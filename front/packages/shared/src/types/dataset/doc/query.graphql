@@ -1,0 +1,67 @@
+query dataGroups{
+    groups(
+        pageable: {
+            page: 0
+            size: 1000
+            sort: CREATED_AT_DESC
+        }
+    )
+    {
+        __typename
+        items {
+            id
+            name
+            description
+            enabled
+            access
+            createdAt
+        }
+    }
+}
+
+query dataAssets($filter: AssetFilterInput, $pageable: AssetPageableInput){
+    assets(
+        filter : $filter
+        pageable: $pageable
+    )
+    {
+        items {
+            id
+            groups {
+                id
+                name
+                description
+                enabled
+                access
+            }
+            name
+            description
+            assetType
+            enabled
+            access
+            createdBy
+            createdAt
+            updatedBy
+            updatedAt
+            process {
+                id
+                name
+                context
+                properties
+                status
+                tasks {
+                    id
+                    status
+                    error
+                    stacktrace
+                }
+            }
+        }
+        pageInfo {
+            totalPages
+            totalItems
+            page
+            size
+        }
+    }
+}

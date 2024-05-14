@@ -1,0 +1,185 @@
+{
+    "RadialLineOfSight": {
+        "title": "관측점에서 지정된 반경 및 시야 내의 가시선을 분석하여 라인 피처를 생성합니다.",
+        "inputCoverage": "표고값을 저장(DEM, DSM 등)한 입력 래스터 레이어입니다.",
+        "observerPoint": "관측자 지점의 위치를 설정합니다.",
+        "observerOffset": "지표로부터의 관측자 지점의 높이값을 설정합니다. 기본값은 0.0입니다.",
+        "radius": "방사형 가시선 분석시 관찰자 지점으로부터의 가시선 분석을 수행할 반경입니다. 반경 단위는 미터 단위 여야합니다.",
+        "sides": "방사형 가시선의 수를 설정합니다. 기본값은 180입니다.",
+        "useCurvature": "가시선 분석을 위해 지구의 곡률을 고려해야하는지 여부를 나타냅니다.",
+        "useRefraction": "지표에서 가시선을 생성할 때 대기 굴절을 고려해야 하는지 여부를 나타냅니다.",
+        "refractionFactor": "굴절 계수. 기본 굴절 계수는 0.13입니다."
+    },
+    "LinearLineOfSight": {
+        "title": "관측점에서 대상지점간의 가시선을 분석하여 라인 피처를 생성합니다.",
+        "inputCoverage": "표고값을 저장(DEM, DSM 등)한 입력 래스터 레이어입니다.",
+        "observerPoint": "관측자 지점의 위치를 설정합니다.",
+        "observerOffset": "지표로부터의 관측자 지점의 높이값을 설정합니다. 기본값은 0.0입니다.",
+        "targetPoint": "관측자 지점에서 바라볼 대상지 지점을 설정합니다.",
+        "useCurvature": "가시선 분석을 위해 지구의 곡률을 고려해야 하는지 여부를 나타냅니다.",
+        "useRefraction": "지표에서 가시선을 생성할 때 대기 굴절을 고려해야 하는지 여부를 나타냅니다.",
+        "refractionFactor": "굴절 계수. 기본 굴절 계수는 0.13입니다."
+    },
+    "RasterProfile": {
+        "title": "래스터에서 보간된 z 값을 포함하는 포인트 피처를 생성합니다.",
+        "inputCoverage": "단면도를 측정할 입력 래스터 레이어입니다.",
+        "userLine": "단면도 측정에 사용할 라인스트링 또는 멀티라인스트링 지오메트리입니다.",
+        "interval": "단면도를 측정할 거리 간격입니다. 기본 거리 = 지오메트리의 길이 / 20."
+    },
+    "RasterHighLowPoints": {
+        "title": "지형 래스터에서 설정한 영역에서의 최고/최저점을 찾아 포인트 피처로 변환합니다.",
+        "inputCoverage": "최고/최저 지점을 추출할 입력 래스터 레이어입니다.",
+        "bandIndex": "0부터 시작하는 밴드 인덱스, 기본 인덱스는 0입니다.",
+        "cropShape": "폴리곤 또는 멀티폴리곤 유형의 잘라낼 영역을 설정합니다.",
+        "valueType": "추출할 값 유형입니다. Both(최고/최저 모두), High(최고점만, 기본값), Low(최저점만)"
+    },
+    "PathAnalysis": {
+        "title": "도로네트워크 데이터를 활용하여 사용자가 지정한 시작점과 종료점 간의 최단경로와, 최적경로를 분석합니다.",
+        "analysisPosition": "남한, 북한 중 분석 위치를 설정합니다. 기본값은 남한 입니다.",
+        "pathType": "최단경로, 최적경로 중 경로 유형을 설정합니다. 기본값은 최단경로 입니다.",
+        "startPoint": "출발지점의 위치를 설정합니다.",
+        "endPoint": "도착지점의 위치를 설정합니다."
+    },
+    "RangeDome": {
+        "title": "관측자 지점에서 지정된 반경 내의 화망을 분석하여 라인 피처를 생성합니다.",
+        "radius": "화망 분석시 관찰자 지점으로부터의 화망 분석을 수행할 반경입니다. 반경 단위는 미터 단위 여야합니다.",
+        "observerPoint": "관측자 지점의 위치를 설정합니다."
+    },
+    "FieldManeuver": {
+        "title": "야지기동 분석입니다.",
+        "slopeCoverage": "경사도 적합지 레이어입니다. 기본값은 45% 이하입니다.",
+        "vegetationFeatures": "식생도 적합지 레이어입니다.",
+        "soilFeatures": "토질도 부적합지 레이어입니다.",
+        "townFeatures": "도심지 부적합지 레이어입니다.",
+        "drainageFeatures": "배수도 부적합지 레이어입니다.",
+        "cropShape": "분석 영역 폴리곤 지오메트리입니다. 최대 분석 범위는 10km * 10km를 넘을 수 없습니다."
+    },
+    "Penetration": {
+        "title": "공중침투 분석입니다.",
+        "slopeCoverage": "경사도 적합지 레이어입니다. 기본값은 20% 이하입니다.",
+        "vegetationFeatures": "식생도 적합지 레이어입니다.",
+        "forestFeatures": "식생도(산림) 적합지 레이어입니다.",
+        "townFeatures": "도심지 부적합지 레이어입니다.",
+        "drainageFeatures": "배수도 부적합지 레이어입니다.",
+        "transFeatures": "송전선 부적합지 레이어입니다.",
+        "distance": "송전선 버퍼 거리입니다. 기본값은 100m입니다.",
+        "distanceUnit": "송전선 버퍼 거리 단위입니다. 기본값은 Meter입니다.",
+        "cropShape": "분석 영역 폴리곤 지오메트리입니다. 최대 분석 범위는 10km * 10km를 넘을 수 없습니다."
+    },
+    "OptimalStation": {
+        "title": "주둔최적지 분석입니다.",
+        "slopeCoverage": "경사도 적합지 레이어입니다. 기본값은 20% 이하입니다.",
+        "vegetationFeatures": "식생도 적합지 레이어입니다.",
+        "soilFeatures": "토질도 적합지 레이어입니다.",
+        "roadFeatures": "수송도 적합지 레이어입니다.",
+        "roadBuffer": "수송도 분석 거리입니다. 기본값은 300미터 입니다.",
+        "drainageFeatures": "배수도 적합지 레이어입니다.",
+        "drainageBuffer": "배수도 분석거리입니다. 기본값은 3,000미터입니다.",
+        "bufferUnit": "분석거리 단위입니다. 기본값은 Meters 입니다.",
+        "drainageExFeatures": "배수도 부적합지 레이어입니다.",
+        "minimumArea": "배수도(부적합지) 최소면적입니다. 기본값은 30,000 제곱미터입니다.",
+        "areaUnit": "배수도 부적합지 면적 단위입니다. 기본값은 제곱미터입니다.",
+        "cropShape": "분석 영역 폴리곤 지오메트리입니다. 최대 분석 범위는 10km * 10km를 넘을 수 없습니다."
+    },
+    "EnemyObservation": {
+        "title": "적종팀 은거 및 관측 분석입니다.",
+        "slopeCoverage": "경사도 적합지 레이어입니다. 기본값은 45% 이하입니다.",
+        "forestFeatures": "식생도(산림) 적합지 레이어입니다.",
+        "soilFeatures": "토질도 부적합지 레이어입니다.",
+        "townFeatures": "도심지 부적합지 레이어입니다.",
+        "drainageFeatures": "배수도 부적합지 레이어입니다.",
+        "dmzFeatures": "식생도(DMZ) 적합지 레이어입니다.",
+        "season": "분석 계절입니다. Winter(동계)와 Summer(하계)로 구분되며 기본값은 Winter입니다.",
+        "cropShape": "분석 영역 폴리곤 지오메트리입니다. 최대 분석 범위는 10km * 10km를 넘을 수 없습니다."
+    },
+    "FrozenArea": {
+        "title": "상습 결빙지역 분석입니다.",
+        "roadFeatures": "수송도 레이어입니다.",
+        "distance": "수송도 분석거리입니다. 기본값은 30미터입니다.",
+        "distanceUnit": "수송도 분석거리 단위입니다. 기본값은 Meters입니다.",
+        "slopeCoverage": "경사도 레이어입니다. 기본값은 10도 이상입니다.",
+        "aspectCoverage": "사면향 레이어입니다. 기본값은 북서(292.5~360도), 정북(0,360), 북동(0~67.5)입니다.",
+        "hillshadeCoverage": "음영 레이어입니다. 기본값은 광원의 방위각 180도, 높이각 29도에서의 음영(0~50) 기준입니다.",
+        "cropShape": "분석 영역 폴리곤 지오메트리입니다. 최대 분석 범위는 10km * 10km를 넘을 수 없습니다."
+    },
+    "Cover": {
+        "title": "엄폐 분석입니다.",
+        "slopeCoverage": "경사도 레이어입니다.",
+        "forestFeatures": "식생도(산림) 레이어입니다.",
+        "soilFeatures": "토질도 부적합지 레이어입니다.",
+        "townFeatures": "도심지 부적합지 레이어입니다.",
+        "drainageFeatures": "배수도 부적합지 레이어입니다.",
+        "cropShape": "분석 영역 폴리곤 지오메트리입니다. 최대 분석 범위는 10km * 10km를 넘을 수 없습니다."
+    },
+    "Concealment": {
+        "title": "은폐 분석입니다.",
+        "forestFeatures": "식생도(산림) 레이어입니다.",
+        "goodFilter": "은폐가 양호한 식생도의 조건식입니다.",
+        "normalFilter": "은폐가 보통인 식생도의 조건식입니다.",
+        "poorFilter": "은폐가 불량한 식생도의 조건식입니다.",
+        "cropShape": "분석 영역 폴리곤 지오메트리입니다. 최대 분석 범위는 10km * 10km를 넘을 수 없습니다."
+    },
+    "AvenueOfApproach": {
+        "title": "피아접근로 분석입니다.",
+        "slopeCoverage": "경사도 적합지 레이어입니다. 기본값은 45%이하입니다.",
+        "forestFeatures": "식생도(산림) 적합지 레이어입니다.",
+        "soilFeatures": "토질도 부적합지 레이어입니다.",
+        "townFeatures": "도심지 부적합지 레이어입니다.",
+        "drainageFeatures": "배수도 부적합지 레이어입니다.",
+        "cropShape": "분석 영역 폴리곤 지오메트리입니다. 최대 분석 범위는 10km * 10km를 넘을 수 없습니다."
+    },
+    "EscapeRange": {
+        "title": "침투 적 도주 범위 분석입니다.",
+        "observerPoint": "식별 원점 포인트 지오메트리입니다.",
+        "speedRaster": "도주속도를 계산한 래스터 레이어입니다.",
+        "radius": "도주속도 최대 분석 반경입니다.",
+        "radiusUnit": "분석반경 단위입니다. 기본값은 Meters 입니다.",
+        "weatherFactor": "기상지연 계수입니다. Normal(일반): 1, Foggy(안개): 1.3, Rainy(강우/적설): 1.6, Night(야간): 1.1",
+        "startTime": "분 단위의 시작 시간입니다.",
+        "endTime": "분 단위의 종료시간입니다.",
+        "cropShape": "분석 영역 폴리곤 지오메트리입니다. 최대 분석 범위는 10km * 10km를 넘을 수 없습니다."
+    },
+    "KernelDensity": {
+        "title": "포인트 피처를 이용하여 설정한 커널 함수에 따른 밀도분석을 수행합니다.",
+        "inputFeatures": "커널 밀도를 계산할 포인트 레이어입니다.",
+        "populationField": "각 피처에 대한 모집단 값을 나타내는 필드입니다.",
+        "cropShape": "출력 래스터의 분석 범위입니다."
+    },
+    "PointStacker": {
+        "title": "그리드 상에서 포인트 객체들을 하나의 포인트로 집계합니다.",
+        "data": "클러스터링할 입력 포인트 레이어입니다."
+    },
+    "ExtractValuesToPoints": {
+        "title": "각 포인트 피처에 셀 원본값, 경사도 등의 셀값 계산 유형별 래스터의 셀값을 계산합니다.",
+        "pointFeatures": "값이 계산될 포인트 레이어입니다.",
+        "valueField": "래스터의 셀값이 계산될 필드입니다.",
+        "valueCoverage": "값을 가져올 래스터 레이어입니다.",
+        "valueType": "셀값 유형: Default(기본값), SlopeAsDegree(도 단위의 경사값), SlopeAsPercentrise(퍼센트단위의 경사값), Aspect."
+    },
+    "BufferFeatures": {
+        "title": "거리값, 필드값 또는 필드의 조합을 이용한 거리 표현식을 정의하여 버퍼를 생성합니다.",
+        "inputFeatures": "버퍼를 적용할 입력 레이어입니다.",
+        "distance": "거리를 설정하기 위해 사용되는 거리 표현식입니다. 예) 1000 또는 [field] 또는 [field] * 0.5 등…",
+        "distanceUnit": "거리 단위입니다.",
+        "quadrantSegments": "원의 사분면을 나타내는데 사용되는 세그먼트의 개수입니다.",
+        "endCapStyle": "선끝(End Cap) 스타일 파라미터는 버퍼 내부에서 라인 끝부분을 어떻게 처리할지 제어합니다.",
+        "joinStyle": "결합(Join) 스타일 파라미터는 옵셋이 라인의 모서리에 적용될 경우 결합 부위를 둥글게(round) 할지, 마이터(mitre)로 할지, 비스듬하게(bevel) 할지 지정합니다."
+    },
+    "MultipleRingBuffer": {
+        "title": "거리값, 필드값 또는 필드의 조합을 이용한 여러 개의 거리 표현식들을 정의하여 다중 링 버퍼를 생성합니다.",
+        "inputFeatures": "버퍼를 적용할 입력 레이어입니다.",
+        "distance": "쉼표로 구분된 버퍼 거리 목록입니다.",
+        "distanceUnit": "거리 단위입니다.",
+        "outsideOnly": "입력 폴리곤 피처 내부 영역이 결과 버퍼에서 제외할 지 여부를 설정합니다.",
+        "dissolve": "버퍼한 피처가 중첩되는 경우 디졸브를 수행할 지 여부를 설정합니다."
+    },
+    "PointsToLine": {
+        "title": "포인트의 정렬 필드값을 이용하여 속성이 같은 필드값별로 라인을 생성합니다.",
+        "inputFeatures": "라인을 생성할 포인트 레이어입니다.",
+        "lineField": "라인 그룹 필드를 설정하면 그룹별로 각각의 라인을 생성할 수 있습니다.",
+        "sortField": "기본값으로 저장된 포인트의 순서대로 라인을 생성합니다. 만약 정해진 정렬 필드가 있다면 이를 설정할 수 있습니다.",
+        "useBezierCurve": "선을 생성할 때 베이지어 커브를 사용할 지 여부를 설정합니다.",
+        "closeLine": "생성된 라인의 폐합 여부를 설정합니다.",
+        "geodesicLine": "출력 라인 생성 시 측지선을 사용할 지 여부를 설정합니다. 지리좌표계만 지원합니다."
+    }
+}

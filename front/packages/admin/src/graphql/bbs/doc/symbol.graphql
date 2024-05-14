@@ -1,0 +1,75 @@
+mutation createSymbolGroup($input:CreateSymbolGroupInput!) {
+    createSymbolGroup (
+        input: $input
+    )
+    {
+        id
+        name
+        description
+        order
+        enabled
+        collapsed
+        access
+        createdBy
+        createdAt
+        updatedBy
+        updatedAt
+    }
+}
+
+mutation updateSymbolGroup($id:ID!, $input: UpdateSymbolGroupInput!) {
+    updateSymbolGroup (
+        id: $id
+        input: $input
+    )
+    {
+        id
+        name
+        description
+        order
+        enabled
+        collapsed
+        access
+        createdBy
+        createdAt
+        updatedBy
+        updatedAt
+    }
+}
+
+mutation deleteSymbolGroup($id:[ID!]!) {
+    deleteSymbolGroup (
+        id: $id
+    )
+}
+
+mutation createSymbol($input: CreateSymbolInput!) {
+    createSymbol(
+        input: $input
+    )
+    {
+        id
+        name
+    }
+}
+
+mutation deleteSymbol($id: [ID!]! ) {
+    deleteSymbol(
+        id: $id
+    )
+}
+
+mutation updateSymbol($id: ID!, $input: UpdateSymbolInput!) {
+    updateSymbol(
+        id: $id
+        input: $input
+    )
+    {
+        id
+        name
+    }
+}
+
+mutation deleteSymbolFile($id: [ID!]! ) {
+    deleteSymbolFile(id: $id)
+}

@@ -1,0 +1,49 @@
+fragment LayerGroupFields on LayerGroup {
+  id
+  name
+  description
+  enabled
+  createdAt
+  createdBy
+  updatedAt
+  updatedBy
+}
+
+fragment LayerAssetFields on LayerAsset {
+  id
+  name
+  description
+  enabled
+  createdAt
+  createdBy
+  updatedAt
+  updatedBy
+}
+
+query Groups($filter: GroupFilterInput) {
+  groups(filter: $filter) {
+    ...LayerGroupFields
+  }
+}
+
+# 3단계 자식까지 읽어온다.
+query GroupTree($filter: GroupFilterInput) {
+  groups(filter: $filter) {
+    ...LayerGroupFields
+    assets {
+      ...LayerAssetFields
+    }
+    children {
+      ...LayerGroupFields
+      assets {
+        ...LayerAssetFields
+      }
+      children {
+        ...LayerGroupFields
+        assets {
+          ...LayerAssetFields
+        }
+      }
+    }
+  }
+}

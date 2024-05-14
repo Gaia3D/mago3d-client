@@ -1,0 +1,62 @@
+query BMKPT_SEARCH($filter:BmkptSearchFilter){
+    bmkptSearch(
+        filter: $filter
+    )
+    {
+        items {
+            id
+            name
+            lat
+            lon
+        }
+    }
+}
+
+query ADDRESS_SEARCH($filter:AddressSearchFilter){
+    addressSearch(
+        filter: $filter
+    )
+    {
+        items {
+            id
+            sidoName
+            sggName
+            emdName
+            bldMnnm
+            bldSlno
+            roadName
+            roadAddr
+            lat
+            lon
+        }
+    }
+}
+
+query UNSPT_SEARCH($filter:UnsptSearchFilter){
+    unsptSearch(
+        filter: $filter
+    )
+    {
+        items {
+            id
+            name
+            lat
+            lon
+        }
+    }
+}
+
+
+query TRIPT_SEARCH($filter:TriptSearchFilter){
+    triptSearch(
+        filter: $filter
+    )
+    {
+        items {
+            id
+            name
+            lat
+            lon
+        }
+    }
+}

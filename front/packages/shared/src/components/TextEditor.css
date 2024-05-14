@@ -1,0 +1,3 @@
+.ql-container:not(.ql-disabled) .ql-editor {
+    min-height: 18em;
+}

@@ -1,0 +1,44 @@
+{
+  "name": "@mnd/root",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "dev:portal": "cd ./packages/portal && pnpm dev",
+    "dev:admin": "cd ./packages/admin && pnpm dev",
+    "dev:user": "cd ./packages/user && pnpm dev",
+    "dev": "pnpm dev:portal && pnpm dev:admin && pnpm dev:user",
+    "docker-build": "docker build -t mdtp/front ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "workspaces": [
+    "packages/*"
+  ],
+  "lint-staged": {
+    "linters": {
+      "./packages/**/*.{ts,tsx}": [
+        "eslint --fix --max-warnings=0 ./packages/"
+      ]
+    },
+    "ignore": [
+      "./packages/**/*-gen-type.{ts,tsx}"
+    ]
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.26.1",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.1",
+    "prettier": "^2.8.7"
+  },
+  "dependencies": {
+    "ol": "^8.1.0"
+  }
+}

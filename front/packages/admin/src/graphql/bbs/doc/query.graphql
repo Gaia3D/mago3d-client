@@ -1,0 +1,126 @@
+query SymbolGroup($id: ID!) {
+    symbolGroup (id: $id) {
+        id
+        name
+        order
+        count
+        enabled
+        collapsed
+        access
+        symbols {
+            id
+            name
+            files {
+                id
+                contentType
+                contentSize
+                download
+                thumbnail {
+                    filename
+                    contentType
+                    download
+                }
+            }
+        }
+    }
+}
+
+query SymbolGroups {
+    symbolGroups
+    {
+        id
+        name
+        order
+        count
+        enabled
+        collapsed
+        access
+    }
+}
+
+query SYMBOLGROUPPAGED($filter: SymbolGroupFilterInput, $pageable: SymbolGroupPageable) {
+    symbolGroupsPaged(filter: $filter, pageable: $pageable) {
+        items {
+            id
+            name
+            description
+            order
+            count
+            enabled
+            collapsed
+            access
+            createdBy
+            createdAt
+            updatedBy
+            updatedAt
+            symbols {
+                id
+                name
+                createdBy
+                createdAt
+                updatedBy
+                updatedAt
+            }
+        }
+        pageInfo {
+            totalPages
+            totalItems
+            page
+            size
+            hasNextPage
+            hasPreviousPage
+        }
+    }
+}
+
+query SYMBOL($id: ID!) {
+    symbol(id: $id) {
+        id
+        name
+        group {
+            id
+            name
+        }
+        files {
+            id
+            filename
+            download
+            contentSize
+            width
+            height
+        }
+    }
+}
+
+query SYMBOLS($filter:SymbolFilterInput, $pageable: SymbolPageable) {
+    symbols (
+        filter: $filter
+        pageable: $pageable
+    )
+    {
+        items {
+            id
+            name
+            files {
+                id
+                filename
+                contentType
+                contentSize
+                download
+                thumbnail {
+                    filename
+                    contentType
+                    download
+                }
+            }
+        }
+        pageInfo {
+            totalPages
+            totalItems
+            page
+            size
+            hasNextPage
+            hasPreviousPage
+        }
+    }
+}
