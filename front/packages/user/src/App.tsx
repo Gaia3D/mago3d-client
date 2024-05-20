@@ -13,7 +13,9 @@ import {Suspense} from "react";
 import UserInfoLoadableProvider from "@/components/providers/UserInfoLoadableProvider.tsx";
 
 function App() {
-  const router = createBrowserRouter(routes)
+  const router = createBrowserRouter(routes, {
+    basename: '/geomatic-user',
+  })
   const setAuth = useSetRecoilState(authenticateState);
   const queryClient = getClient();
 

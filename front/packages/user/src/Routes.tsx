@@ -7,7 +7,7 @@ export const routes = [
     path: "",
     element: <GlobalLayout />,
     children: [
-      { path: "/user", element: <Index />, index: true,  },
+      { path: "/", element: <Index />, index: true,  },
       { path: "*", element: <Page404 /> },
     ],
   },
