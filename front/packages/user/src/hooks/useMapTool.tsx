@@ -6,6 +6,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { LoadingStateType, loadingState } from "@/recoils/Spinner";
 import { MeasureAngleOpenState, MeasureAreaOpenState, MeasureComplexOpenState, MeasureDistanceOpenState, PrintPotalOpenState, SearchCoordinateOpenState, ToolStatus, ToolStatusState } from "@/recoils/Tool";
 import { useEffect, useState } from "react";
+import {Fullscreen} from "cesium";
 
 export const useMapTool = () => {
   const {globeController, initialized} = useGlobeController();
@@ -18,6 +19,7 @@ export const useMapTool = () => {
   const setMeasureComplexOpen = useSetRecoilState(MeasureComplexOpenState);
   const setSearchCoordinateOpen = useSetRecoilState(SearchCoordinateOpenState);
 
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [angle, setAngle] = useState(0);
 
   useEffect(() => {
@@ -157,7 +159,20 @@ export const useMapTool = () => {
 
   const onClickPrint = () => {
     setPrintPortalOpen(!printPortalOpen);
-  } 
+  }
 
-  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toolStatus};
+  const onClickFullscreen = () => {
+    if (!Fullscreen.enabled) {
+      alert('Fullscreen is not supported')
+      return
+    }
+    if(!fullscreenOpen){
+      Fullscreen.requestFullscreen(document.querySelector('#container'))
+    } else {
+      Fullscreen.exitFullscreen()
+    }
+    setFullscreenOpen((prev) => !prev);
+  }
+
+  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toolStatus, onClickFullscreen};
 }

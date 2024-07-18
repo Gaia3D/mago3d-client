@@ -118,6 +118,7 @@ nav .logout:hover {opacity:1;}
 #toolbox button.search {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -171px -700px;}
 #toolbox button.print {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -171px -232px;}
 #toolbox button.save {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
+#toolbox button.fullscreen {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 
 #toolbox button.compass:hover, #toolbox button.compass:focus {background:rgba(0,0,0,0.8) url(../images/icon-compass-active.png) no-repeat 12px 10px;}
 #toolbox button.home:hover, #toolbox button.home:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -244px -54px;}
@@ -128,6 +129,7 @@ nav .logout:hover {opacity:1;}
 #toolbox button.search:hover, #toolbox button.search:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -245px -700px;}
 #toolbox button.print:hover, #toolbox button.print:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -245px -232px;}
 #toolbox button.save:hover, #toolbox button.save:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
+#toolbox button.fullscreen:hover, #toolbox button.fullscreen:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 
 #toolbox-view {margin:0; padding:0; position:absolute; top:400px; right:10px;}
 #toolbox-view button {display:block; width:40px; height:40px; background:rgba(0,0,0,0.7);}
@@ -150,6 +152,7 @@ nav .logout:hover {opacity:1;}
 #toolbox button.angles:hover .toolbox-txt {display:block;}
 #toolbox button.composite:hover .toolbox-txt {display:block;}
 #toolbox button.search:hover .toolbox-txt {display:block;}
+#toolbox button.fullscreen:hover .toolbox-txt {display:block;}
 
 /* aside */
 aside {width:350px; height:100vh; position:absolute; box-shadow:0 0 10px rgba(28,28,28,0.5);}
