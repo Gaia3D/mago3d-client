@@ -9,6 +9,14 @@ import { useEffect, useState } from "react";
 import {EllipsoidTerrainProvider, Fullscreen} from "cesium";
 import {getWmsLayer} from "@/components/utils/utils.ts";
 
+interface Options {
+  isFullscreen: boolean;
+  isTerrain: boolean;
+  isTerrainTranslucent: boolean;
+  isOpenClock: boolean;
+  isOpenSetting: boolean;
+}
+
 export const useMapTool = () => {
   const {globeController, initialized} = useGlobeController();
   const [toolStatus, setToolStatus] = useRecoilState<ToolStatus>(ToolStatusState);
@@ -20,8 +28,15 @@ export const useMapTool = () => {
   const setMeasureComplexOpen = useSetRecoilState(MeasureComplexOpenState);
   const setSearchCoordinateOpen = useSetRecoilState(SearchCoordinateOpenState);
 
-  const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [angle, setAngle] = useState(0);
+
+  const [options, setOptions] = useState<Options>({
+    isFullscreen: false,
+    isTerrain: false,
+    isTerrainTranslucent: false,
+    isOpenClock: false,
+    isOpenSetting: false
+  });
 
   useEffect(() => {
     if (!initialized) return;
@@ -162,17 +177,20 @@ export const useMapTool = () => {
     setPrintPortalOpen(!printPortalOpen);
   }
 
-  const onClickFullscreen = () => {
+  const toggleFullscreen = () => {
     if (!Fullscreen.enabled) {
       alert('Fullscreen is not supported')
       return
     }
-    if(!fullscreenOpen){
+    if(!options.isFullscreen){
       Fullscreen.requestFullscreen(document.querySelector('#container'))
     } else {
       Fullscreen.exitFullscreen()
     }
-    setFullscreenOpen((prev) => !prev);
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      isFullscreen: !prevOptions.isFullscreen
+    }));
   }
 
   const resetDirection = () => {
@@ -208,10 +226,38 @@ export const useMapTool = () => {
     if (viewer?.terrainProvider === undefined || isEllipsoidTerrainProvider(viewer.terrainProvider)) {
       viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
     } else {
-      console.log("지형 제거");
       viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
     }
+
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      isTerrain: !prevOptions.isTerrain
+    }));
   };
 
-  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, onClickFullscreen, resetDirection, toggleDefaultTerrain, toolStatus,};
+  const toggleTerrainTranslucent = () => {
+    const { viewer } = globeController;
+    if (!viewer) return;
+
+    const globe = viewer.scene.globe;
+    const isTranslucent = options.isTerrainTranslucent;
+
+    globe.translucency.enabled = !isTranslucent;
+
+    if (!isTranslucent) {
+      globe.translucency.frontFaceAlpha = 0.6;
+      globe.translucency.backFaceAlpha = 0.6;
+      globe.undergroundColorAlphaByDistance.nearValue = 1.0;
+      globe.undergroundColorAlphaByDistance.farValue = 1.0;
+      globe.undergroundColor = Cesium.Color.BLACK;
+    }
+
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      isTerrainTranslucent: !prevOptions.isTerrainTranslucent
+    }));
+    // saveWebStorage()
+  };
+
+  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toolStatus,};
 }
