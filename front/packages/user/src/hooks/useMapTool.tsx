@@ -174,5 +174,27 @@ export const useMapTool = () => {
     setFullscreenOpen((prev) => !prev);
   }
 
-  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toolStatus, onClickFullscreen};
+  const resetDirection = () => {
+    const {viewer} = globeController;
+    if (!viewer) return;
+
+    const camera = viewer.camera;
+    const viewRectangle = camera.computeViewRectangle();
+
+    if (!viewRectangle) return;
+
+    camera.flyTo({
+        destination: viewer.camera.positionWC,
+        duration: 1.0,
+        orientation: {
+          heading: 0,
+          pitch: viewer.camera.pitch,
+          roll: viewer.camera.roll
+        }
+    });
+
+    setToolStatus(null);
+  }
+
+  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, onClickFullscreen, resetDirection, toolStatus,};
 }
