@@ -122,6 +122,7 @@ nav .logout:hover {opacity:1;}
 #toolbox button.reset-direction {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 #toolbox button.set-terrain {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 #toolbox button.set-terrain-trans {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
+#toolbox button.open-clock-tool {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 
 #toolbox button.compass:hover, #toolbox button.compass:focus {background:rgba(0,0,0,0.8) url(../images/icon-compass-active.png) no-repeat 12px 10px;}
 #toolbox button.home:hover, #toolbox button.home:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -244px -54px;}
@@ -136,6 +137,19 @@ nav .logout:hover {opacity:1;}
 #toolbox button.reset-direction:hover, #toolbox button.reset-direction:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 #toolbox button.set-terrain:hover, #toolbox button.set-terrain:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 #toolbox button.set-terrain-trans:hover, #toolbox button.set-terrain-trans:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
+#toolbox button.open-clock-tool:hover, #toolbox button.open-clock-tool:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
+
+/*clock*/
+.default-layer {display: inline-block;border-radius: 8px;box-shadow: 0 0 3px 2px #00000012;border: 1px solid rgba(60, 60, 60, .12);;background-color: #f8f8f8;min-width: 10px;min-height: 10px;z-index: 10;opacity: .9;}
+.default-layer.clock {position: absolute; top: 400px; right: 80px; padding: 5px;}
+.default-layer.clock>input[type=date], .default-layer.clock>input[type=time], .default-layer.clock input[type=number] {padding: 5px;margin: 3px;height: 20px;font-family: Noto Sans KR, sans-serif, Arial;font-size: 11px;text-align: center;}
+.default-layer.clock label {font-size: 11px;padding: 5px;}
+.default-layer input[type=range] {vertical-align: middle;display: inline-block;margin: 5px;width: 100px;font-family: Noto Sans KR, sans-serif, Arial;}
+.default-layer>div{text-align: center;}
+.default-layer.clock button {font-family: monospace;display: inline-block;font-size: 12px;vertical-align: middle;padding: 5px 8px;margin: 0 2px;}
+.default-layer.clock button>img {padding: 1px !important;margin: 0 !important;}
+.default-layer img {min-height: 8px;min-width: 8px;vertical-align: middle;filter: invert(26%) sepia(46%) saturate(401%) hue-rotate(170deg) brightness(93%) contrast(95%);}
+img.icon-24 {width: 24px;height: 24px;}
 
 /*#toolbox-view {margin:0; padding:0; position:absolute; top:400px; right:10px;}*/
 #toolbox-view {margin:0; padding:0; position:absolute; bottom:100px; right:10px;}
@@ -163,6 +177,7 @@ nav .logout:hover {opacity:1;}
 #toolbox button.reset-direction:hover .toolbox-txt {display:block;}
 #toolbox button.set-terrain:hover .toolbox-txt {display:block;}
 #toolbox button.set-terrain-trans:hover .toolbox-txt {display:block;}
+#toolbox button.open-clock-tool:hover .toolbox-txt {display:block;}
 
 /* aside */
 aside {width:350px; height:100vh; position:absolute; box-shadow:0 0 10px rgba(28,28,28,0.5);}

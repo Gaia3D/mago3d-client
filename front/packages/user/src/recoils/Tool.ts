@@ -30,6 +30,37 @@ export const SearchCoordinateOpenState = atom<boolean>({
   default: false
 });
 
+export type Options = {
+  isFullscreen: boolean;
+  isTerrain: boolean;
+  isTerrainTranslucent: boolean;
+  isOpenClock: boolean;
+  isOpenSetting: boolean;
+  isAnimation: boolean;
+  dateObject?: Date;
+  date: string;
+  time: string;
+  speed: number;
+  playText: string;
+};
+
+export const OptionsState = atom<Options>({
+  key: 'OptionsState',
+  default: {
+    isFullscreen: false,
+    isTerrain: false,
+    isTerrainTranslucent: false,
+    isOpenClock: false,
+    isOpenSetting: false,
+    isAnimation: false,
+    dateObject: undefined,
+    date: '0001-01-01',
+    time: '00:00:00',
+    speed: 1,
+    playText: '▶',
+  }
+})
+
 export type ToolStatus = "angles" | "length" | "area" | "composite" | "search" | null;
 
 export const ToolStatusState = atom<ToolStatus>({
