@@ -6,7 +6,8 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { LoadingStateType, loadingState } from "@/recoils/Spinner";
 import { MeasureAngleOpenState, MeasureAreaOpenState, MeasureComplexOpenState, MeasureDistanceOpenState, PrintPotalOpenState, SearchCoordinateOpenState, ToolStatus, ToolStatusState } from "@/recoils/Tool";
 import { useEffect, useState } from "react";
-import {Fullscreen} from "cesium";
+import {EllipsoidTerrainProvider, Fullscreen} from "cesium";
+import {getWmsLayer} from "@/components/utils/utils.ts";
 
 export const useMapTool = () => {
   const {globeController, initialized} = useGlobeController();
@@ -196,5 +197,21 @@ export const useMapTool = () => {
     setToolStatus(null);
   }
 
-  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, onClickFullscreen, resetDirection, toolStatus,};
+  function isEllipsoidTerrainProvider(provider: any): provider is EllipsoidTerrainProvider {
+    return provider instanceof EllipsoidTerrainProvider;
+  }
+
+  const toggleDefaultTerrain = async () => {
+    const {viewer} = globeController;
+    if (!viewer) return;
+
+    if (viewer?.terrainProvider === undefined || isEllipsoidTerrainProvider(viewer.terrainProvider)) {
+      viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
+    } else {
+      console.log("지형 제거");
+      viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+    }
+  };
+
+  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, onClickFullscreen, resetDirection, toggleDefaultTerrain, toolStatus,};
 }

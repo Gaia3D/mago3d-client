@@ -15,7 +15,7 @@ export interface MapTool {
 type ToolClicked = (tool: MapTool) => void;
 
 export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
-  const {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea, onClickLength, onClickSearch, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickFullscreen, resetDirection} = useMapTool();
+  const {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea, onClickLength, onClickSearch, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickFullscreen, resetDirection, toggleDefaultTerrain} = useMapTool();
   // 현재 선택된 도구 상태를 관리하는 상태
   const [selectedTool, setSelectedTool] = useRecoilState<ToolStatus>(ToolStatusState);
   // 각 도구의 클릭 핸들러 함수
@@ -38,6 +38,7 @@ export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
     { className: "save", label: "저장하기", onClick: onClickSave},
     { className: "fullscreen", label: "전체화면", active: false, toggle: true, onClick: onClickFullscreen},
     { className: "reset-direction", label: "방향 초기화", active: false, toggle: true, onClick: resetDirection},
+    { className: "set-terrain", label: "지형설정", active: false, toggle: true, onClick: toggleDefaultTerrain},
   ];
 
   const tools2: MapTool[] = [
