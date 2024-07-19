@@ -19,6 +19,8 @@ import {
 import {useEffect, useRef, useState} from "react";
 import {EllipsoidTerrainProvider, Fullscreen} from "cesium";
 import {getWmsLayer} from "@/components/utils/utils.ts";
+import {MagoSSAORender, offSSAO, onSSAO} from "@/api/rendering/magoSsaoRender.ts";
+import {MagoEdgeRender, offEdge, onEdge} from "@/api/rendering/magoEdgeRender.ts";
 
 export const useMapTool = () => {
   const {globeController, initialized} = useGlobeController();
@@ -54,6 +56,7 @@ export const useMapTool = () => {
     const clock = viewer.clock;
     clock.multiplier = options.speed;
   }, [options.speed, globeController]);
+
 
   const onClickCompas = () => {
     const {viewer} = globeController;
@@ -416,5 +419,214 @@ export const useMapTool = () => {
     }
   };
 
-    return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, changedDate, changedSpeed, toggleAnimation, slowAnimation, fastAnimation, toolStatus, options, setOptions};
+  const toggleSetting = () => {
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      isSetting: !prevOptions.isSetting,
+    }));
+  }
+
+  const toggleShadow = (on: boolean) => {
+    if (on !== undefined) {
+      setOptions((prevOptions) => ({
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isShadow: !on,
+        },
+      }));
+    }
+
+    const { viewer } = globeController;
+    if (!viewer) return;
+
+    if(!options.renderOptions.isShadow) {
+      if (options.dateObject === undefined) {
+        initDate();
+      }
+      viewer.scene.shadowMap.enabled = true;
+      viewer.scene.shadowMap.darkness = 0.5;
+    } else {
+      viewer.scene.shadowMap.enabled = false;
+    }
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      renderOptions: {
+        ...prevOptions.renderOptions,
+        isShadow: !prevOptions.renderOptions.isShadow,
+      },
+    }));
+    // saveWebStorage();
+  };
+
+  const setShadowQuality = (quality: string) => {
+    const { viewer } = globeController;
+    if (!viewer) return;
+    if (quality === 'very-low') {
+      viewer.shadowMap.size = 256
+    } else if (quality === 'low') {
+      viewer.shadowMap.size = 512
+    } else if (quality === 'mid') {
+      viewer.shadowMap.size = 1024
+    } else if (quality === 'high') {
+      viewer.shadowMap.size = 2048
+    } else if (quality === 'very-high') {
+      viewer.shadowMap.size = 4096
+    }
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      renderOptions: {
+        ...prevOptions.renderOptions,
+        shadowQuality: quality,
+      },
+    }));
+    // saveWebStorage();
+  };
+
+  const setResolution = (quality: string) => {
+    const { viewer } = globeController;
+    if (!viewer) return;
+    if (quality === 'very-low') {
+      viewer.resolutionScale = 0.25
+    } else if (quality === 'low') {
+      viewer.resolutionScale = 0.5
+    } else if (quality === 'mid') {
+      viewer.resolutionScale = 0.75
+    } else if (quality === 'high') {
+      viewer.resolutionScale = 1.0
+    } else if (quality === 'very-high') {
+      viewer.resolutionScale = 1.5
+    }
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      renderOptions: {
+        ...prevOptions.renderOptions,
+        renderQuality: quality,
+      },
+    }));
+    // saveWebStorage();
+  };
+
+  const toggleLighting = (on: boolean) => {
+    if (on !== undefined) {
+      setOptions((prevOptions) => ({
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isLighting: !on,
+        },
+      }));
+    }
+
+    const { viewer } = globeController;
+    if (!viewer) return;
+
+    viewer.scene.globe.enableLighting = !on;
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      renderOptions: {
+        ...prevOptions.renderOptions,
+        isLighting: !prevOptions.renderOptions.isLighting,
+      },
+    }));
+    // saveWebStorage();
+  };
+
+  const toggleSSAO = (on: boolean) => {
+    if (on !== undefined) {
+      setOptions((prevOptions) => ({
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isSSAO: !on,
+        },
+      }));
+    }
+    const { viewer } = globeController;
+    if (!viewer) return;
+
+    if (options.magoSsao === undefined) {
+      setOptions((prevOptions) => ({
+        ...prevOptions,
+        magoSsao : MagoSSAORender(viewer)
+      }));
+    }
+
+    if (options.renderOptions.isSSAO) {
+      offSSAO();
+    } else {
+      onSSAO();
+    }
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      renderOptions: {
+        ...prevOptions.renderOptions,
+        isSSAO: !prevOptions.renderOptions.isSSAO,
+      },
+    }));
+    // saveWebStorage();
+  };
+
+  const toggleFxaa = (on: boolean) => {
+    if (on !== undefined) {
+      setOptions((prevOptions) => ({
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isFxaa: !on,
+        },
+      }));
+    }
+
+    const { viewer } = globeController;
+    if (!viewer) return;
+
+    viewer.scene.postProcessStages.fxaa.enabled = !options.renderOptions.isFxaa;
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      renderOptions: {
+        ...prevOptions.renderOptions,
+        isFxaa: !prevOptions.renderOptions.isFxaa,
+      },
+    }));
+    // saveWebStorage();
+  };
+
+  const toggleEdge = (on: boolean) => {
+    if (on !== undefined) {
+      setOptions((prevOptions) => ({
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isEdge: !on,
+        },
+      }));
+    }
+    const { viewer } = globeController;
+    if (!viewer) return;
+
+    if (options.magoEdge === undefined) {
+      setOptions((prevOptions) => ({
+        ...prevOptions,
+        magoEdge : MagoEdgeRender(viewer)
+      }));
+    }
+
+    if (options.renderOptions.isEdge) {
+      offEdge();
+    } else {
+      onEdge();
+    }
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      renderOptions: {
+        ...prevOptions.renderOptions,
+        isEdge: !prevOptions.renderOptions.isEdge,
+      },
+    }));
+    // saveWebStorage();
+  };
+
+
+  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, changedDate, changedSpeed, toggleAnimation, slowAnimation, fastAnimation, toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, toolStatus, options, setOptions};
   }

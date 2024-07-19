@@ -15,7 +15,7 @@ export interface MapTool {
 type ToolClicked = (tool: MapTool) => void;
 
 export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
-  const {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea, onClickLength, onClickSearch, onClickAngle, onClickSave, onClickPrint, onClickComplex, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, changedDate, changedSpeed, toggleAnimation, slowAnimation, fastAnimation, options, setOptions} = useMapTool();
+  const {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea, onClickLength, onClickSearch, onClickAngle, onClickSave, onClickPrint, onClickComplex, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, changedDate, changedSpeed, toggleAnimation, slowAnimation, fastAnimation, toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, options, setOptions} = useMapTool();
   // 현재 선택된 도구 상태를 관리하는 상태
   const [selectedTool, setSelectedTool] = useRecoilState<ToolStatus>(ToolStatusState);
   // 각 도구의 클릭 핸들러 함수
@@ -49,6 +49,7 @@ export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
     { className: "set-terrain", label: "지형설정", active: false, toggle: true, onClick: toggleDefaultTerrain},
     { className: "set-terrain-trans", label: "지형불투명설정", active: false, toggle: true, onClick: toggleTerrainTranslucent},
     { className: "open-clock-tool", label: "시간도구", active: false, toggle: true, onClick: toggleClock},
+    { className: "open-setting-tool", label: "설정도구", active: false, toggle: true, onClick: toggleSetting},
   ];
 
   const tools2: MapTool[] = [
@@ -72,6 +73,11 @@ export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
               <div className="rect"></div>
             </div>
           </button>
+        ))}
+      </div>
+      <div id="toolbox-view">
+        {tools2.map((tool) => (
+          <button key={tool.className} type="button" className={`${tool.className}`} onClick={() => handleToolClick(tool)}></button>
         ))}
       </div>
       {options.isOpenClock && (
@@ -104,11 +110,226 @@ export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
             </div>
           </div>
       )}
-      <div id="toolbox-view">
-        {tools2.map((tool) => (
-          <button key={tool.className} type="button" className={`${tool.className}`} onClick={() => handleToolClick(tool)}></button>
-        ))}
-      </div>
+      {options.isSetting && (
+          <div className="default-layer option-tool">
+            <header>
+              <h2>Graphic Setting</h2>
+              <button className="close" onClick={toggleSetting}>
+                <span className="minimize"></span>
+              </button>
+            </header>
+            <div className="group">
+              <div>
+                <h3>Rendering Resolution</h3>
+                <p>Set the rendering resolution, Higher values have a greater impact on performance.</p>
+                <label>
+                  Very High
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.renderQuality === 'very-high'}
+                      onChange={() => setResolution('very-high')}
+                      value="very-high"
+                  />
+                </label>
+                <label>
+                  High
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.renderQuality === 'high'}
+                      onChange={() => setResolution('high')}
+                      value="high"
+                  />
+                </label>
+                <label>
+                  Middle
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.renderQuality === 'mid'}
+                      onChange={() => setResolution('mid')}
+                      value="mid"
+                  />
+                </label>
+                <label>
+                  Low
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.renderQuality === 'low'}
+                      onChange={() => setResolution('low')}
+                      value="low"
+                  />
+                </label>
+                <label>
+                  Very Low
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.renderQuality === 'very-low'}
+                      onChange={() => setResolution('very-low')}
+                      value="very-low"
+                  />
+                </label>
+              </div>
+              <div>
+                <h3>Shadow</h3>
+                <p>Enable/disable shadows</p>
+                <label>
+                  On
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.isShadow === true}
+                      onChange={() => toggleShadow(true)}
+                      value="true"
+                  />
+                </label>
+                <label>
+                  Off
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.isShadow === false}
+                      onChange={() => toggleShadow(false)}
+                      value="false"
+                  />
+                </label>
+              </div>
+              <div>
+                <h3>Shadow Quality</h3>
+                <p>Set the shadow quality.</p>
+                <label>
+                  Very High
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.shadowQuality === 'very-high'}
+                      onChange={() => setShadowQuality('very-high')}
+                      value="very-high"
+                  />
+                </label>
+                <label>
+                  High
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.shadowQuality === 'high'}
+                      onChange={() => setShadowQuality('high')}
+                      value="high"
+                  />
+                </label>
+                <label>
+                  Middle
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.shadowQuality === 'mid'}
+                      onChange={() => setShadowQuality('mid')}
+                      value="mid"
+                  />
+                </label>
+                <label>
+                  Low
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.shadowQuality === 'low'}
+                      onChange={() => setShadowQuality('low')}
+                      value="low"
+                  />
+                </label>
+                <label>
+                  Very Low
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.shadowQuality === 'very-low'}
+                      onChange={() => setShadowQuality('very-low')}
+                      value="very-low"
+                  />
+                </label>
+              </div>
+              <div>
+                <h3>Global Lighting</h3>
+                <p>Visualise global illumination. Affected by time of day.</p>
+                <label>
+                  On
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.isLighting}
+                      onChange={() => toggleLighting(true)}
+                      value="true"
+                  />
+                </label>
+                <label>
+                  Off
+                  <input
+                      type="radio"
+                      checked={!options.renderOptions.isLighting}
+                      onChange={() => toggleLighting(false)}
+                      value="false"
+                  />
+                </label>
+              </div>
+              <div>
+                <h3>Anti-Aliasing (FXAA)</h3>
+                <p>Visualise anti-aliasing.</p>
+                <label>
+                  On
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.isFxaa}
+                      onChange={() => toggleFxaa(true)}
+                      value="true"
+                  />
+                </label>
+                <label>
+                  Off
+                  <input
+                      type="radio"
+                      checked={!options.renderOptions.isFxaa}
+                      onChange={() => toggleFxaa(false)}
+                      value="false"
+                  />
+                </label>
+              </div>
+              <div>
+                <h3>Edge</h3>
+                <p>Visualise edge of objects.</p>
+                <label>
+                  On
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.isEdge}
+                      onChange={() => toggleEdge(true)}
+                      value="true"
+                  />
+                </label>
+                <label>
+                  Off
+                  <input
+                      type="radio"
+                      checked={!options.renderOptions.isEdge}
+                      onChange={() => toggleEdge(false)}
+                      value="false"
+                  />
+                </label>
+              </div>
+              <div>
+                <h3>Screen Space Ambient Occlusion</h3>
+                <p>Visualise detailed shading between objects.</p>
+                <label>
+                  On
+                  <input
+                      type="radio"
+                      checked={options.renderOptions.isSSAO}
+                      onChange={() => toggleSSAO(true)}
+                      value="true"
+                  />
+                </label>
+                <label>
+                  Off
+                  <input
+                      type="radio"
+                      checked={!options.renderOptions.isSSAO}
+                      onChange={() => toggleSSAO(false)}
+                      value="false"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+      )}
     </>
   );
 };

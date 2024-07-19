@@ -30,14 +30,32 @@ export const SearchCoordinateOpenState = atom<boolean>({
   default: false
 });
 
+interface RenderOptions {
+  isFxaa: boolean;
+  isShadow: boolean;
+  isSSAO: boolean;
+  isEdge: boolean;
+  isLighting: boolean;
+  shadowQuality: string;
+  renderQuality: string;
+}
+
 export type Options = {
+  layer: number;
+  selectedMapLayer?: any;
+  isProjection2D: boolean;
   isFullscreen: boolean;
   isTerrain: boolean;
   isTerrainTranslucent: boolean;
   isOpenClock: boolean;
   isOpenSetting: boolean;
   isAnimation: boolean;
-  dateObject?: Date;
+  isSetting: boolean;
+  renderOptions: RenderOptions;
+  defaultRenderOptions: RenderOptions;
+  magoSsao?: any;
+  magoEdge?: any;
+  dateObject?: any;
   date: string;
   time: string;
   speed: number;
@@ -47,12 +65,36 @@ export type Options = {
 export const OptionsState = atom<Options>({
   key: 'OptionsState',
   default: {
+    layer: 0,
+    selectedMapLayer: undefined,
+    isProjection2D: false,
     isFullscreen: false,
     isTerrain: false,
     isTerrainTranslucent: false,
     isOpenClock: false,
     isOpenSetting: false,
     isAnimation: false,
+    isSetting: false,
+    renderOptions: {
+      isFxaa: true,
+      isShadow: true,
+      isSSAO: false,
+      isEdge: false,
+      isLighting: true,
+      shadowQuality: 'mid',
+      renderQuality: 'high',
+    },
+    defaultRenderOptions: {
+      isFxaa: true,
+      isShadow: true,
+      isSSAO: false,
+      isEdge: false,
+      isLighting: true,
+      shadowQuality: 'mid',
+      renderQuality: 'high',
+    },
+    magoSsao: undefined,
+    magoEdge: undefined,
     dateObject: undefined,
     date: '0001-01-01',
     time: '00:00:00',
