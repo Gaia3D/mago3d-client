@@ -2,9 +2,11 @@ import { RefObject, useEffect } from "react";
 import * as Cesium from "cesium";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import {getWmsLayer} from "@/components/utils/utils.ts";
+import { useMapTool } from "./useMapTool";
 
 export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
   const { globeController } = useGlobeController();
+  const { initWebStorage } = useMapTool();
   
   useEffect(() => {
     Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL).then(terrainProvider => {
@@ -41,6 +43,8 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
       });
       viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
       viewer.scene.camera.percentageChanged = 0.01;
+
+      initWebStorage();
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

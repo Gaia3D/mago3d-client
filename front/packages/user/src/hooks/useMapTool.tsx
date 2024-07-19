@@ -39,6 +39,10 @@ export const useMapTool = () => {
   const clockInterval = useRef<number  | undefined>(undefined);
 
   useEffect(() => {
+    initWebStorage();
+  }, []);
+
+  useEffect(() => {
     if (!initialized) return;
     const { viewer } = globeController;
     const scene = viewer?.scene;
@@ -57,6 +61,50 @@ export const useMapTool = () => {
     clock.multiplier = options.speed;
   }, [options.speed, globeController]);
 
+  const initWebStorage = () => {
+    const renderOptionsString = localStorage.getItem('renderOptions');
+    if (!renderOptionsString) {
+      localStorage.setItem('renderOptions', JSON.stringify(options.renderOptions));
+    } else {
+      try {
+        const storedOptions = JSON.parse(renderOptionsString);
+        setOptions((prevOptions) => ({
+          ...prevOptions,
+          renderOptions: storedOptions,
+        }));
+
+        const interval = setInterval(() => {
+          const { viewer } = globeController;
+          if (viewer !== undefined) {
+            clearInterval(interval);
+            applyStoredOptions(storedOptions);
+          }
+        }, 1000);
+      } catch (error) {
+        console.error('Error parsing renderOptions from localStorage:', error);
+        localStorage.removeItem('renderOptions');
+      }
+    }
+  };
+  const applyStoredOptions = (storedOptions: any) => {
+    toggleShadow(storedOptions.isShadow);
+    toggleSSAO(storedOptions.isSSAO);
+    toggleEdge(storedOptions.isEdge);
+    toggleLighting(storedOptions.isLighting);
+    toggleFxaa(storedOptions.isFxaa);
+    setShadowQuality(storedOptions.shadowQuality);
+    setResolution(storedOptions.renderQuality);
+  };
+
+  const saveWebStorage = (updatedOptions: Options) => {
+    console.log(updatedOptions.renderOptions);
+    localStorage.setItem('renderOptions', JSON.stringify(updatedOptions.renderOptions));
+  };
+
+  const resetWebStorage = () => {
+    localStorage.setItem('renderOptions', JSON.stringify(options.defaultRenderOptions));
+    initWebStorage();
+  };
 
   const onClickCompas = () => {
     const {viewer} = globeController;
@@ -259,12 +307,14 @@ export const useMapTool = () => {
       globe.undergroundColorAlphaByDistance.farValue = 1.0;
       globe.undergroundColor = Cesium.Color.BLACK;
     }
-
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      isTerrainTranslucent: !prevOptions.isTerrainTranslucent
-    }));
-    // saveWebStorage()
+    setOptions((prevOptions) => {
+      const updatedOptions = {
+        ...prevOptions,
+        isTerrainTranslucent: !prevOptions.isTerrainTranslucent
+      };
+      saveWebStorage(updatedOptions);
+      return updatedOptions;
+    });
   };
 
   const initDate = () => {
@@ -427,6 +477,9 @@ export const useMapTool = () => {
   }
 
   const toggleShadow = (on: boolean) => {
+    console.log("is shadow")
+    console.log(on)
+    console.log("is shadow")
     if (on !== undefined) {
       setOptions((prevOptions) => ({
         ...prevOptions,
@@ -440,7 +493,7 @@ export const useMapTool = () => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    if(!options.renderOptions.isShadow) {
+    if(on) {
       if (options.dateObject === undefined) {
         initDate();
       }
@@ -449,14 +502,17 @@ export const useMapTool = () => {
     } else {
       viewer.scene.shadowMap.enabled = false;
     }
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      renderOptions: {
-        ...prevOptions.renderOptions,
-        isShadow: !prevOptions.renderOptions.isShadow,
-      },
-    }));
-    // saveWebStorage();
+    setOptions((prevOptions) => {
+      const updatedOptions = {
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isShadow: !prevOptions.renderOptions.isShadow,
+        },
+      };
+      saveWebStorage(updatedOptions);
+      return updatedOptions;
+    });
   };
 
   const setShadowQuality = (quality: string) => {
@@ -473,14 +529,17 @@ export const useMapTool = () => {
     } else if (quality === 'very-high') {
       viewer.shadowMap.size = 4096
     }
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      renderOptions: {
-        ...prevOptions.renderOptions,
-        shadowQuality: quality,
-      },
-    }));
-    // saveWebStorage();
+    setOptions((prevOptions) => {
+      const updatedOptions = {
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          shadowQuality: quality,
+        },
+      };
+      saveWebStorage(updatedOptions);
+      return updatedOptions;
+    });
   };
 
   const setResolution = (quality: string) => {
@@ -497,14 +556,17 @@ export const useMapTool = () => {
     } else if (quality === 'very-high') {
       viewer.resolutionScale = 1.5
     }
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      renderOptions: {
-        ...prevOptions.renderOptions,
-        renderQuality: quality,
-      },
-    }));
-    // saveWebStorage();
+    setOptions((prevOptions) => {
+      const updatedOptions = {
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          renderQuality: quality,
+        },
+      };
+      saveWebStorage(updatedOptions);
+      return updatedOptions;
+    });
   };
 
   const toggleLighting = (on: boolean) => {
@@ -522,14 +584,17 @@ export const useMapTool = () => {
     if (!viewer) return;
 
     viewer.scene.globe.enableLighting = !on;
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      renderOptions: {
-        ...prevOptions.renderOptions,
-        isLighting: !prevOptions.renderOptions.isLighting,
-      },
-    }));
-    // saveWebStorage();
+    setOptions((prevOptions) => {
+      const updatedOptions = {
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isLighting: !prevOptions.renderOptions.isLighting,
+        },
+      };
+      saveWebStorage(updatedOptions);
+      return updatedOptions;
+    });
   };
 
   const toggleSSAO = (on: boolean) => {
@@ -552,19 +617,22 @@ export const useMapTool = () => {
       }));
     }
 
-    if (options.renderOptions.isSSAO) {
-      offSSAO();
-    } else {
+    if (on) {
       onSSAO();
+    } else {
+      offSSAO();
     }
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      renderOptions: {
-        ...prevOptions.renderOptions,
-        isSSAO: !prevOptions.renderOptions.isSSAO,
-      },
-    }));
-    // saveWebStorage();
+    setOptions((prevOptions) => {
+      const updatedOptions = {
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isSSAO: !prevOptions.renderOptions.isSSAO,
+        },
+      };
+      saveWebStorage(updatedOptions);
+      return updatedOptions;
+    });
   };
 
   const toggleFxaa = (on: boolean) => {
@@ -581,15 +649,18 @@ export const useMapTool = () => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    viewer.scene.postProcessStages.fxaa.enabled = !options.renderOptions.isFxaa;
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      renderOptions: {
-        ...prevOptions.renderOptions,
-        isFxaa: !prevOptions.renderOptions.isFxaa,
-      },
-    }));
-    // saveWebStorage();
+    viewer.scene.postProcessStages.fxaa.enabled = on;
+    setOptions((prevOptions) => {
+      const updatedOptions = {
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isFxaa: !prevOptions.renderOptions.isFxaa,
+        },
+      };
+      saveWebStorage(updatedOptions);
+      return updatedOptions;
+    });
   };
 
   const toggleEdge = (on: boolean) => {
@@ -612,21 +683,24 @@ export const useMapTool = () => {
       }));
     }
 
-    if (options.renderOptions.isEdge) {
-      offEdge();
-    } else {
+    if (on) {
       onEdge();
+    } else {
+      offEdge();
     }
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      renderOptions: {
-        ...prevOptions.renderOptions,
-        isEdge: !prevOptions.renderOptions.isEdge,
-      },
-    }));
-    // saveWebStorage();
+    setOptions((prevOptions) => {
+      const updatedOptions = {
+        ...prevOptions,
+        renderOptions: {
+          ...prevOptions.renderOptions,
+          isEdge: !prevOptions.renderOptions.isEdge,
+        },
+      };
+      saveWebStorage(updatedOptions);
+      return updatedOptions;
+    });
   };
 
 
-  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, changedDate, changedSpeed, toggleAnimation, slowAnimation, fastAnimation, toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, toolStatus, options, setOptions};
+  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, changedDate, changedSpeed, toggleAnimation, slowAnimation, fastAnimation, toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, initWebStorage, toolStatus, options, setOptions};
   }
