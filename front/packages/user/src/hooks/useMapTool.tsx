@@ -1,7 +1,5 @@
+import { useState, useEffect, useRef } from "react";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
-import  * as Cesium from "cesium";
-import dayjs from "dayjs";
-import { download } from "@mnd/shared";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { LoadingStateType, loadingState } from "@/recoils/Spinner";
 import {
@@ -13,18 +11,19 @@ import {
   OptionsState,
   PrintPotalOpenState,
   SearchCoordinateOpenState,
-  ToolStatus,
   ToolStatusState,
 } from "@/recoils/Tool";
-import {useEffect, useRef, useState} from "react";
-import {EllipsoidTerrainProvider, Fullscreen} from "cesium";
-import {getWmsLayer} from "@/components/utils/utils.ts";
-import {MagoSSAORender, offSSAO, onSSAO} from "@/api/rendering/magoSsaoRender.ts";
-import {MagoEdgeRender, offEdge, onEdge} from "@/api/rendering/magoEdgeRender.ts";
+import { getWmsLayer } from "@/components/utils/utils.ts";
+import { MagoSSAORender, offSSAO, onSSAO } from "@/api/rendering/magoSsaoRender.ts";
+import { MagoEdgeRender, offEdge, onEdge } from "@/api/rendering/magoEdgeRender.ts";
+import * as Cesium from "cesium";
+import { Fullscreen } from "cesium";
+import dayjs from "dayjs";
+import { download } from "@mnd/shared";
 
 export const useMapTool = () => {
-  const {globeController, initialized} = useGlobeController();
-  const [toolStatus, setToolStatus] = useRecoilState<ToolStatus>(ToolStatusState);
+  const { globeController, initialized } = useGlobeController();
+  const [toolStatus, setToolStatus] = useRecoilState(ToolStatusState);
   const setLoadingState = useSetRecoilState<LoadingStateType>(loadingState);
   const [printPortalOpen, setPrintPortalOpen] = useRecoilState(PrintPotalOpenState);
   const setMeasureDistanceOpen = useSetRecoilState(MeasureDistanceOpenState);
@@ -35,12 +34,7 @@ export const useMapTool = () => {
   const [options, setOptions] = useRecoilState(OptionsState);
 
   const [angle, setAngle] = useState(0);
-
-  const clockInterval = useRef<number  | undefined>(undefined);
-
-  useEffect(() => {
-    initWebStorage();
-  }, []);
+  const clockInterval = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!initialized) return;
@@ -61,9 +55,13 @@ export const useMapTool = () => {
     clock.multiplier = options.speed;
   }, [options.speed, globeController]);
 
+  useEffect(() => {
+    initWebStorage();
+  }, []);
+
   const initWebStorage = () => {
     const renderOptionsString = localStorage.getItem('renderOptions');
-    if (!renderOptionsString) {
+    if (renderOptionsString === null) {
       localStorage.setItem('renderOptions', JSON.stringify(options.renderOptions));
     } else {
       try {
@@ -105,9 +103,8 @@ export const useMapTool = () => {
     localStorage.setItem('renderOptions', JSON.stringify(options.defaultRenderOptions));
     initWebStorage();
   };
-
   const onClickCompas = () => {
-    const {viewer} = globeController;
+    const { viewer } = globeController;
     if (!viewer) return;
 
     const camera = viewer.camera;
@@ -130,7 +127,7 @@ export const useMapTool = () => {
   }
 
   const onClickHome = () => {
-    const {viewer} = globeController;
+    const { viewer } = globeController;
     if (!viewer) return;
 
     viewer.camera.flyTo({
@@ -148,109 +145,109 @@ export const useMapTool = () => {
     setMeasureAngleOpen(false);
     setMeasureComplexOpen(false);
     setSearchCoordinateOpen(false);
-  }
+  };
 
   const onClickExpand = () => {
-    const {viewer} = globeController;
+    const { viewer } = globeController;
     if (!viewer) return;
 
     viewer.camera.zoomIn(20000);
     setToolStatus(null);
-  }
+  };
 
   const onClickReduce = () => {
-    const {viewer} = globeController;
+    const { viewer } = globeController;
     if (!viewer) return;
 
     viewer.camera.zoomOut(20000);
     setToolStatus(null);
-  }
+  };
 
   const onClickLength = () => {
     setToolStatus((prev) => (prev === "length" ? null : "length"));
     setMeasureDistanceOpen((prev) => !prev);
-  }
+  };
 
   const onClickArea = () => {
     setToolStatus((prev) => (prev === "area" ? null : "area"));
     setMeasureAreaOpen((prev) => !prev);
-  }
+  };
 
   const onClickAngle = () => {
     setToolStatus((prev) => (prev === "angles" ? null : "angles"));
     setMeasureAngleOpen((prev) => !prev);
-  }
+  };
 
   const onClickComplex = () => {
     setToolStatus((prev) => (prev === "composite" ? null : "composite"));
     setMeasureComplexOpen((prev) => !prev);
-  }
+  };
 
   const onClickSearch = () => {
     setToolStatus((prev) => (prev === "search" ? null : "search"));
-    setSearchCoordinateOpen((prev) => !prev)
-  }
+    setSearchCoordinateOpen((prev) => !prev);
+  };
 
   const onClickSave = () => {
-    const {viewer} = globeController;
+    const { viewer } = globeController;
     if (!viewer || !viewer.scene) return;
     const targetResolutionScale = 1.0;
     const timeout = 1000; // in ms
 
-    const {scene} = viewer;
+    const { scene } = viewer;
 
     // define callback functions
-    const prepareScreenshot = function(){
+    const prepareScreenshot = function () {
       viewer.resolutionScale = targetResolutionScale;
       scene.preRender.removeEventListener(prepareScreenshot);
       // take snapshot after defined timeout to allow scene update (ie. loading data)
-      setTimeout(function(){
-          scene.postRender.addEventListener(takeScreenshot);
+      setTimeout(function () {
+        scene.postRender.addEventListener(takeScreenshot);
       }, timeout);
-    }
+    };
 
-    const takeScreenshot = function(){
+    const takeScreenshot = function () {
       scene.postRender.removeEventListener(takeScreenshot);
       const canvas = scene.canvas;
       try {
-        canvas.toBlob(function(blob){
-            if (!blob) return;
-            download(blob, "snapshot-" + dayjs().format("YYYYMMDDHHmmss") + ".png");
-            // reset resolutionScale
-            viewer.resolutionScale = 1.0;
+        canvas.toBlob(function (blob) {
+          if (!blob) return;
+          download(blob, "snapshot-" + dayjs().format("YYYYMMDDHHmmss") + ".png");
+          // reset resolutionScale
+          viewer.resolutionScale = 1.0;
         });
       } catch (error) {
         console.error(error);
       } finally {
-        setLoadingState({loading: false, msg: '스냅샷을 저장하는 중입니다.'});
+        setLoadingState({ loading: false, msg: '스냅샷을 저장하는 중입니다.' });
       }
-    }
-    setLoadingState({loading: true, msg: '스냅샷을 저장하는 중입니다.'});
+    };
+    setLoadingState({ loading: true, msg: '스냅샷을 저장하는 중입니다.' });
     scene.preRender.addEventListener(prepareScreenshot);
-  }
+  };
 
   const onClickPrint = () => {
     setPrintPortalOpen(!printPortalOpen);
-  }
+  };
 
   const toggleFullscreen = () => {
     if (!Fullscreen.enabled) {
-      alert('Fullscreen is not supported')
-      return
+      alert('Fullscreen is not supported');
+      return;
     }
-    if(!options.isFullscreen){
-      Fullscreen.requestFullscreen(document.querySelector('#container'))
+    if (!options.isFullscreen) {
+      Fullscreen.requestFullscreen(document.querySelector('#container'));
     } else {
-      Fullscreen.exitFullscreen()
+      Fullscreen.exitFullscreen();
     }
     setOptions((prevOptions) => ({
       ...prevOptions,
-      isFullscreen: !prevOptions.isFullscreen
+      isFullscreen: !prevOptions.isFullscreen,
     }));
-  }
+  };
 
   const resetDirection = () => {
-    const {viewer} = globeController;
+    const { viewer } = globeController;
     if (!viewer) return;
 
     const camera = viewer.camera;
@@ -259,24 +256,24 @@ export const useMapTool = () => {
     if (!viewRectangle) return;
 
     camera.flyTo({
-        destination: viewer.camera.positionWC,
-        duration: 1.0,
-        orientation: {
-          heading: 0,
-          pitch: viewer.camera.pitch,
-          roll: viewer.camera.roll
-        }
+      destination: viewer.camera.positionWC,
+      duration: 1.0,
+      orientation: {
+        heading: 0,
+        pitch: viewer.camera.pitch,
+        roll: viewer.camera.roll,
+      },
     });
 
     setToolStatus(null);
-  }
+  };
 
-  function isEllipsoidTerrainProvider(provider: any): provider is EllipsoidTerrainProvider {
-    return provider instanceof EllipsoidTerrainProvider;
+  function isEllipsoidTerrainProvider(provider: any): provider is Cesium.EllipsoidTerrainProvider {
+    return provider instanceof Cesium.EllipsoidTerrainProvider;
   }
 
   const toggleDefaultTerrain = async () => {
-    const {viewer} = globeController;
+    const { viewer } = globeController;
     if (!viewer) return;
 
     if (viewer?.terrainProvider === undefined || isEllipsoidTerrainProvider(viewer.terrainProvider)) {
@@ -287,7 +284,7 @@ export const useMapTool = () => {
 
     setOptions((prevOptions) => ({
       ...prevOptions,
-      isTerrain: !prevOptions.isTerrain
+      isTerrain: !prevOptions.isTerrain,
     }));
   };
 
@@ -310,7 +307,7 @@ export const useMapTool = () => {
     setOptions((prevOptions) => {
       const updatedOptions = {
         ...prevOptions,
-        isTerrainTranslucent: !prevOptions.isTerrainTranslucent
+        isTerrainTranslucent: !prevOptions.isTerrainTranslucent,
       };
       saveWebStorage(updatedOptions);
       return updatedOptions;
@@ -344,18 +341,18 @@ export const useMapTool = () => {
   };
 
   const paddedDate = (date: Date) => {
-    const dd = String(date.getDate()).padStart(2, '0')
-    const mm = String(date.getMonth() + 1).padStart(2, '0')
-    const yyyy = String(date.getFullYear()).padStart(4, '0')
-    return `${yyyy}-${mm}-${dd}`
-  }
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = String(date.getFullYear()).padStart(4, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   const paddedTime = (date: Date) => {
-    const hh = String(date.getHours()).padStart(2, '0')
-    const mm = String(date.getMinutes()).padStart(2, '0')
-    const ss = String(date.getSeconds()).padStart(2, '0')
-    return `${hh}:${mm}:${ss}`
-  }
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+    return `${hh}:${mm}:${ss}`;
+  };
 
   const changedDate = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
@@ -390,8 +387,8 @@ export const useMapTool = () => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    const clock = viewer.clock
-    clock.multiplier = options.speed
+    const clock = viewer.clock;
+    clock.multiplier = options.speed;
   };
 
   const slowAnimation = () => {
@@ -454,7 +451,6 @@ export const useMapTool = () => {
     }
   };
 
-
   const toggleClock = () => {
     setOptions((prevOptions) => ({
       ...prevOptions,
@@ -474,12 +470,9 @@ export const useMapTool = () => {
       ...prevOptions,
       isSetting: !prevOptions.isSetting,
     }));
-  }
+  };
 
   const toggleShadow = (on: boolean) => {
-    console.log("is shadow")
-    console.log(on)
-    console.log("is shadow")
     if (on !== undefined) {
       setOptions((prevOptions) => ({
         ...prevOptions,
@@ -493,7 +486,7 @@ export const useMapTool = () => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    if(on) {
+    if (on) {
       if (options.dateObject === undefined) {
         initDate();
       }
@@ -519,15 +512,15 @@ export const useMapTool = () => {
     const { viewer } = globeController;
     if (!viewer) return;
     if (quality === 'very-low') {
-      viewer.shadowMap.size = 256
+      viewer.shadowMap.size = 256;
     } else if (quality === 'low') {
-      viewer.shadowMap.size = 512
+      viewer.shadowMap.size = 512;
     } else if (quality === 'mid') {
-      viewer.shadowMap.size = 1024
+      viewer.shadowMap.size = 1024;
     } else if (quality === 'high') {
-      viewer.shadowMap.size = 2048
+      viewer.shadowMap.size = 2048;
     } else if (quality === 'very-high') {
-      viewer.shadowMap.size = 4096
+      viewer.shadowMap.size = 4096;
     }
     setOptions((prevOptions) => {
       const updatedOptions = {
@@ -546,24 +539,24 @@ export const useMapTool = () => {
     const { viewer } = globeController;
     if (!viewer) return;
     if (quality === 'very-low') {
-      viewer.resolutionScale = 0.25
+      viewer.resolutionScale = 0.25;
     } else if (quality === 'low') {
-      viewer.resolutionScale = 0.5
+      viewer.resolutionScale = 0.5;
     } else if (quality === 'mid') {
-      viewer.resolutionScale = 0.75
+      viewer.resolutionScale = 0.75;
     } else if (quality === 'high') {
-      viewer.resolutionScale = 1.0
+      viewer.resolutionScale = 1.0;
     } else if (quality === 'very-high') {
-      viewer.resolutionScale = 1.5
+      viewer.resolutionScale = 1.5;
     }
     setOptions((prevOptions) => {
-      const updatedOptions = {
+      const updatedOptions = ({
         ...prevOptions,
         renderOptions: {
           ...prevOptions.renderOptions,
           renderQuality: quality,
         },
-      };
+      });
       saveWebStorage(updatedOptions);
       return updatedOptions;
     });
@@ -585,13 +578,13 @@ export const useMapTool = () => {
 
     viewer.scene.globe.enableLighting = !on;
     setOptions((prevOptions) => {
-      const updatedOptions = {
+      const updatedOptions = ({
         ...prevOptions,
         renderOptions: {
           ...prevOptions.renderOptions,
           isLighting: !prevOptions.renderOptions.isLighting,
         },
-      };
+      });
       saveWebStorage(updatedOptions);
       return updatedOptions;
     });
@@ -613,7 +606,7 @@ export const useMapTool = () => {
     if (options.magoSsao === undefined) {
       setOptions((prevOptions) => ({
         ...prevOptions,
-        magoSsao : MagoSSAORender(viewer)
+        magoSsao: MagoSSAORender(viewer),
       }));
     }
 
@@ -623,13 +616,13 @@ export const useMapTool = () => {
       offSSAO();
     }
     setOptions((prevOptions) => {
-      const updatedOptions = {
+      const updatedOptions = ({
         ...prevOptions,
         renderOptions: {
           ...prevOptions.renderOptions,
           isSSAO: !prevOptions.renderOptions.isSSAO,
         },
-      };
+      });
       saveWebStorage(updatedOptions);
       return updatedOptions;
     });
@@ -651,13 +644,13 @@ export const useMapTool = () => {
 
     viewer.scene.postProcessStages.fxaa.enabled = on;
     setOptions((prevOptions) => {
-      const updatedOptions = {
+      const updatedOptions = ({
         ...prevOptions,
         renderOptions: {
           ...prevOptions.renderOptions,
           isFxaa: !prevOptions.renderOptions.isFxaa,
         },
-      };
+      });
       saveWebStorage(updatedOptions);
       return updatedOptions;
     });
@@ -679,7 +672,7 @@ export const useMapTool = () => {
     if (options.magoEdge === undefined) {
       setOptions((prevOptions) => ({
         ...prevOptions,
-        magoEdge : MagoEdgeRender(viewer)
+        magoEdge: MagoEdgeRender(viewer),
       }));
     }
 
@@ -689,18 +682,17 @@ export const useMapTool = () => {
       offEdge();
     }
     setOptions((prevOptions) => {
-      const updatedOptions = {
+      const updatedOptions = ({
         ...prevOptions,
         renderOptions: {
           ...prevOptions.renderOptions,
           isEdge: !prevOptions.renderOptions.isEdge,
         },
-      };
+      });
       saveWebStorage(updatedOptions);
       return updatedOptions;
     });
   };
 
-
-  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, changedDate, changedSpeed, toggleAnimation, slowAnimation, fastAnimation, toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, initWebStorage, toolStatus, options, setOptions};
-  }
+  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, changedDate, changedSpeed, toggleAnimation, slowAnimation, fastAnimation, toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, initWebStorage, toolStatus, options, setOptions,};
+};
