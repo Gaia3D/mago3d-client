@@ -1,7 +1,13 @@
 import {useMapTool} from "@/hooks/useMapTool.tsx";
+import {useRecoilState} from "recoil";
+import {OptionsState} from "@/recoils/Tool.ts";
+import {useSettingTool} from "@/hooks/useMapTool/useSettingTool.ts";
 
 export const SettingTool = () => {
-    const { toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, options, setOptions } = useMapTool();
+
+    const [options ] = useRecoilState(OptionsState);
+    const { toggleSetting } = useMapTool();
+    const { toggleShadow, toggleSSAO, toggleEdge, toggleLighting, toggleFxaa, setShadowQuality, setResolution } = useSettingTool()
 
     return options.isSetting && (
         <div className="default-layer option-tool">

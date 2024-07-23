@@ -13,14 +13,12 @@ import {
   SearchCoordinateOpenState,
   ToolStatusState,
 } from "@/recoils/Tool";
-import { getWmsLayer } from "@/components/utils/utils.ts";
-import { MagoSSAORender, offSSAO, onSSAO } from "@/api/rendering/magoSsaoRender.ts";
-import { MagoEdgeRender, offEdge, onEdge } from "@/api/rendering/magoEdgeRender.ts";
 import * as Cesium from "cesium";
 import { Fullscreen } from "cesium";
 import dayjs from "dayjs";
 import { download } from "@mnd/shared";
 import {useClockTool} from "@/hooks/useMapTool/useClockTool.ts";
+import {useWebStorage} from "@/hooks/useMapTool/useWebStorage.ts";
 
 export const useMapTool = () => {
   const { globeController, initialized } = useGlobeController();
@@ -34,6 +32,7 @@ export const useMapTool = () => {
   const setSearchCoordinateOpen = useSetRecoilState(SearchCoordinateOpenState);
   const [options, setOptions] = useRecoilState(OptionsState);
   const { initDate } = useClockTool();
+  const { initWebStorage, saveWebStorage } = useWebStorage();
 
   const [angle, setAngle] = useState(0);
 
@@ -61,49 +60,7 @@ export const useMapTool = () => {
     initWebStorage();
   }, []);
 
-  const initWebStorage = () => {
-    const renderOptionsString = localStorage.getItem('renderOptions');
-    if (renderOptionsString === null) {
-      localStorage.setItem('renderOptions', JSON.stringify(options.renderOptions));
-    } else {
-      try {
-        const storedOptions = JSON.parse(renderOptionsString);
-        setOptions((prevOptions) => ({
-          ...prevOptions,
-          renderOptions: storedOptions,
-        }));
 
-        const interval = setInterval(() => {
-          const { viewer } = globeController;
-          if (viewer !== undefined) {
-            clearInterval(interval);
-            applyStoredOptions(storedOptions);
-          }
-        }, 1000);
-      } catch (error) {
-        console.error('Error parsing renderOptions from localStorage:', error);
-        localStorage.removeItem('renderOptions');
-      }
-    }
-  };
-  const applyStoredOptions = (storedOptions: any) => {
-    toggleShadow(storedOptions.isShadow);
-    toggleSSAO(storedOptions.isSSAO);
-    toggleEdge(storedOptions.isEdge);
-    toggleLighting(storedOptions.isLighting);
-    toggleFxaa(storedOptions.isFxaa);
-    setShadowQuality(storedOptions.shadowQuality);
-    setResolution(storedOptions.renderQuality);
-  };
-
-  const saveWebStorage = (updatedOptions: Options) => {
-    localStorage.setItem('renderOptions', JSON.stringify(updatedOptions.renderOptions));
-  };
-
-  const resetWebStorage = () => {
-    localStorage.setItem('renderOptions', JSON.stringify(options.defaultRenderOptions));
-    initWebStorage();
-  };
   const onClickCompas = () => {
     const { viewer } = globeController;
     if (!viewer) return;
@@ -338,227 +295,5 @@ export const useMapTool = () => {
     }));
   };
 
-  const toggleShadow = (on: boolean) => {
-    if (on !== undefined) {
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isShadow: !on,
-        },
-      }));
-    }
-
-    const { viewer } = globeController;
-    if (!viewer) return;
-
-    if (on) {
-      if (options.dateObject === undefined) {
-        initDate();
-      }
-      viewer.scene.shadowMap.enabled = true;
-      viewer.scene.shadowMap.darkness = 0.5;
-    } else {
-      viewer.scene.shadowMap.enabled = false;
-    }
-    setOptions((prevOptions) => {
-      const updatedOptions = {
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isShadow: !prevOptions.renderOptions.isShadow,
-        },
-      };
-      saveWebStorage(updatedOptions);
-      return updatedOptions;
-    });
-  };
-
-  const setShadowQuality = (quality: string) => {
-    const { viewer } = globeController;
-    if (!viewer) return;
-    if (quality === 'very-low') {
-      viewer.shadowMap.size = 256;
-    } else if (quality === 'low') {
-      viewer.shadowMap.size = 512;
-    } else if (quality === 'mid') {
-      viewer.shadowMap.size = 1024;
-    } else if (quality === 'high') {
-      viewer.shadowMap.size = 2048;
-    } else if (quality === 'very-high') {
-      viewer.shadowMap.size = 4096;
-    }
-    setOptions((prevOptions) => {
-      const updatedOptions = {
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          shadowQuality: quality,
-        },
-      };
-      saveWebStorage(updatedOptions);
-      return updatedOptions;
-    });
-  };
-
-  const setResolution = (quality: string) => {
-    const { viewer } = globeController;
-    if (!viewer) return;
-    if (quality === 'very-low') {
-      viewer.resolutionScale = 0.25;
-    } else if (quality === 'low') {
-      viewer.resolutionScale = 0.5;
-    } else if (quality === 'mid') {
-      viewer.resolutionScale = 0.75;
-    } else if (quality === 'high') {
-      viewer.resolutionScale = 1.0;
-    } else if (quality === 'very-high') {
-      viewer.resolutionScale = 1.5;
-    }
-    setOptions((prevOptions) => {
-      const updatedOptions = ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          renderQuality: quality,
-        },
-      });
-      saveWebStorage(updatedOptions);
-      return updatedOptions;
-    });
-  };
-
-  const toggleLighting = (on: boolean) => {
-    if (on !== undefined) {
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isLighting: !on,
-        },
-      }));
-    }
-
-    const { viewer } = globeController;
-    if (!viewer) return;
-
-    viewer.scene.globe.enableLighting = !on;
-    setOptions((prevOptions) => {
-      const updatedOptions = ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isLighting: !prevOptions.renderOptions.isLighting,
-        },
-      });
-      saveWebStorage(updatedOptions);
-      return updatedOptions;
-    });
-  };
-
-  const toggleSSAO = (on: boolean) => {
-    if (on !== undefined) {
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isSSAO: !on,
-        },
-      }));
-    }
-    const { viewer } = globeController;
-    if (!viewer) return;
-
-    if (options.magoSsao === undefined) {
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        magoSsao: MagoSSAORender(viewer),
-      }));
-    }
-
-    if (on) {
-      onSSAO();
-    } else {
-      offSSAO();
-    }
-    setOptions((prevOptions) => {
-      const updatedOptions = ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isSSAO: !prevOptions.renderOptions.isSSAO,
-        },
-      });
-      saveWebStorage(updatedOptions);
-      return updatedOptions;
-    });
-  };
-
-  const toggleFxaa = (on: boolean) => {
-    if (on !== undefined) {
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isFxaa: !on,
-        },
-      }));
-    }
-
-    const { viewer } = globeController;
-    if (!viewer) return;
-
-    viewer.scene.postProcessStages.fxaa.enabled = on;
-    setOptions((prevOptions) => {
-      const updatedOptions = ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isFxaa: !prevOptions.renderOptions.isFxaa,
-        },
-      });
-      saveWebStorage(updatedOptions);
-      return updatedOptions;
-    });
-  };
-
-  const toggleEdge = (on: boolean) => {
-    if (on !== undefined) {
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isEdge: !on,
-        },
-      }));
-    }
-    const { viewer } = globeController;
-    if (!viewer) return;
-
-    if (options.magoEdge === undefined) {
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        magoEdge: MagoEdgeRender(viewer),
-      }));
-    }
-
-    if (on) {
-      onEdge();
-    } else {
-      offEdge();
-    }
-    setOptions((prevOptions) => {
-      const updatedOptions = ({
-        ...prevOptions,
-        renderOptions: {
-          ...prevOptions.renderOptions,
-          isEdge: !prevOptions.renderOptions.isEdge,
-        },
-      });
-      saveWebStorage(updatedOptions);
-      return updatedOptions;
-    });
-  };
-
-  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, initWebStorage, toolStatus, options, setOptions,};
+  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, initWebStorage, toolStatus};
 };

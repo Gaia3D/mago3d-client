@@ -1,9 +1,11 @@
 import {useMapTool} from "@/hooks/useMapTool.tsx";
 import {useClockTool} from "@/hooks/useMapTool/useClockTool.ts";
+import {useRecoilState} from "recoil";
+import {OptionsState} from "@/recoils/Tool.ts";
 
 export const ClockTool = () => {
 
-    const { options, setOptions } = useMapTool();
+    const [options, setOptions] = useRecoilState(OptionsState);
     const { slowAnimation, fastAnimation, toggleAnimation, onChangeDate, onChangeSpeed } = useClockTool();
 
     // 임시 이미지 경로 (추후 내장 이미지로 대체)
