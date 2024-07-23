@@ -20,6 +20,7 @@ import * as Cesium from "cesium";
 import { Fullscreen } from "cesium";
 import dayjs from "dayjs";
 import { download } from "@mnd/shared";
+import {useClockTool} from "@/hooks/useMapTool/useClockTool.ts";
 
 export const useMapTool = () => {
   const { globeController, initialized } = useGlobeController();
@@ -32,9 +33,10 @@ export const useMapTool = () => {
   const setMeasureComplexOpen = useSetRecoilState(MeasureComplexOpenState);
   const setSearchCoordinateOpen = useSetRecoilState(SearchCoordinateOpenState);
   const [options, setOptions] = useRecoilState(OptionsState);
+  const { initDate } = useClockTool();
 
   const [angle, setAngle] = useState(0);
-  const clockInterval = useRef<number | undefined>(undefined);
+
 
   useEffect(() => {
     if (!initialized) return;
@@ -95,7 +97,6 @@ export const useMapTool = () => {
   };
 
   const saveWebStorage = (updatedOptions: Options) => {
-    console.log(updatedOptions.renderOptions);
     localStorage.setItem('renderOptions', JSON.stringify(updatedOptions.renderOptions));
   };
 
@@ -314,142 +315,7 @@ export const useMapTool = () => {
     });
   };
 
-  const initDate = () => {
-    const { viewer } = globeController;
-    if (!viewer) return;
 
-    const dateObject = new Date();
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      date: paddedDate(dateObject),
-      time: paddedTime(dateObject),
-      dateObject: dateObject,
-    }));
-
-    const today = dateObject;
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const start = Cesium.JulianDate.fromIso8601(today.toISOString());
-    const stop = Cesium.JulianDate.fromIso8601(tomorrow.toISOString());
-    const clock = viewer.clock;
-    clock.startTime = start;
-    clock.stopTime = stop;
-    clock.currentTime = start;
-    clock.clockRange = Cesium.ClockRange.UNBOUNDED;
-    clock.multiplier = options.speed;
-  };
-
-  const paddedDate = (date: Date) => {
-    const dd = String(date.getDate()).padStart(2, '0');
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const yyyy = String(date.getFullYear()).padStart(4, '0');
-    return `${yyyy}-${mm}-${dd}`;
-  };
-
-  const paddedTime = (date: Date) => {
-    const hh = String(date.getHours()).padStart(2, '0');
-    const mm = String(date.getMinutes()).padStart(2, '0');
-    const ss = String(date.getSeconds()).padStart(2, '0');
-    return `${hh}:${mm}:${ss}`;
-  };
-
-  const changedDate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = event.target;
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      [name]: value,
-    }));
-
-    const { viewer } = globeController;
-    if (!viewer) return;
-    const clock = viewer.clock;
-    const date = options.date.split('-');
-    const time = options.time.split(':');
-    const dateObject = new Date(
-        parseInt(date[0]),
-        parseInt(date[1]) - 1,
-        parseInt(date[2]),
-        parseInt(time[0]),
-        parseInt(time[1]),
-        parseInt(time[2])
-    );
-    clock.currentTime = Cesium.JulianDate.fromDate(dateObject);
-  };
-
-  const changedSpeed = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      speed: parseInt(value),
-    }));
-
-    const { viewer } = globeController;
-    if (!viewer) return;
-
-    const clock = viewer.clock;
-    clock.multiplier = options.speed;
-  };
-
-  const slowAnimation = () => {
-    const { viewer } = globeController;
-    if (!viewer) return;
-    if (options.speed <= 1) {
-      return;
-    } else {
-      const multiplier = Math.round(viewer.clock.multiplier / 2);
-      viewer.clock.multiplier = multiplier;
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        speed: multiplier,
-      }));
-    }
-  };
-
-  const fastAnimation = () => {
-    const { viewer } = globeController;
-    if (!viewer) return;
-    if (options.speed >= 4096) {
-      return;
-    } else {
-      const multiplier = Math.round(viewer.clock.multiplier * 2);
-      viewer.clock.multiplier = multiplier;
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        speed: multiplier,
-      }));
-    }
-  };
-
-  const toggleAnimation = () => {
-    const { viewer } = globeController;
-    if (!viewer) return;
-    if (options.isAnimation) {
-      viewer.clock.shouldAnimate = false;
-      clearInterval(clockInterval.current);
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        isAnimation: false,
-        playText: '▶',
-      }));
-    } else {
-      viewer.clock.shouldAnimate = true;
-      clockInterval.current = window.setInterval(() => {
-        const date = Cesium.JulianDate.toDate(viewer.clock.currentTime);
-        setOptions((prevOptions) => ({
-          ...prevOptions,
-          dateObject: date,
-          date: paddedDate(date),
-          time: paddedTime(date),
-        }));
-      }, 1000);
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        isAnimation: true,
-        playText: '■',
-      }));
-    }
-  };
 
   const toggleClock = () => {
     setOptions((prevOptions) => ({
@@ -694,5 +560,5 @@ export const useMapTool = () => {
     });
   };
 
-  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, changedDate, changedSpeed, toggleAnimation, slowAnimation, fastAnimation, toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, initWebStorage, toolStatus, options, setOptions,};
+  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, toggleShadow, setShadowQuality, setResolution, toggleLighting, toggleSSAO, toggleFxaa, toggleEdge, initWebStorage, toolStatus, options, setOptions,};
 };
