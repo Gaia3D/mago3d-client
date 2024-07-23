@@ -7,20 +7,33 @@ const globalOptions = {
     radius : 1.0, // radius
 }
 
-let composite : Cesium.PostProcessStageComposite = null;
+let composite : Cesium.PostProcessStageComposite | null = null;
 
 export const MagoSSAORender = (viewer : Cesium.Viewer) => {
     if (composite) {
         viewer.scene.postProcessStages.remove(composite);
-        composite = null;
     }
-    composite = null;
     init(viewer);
 }
 
-const init = (viewer : Cesium.Viewer) => {
-    const depthProcess = new Cesium.PostProcessStage({
-        fragmentShader: `
+const init = (viewer: Cesium.Viewer) => {
+    const depthProcess = createDepthProcessStage();
+    const normalProcess = createNormalProcessStage();
+    const ssaoProcess = createSSAOProcessStage(viewer);
+    const ssaoAntiAliasing = createSSAOAntiAliasingStage();
+
+    composite = new Cesium.PostProcessStageComposite({
+        name: 'ssaoComposite',
+        inputPreviousStageTexture: false,
+        stages: [depthProcess, normalProcess, ssaoProcess, ssaoAntiAliasing]
+    });
+
+    viewer.scene.postProcessStages.add(composite);
+    composite.enabled = false;
+};
+
+const createDepthProcessStage = () => new Cesium.PostProcessStage({
+    fragmentShader: `
         in vec2 v_textureCoordinates; 
         uniform sampler2D depthTexture;
         void main(void) { 
@@ -29,13 +42,13 @@ const init = (viewer : Cesium.Viewer) => {
     
           out_FragColor = packDepth;
         }`,
-        /* @ts-expect-error */
-        inputPreviousStageTexture : true,
-        name : 'magoDepthTextureForSsao'
-    });
+    /* @ts-expect-error */
+    inputPreviousStageTexture : true,
+    name : 'magoDepthTextureForSsao'
+});
 
-    const normalProcess = new Cesium.PostProcessStage({
-        fragmentShader: `
+const createNormalProcessStage = () => new Cesium.PostProcessStage({
+    fragmentShader: `
     uniform sampler2D colorTexture;
     uniform sampler2D depthTexture; 
     in vec2 v_textureCoordinates; 
@@ -67,32 +80,13 @@ const init = (viewer : Cesium.Viewer) => {
     void main(void) { 
       out_FragColor = vec4(getNormal(gl_FragCoord.xy), 1.0);
     }`,
-        /* @ts-expect-error */
-        inputPreviousStageTexture : true,
-        name : 'magoNormalTextureForSsao'
-    });
-    new Cesium.PostProcessStage({
-        fragmentShader: `
-    uniform sampler2D colorTexture; 
-    uniform sampler2D depthTexture; 
-    uniform sampler2D magoNormalTextureForSsao; 
-    uniform sampler2D magoDepthTextureForSsao;
-  
-    in vec2 v_textureCoordinates; 
-    void main(void) { 
-      vec4 color = texture(colorTexture, v_textureCoordinates);
-      vec4 depth = texture(magoDepthTextureForSsao, v_textureCoordinates);
-      vec4 normal = texture(magoNormalTextureForSsao, v_textureCoordinates);
-      out_FragColor = vec4(depth.xyz, 1.0);
-    }`,
-        uniforms: {
-            magoNormalTextureForSsao: 'magoNormalTextureForSsao',
-            magoDepthTextureForSsao: 'magoDepthTextureForSsao'
-        }
-    })
+    /* @ts-expect-error */
+    inputPreviousStageTexture : true,
+    name : 'magoNormalTextureForSsao'
+});
 
-    const ssaoProcess = new Cesium.PostProcessStage({
-        fragmentShader: `
+const createSSAOProcessStage = (viewer: Cesium.Viewer) => new Cesium.PostProcessStage({
+    fragmentShader: `
     uniform sampler2D colorTexture; 
     uniform sampler2D magoNormalTextureForSsao; 
     uniform sampler2D magoDepthTextureForSsao;
@@ -367,41 +361,41 @@ const init = (viewer : Cesium.Viewer) => {
       out_FragColor = vec4(1.0);
       out_FragColor = out_FragColor * ssao.x * ssao.y * ssao.z * ssao.w;
     }`,
-        uniforms : {
-            magoNormalTextureForSsao : 'magoNormalTextureForSsao',
-            magoDepthTextureForSsao : 'magoDepthTextureForSsao',
-            aspectRatio : function() {
-                /* @ts-expect-error */
-                return viewer.scene.camera.frustum.aspectRatio;
-            },
-            fovy : function() {
-                /* @ts-expect-error */
-                return viewer.scene.camera.frustum.fovy;
-            },
-            tangentOfFovy : function() {
-                /* @ts-expect-error */
-                return Math.tan(viewer.scene.camera.frustum.fovy / 2);
-            },
-            near : function() {
-                return viewer.scene.camera.frustum.near;
-            },
-            far : function() {
-                return viewer.scene.camera.frustum.far;
-            },
-            uIntensity : function() {
-                return globalOptions.intensity;
-            },
-            uRadius : function() {
-                return globalOptions.radius;
-            }
+    uniforms : {
+        magoNormalTextureForSsao : 'magoNormalTextureForSsao',
+        magoDepthTextureForSsao : 'magoDepthTextureForSsao',
+        aspectRatio : function() {
+            /* @ts-expect-error */
+            return viewer.scene.camera.frustum.aspectRatio;
         },
-        /* @ts-expect-error */
-        inputPreviousStageTexture : true,
-        name : 'ssaoTexture'
-    });
+        fovy : function() {
+            /* @ts-expect-error */
+            return viewer.scene.camera.frustum.fovy;
+        },
+        tangentOfFovy : function() {
+            /* @ts-expect-error */
+            return Math.tan(viewer.scene.camera.frustum.fovy / 2);
+        },
+        near : function() {
+            return viewer.scene.camera.frustum.near;
+        },
+        far : function() {
+            return viewer.scene.camera.frustum.far;
+        },
+        uIntensity : function() {
+            return globalOptions.intensity;
+        },
+        uRadius : function() {
+            return globalOptions.radius;
+        }
+    },
+    /* @ts-expect-error */
+    inputPreviousStageTexture : true,
+    name : 'ssaoTexture'
+});
 
-    const ssaoAntiAliasing = new Cesium.PostProcessStage({
-        fragmentShader: `
+const createSSAOAntiAliasingStage = () => new Cesium.PostProcessStage({
+    fragmentShader: `
       in vec2 v_textureCoordinates; 
       uniform sampler2D colorTexture;
       uniform sampler2D depthTexture; 
@@ -485,33 +479,24 @@ const init = (viewer : Cesium.Viewer) => {
         out_FragColor = color * vec4(ssao, ssao, ssao, 1.0);
       }
     `,
-        uniforms : {
-            ssaoTexture : 'ssaoTexture',
-            magoDepthTextureForSsao : 'magoDepthTextureForSsao',
-            gridSize : function() {
-                return globalOptions.gridSize;
-            },
-            threshold : function() {
-                return globalOptions.threshold;
-            },
+    uniforms : {
+        ssaoTexture : 'ssaoTexture',
+        magoDepthTextureForSsao : 'magoDepthTextureForSsao',
+        gridSize : function() {
+            return globalOptions.gridSize;
         },
-        /* @ts-expect-error */
-        inputPreviousStageTexture : true,
-        name : 'ssaoAntiAliasingTexture'
-    })
+        threshold : function() {
+            return globalOptions.threshold;
+        },
+    },
+    /* @ts-expect-error */
+    inputPreviousStageTexture : true,
+    name : 'createSSAOAntiAliasingStageTexture'
+})
 
-    const createdComposite = new Cesium.PostProcessStageComposite({
-        name: 'ssaoComposite',
-        inputPreviousStageTexture : false,
-        stages : [depthProcess, normalProcess, ssaoProcess, ssaoAntiAliasing]
-    })
-    viewer.scene.postProcessStages.add(createdComposite);
-    composite = createdComposite;
-    composite.enabled = false;
-};
 export const onSSAO = () => {
-    composite.enabled = true;
+    if(composite) composite.enabled = true;
 }
 export const offSSAO = () => {
-    composite.enabled = false;
+    if(composite) composite.enabled = false;
 }

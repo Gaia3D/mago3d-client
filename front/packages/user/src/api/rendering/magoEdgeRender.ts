@@ -1,20 +1,18 @@
-import * as Cesium from 'cesium'
+import * as Cesium from 'cesium';
 
-const globalOptions = {}
-
-let composite: Cesium.PostProcessStageComposite = null
+let composite: Cesium.PostProcessStageComposite | null = null;
 
 export const MagoEdgeRender = (viewer: Cesium.Viewer) => {
   if (composite) {
     viewer.scene.postProcessStages.remove(composite);
     composite = null;
   }
-  composite = null;
   init(viewer);
 }
 
+
 const init = (viewer: Cesium.Viewer) => {
-  const depthProcess = new Cesium.PostProcessStage({
+  const createDepthProcessStage = new Cesium.PostProcessStage({
     fragmentShader: `
     in vec2 v_textureCoordinates; 
     uniform sampler2D depthTexture;
@@ -22,12 +20,12 @@ const init = (viewer: Cesium.Viewer) => {
       float unpackDepth = czm_unpackDepth(texture(depthTexture, v_textureCoordinates.xy));
       vec4 packDepth = czm_packDepth(unpackDepth);
       out_FragColor = packDepth;
-    }`, /* @ts-expect-error */
+    }`, /* @ts-expect-error : //*/
     inputPreviousStageTexture: true,
     name: 'magoDepthTextureForEdge'
   })
 
-  const normalProcess = new Cesium.PostProcessStage({
+  const createNormalProcessStage = new Cesium.PostProcessStage({
     fragmentShader: `
     uniform sampler2D colorTexture;
     uniform sampler2D depthTexture; 
@@ -59,7 +57,7 @@ const init = (viewer: Cesium.Viewer) => {
     
     void main(void) { 
       out_FragColor = vec4(getNormal(gl_FragCoord.xy), 1.0);
-    }`, /* @ts-expect-error */
+    }`, /* @ts-expect-error : ..*/
     inputPreviousStageTexture: true,
     name: 'magoNormalTextureForEdge'
   })
@@ -175,15 +173,20 @@ const init = (viewer: Cesium.Viewer) => {
   const createdComposite = new Cesium.PostProcessStageComposite({
     name: 'edgeComposite',
     inputPreviousStageTexture: false,
-    stages: [depthProcess, normalProcess, edgeProcess]
+    stages: [createDepthProcessStage, createNormalProcessStage, edgeProcess]
   })
   viewer.scene.postProcessStages.add(createdComposite)
   composite = createdComposite
   composite.enabled = false
 }
 export const onEdge = () => {
-  composite.enabled = true
+  if (composite) {
+    composite.enabled = true;
+  }
 }
+
 export const offEdge = () => {
-  composite.enabled = false
+  if (composite) {
+    composite.enabled = false;
+  }
 }

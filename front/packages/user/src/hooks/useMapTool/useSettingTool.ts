@@ -44,17 +44,16 @@ export const useSettingTool = () => {
     const setShadowQuality = (quality: string) => {
         const { viewer } = globeController;
         if (!viewer) return;
-        if (quality === 'very-low') {
-            viewer.shadowMap.size = 256;
-        } else if (quality === 'low') {
-            viewer.shadowMap.size = 512;
-        } else if (quality === 'mid') {
-            viewer.shadowMap.size = 1024;
-        } else if (quality === 'high') {
-            viewer.shadowMap.size = 2048;
-        } else if (quality === 'very-high') {
-            viewer.shadowMap.size = 4096;
-        }
+
+        const shadowMapSizes: { [key: string]: number } = {
+            "very-low": 256,
+            "low": 512,
+            "mid": 1024,
+            "high": 2048,
+            "very-high": 4096,
+        };
+        viewer.shadowMap.size = shadowMapSizes[quality] || 1024;
+
         setOptions((prevOptions) => {
             const updatedOptions = {
                 ...prevOptions,
@@ -71,17 +70,16 @@ export const useSettingTool = () => {
     const setResolution = (quality: string) => {
         const { viewer } = globeController;
         if (!viewer) return;
-        if (quality === 'very-low') {
-            viewer.resolutionScale = 0.25;
-        } else if (quality === 'low') {
-            viewer.resolutionScale = 0.5;
-        } else if (quality === 'mid') {
-            viewer.resolutionScale = 0.75;
-        } else if (quality === 'high') {
-            viewer.resolutionScale = 1.0;
-        } else if (quality === 'very-high') {
-            viewer.resolutionScale = 1.5;
+
+        const resolutionScales: { [key: string]: number } = {
+            "very-low": 0.25,
+            "low": 0.5,
+            "mid": 0.75,
+            "high": 1.0,
+            "very-high": 1.5,
         }
+        viewer.resolutionScale = resolutionScales[quality] || 1.0;
+
         setOptions((prevOptions) => {
             const updatedOptions = ({
                 ...prevOptions,

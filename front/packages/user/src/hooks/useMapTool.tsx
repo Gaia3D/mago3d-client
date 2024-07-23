@@ -272,8 +272,6 @@ export const useMapTool = () => {
     });
   };
 
-
-
   const toggleClock = () => {
     setOptions((prevOptions) => ({
       ...prevOptions,

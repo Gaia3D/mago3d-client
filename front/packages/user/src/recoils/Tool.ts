@@ -1,33 +1,55 @@
 import { atom } from "recoil";
 
+const ATOM_KEYS = {
+  PRINT_PORTAL_OPEN: 'PrintPotalOpenState',
+  MEASURE_DISTANCE_OPEN: 'MeasureDistanceOpenState',
+  MEASURE_AREA_OPEN: 'MeasureAreaOpenState',
+  MEASURE_ANGLE_OPEN: 'MeasureAngleOpenState',
+  MEASURE_COMPLEX_OPEN: 'MeasureComplexOpenState',
+  SEARCH_COORDINATE_OPEN: 'SearchCoordinateOpenState',
+  OPTIONS_STATE: 'OptionsState',
+  TOOL_STATUS_STATE: 'ToolStatusState',
+};
+
+// 기본 렌더 옵션 상수
+const DEFAULT_RENDER_OPTIONS = {
+  isFxaa: true,
+  isShadow: true,
+  isSSAO: false,
+  isEdge: false,
+  isLighting: true,
+  shadowQuality: 'mid',
+  renderQuality: 'high',
+};
+
 export const PrintPotalOpenState = atom<boolean>({
-  key: 'PrintPotalOpenState',
-  default: false
+  key: ATOM_KEYS.PRINT_PORTAL_OPEN,
+  default: false,
 });
 
 export const MeasureDistanceOpenState = atom<boolean>({
-  key: 'MeasureDistanceOpenState',
-  default: false
+  key: ATOM_KEYS.MEASURE_DISTANCE_OPEN,
+  default: false,
 });
 
 export const MeasureAreaOpenState = atom<boolean>({
-  key: 'MeasureAreaOpenState',
-  default: false
+  key: ATOM_KEYS.MEASURE_AREA_OPEN,
+  default: false,
 });
 
 export const MeasureAngleOpenState = atom<boolean>({
-  key: 'MeasureAngleOpenState',
-  default: false
+  key: ATOM_KEYS.MEASURE_ANGLE_OPEN,
+  default: false,
 });
 
 export const MeasureComplexOpenState = atom<boolean>({
-  key: 'MeasureComplexOpenState',
-  default: false
+  key: ATOM_KEYS.MEASURE_COMPLEX_OPEN,
+  default: false,
 });
 
 export const SearchCoordinateOpenState = atom<boolean>({
-  key: 'SearchCoordinateOpenState',
-  default: false
+  key: ATOM_KEYS.SEARCH_COORDINATE_OPEN,
+  default: false,
 });
 
 interface RenderOptions {
@@ -63,7 +85,7 @@ export type Options = {
 };
 
 export const OptionsState = atom<Options>({
-  key: 'OptionsState',
+  key: ATOM_KEYS.OPTIONS_STATE,
   default: {
     layer: 0,
     selectedMapLayer: undefined,
@@ -75,24 +97,8 @@ export const OptionsState = atom<Options>({
     isOpenSetting: false,
     isAnimation: false,
     isSetting: false,
-    renderOptions: {
-      isFxaa: true,
-      isShadow: true,
-      isSSAO: false,
-      isEdge: false,
-      isLighting: true,
-      shadowQuality: 'mid',
-      renderQuality: 'high',
-    },
-    defaultRenderOptions: {
-      isFxaa: true,
-      isShadow: true,
-      isSSAO: false,
-      isEdge: false,
-      isLighting: true,
-      shadowQuality: 'mid',
-      renderQuality: 'high',
-    },
+    renderOptions: { ...DEFAULT_RENDER_OPTIONS },
+    defaultRenderOptions: { ...DEFAULT_RENDER_OPTIONS },
     magoSsao: undefined,
     magoEdge: undefined,
     dateObject: undefined,
