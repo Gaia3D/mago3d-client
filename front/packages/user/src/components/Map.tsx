@@ -10,6 +10,8 @@ import { MeasureComplex } from "./maptool/MeasureComplex";
 import { SearchCoordinate } from "./maptool/SearchCoordinate";
 import AnalysisFilter from "./analysis/Filter";
 import AnalResult from "./analysis/AnalResult";
+import {ClockTool} from "./maptool/ClockTool.tsx";
+import {SettingTool} from "./maptool/SettingTool.tsx";
 
 const Globe = () => {
     const cesiumContainer = useRef<HTMLDivElement>(null);
@@ -26,6 +28,8 @@ const Globe = () => {
             <SearchCoordinate />
             <AnalysisFilter />
             <AnalResult />
+            <ClockTool />
+            <SettingTool />
         </div>
     )
 }
