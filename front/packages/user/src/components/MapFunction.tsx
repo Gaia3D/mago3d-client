@@ -43,6 +43,13 @@ const MapFunction = () => {
     }, [visibleToggledLayerId]);
 
     useEffect(() => {
+        if (!initialized) return;
+        const viewer = globeController?.viewer;
+        const tempUrl = "/geomatic-user/geojson/extrusion.geojson";
+        loadGeojson(viewer, tempUrl);
+    }, [initialized]);
+
+    useEffect(() => {
       if (visibleToggledLayerIds === null) return;
       const {ids, visible} = visibleToggledLayerIds;
       ids.forEach((id)=>toggle(id, visible));
@@ -69,9 +76,6 @@ const MapFunction = () => {
                 delete layerCache[key];
             });
         }
-
-        const tempUrl = "/geomatic-user/geojson/extrusion.geojson";
-        loadGeojson(viewer, tempUrl);
 
         layers.forEach(layer => {
             const {type, assetId, properties, visible} = layer;

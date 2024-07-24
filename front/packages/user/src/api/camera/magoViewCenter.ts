@@ -41,7 +41,7 @@ export const onViewCenter = (viewer: Cesium.Viewer) => {
       startCartesian = pickedObject.content.tile.boundingSphere.center;
       startCartographic = Cesium.Cartographic.fromCartesian(startCartesian);
       centerHeight = startCartographic.height;
-    } else if (pickedObject?.primitive instanceof Cesium.Primitive) {
+    } else if (pickedObject?.primitive instanceof Cesium.Primitive && pickedObject.id?.polygon) {
       startCartesian = pickedObject.primitive._boundingSphereWC[0].center;
       startCartographic = Cesium.Cartographic.fromCartesian(startCartesian);
       centerHeight = pickedObject.id.polygon.height.getValue();
@@ -83,7 +83,20 @@ export const onViewCenter = (viewer: Cesium.Viewer) => {
       duration: 2.0
     });
 
-    if (tempObject?.primitive instanceof Cesium.Primitive) {
+    function updateModelMatrix(object: any, modelMatrix: any) {
+      const owner = object.id.entityCollection.owner;
+      const primitives = owner._primitives._primitives;
+      for (let i = 1; i < primitives.length; i++) {
+        const primitive = primitives[i];
+        if (primitive instanceof Cesium.Primitive) {
+          primitive.modelMatrix = modelMatrix;
+        }
+      }
+      object.id.entityCollection.show = true;
+    }
+
+    if (tempObject?.primitive instanceof Cesium.Primitive && tempObject.id?.polygon) {
+
       tempObject.id.polygon.material = tempMaterial;
       tempObject.id.polygon.outlineColor = tempColor;
 
@@ -91,39 +104,24 @@ export const onViewCenter = (viewer: Cesium.Viewer) => {
       tempObject.id.entityCollection.show = false;
       setTimeout(() => {
         if (tempObject) {
-          const owner = tempObject.id.entityCollection.owner;
-          const primitives = owner._primitives._primitives;
-          for (let i = 1; i < primitives.length; i++) {
-            const primitive = primitives[i];
-            if (primitive instanceof Cesium.Primitive) {
-              primitive.modelMatrix = modelMatrix;
-            }
-          }
-          tempObject.id.entityCollection.show = true;
+          updateModelMatrix(tempObject, modelMatrix);
         }
       }, 100);
     }
 
-    if (pickedObject?.primitive instanceof Cesium.Primitive) {
+    if (pickedObject?.primitive instanceof Cesium.Primitive && pickedObject.id?.polygon) {
+
       tempColor = pickedObject.id.polygon.outlineColor;
       tempMaterial = pickedObject.id.polygon.material;
-      tempModelMatrix = pickedObject.primitive.modelMatrix;
-      pickedObject.id.polygon.material = color.withAlpha(0.1);
+
+      pickedObject.id.polygon.material = new Cesium.ColorMaterialProperty(color.withAlpha(0.1));
       pickedObject.id.polygon.outlineColor = color;
 
       const modelMatrix = pickedObject.primitive.modelMatrix;
       pickedObject.id.entityCollection.show = false;
       setTimeout(() => {
         if (pickedObject) {
-          const owner = pickedObject.id.entityCollection.owner;
-          const primitives = owner._primitives._primitives;
-          for (let i = 1; i < primitives.length; i++) {
-            const primitive = primitives[i];
-            if (primitive instanceof Cesium.Primitive) {
-              primitive.modelMatrix = modelMatrix;
-            }
-          }
-          pickedObject.id.entityCollection.show = true;
+          updateModelMatrix(pickedObject, modelMatrix);
         }
       }, 100);
     }
@@ -135,5 +133,6 @@ export const onViewCenter = (viewer: Cesium.Viewer) => {
 export const offViewCenter = (viewer: Cesium.Viewer) => {
   if (screenSpaceEventHandler) {
     screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    screenSpaceEventHandler = undefined;
   }
 };
