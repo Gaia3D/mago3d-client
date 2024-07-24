@@ -3,6 +3,7 @@ import { ToolStatus, ToolStatusState } from "@/recoils/Tool";
 import { useRecoilState } from "recoil";
 import NavigationRoundedIcon from '@mui/icons-material/NavigationRounded';
 import { useMemo } from "react";
+import {useViewTool} from "@/hooks/useViewTool.tsx";
 
 export interface MapTool {
   className: string;
@@ -14,9 +15,9 @@ export interface MapTool {
 
 type ToolClicked = (tool: MapTool) => void;
 
-
 export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
-  const {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea, onClickLength, onClickSearch, onClickAngle, onClickSave, onClickPrint, onClickComplex, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting} = useMapTool();
+  const { angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea, onClickLength, onClickSearch, onClickAngle, onClickSave, onClickPrint, onClickComplex, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting} = useMapTool();
+  const { toggleFirstPersonView } = useViewTool();
   // 현재 선택된 도구 상태를 관리하는 상태
   const [selectedTool, setSelectedTool] = useRecoilState<ToolStatus>(ToolStatusState);
 
@@ -53,6 +54,15 @@ export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
     { className: "angles", label: "각도", active: false, toggle: true, onClick: onClickAngle },
     { className: "composite", label: "복합거리", active: false, toggle: true, onClick: onClickComplex },
     { className: "save", label: "저장하기", onClick: onClickSave },
+  ], []);
+
+  const tools2 = useMemo(() => [
+    { className: "expand", label: "확대", onClick: onClickExpand },
+    { className: "reduce", label: "축소", onClick: onClickReduce },
+  ], []);
+
+  const tools3 = useMemo(() => [
+    { className: "", label: "", active: false, toggle: true },
     { className: "fullscreen", label: "전체화면", active: false, toggle: true, onClick: toggleFullscreen },
     { className: "reset-direction", label: "방향초기화", onClick: resetDirection },
     { className: "set-terrain", label: "지형설정", active: false, toggle: true, onClick: toggleDefaultTerrain },
@@ -61,9 +71,9 @@ export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
     { className: "open-setting-tool", label: "설정도구", active: false, toggle: true, onClick: toggleSetting },
   ], []);
 
-  const tools2 = useMemo(() => [
-    { className: "expand", label: "확대", onClick: onClickExpand },
-    { className: "reduce", label: "축소", onClick: onClickReduce },
+  const tools4 = useMemo(() => [
+    { className: "", label: "", active: false, toggle: true },
+    { className: "first-person-view", label: "사람시점", onClick: toggleFirstPersonView },
   ], []);
 
   return (
@@ -76,6 +86,12 @@ export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
         </div>
         <div id="toolbox-view">
           {tools2.map(tool => <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick}/>)}
+        </div>
+        <div id="toolbox-cesium-map-tool" className="expand-tool-box">
+          {tools3.map(tool => <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick}/>)}
+        </div>
+        <div id="toolbox-view-tool" className="expand-tool-box">
+          {tools4.map(tool => <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick}/>)}
         </div>
       </>
   );
