@@ -17,7 +17,7 @@ type ToolClicked = (tool: MapTool) => void;
 
 export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
   const { angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea, onClickLength, onClickSearch, onClickAngle, onClickSave, onClickPrint, onClickComplex, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting} = useMapTool();
-  const { toggleFirstPersonView } = useViewTool();
+  const { toggleFirstPersonView, toggleViewCenter } = useViewTool();
   // 현재 선택된 도구 상태를 관리하는 상태
   const [selectedTool, setSelectedTool] = useRecoilState<ToolStatus>(ToolStatusState);
 
@@ -74,6 +74,7 @@ export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
   const tools4 = useMemo(() => [
     { className: "", label: "", active: false, toggle: true },
     { className: "first-person-view", label: "사람시점", onClick: toggleFirstPersonView },
+    { className: "indoors", label: "실내시점", onClick: toggleViewCenter },
   ], []);
 
   return (
