@@ -163,7 +163,7 @@ nav .logout:hover {opacity:1;}
 .expand-tool-box button:first-child {border-bottom-left-radius:8px; border-top-left-radius:8px; border-top:1px solid rgba(100,100,100,0.8);}
 .expand-tool-box button:last-child {border-bottom-right-radius:8px; border-top-right-radius:8px;}
 .expand-tool-box .toolbox-txt {display:none; width:auto; float:left; position:relative; z-index:999999; margin-top: -48px;}
-.expand-tool-box .toolbox-txt > .rect { float:right; margin-top:-40px; margin-right: 17px; width: 0; height: 0; border-top: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 5px solid rgba(46, 46, 46, 0.8);}
+.expand-tool-box .toolbox-txt > .rect { float:left; margin-top: 0; margin-left: 15px ; width: 0; height: 0; border-top: 5px solid rgba(46, 46, 46, 0.8); border-right: 5px solid transparent; border-left: 5px solid transparent;}
 .expand-tool-box .toolbox-txt > .title { float:left; clear:both; font-size:11px; background:rgba(46, 46, 46, 0.8); color:white; border-radius:5px; line-height:24px;  padding:0 10px;}
 
 #toolbox-cesium-map-tool {margin:0; padding:0; position:absolute; bottom:36px; left:360px;}

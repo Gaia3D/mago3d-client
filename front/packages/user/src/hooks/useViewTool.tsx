@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 import { offFirstPersonView, onFirstPersonView } from "@/api/camera/magoFirstPersonView.ts";
 import {offViewCenter, onViewCenter} from "@/api/camera/magoViewCenter.ts";
+import {offFloorEvents} from "@/api/object/magoBuildingFloor.ts";
+import {offViewPoint, onViewPoint} from "@/api/camera/magoViewPoint.ts";
 
 export const useViewTool = () => {
     const { globeController, initialized } = useGlobeController();
@@ -38,8 +40,21 @@ export const useViewTool = () => {
         options.isViewCenter = !options.isViewCenter;
     }
 
+    const toggleViewPoint = () => {
+        const { viewer } = globeController;
+        if (!viewer) return;
+        if (!options.isViewPoint) {
+            // emit('clearAllEvents', ControlMode.ViewPoint);
+            onViewPoint(viewer);
+        } else {
+            offViewPoint();
+        }
+        options.isViewPoint = !options.isViewPoint;
+    }
+
     return {
         toggleFirstPersonView,
         toggleViewCenter,
+        toggleViewPoint,
     };
 };
