@@ -1,104 +1,129 @@
 import { useMapTool } from "@/hooks/useMapTool";
-import { ToolStatus, ToolStatusState } from "@/recoils/Tool";
-import { useRecoilState } from "recoil";
+import { useState, useMemo, useCallback } from "react";
 import NavigationRoundedIcon from '@mui/icons-material/NavigationRounded';
-import { useMemo } from "react";
-import {useViewTool} from "@/hooks/useViewTool.tsx";
+import { useViewTool } from "@/hooks/useViewTool.tsx";
 
 export interface MapTool {
-  className: string;
-  label: string;
-  active?: boolean;
-  toggle?: boolean;
-  onClick?: () => void;
+    toolBoxIndex: number;
+    className: string;
+    label: string;
+    active?: boolean;
+    toggle?: boolean;
+    group?: string;
+    onClick: () => void;
 }
 
 type ToolClicked = (tool: MapTool) => void;
 
-export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
-  const { angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea, onClickLength, onClickSearch, onClickAngle, onClickSave, onClickPrint, onClickComplex, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting} = useMapTool();
-  const { toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool } = useViewTool();
-  // 현재 선택된 도구 상태를 관리하는 상태
-  const [selectedTool, setSelectedTool] = useRecoilState<ToolStatus>(ToolStatusState);
+const TOOLBOX_SEP = "sep";
+const CLICK_EVENT_GROUP = "clickEvent";
 
-  // 각 도구의 클릭 핸들러 함수
-  const handleToolClick = (tool: MapTool) => {
-    onToolClick(tool);
-
-    const { onClick } = tool;
-    if (onClick) {
-      onClick();
-    }
-  };
-
-  // 툴 버튼 컴포넌트화
-  const ToolButton = ({ tool, handleClick }: { tool: MapTool, handleClick: (tool: MapTool) => void }) => (
-      <button
-          key={tool.className}
-          type="button"
-          className={`${tool.className} ${(tool.toggle && selectedTool === tool.className) ? "active" : ""}`}
-          onClick={() => handleClick(tool)}
-      >
+const ToolButton = ({ tool, handleClick }: { tool: MapTool, handleClick: (tool: MapTool) => void }) => (
+    <button
+        key={tool.className}
+        type="button"
+        className={`${tool.className} ${tool.active ? 'active' : ''}`}
+        onClick={() => handleClick(tool)}
+    >
         <div className="toolbox-txt">
-          <div className="title">{tool.label}</div>
-          <div className="rect"></div>
+            <div className="title">{tool.label}</div>
+            <div className="rect"></div>
         </div>
-      </button>
-  );
+    </button>
+);
 
-  // Toolbox에 표시할 도구 목록
-  const tools = useMemo(() => [
-    { className: "home", label: "초기화", onClick: onClickHome },
-    { className: "length", label: "길이측정", active: false, toggle: true, onClick: onClickLength },
-    { className: "area", label: "면적측정", active: false, toggle: true, onClick: onClickArea },
-    { className: "angles", label: "각도", active: false, toggle: true, onClick: onClickAngle },
-    { className: "composite", label: "복합거리", active: false, toggle: true, onClick: onClickComplex },
-    { className: "save", label: "저장하기", onClick: onClickSave },
-  ], []);
+export const MapToolbox = ({ onToolClick }: { onToolClick: ToolClicked }) => {
+    const {
+        angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea,
+        onClickLength, onClickAngle, onClickSave, onClickPrint, onClickComplex,
+        toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent,
+        toggleClock, toggleSetting
+    } = useMapTool();
+    const {
+        toggleFirstPersonView, toggleViewCenter, toggleViewPoint,
+        toggleViewAxis, toggleCameraTool
+    } = useViewTool();
 
-  const tools2 = useMemo(() => [
-    { className: "expand", label: "확대", onClick: onClickExpand },
-    { className: "reduce", label: "축소", onClick: onClickReduce },
-  ], []);
+    const initialTools: MapTool[] = useMemo(() => [
+        { toolBoxIndex: 1, className: "home", label: "초기화", group: TOOLBOX_SEP, onClick: onClickHome },
+        { toolBoxIndex: 1, className: "length", label: "길이측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickLength },
+        { toolBoxIndex: 1, className: "area", label: "면적측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickArea },
+        { toolBoxIndex: 1, className: "angles", label: "각도", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickAngle },
+        { toolBoxIndex: 1, className: "composite", label: "복합거리", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickComplex },
+        { toolBoxIndex: 1, className: "save", label: "저장하기", group: TOOLBOX_SEP, onClick: onClickSave },
+        { toolBoxIndex: 2, className: "expand", label: "확대", group: TOOLBOX_SEP, onClick: onClickExpand },
+        { toolBoxIndex: 2, className: "reduce", label: "축소", group: TOOLBOX_SEP, onClick: onClickReduce },
+        { toolBoxIndex: 3, className: "fullscreen", label: "전체화면", group: TOOLBOX_SEP, toggle: true, onClick: toggleFullscreen },
+        { toolBoxIndex: 3, className: "reset-direction", label: "방향초기화", group: TOOLBOX_SEP, onClick: resetDirection },
+        { toolBoxIndex: 3, className: "set-terrain", label: "지형설정", group: TOOLBOX_SEP, toggle: true, onClick: toggleDefaultTerrain },
+        { toolBoxIndex: 3, className: "set-terrain-trans", label: "지형불투명설정", group: TOOLBOX_SEP, toggle: true, onClick: toggleTerrainTranslucent },
+        { toolBoxIndex: 3, className: "open-clock-tool", label: "시간도구", group: TOOLBOX_SEP, toggle: true, onClick: toggleClock },
+        { toolBoxIndex: 3, className: "open-setting-tool", label: "설정도구", group: TOOLBOX_SEP, toggle: true, onClick: toggleSetting },
+        { toolBoxIndex: 4, className: "first-person-view", label: "사람시점", group: TOOLBOX_SEP, onClick: toggleFirstPersonView },
+        { toolBoxIndex: 4, className: "indoors", label: "실내시점", group: CLICK_EVENT_GROUP, onClick: toggleViewCenter },
+        { toolBoxIndex: 4, className: "go-to-point", label: "시점이동", group: CLICK_EVENT_GROUP, onClick: toggleViewPoint },
+        { toolBoxIndex: 4, className: "axis-view", label: "축시점", group: CLICK_EVENT_GROUP, onClick: toggleViewAxis },
+        { toolBoxIndex: 4, className: "camera-info", label: "카메라정보", group: TOOLBOX_SEP, onClick: toggleCameraTool },
+    ], [onClickHome, onClickLength, onClickArea, onClickAngle, onClickComplex, onClickSave, onClickExpand, onClickReduce, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool]);
 
-  const tools3 = useMemo(() => [
-    { className: "", label: "", active: false, toggle: true },
-    { className: "fullscreen", label: "전체화면", active: false, toggle: true, onClick: toggleFullscreen },
-    { className: "reset-direction", label: "방향초기화", onClick: resetDirection },
-    { className: "set-terrain", label: "지형설정", active: false, toggle: true, onClick: toggleDefaultTerrain },
-    { className: "set-terrain-trans", label: "지형불투명설정", active: false, toggle: true, onClick: toggleTerrainTranslucent },
-    { className: "open-clock-tool", label: "시간도구", active: false, toggle: true, onClick: toggleClock },
-    { className: "open-setting-tool", label: "설정도구", active: false, toggle: true, onClick: toggleSetting },
-  ], []);
+    const [tools, setTools] = useState<MapTool[]>(initialTools);
+    const [expandedTools, setExpandedTools] = useState<{ [key: string]: boolean }>({
+        "toolbox-cesium-map-tool": false,
+        "toolbox-view-tool": false
+    });
 
-  const tools4 = useMemo(() => [
-    { className: "", label: "", active: false, toggle: true },
-    { className: "first-person-view", label: "사람시점", onClick: toggleFirstPersonView },
-    { className: "indoors", label: "실내시점", onClick: toggleViewCenter },
-    { className: "go-to-point", label: "시점이동", onClick: toggleViewPoint },
-    { className: "axis-view", label: "축시점", onClick: toggleViewAxis },
-    { className: "camera-info", label: "카메라정보", onClick: toggleCameraTool },
-  ], []);
+    const handleToolClick = useCallback((clickedTool: MapTool) => {
+        setTools(prevState =>
+            prevState.map(tool => {
+                if (tool.group === clickedTool.group && tool.className !== clickedTool.className && tool.active && clickedTool.group !== TOOLBOX_SEP) {
+                    tool.onClick?.();  // 이전 활성화된 도구의 onClick 호출
+                }
+                return tool.group === clickedTool.group && tool.className !== clickedTool.className && clickedTool.group !== TOOLBOX_SEP
+                    ? { ...tool, active: false }
+                    : tool.className === clickedTool.className
+                        ? { ...tool, active: !tool.active }
+                        : tool;
+            })
+        );
 
-  return (
-      <>
-        <div id="toolbox">
-          <button type="button" onClick={onClickCompas} style={{backgroundColor: 'rgba(0,0,0,0.8)'}}>
-            <NavigationRoundedIcon style={{color: '#FCFCFD', transform: `rotate(${angle}deg)`}}/>
-          </button>
-          {tools.map(tool => <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick}/>)}
-        </div>
-        <div id="toolbox-view">
-          {tools2.map(tool => <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick}/>)}
-        </div>
-        <div id="toolbox-cesium-map-tool" className="expand-tool-box">
-          {tools3.map(tool => <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick}/>)}
-        </div>
-        <div id="toolbox-view-tool" className="expand-tool-box">
-          {tools4.map(tool => <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick}/>)}
-        </div>
-      </>
-  );
+        clickedTool.onClick();
+        onToolClick(clickedTool);
+    }, [onToolClick]);
+
+    const toggleExpand = useCallback((eleId: string) => {
+        setExpandedTools(prevState => ({
+            ...prevState,
+            [eleId]: !prevState[eleId]
+        }));
+    }, []);
+
+    return (
+        <>
+            <div id="toolbox">
+                <button type="button" onClick={onClickCompas} style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
+                    <NavigationRoundedIcon style={{ color: '#FCFCFD', transform: `rotate(${angle}deg)` }} />
+                </button>
+                {tools.filter(tool => tool.toolBoxIndex === 1).map(tool => (
+                    <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
+                ))}
+            </div>
+            <div id="toolbox-view">
+                {tools.filter(tool => tool.toolBoxIndex === 2).map(tool => (
+                    <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
+                ))}
+            </div>
+            <div id="cesium-map-tool-expand-button" className='expand-button' onClick={() => toggleExpand("toolbox-cesium-map-tool")}></div>
+            <div id="toolbox-cesium-map-tool" className={`expand-tool-box ${expandedTools["toolbox-cesium-map-tool"] ? 'expand' : ''}`}>
+                {tools.filter(tool => tool.toolBoxIndex === 3).map(tool => (
+                    <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
+                ))}
+            </div>
+            <div id="view-tool-expand-button" className='expand-button' onClick={() => toggleExpand("toolbox-view-tool")}></div>
+            <div id="toolbox-view-tool" className={`expand-tool-box ${expandedTools["toolbox-view-tool"] ? 'expand' : ''}`}>
+                {tools.filter(tool => tool.toolBoxIndex === 4).map(tool => (
+                    <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
+                ))}
+            </div>
+        </>
+    );
 };
-
-// export type { Tool };

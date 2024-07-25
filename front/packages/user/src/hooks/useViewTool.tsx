@@ -10,7 +10,7 @@ import { OptionsState } from "@/recoils/Tool";
 import {useRecoilState} from "recoil";
 
 export const useViewTool = () => {
-    const { globeController, initialized } = useGlobeController();
+    const { globeController } = useGlobeController();
     const [options, setOptions] = useRecoilState(OptionsState);
     const [localOptions, setLocalOptions] = useState({
         isFirstPersonView: false,
@@ -19,13 +19,6 @@ export const useViewTool = () => {
         isViewPoint: false,
         isViewAxis: false,
         isCameraTool: false,
-    });
-    const [cameraToolInfo, setCameraToolInfo] = useState({
-        longitude: 0,
-        latitude: 0,
-        height: 0,
-        heading: 360,
-        compass: 'N',
     });
 
     const toggleFirstPersonView = () => {
@@ -76,12 +69,7 @@ export const useViewTool = () => {
         localOptions.isViewAxis = !localOptions.isViewAxis;
     }
 
-    useEffect(() => {
-        console.log(cameraToolInfo)
-    }, [cameraToolInfo]);
-
     const toggleCameraTool = () => {
-        console.log("toggle")
         setOptions((prevOptions) => ({
             ...prevOptions,
             viewOptions: {
