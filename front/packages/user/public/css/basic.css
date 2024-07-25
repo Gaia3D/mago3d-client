@@ -196,16 +196,19 @@ nav .logout:hover {opacity:1;}
 #toolbox-view-tool button.indoors {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 #toolbox-view-tool button.go-to-point {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 #toolbox-view-tool button.axis-view {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
+#toolbox-view-tool button.camera-info {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 
 #toolbox-view-tool button.first-person-view:hover, #toolbox-view-tool button.first-person-view:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 #toolbox-view-tool button.indoors:hover, #toolbox-view-tool button.indoors:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 #toolbox-view-tool button.go-to-point:hover, #toolbox-view-tool button.go-to-point:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 #toolbox-view-tool button.axis-view:hover, #toolbox-view-tool button.axis-view:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
+#toolbox-view-tool button.camera-info:hover, #toolbox-view-tool button.camera-info:focus {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 
 #toolbox-view-tool button.first-person-view:hover .toolbox-txt {display:block;}
 #toolbox-view-tool button.indoors:hover .toolbox-txt {display:block;}
 #toolbox-view-tool button.go-to-point:hover .toolbox-txt {display:block;}
 #toolbox-view-tool button.axis-view:hover .toolbox-txt {display:block;}
+#toolbox-view-tool button.camera-info:hover .toolbox-txt {display:block;}
 
 
 /*clock*/
@@ -238,6 +241,12 @@ img.icon-24 {width: 24px;height: 24px;}
     color: #6564d5;
     font-weight: 700;
 }
+
+/*camera info modal*/
+.default-layer.camera-tool {position: absolute;bottom: 185px;left: 360px;z-index: 10;padding: 5px;font-size: 11px;color: #4a6986;}
+.default-layer.camera-tool h3 {font-size: 12px;padding: 5px 6px;font-weight: bold;}
+.default-layer.camera-tool label {height: 15px;display: block;position: relative;margin: 2px 5px;}
+.default-layer.camera-tool label > span {font-weight: bold;}
 
 /* aside */
 aside {width:350px; height:100vh; position:absolute; box-shadow:0 0 10px rgba(28,28,28,0.5);}
