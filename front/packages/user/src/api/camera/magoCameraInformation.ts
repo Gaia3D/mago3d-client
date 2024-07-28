@@ -1,9 +1,12 @@
 import * as Cesium from 'cesium';
 
-let compassInformationEvent: any = undefined;
-let cameraInformationEvent: any = undefined;
+let compassInformationEvent: Cesium.Event.RemoveCallback | undefined = undefined;
+let cameraInformationEvent: Cesium.Event.RemoveCallback | undefined = undefined;
 
-export const onCompassInformation = (viewer: Cesium.Viewer, callback: Function) => {
+type CompassCallback = (heading: number) => void;
+type CameraCallback = (longitude: number, latitude: number, height: number, heading: number) => void;
+
+export const onCompassInformation = (viewer: Cesium.Viewer, callback: CompassCallback) => {
   if (!compassInformationEvent) {
     compassInformationEvent = () => {
       const camera = viewer.camera;
@@ -16,7 +19,7 @@ export const onCompassInformation = (viewer: Cesium.Viewer, callback: Function) 
   viewer.clock.onTick.addEventListener(compassInformationEvent);
 }
 
-export const onCameraInformation = (viewer : Cesium.Viewer, callback : Function) => {
+export const onCameraInformation = (viewer: Cesium.Viewer, callback: CameraCallback) => {
   if (!cameraInformationEvent) {
     cameraInformationEvent = () => {
       const camera = viewer.camera;
@@ -33,6 +36,16 @@ export const onCameraInformation = (viewer : Cesium.Viewer, callback : Function)
   viewer.clock.onTick.addEventListener(cameraInformationEvent);
 }
 
-export const offCameraInformation = (viewer : Cesium.Viewer) => {
-  viewer.clock.onTick.removeEventListener(cameraInformationEvent);
+export const offCompassInformation = (viewer: Cesium.Viewer) => {
+  if (compassInformationEvent) {
+    viewer.clock.onTick.removeEventListener(compassInformationEvent);
+    compassInformationEvent = undefined;
+  }
+}
+
+export const offCameraInformation = (viewer: Cesium.Viewer) => {
+  if (cameraInformationEvent) {
+    viewer.clock.onTick.removeEventListener(cameraInformationEvent);
+    cameraInformationEvent = undefined;
+  }
 }

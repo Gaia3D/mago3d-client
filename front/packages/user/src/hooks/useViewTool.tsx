@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 import { offFirstPersonView, onFirstPersonView } from "@/api/camera/magoFirstPersonView.ts";
 import {offViewCenter, onViewCenter} from "@/api/camera/magoViewCenter.ts";
@@ -21,54 +21,44 @@ export const useViewTool = () => {
         isCameraTool: false,
     });
 
-    const toggleFirstPersonView = () => {
+    type ToolName = keyof typeof localOptions;
+
+    const toggleViewTool = useCallback((toolName: ToolName, onAction: () => void, offAction: () => void) => {
         const { viewer } = globeController;
         if (!viewer) return;
-        if (!localOptions.isFirstPersonView) {
-            // emit('clearAllEvents', ControlMode.ViewFirstPerson);
-            onFirstPersonView(viewer);
-        } else {
-            offFirstPersonView(viewer);
-        }
-        localOptions.isFirstPersonView = !localOptions.isFirstPersonView;
-    };
 
-    const toggleViewCenter = () => {
-        const { viewer } = globeController;
-        if (!viewer) return;
-        if (!localOptions.isViewCenter) {
-            // emit('clearAllEvents', ControlMode.ViewCenter);
-            onViewCenter(viewer);
-        } else {
-            offViewCenter(viewer);
-        }
-        localOptions.isViewCenter = !localOptions.isViewCenter;
-    }
+        setLocalOptions((prevState) => {
+            const newState = { ...prevState, [toolName]: !prevState[toolName] };
+            if (newState[toolName]) {
+                onAction();
+            } else {
+                offAction();
+            }
+            return newState;
+        });
+    }, [globeController]);
 
-    const toggleViewPoint = () => {
-        const { viewer } = globeController;
-        if (!viewer) return;
-        if (!localOptions.isViewPoint) {
-            // emit('clearAllEvents', ControlMode.ViewPoint);
-            onViewPoint(viewer);
-        } else {
-            offViewPoint();
-        }
-        localOptions.isViewPoint = !localOptions.isViewPoint;
-    }
+    const toggleFirstPersonView = () => toggleViewTool('isFirstPersonView', () => {
+        if (globeController.viewer) onFirstPersonView(globeController.viewer);
+    }, () => {
+        if (globeController.viewer) offFirstPersonView(globeController.viewer);
+    });
 
-    const toggleViewAxis = () => {
-        const { viewer } = globeController;
-        if (!viewer) return;
-        if (!localOptions.isViewAxis) {
-            // emit('clearAllEvents', ControlMode.ViewAxis);
-            onViewAxis(viewer);
-        } else {
-            offViewAxis(viewer);
-        }
-        localOptions.isViewAxis = !localOptions.isViewAxis;
-    }
+    const toggleViewCenter = () => toggleViewTool('isViewCenter', () => {
+        if (globeController.viewer) onViewCenter(globeController.viewer);
+    }, () => {
+        if (globeController.viewer) offViewCenter(globeController.viewer);
+    });
 
+    const toggleViewPoint = () => toggleViewTool('isViewPoint', () => {
+        if (globeController.viewer) onViewPoint(globeController.viewer);
+    }, () => { offViewPoint();});
+
+    const toggleViewAxis = () => toggleViewTool('isViewAxis', () => {
+        if (globeController.viewer) onViewAxis(globeController.viewer);
+    }, () => {
+        if (globeController.viewer) offViewAxis(globeController.viewer);
+    });
     const toggleCameraTool = () => {
         setOptions((prevOptions) => ({
             ...prevOptions,

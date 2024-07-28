@@ -2,7 +2,28 @@ import * as Cesium from 'cesium';
 
 let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | undefined = undefined;
 
-let pickedObject: any = undefined;
+let pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined = undefined;
+const MAN_HEIGHT = 1.5;
+
+const getStartCartesian = (pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined, defaultCartesian: Cesium.Cartesian3): Cesium.Cartesian3 => {
+  if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
+    return pickedObject.content.tile.boundingSphere.center;
+  } else if (pickedObject?.primitive instanceof Cesium.Primitive) {
+    return pickedObject.primitive.boundingSphere.center;
+  }
+  return defaultCartesian;
+};
+
+const getCenterHeight = (pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined, startCartesian: Cesium.Cartesian3, scene: Cesium.Scene): number => {
+  if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
+    return Cesium.Cartographic.fromCartesian(startCartesian).height;
+  } else if (pickedObject?.primitive instanceof Cesium.Primitive) {
+    return pickedObject.id.polygon.height.getValue();
+  } else {
+    const cartographic = Cesium.Cartographic.fromCartesian(startCartesian);
+    return scene.globe.getHeight(cartographic) || 0;
+  }
+};
 
 export const onViewPoint = (viewer: Cesium.Viewer) => {
   const scene = viewer.scene;
@@ -12,7 +33,7 @@ export const onViewPoint = (viewer: Cesium.Viewer) => {
   }
 
   const mouseLeftClickHandler = (event: { position: Cesium.Cartesian2 }) => {
-    pickedObject = scene.pick(event.position);
+    pickedObject = scene.pick(event.position) as Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature;
 
     const pickedEllipsoidPosition = scene.pickPositionSupported
         ? scene.pickPosition(event.position)
@@ -23,28 +44,13 @@ export const onViewPoint = (viewer: Cesium.Viewer) => {
       return;
     }
 
-    let startCartesian = pickedEllipsoidPosition;
-    let centerHeight = 0;
-
-    if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
-      /* @ts-expect-error: null */
-      startCartesian = pickedObject.content.tile.boundingSphere.center;
-      centerHeight = Cesium.Cartographic.fromCartesian(startCartesian).height;
-    } else if (pickedObject?.primitive instanceof Cesium.Primitive) {
-      startCartesian = pickedObject.primitive.boundingSphere.center;
-      centerHeight = pickedObject.id.polygon.height.getValue();
-    } else {
-      const cartographic = Cesium.Cartographic.fromCartesian(startCartesian);
-      centerHeight = scene.globe.getHeight(cartographic) || 0;
-    }
-
-    const manHeight = 1.5;
-
+    const startCartesian = getStartCartesian(pickedObject, pickedEllipsoidPosition);
     const cartographic = Cesium.Cartographic.fromCartesian(startCartesian);
+    const centerHeight = getCenterHeight(pickedObject, startCartesian, scene);
     const startDestination = Cesium.Cartesian3.fromRadians(
         cartographic.longitude,
         cartographic.latitude,
-        cartographic.height + manHeight
+        centerHeight + MAN_HEIGHT
     );
 
     const camera = viewer.camera;
@@ -65,6 +71,7 @@ export const onViewPoint = (viewer: Cesium.Viewer) => {
 export const offViewPoint = () => {
   if (screenSpaceEventHandler) {
     screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    screenSpaceEventHandler = undefined;
   }
 };
 

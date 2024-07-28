@@ -8,9 +8,10 @@ export const CameraInfoDisplay = () => {
     const { globeController, initialized } = useGlobeController();
     const [options, setOptions] = useRecoilState(OptionsState);
 
+    const DIRECTIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+
     const getCardinalDirection = (angle: number) => {
-        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-        return directions[Math.round(angle / 45) % 8];
+        return DIRECTIONS[Math.round(angle / 45) % 8];
     };
 
     useEffect(() => {
@@ -34,7 +35,12 @@ export const CameraInfoDisplay = () => {
                 compass: getCardinalDirection(heading),
             };
 
-            if (JSON.stringify(newInfo) !== JSON.stringify(currentInfo)) {
+            if (
+                newInfo.longitude !== currentInfo.longitude ||
+                newInfo.latitude !== currentInfo.latitude ||
+                newInfo.height !== currentInfo.height ||
+                newInfo.heading !== currentInfo.heading
+            ) {
                 currentInfo = newInfo;
                 setOptions((prevOptions) => ({
                     ...prevOptions,

@@ -1,5 +1,7 @@
 import * as Cesium from 'cesium';
 
+const MAN_HEIGHT = 1.5;
+const UP_HEIGHT = 50.0;
 const color = Cesium.Color.RED;
 let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | undefined = undefined;
 
@@ -21,8 +23,6 @@ export const onViewAxis = (viewer: Cesium.Viewer) => {
   }
 
   const mouseLeftClickHandler = (event: any) => {
-    const manHeight = 1.5;
-
     if (!status) {
       status = true;
       clearEntities(viewer);
@@ -30,30 +30,7 @@ export const onViewAxis = (viewer: Cesium.Viewer) => {
       status = false;
 
       if (startCartesian && endCartesian) {
-        const startCartographic = Cesium.Cartographic.fromCartesian(startCartesian);
-        const startDestination = Cesium.Cartesian3.fromRadians(
-            startCartographic.longitude,
-            startCartographic.latitude,
-            startCartographic.height + manHeight
-        );
-
-        const startDirection = Cesium.Cartesian3.subtract(endCartesian, startCartesian, new Cesium.Cartesian3());
-        const startDirectionNormal = Cesium.Cartesian3.normalize(startDirection, new Cesium.Cartesian3());
-
-        const startUpCartesian = Cesium.Cartesian3.fromRadians(
-            startCartographic.longitude,
-            startCartographic.latitude,
-            startCartographic.height + 50.0
-        );
-        const startUpNormal = Cesium.Cartesian3.subtract(startUpCartesian, startCartesian, new Cesium.Cartesian3());
-
-        viewer.camera.setView({
-          destination: startDestination,
-          orientation: {
-            direction: startDirectionNormal,
-            up: startUpNormal,
-          },
-        });
+        setCameraView(viewer, startCartesian, endCartesian);
       }
       return;
     }
@@ -66,14 +43,14 @@ export const onViewAxis = (viewer: Cesium.Viewer) => {
       pickedEllipsoidPosition = Cesium.Cartesian3.fromRadians(
           convertCartographic.longitude,
           convertCartographic.latitude,
-          convertCartographic.height + manHeight
+          convertCartographic.height + MAN_HEIGHT
       );
 
-      startCartesian = pickedEllipsoidPosition;
-      endCartesian = pickedEllipsoidPosition;
+      startCartesian = adjustHeight(pickedEllipsoidPosition, MAN_HEIGHT);
+      endCartesian = startCartesian;
 
       startEntity = viewer.entities.add({
-        position: pickedEllipsoidPosition,
+        position: startCartesian,
         point: {
           color: Cesium.Color.RED,
           pixelSize: 4,
@@ -92,21 +69,38 @@ export const onViewAxis = (viewer: Cesium.Viewer) => {
     }
   };
 
+  const adjustHeight = (cartesian: Cesium.Cartesian3, height: number): Cesium.Cartesian3 => {
+    const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+    return Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height + height);
+  };
+
+  const setCameraView = (viewer: Cesium.Viewer, startCartesian: Cesium.Cartesian3, endCartesian: Cesium.Cartesian3) => {
+    const startCartographic = Cesium.Cartographic.fromCartesian(startCartesian);
+    const startDestination = adjustHeight(startCartesian, MAN_HEIGHT);
+
+    const startDirection = Cesium.Cartesian3.subtract(endCartesian, startCartesian, new Cesium.Cartesian3());
+    const startDirectionNormal = Cesium.Cartesian3.normalize(startDirection, new Cesium.Cartesian3());
+
+    const startUpCartesian = adjustHeight(startCartesian, UP_HEIGHT);
+    const startUpNormal = Cesium.Cartesian3.subtract(startUpCartesian, startCartesian, new Cesium.Cartesian3());
+
+    viewer.camera.setView({
+      destination: startDestination,
+      orientation: {
+        direction: startDirectionNormal,
+        up: startUpNormal,
+      },
+    });
+  };
+
   const mouseMoveHandler = (moveEvent: any) => {
     if (!status) {
       return;
     }
-    let pickedEllipsoidPosition = getEllipsoidPosition(viewer, moveEvent.endPosition);
+    const pickedEllipsoidPosition = getEllipsoidPosition(viewer, moveEvent.endPosition);
 
     if (pickedEllipsoidPosition) {
-      const convertCartographic = Cesium.Cartographic.fromCartesian(pickedEllipsoidPosition);
-      pickedEllipsoidPosition = Cesium.Cartesian3.fromRadians(
-          convertCartographic.longitude,
-          convertCartographic.latitude,
-          convertCartographic.height + 1.5
-      );
-
-      endCartesian = pickedEllipsoidPosition;
+      endCartesian = adjustHeight(pickedEllipsoidPosition, MAN_HEIGHT);
     }
   };
 

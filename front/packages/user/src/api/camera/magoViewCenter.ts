@@ -3,11 +3,19 @@ import * as Cesium from 'cesium';
 let screenSpaceEventHandler : Cesium.ScreenSpaceEventHandler | undefined = undefined;
 
 const color : Cesium.Color = Cesium.Color.fromCssColorString("#0675e6");
+const manHeight = 1.5;
 let tempColor : any = undefined;
 let tempMaterial : any = undefined;
-let tempModelMatrix : any = undefined;
 
-let pickedObject : any = undefined;
+let pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined = undefined;
+
+const calculateCartesian = (cartographic: Cesium.Cartographic, centerHeightOffset: number, heightOffset: number): Cesium.Cartesian3 => {
+  return Cesium.Cartesian3.fromRadians(
+      cartographic.longitude,
+      cartographic.latitude,
+      centerHeightOffset + heightOffset
+  );
+};
 
 export const onViewCenter = (viewer: Cesium.Viewer) => {
   const scene = viewer.scene;
@@ -32,9 +40,9 @@ export const onViewCenter = (viewer: Cesium.Viewer) => {
       }
     }
 
-    let startCartesian;
-    let startCartographic;
-    let centerHeight;
+    let startCartesian: Cesium.Cartesian3 | undefined;
+    let startCartographic: Cesium.Cartographic | undefined;
+    let centerHeight: number | undefined;
 
     if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
       /* @ts-expect-error : null */
@@ -49,29 +57,18 @@ export const onViewCenter = (viewer: Cesium.Viewer) => {
       return;
     }
 
-    const manHeight = 1.5;
-    const startDestination = Cesium.Cartesian3.fromRadians(
-        startCartographic.longitude,
-        startCartographic.latitude,
-        centerHeight + manHeight
-    );
+    if(!centerHeight){ return; }
+
+    const startDestination = calculateCartesian(startCartographic, centerHeight, manHeight);
 
     const cameraCartographic = Cesium.Cartographic.fromCartesian(viewer.camera.position);
-    const cameraCartesian = Cesium.Cartesian3.fromRadians(
-        cameraCartographic.longitude,
-        cameraCartographic.latitude,
-        centerHeight
-    );
+    const cameraCartesian = calculateCartesian(cameraCartographic, centerHeight, 0);
 
     const cameraDirection = Cesium.Cartesian3.subtract(startDestination, cameraCartesian, new Cesium.Cartesian3());
     const cameraDirInverse = Cesium.Cartesian3.negate(cameraDirection, new Cesium.Cartesian3());
     const cameraNormal = Cesium.Cartesian3.normalize(cameraDirInverse, new Cesium.Cartesian3());
 
-    const startUpCartesian = Cesium.Cartesian3.fromRadians(
-        startCartographic.longitude,
-        startCartographic.latitude,
-        centerHeight + 10.0
-    );
+    const startUpCartesian = calculateCartesian(startCartographic, centerHeight, 10.0);
     const startUpNormal = Cesium.Cartesian3.subtract(startUpCartesian, startDestination, new Cesium.Cartesian3());
 
     viewer.camera.flyTo({

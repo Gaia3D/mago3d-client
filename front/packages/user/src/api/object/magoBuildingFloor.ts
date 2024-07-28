@@ -2,7 +2,7 @@ import * as Cesium from 'cesium';
 
 const color = Cesium.Color.ORANGE;
 let tempColor: Cesium.Color | undefined;
-let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | null = null;
+let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | undefined = undefined;
 let status = false;
 let pickedObject: any;
 
@@ -24,11 +24,8 @@ export const addBuildingFloor = (viewer: Cesium.Viewer) => {
 
     pickedObject = scene.pick(event.position);
 
-    if (pickedObject?.primitive instanceof Cesium.Primitive) {
-      tempColor = pickedObject.id.polygon.material;
-    } else {
-      return;
-    }
+    if (!(pickedObject?.primitive instanceof Cesium.Primitive)) return;
+    tempColor = pickedObject.id.polygon.material;
 
     const entityCollection = pickedObject.id.entityCollection;
     const entities = entityCollection.values;
@@ -111,5 +108,6 @@ const relocateBuilding = (pickedObject: any) => {
 export const offFloorEvents = (viewer: Cesium.Viewer) => {
   if (screenSpaceEventHandler) {
     screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    screenSpaceEventHandler = undefined;
   }
 };

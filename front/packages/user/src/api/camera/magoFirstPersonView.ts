@@ -9,6 +9,10 @@ let previousFov: number | undefined;
 
 let status = false;
 
+const WHEEL_MOVE_RATE = 10;
+const MOVE_RATE = 0.75;
+const FOV = 90;
+
 const flags: Record<string, boolean> = {
   looking: false,
   moveForward: false,
@@ -65,13 +69,12 @@ export const onFirstPersonView = (viewer: Cesium.Viewer) => {
 
   if (camera.frustum instanceof PerspectiveFrustum) {
     previousFov = camera.frustum.fov;
-    camera.frustum.fov = Cesium.Math.toRadians(90);
+    camera.frustum.fov = Cesium.Math.toRadians(FOV);
   }
 
   const mouseWheelHandler = (event: any) => {
-    const moveRate = 10;
     const delta = event / 100.0;
-    camera.moveForward(moveRate * delta);
+    camera.moveForward(WHEEL_MOVE_RATE * delta);
   };
 
   const mouseDownHandler = () => {
@@ -91,13 +94,12 @@ export const onFirstPersonView = (viewer: Cesium.Viewer) => {
   };
 
   keyboardEventHandler = () => {
-    const moveRate = 0.75;
-    if (flags.moveForward) camera.moveForward(moveRate);
-    if (flags.moveBackward) camera.moveBackward(moveRate);
-    if (flags.moveUp) camera.moveUp(moveRate);
-    if (flags.moveDown) camera.moveDown(moveRate);
-    if (flags.moveLeft) camera.moveLeft(moveRate);
-    if (flags.moveRight) camera.moveRight(moveRate);
+    if (flags.moveForward) camera.moveForward(MOVE_RATE);
+    if (flags.moveBackward) camera.moveBackward(MOVE_RATE);
+    if (flags.moveUp) camera.moveUp(MOVE_RATE);
+    if (flags.moveDown) camera.moveDown(MOVE_RATE);
+    if (flags.moveLeft) camera.moveLeft(MOVE_RATE);
+    if (flags.moveRight) camera.moveRight(MOVE_RATE);
   };
 
   keyDownEventHandler = (e: KeyboardEvent) => {
@@ -177,5 +179,7 @@ export const offFirstPersonView = (viewer: Cesium.Viewer) => {
     handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE, Cesium.KeyboardEventModifier.SHIFT);
     handler.removeInputAction(Cesium.ScreenSpaceEventType.WHEEL);
     handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_UP);
+
+    screenSpaceEventHandler = undefined;
   }
 };
