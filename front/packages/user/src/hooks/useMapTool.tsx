@@ -36,7 +36,6 @@ export const useMapTool = () => {
 
   const [angle, setAngle] = useState(0);
 
-
   useEffect(() => {
     if (!initialized) return;
     const { viewer } = globeController;
@@ -193,15 +192,11 @@ export const useMapTool = () => {
       alert('Fullscreen is not supported');
       return;
     }
-    if (!options.isFullscreen) {
+    if (!Cesium.Fullscreen.fullscreen) {
       Fullscreen.requestFullscreen(document.querySelector('#container'));
     } else {
       Fullscreen.exitFullscreen();
     }
-    setOptions((prevOptions) => ({
-      ...prevOptions,
-      isFullscreen: !prevOptions.isFullscreen,
-    }));
   };
 
   const resetDirection = () => {
@@ -251,11 +246,11 @@ export const useMapTool = () => {
     if (!viewer) return;
 
     const globe = viewer.scene.globe;
-    const isTranslucent = options.isTerrainTranslucent;
+    const isTranslucent = !globe.translucency.enabled;
 
-    globe.translucency.enabled = !isTranslucent;
+    globe.translucency.enabled = isTranslucent ;
 
-    if (!isTranslucent) {
+    if (isTranslucent ) {
       globe.translucency.frontFaceAlpha = 0.6;
       globe.translucency.backFaceAlpha = 0.6;
       globe.undergroundColorAlphaByDistance.nearValue = 1.0;
@@ -293,5 +288,5 @@ export const useMapTool = () => {
     }));
   };
 
-  return {angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, initWebStorage, toolStatus};
+  return { angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, initWebStorage, toolStatus};
 };

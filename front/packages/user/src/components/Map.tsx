@@ -12,6 +12,7 @@ import AnalysisFilter from "./analysis/Filter";
 import AnalResult from "./analysis/AnalResult";
 import {ClockTool} from "./maptool/ClockTool.tsx";
 import {SettingTool} from "./maptool/SettingTool.tsx";
+import {CameraInfoDisplay} from "@/components/maptool/CameraInfoDisplay.tsx";
 
 const Globe = () => {
     const cesiumContainer = useRef<HTMLDivElement>(null);
@@ -30,6 +31,7 @@ const Globe = () => {
             <AnalResult />
             <ClockTool />
             <SettingTool />
+            <CameraInfoDisplay />
         </div>
     )
 }

@@ -11,6 +11,25 @@ const ATOM_KEYS = {
   TOOL_STATUS_STATE: 'ToolStatusState',
 };
 
+interface RenderOptions {
+  isFxaa: boolean;
+  isShadow: boolean;
+  isSSAO: boolean;
+  isEdge: boolean;
+  isLighting: boolean;
+  shadowQuality: string;
+  renderQuality: string;
+}
+
+interface ViewOptions {
+  isOpenCameraInfo: boolean;
+  longitude: number,
+  latitude: number,
+  height: number,
+  heading: number,
+  compass: string,
+}
+
 // 기본 렌더 옵션 상수
 const DEFAULT_RENDER_OPTIONS = {
   isFxaa: true,
@@ -21,6 +40,15 @@ const DEFAULT_RENDER_OPTIONS = {
   shadowQuality: 'mid',
   renderQuality: 'high',
 };
+
+const DEFAULT_VIEW_OPTIONS = {
+  isOpenCameraInfo: false,
+  longitude: 0,
+  latitude: 0,
+  height: 0,
+  heading: 360,
+  compass: 'N',
+}
 
 export const PrintPotalOpenState = atom<boolean>({
   key: ATOM_KEYS.PRINT_PORTAL_OPEN,
@@ -52,16 +80,6 @@ export const SearchCoordinateOpenState = atom<boolean>({
   default: false,
 });
 
-interface RenderOptions {
-  isFxaa: boolean;
-  isShadow: boolean;
-  isSSAO: boolean;
-  isEdge: boolean;
-  isLighting: boolean;
-  shadowQuality: string;
-  renderQuality: string;
-}
-
 export type Options = {
   layer: number;
   selectedMapLayer?: any;
@@ -75,6 +93,7 @@ export type Options = {
   isSetting: boolean;
   renderOptions: RenderOptions;
   defaultRenderOptions: RenderOptions;
+  viewOptions: ViewOptions;
   magoSsao?: any;
   magoEdge?: any;
   dateObject?: any;
@@ -99,6 +118,7 @@ export const OptionsState = atom<Options>({
     isSetting: false,
     renderOptions: { ...DEFAULT_RENDER_OPTIONS },
     defaultRenderOptions: { ...DEFAULT_RENDER_OPTIONS },
+    viewOptions: { ...DEFAULT_VIEW_OPTIONS },
     magoSsao: undefined,
     magoEdge: undefined,
     dateObject: undefined,
