@@ -5,6 +5,7 @@ import {useObjectSelector} from "@/api/object/useObjectSelector.ts";
 import {useObjectTranslation} from "@/api/object/useObjectTranslation.ts";
 import {offObjectRotation, onObjectRotation} from "@/api/object/useObjectRotation.ts";
 import {offFirstPersonView, onFirstPersonView} from "@/api/camera/magoFirstPersonView.ts";
+import {offObjectScaling, onObjectScaling} from "@/api/object/useObjectScaling.ts";
 
 export const useObjectTool = () => {
     const { globeController } = useGlobeController();
@@ -57,9 +58,9 @@ export const useObjectTool = () => {
         if (globeController.viewer) offObjectRotation(globeController.viewer);
     });
 
-    const toggleScaling = () => {
-        console.log("크기 변경");
-    }
+    const toggleScaling = () => toggleObjectTool('isScaling', () => {
+        if (globeController.viewer) onObjectScaling(globeController.viewer);
+    }, () => {offObjectScaling();});
 
     const toggleCopyObject = () => {
         console.log("건물 복사");
