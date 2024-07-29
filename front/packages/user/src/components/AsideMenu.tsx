@@ -2,9 +2,12 @@ import {mainMenuState} from "@/recoils/MainMenuState";
 import React, {useMemo} from "react";
 import {useRecoilState} from "recoil";
 import {useUserInfoLoadable} from "@/components/providers/UserInfoLoadableProvider.tsx";
-import SignInfo from "./SignInfo";
+import {useTranslation} from "react-i18next";
+import SignInfo from "@/components/SignInfo.tsx";
+import LanguageSelector from "@/components/LanguageSelector.tsx";
 
 export const AsideMenu = () => {
+  const {t} = useTranslation();
   const [menu, setMenu] = useRecoilState(mainMenuState);
   const {userInfo} = useUserInfoLoadable();
 
@@ -12,15 +15,12 @@ export const AsideMenu = () => {
     e.preventDefault();
     setMenu((prev) => ({...prev, SelectedId: menuName}));
   };
-  //console.info(userInfo);
 
   const items = useMemo(() => {
-    const values = [
-      {className: "layer", text: "레이어"},
-      {className: "search", text: "검색"},
+    return [
+      {className: "layer", text: "layer"},
+      {className: "search", text: "search"},
     ];
-
-    return values;
   }, [userInfo]);
 
   return (
@@ -29,11 +29,12 @@ export const AsideMenu = () => {
         {items.map((item) => (
           <li key={item.className} className={`${menu.SelectedId === item.className ? "on" : ""} ${item.className}`}
               onClick={(e) => handleMenuClick(e, item.className)}>
-            <a href="#">{item.text}</a>
+            <a href="#">{t(item.text)}</a>
           </li>
         ))}
       </ul>
       <SignInfo />
+      <LanguageSelector />
     </>
   );
 };
