@@ -1,31 +1,26 @@
 import * as Cesium from "cesium";
-import {useRecoilState} from "recoil";
-import {OptionsState} from "@/recoils/Tool.ts";
+import { useRecoilState } from "recoil";
+import { OptionsState } from "@/recoils/Tool.ts";
 
 export const useObjectSelector = () => {
     const [options, setOptions] = useRecoilState(OptionsState);
-    // 현재 선택된 객체와 그 원래 색상을 저장하는 객체
     const selected = {
         feature: undefined,
         originalColor: new Cesium.Color(),
     };
-    // 선택된 엔티티를 저장하는 엔티티 객체
     const selectedEntity = new Cesium.Entity();
 
-    // 이벤트 핸들러와 실루엣 단계에 대한 참조 변수
     let mouseMoveHandler: any;
     let leftClickHandler: any;
     let silhouetteStage: any;
 
-    function addDivElement(viewer: Cesium.Viewer, cartesian: any) {
+    function addDivElement() {
         setOptions((prevOptions) => ({
             ...prevOptions,
             isOpenObjectTool: true,
-            objectPosition: cartesian,
         }));
     }
 
-    // 객체 선택 기능을 활성화하는 함수
     const onObjectSelector = (viewer: Cesium.Viewer) => {
         const clickHandler = viewer.screenSpaceEventHandler.getInputAction(
             Cesium.ScreenSpaceEventType.LEFT_CLICK
@@ -97,7 +92,6 @@ export const useObjectSelector = () => {
                 const terrainProvider = viewer.terrainProvider;
                 const cartographic = Cesium.Cartographic.fromCartesian(pickedPosition);
 
-                // SampleTerrainMostDetailed 함수를 사용해 고도 값을 얻음
                 const positions = [cartographic];
                 const updatedPositions = await Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
                 const clampedPosition = Cesium.Cartesian3.fromRadians(
@@ -106,7 +100,12 @@ export const useObjectSelector = () => {
                     updatedPositions[0].height
                 );
 
-                addDivElement(viewer, clampedPosition);
+                // Cesium 객체를 직접 상태에 저장하지 않고, 필요한 최소한의 정보만 저장
+                setOptions((prevOptions) => ({
+                    ...prevOptions,
+                    pickedObject: { id: pickedFeature._id, name: pickedFeature._name, position: clampedPosition },
+                }));
+                addDivElement();
             }
 
             silhouetteBlue.selected = [];
@@ -139,7 +138,6 @@ export const useObjectSelector = () => {
 
     return {
         onObjectSelector,
-        offObjectSelector
-    }
+        offObjectSelector,
+    };
 }
-

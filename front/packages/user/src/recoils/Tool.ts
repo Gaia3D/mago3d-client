@@ -1,4 +1,5 @@
 import { atom } from "recoil";
+import {Cartesian3} from "cesium";
 
 const ATOM_KEYS = {
   PRINT_PORTAL_OPEN: 'PrintPotalOpenState',
@@ -30,11 +31,11 @@ interface ViewOptions {
   compass: string,
 }
 
-// interface ObjectPosition {
-//   x: number,
-//   y: number,
-//   z: number,
-// }
+interface PickedObject {
+  id: string,
+  name: string,
+  position: Cartesian3 | undefined,
+}
 
 const DEFAULT_RENDER_OPTIONS = {
   isFxaa: true,
@@ -55,11 +56,11 @@ const DEFAULT_VIEW_OPTIONS = {
   compass: 'N',
 }
 
-// const DEFAULT_OBJECT_POSITION = {
-//   x: 0,
-//   y: 0,
-//   z: 0
-// }
+const DEFAULT_PICKED_OBJECT = {
+  id: '',
+  name: '',
+  position: undefined,
+}
 
 export const PrintPotalOpenState = atom<boolean>({
   key: ATOM_KEYS.PRINT_PORTAL_OPEN,
@@ -106,6 +107,7 @@ export type Options = {
   renderOptions: RenderOptions;
   defaultRenderOptions: RenderOptions;
   viewOptions: ViewOptions;
+  pickedObject: PickedObject;
   objectPosition: any;
   magoSsao?: any;
   magoEdge?: any;
@@ -133,6 +135,7 @@ export const OptionsState = atom<Options>({
     renderOptions: { ...DEFAULT_RENDER_OPTIONS },
     defaultRenderOptions: { ...DEFAULT_RENDER_OPTIONS },
     viewOptions: { ...DEFAULT_VIEW_OPTIONS },
+    pickedObject: { ...DEFAULT_PICKED_OBJECT },
     objectPosition: undefined,
     magoSsao: undefined,
     magoEdge: undefined,

@@ -2,27 +2,50 @@ import * as Cesium from "cesium";
 import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
 import {useState} from "react";
 import {useObjectSelector} from "@/api/object/useObjectSelector.ts";
+import {useObjectTranslation} from "@/api/object/useObjectTranslation.ts";
 
 export const useObjectTool = () => {
     const { globeController } = useGlobeController();
     const {onObjectSelector, offObjectSelector} = useObjectSelector();
-    let onSelector = false;
+    const [ localOptions, setLocalOptions ] = useState({
+        onSelector: false,
+        isTranslation: false,
+        isRotation: false,
+        isScaling: false,
+        isCopyObject: false,
+        isRemoveObject: false,
+        isAddFloor: false,
+        isRemoveFloor: false,
+        isColoring: false,
+        isBoundingVolume: false,
+    });
+
+    const {onObjectTranslation, offObjectTranslation} = useObjectTranslation();
 
     const toggleSelector = () => {
         const { viewer } = globeController;
         if (!viewer) return;
-        if (!onSelector) {
+        if (!localOptions.onSelector) {
             console.log("on")
             onObjectSelector(viewer);
         } else {
             console.log("off")
             offObjectSelector(viewer);
         }
-        onSelector = !onSelector;
+        localOptions.onSelector = !localOptions.onSelector;
     }
 
     const toggleTranslation = () => {
-        console.log("이동");
+        const { viewer } = globeController;
+        if (!viewer) return;
+        if (!localOptions.isTranslation) {
+            console.log("이동 on");
+            onObjectTranslation(viewer);
+        } else {
+            console.log("이동 off");
+            offObjectTranslation(viewer);
+        }
+        localOptions.isTranslation = !localOptions.isTranslation;
     }
 
     const toggleRotation = () => {
