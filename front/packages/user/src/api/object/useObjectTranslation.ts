@@ -5,7 +5,8 @@ import {OptionsState} from "@/recoils/Tool.ts";
 const START_UP_HEIGHT = 50;
 
 let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | undefined = undefined;
-let pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined = undefined;
+// let pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined = undefined;
+let pickedObject:  any = undefined;
 
 let startHeight: number | undefined = undefined;
 let startCartesian: Cesium.Cartesian3 | undefined = undefined;
@@ -41,7 +42,6 @@ export const useObjectTranslation = () => {
                 );
             }
             startCartesian = localStartCartesian;
-
             const originCartographic = Cesium.Cartographic.fromCartesian(localStartCartesian);
             // 시작 위치에서 위로 50m 이동한 위치 계산 왜 50인지는 모름
             const startUpCartesian = Cesium.Cartesian3.fromRadians(
@@ -76,7 +76,7 @@ export const useObjectTranslation = () => {
             }
         }
 
-        const mouseUpHandler = (event: any) => {
+        const mouseUpHandler = () => {
             if (!pickedObject) { return; }
             setOptions((prev) => ({
                 ...prev,
@@ -94,7 +94,7 @@ export const useObjectTranslation = () => {
             toggleCameraControl(true);
         }
 
-        const mouseMoveWithCtrlHandler = (moveEvent: any) => {
+        const mouseMoveWithCtrlHandler = (moveEvent: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
             if (pickedObject && Cesium.defined(pickedObject)) {
                 const { pickedModel } = getPickedModel(pickedObject);
 
@@ -138,7 +138,7 @@ export const useObjectTranslation = () => {
             }
         }
 
-        const mouseMoveHandler = (moveEvent: any) => {
+        const mouseMoveHandler = (moveEvent: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
             if (pickedObject && Cesium.defined(pickedObject)) {
                 const { pickedModel } = getPickedModel(pickedObject);
 
@@ -218,7 +218,7 @@ export const useObjectTranslation = () => {
         }
     }
 
-    const offObjectTranslation = (viewer: Cesium.Viewer) => {
+    const offObjectTranslation = () => {
         if (screenSpaceEventHandler) {
             screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN);
             screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_UP);

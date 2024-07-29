@@ -1,12 +1,16 @@
 import * as Cesium from "cesium";
 import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {useObjectSelector} from "@/api/object/useObjectSelector.ts";
 import {useObjectTranslation} from "@/api/object/useObjectTranslation.ts";
+import {offObjectRotation, onObjectRotation} from "@/api/object/useObjectRotation.ts";
+import {offFirstPersonView, onFirstPersonView} from "@/api/camera/magoFirstPersonView.ts";
 
 export const useObjectTool = () => {
     const { globeController } = useGlobeController();
     const {onObjectSelector, offObjectSelector} = useObjectSelector();
+    const {onObjectTranslation, offObjectTranslation} = useObjectTranslation();
+
     const [ localOptions, setLocalOptions ] = useState({
         onSelector: false,
         isTranslation: false,
@@ -20,37 +24,38 @@ export const useObjectTool = () => {
         isBoundingVolume: false,
     });
 
-    const {onObjectTranslation, offObjectTranslation} = useObjectTranslation();
+    type ToolName = keyof typeof localOptions;
 
-    const toggleSelector = () => {
+    const toggleObjectTool = useCallback((toolName: ToolName, onAction: () => void, offAction: () => void) => {
         const { viewer } = globeController;
         if (!viewer) return;
-        if (!localOptions.onSelector) {
-            console.log("on")
-            onObjectSelector(viewer);
-        } else {
-            console.log("off")
-            offObjectSelector(viewer);
-        }
-        localOptions.onSelector = !localOptions.onSelector;
-    }
 
-    const toggleTranslation = () => {
-        const { viewer } = globeController;
-        if (!viewer) return;
-        if (!localOptions.isTranslation) {
-            console.log("이동 on");
-            onObjectTranslation(viewer);
-        } else {
-            console.log("이동 off");
-            offObjectTranslation(viewer);
-        }
-        localOptions.isTranslation = !localOptions.isTranslation;
-    }
+        setLocalOptions((prevState) => {
+            const newState = { ...prevState, [toolName]: !prevState[toolName] };
+            if (newState[toolName]) {
+                onAction();
+            } else {
+                offAction();
+            }
+            return newState;
+        });
+    }, [globeController]);
 
-    const toggleRotation = () => {
-        console.log("회전");
-    }
+    const toggleSelector = () => toggleObjectTool('onSelector', () => {
+        if (globeController.viewer) onObjectSelector(globeController.viewer);
+    }, () => {
+        if (globeController.viewer) offObjectSelector(globeController.viewer);
+    });
+
+    const toggleTranslation = () => toggleObjectTool('isTranslation', () => {
+        if (globeController.viewer) onObjectTranslation(globeController.viewer);
+    }, () => {offObjectTranslation();});
+
+    const toggleRotation = () => toggleObjectTool('isRotation', () => {
+        if (globeController.viewer) onObjectRotation(globeController.viewer);
+    }, () => {
+        if (globeController.viewer) offObjectRotation(globeController.viewer);
+    });
 
     const toggleScaling = () => {
         console.log("크기 변경");
