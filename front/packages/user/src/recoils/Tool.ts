@@ -30,7 +30,12 @@ interface ViewOptions {
   compass: string,
 }
 
-// 기본 렌더 옵션 상수
+// interface ObjectPosition {
+//   x: number,
+//   y: number,
+//   z: number,
+// }
+
 const DEFAULT_RENDER_OPTIONS = {
   isFxaa: true,
   isShadow: true,
@@ -49,6 +54,12 @@ const DEFAULT_VIEW_OPTIONS = {
   heading: 360,
   compass: 'N',
 }
+
+// const DEFAULT_OBJECT_POSITION = {
+//   x: 0,
+//   y: 0,
+//   z: 0
+// }
 
 export const PrintPotalOpenState = atom<boolean>({
   key: ATOM_KEYS.PRINT_PORTAL_OPEN,
@@ -89,11 +100,13 @@ export type Options = {
   isTerrainTranslucent: boolean;
   isOpenClock: boolean;
   isOpenSetting: boolean;
+  isOpenObjectTool: boolean;
   isAnimation: boolean;
   isSetting: boolean;
   renderOptions: RenderOptions;
   defaultRenderOptions: RenderOptions;
   viewOptions: ViewOptions;
+  objectPosition: any;
   magoSsao?: any;
   magoEdge?: any;
   dateObject?: any;
@@ -114,11 +127,13 @@ export const OptionsState = atom<Options>({
     isTerrainTranslucent: false,
     isOpenClock: false,
     isOpenSetting: false,
+    isOpenObjectTool: false,
     isAnimation: false,
     isSetting: false,
     renderOptions: { ...DEFAULT_RENDER_OPTIONS },
     defaultRenderOptions: { ...DEFAULT_RENDER_OPTIONS },
     viewOptions: { ...DEFAULT_VIEW_OPTIONS },
+    objectPosition: undefined,
     magoSsao: undefined,
     magoEdge: undefined,
     dateObject: undefined,

@@ -1,0 +1,56 @@
+import React, { useEffect, useRef } from 'react';
+import * as Cesium from 'cesium';
+import { useRecoilState } from "recoil";
+import { OptionsState } from "@/recoils/Tool.ts";
+import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
+import {useObjectTool} from "@/hooks/useObjectTool.tsx";
+
+export const ObjectToolbox = () => {
+
+    const [options] = useRecoilState(OptionsState);
+    const SIDE_MENU_WIDTH = 350;
+
+    const divRef = useRef<HTMLDivElement>(null);
+    const { globeController, initialized } = useGlobeController();
+    const { viewer } = globeController;
+
+    const { toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, toggleRemoveObject, toggleAddFloor, toggleRemoveFloor, toggleColoring, toggleBoundingVolume } = useObjectTool();
+
+    useEffect(() => {
+        const labelDiv = divRef.current;
+        if (!labelDiv || !viewer) return;
+
+        // 위치 업데이트 함수
+        function updateDivPosition() {
+            const canvasPosition = viewer?.scene.cartesianToCanvasCoordinates(options.objectPosition);
+            if (Cesium.defined(canvasPosition) && labelDiv) {
+                labelDiv.style.left = `${canvasPosition.x + SIDE_MENU_WIDTH}px`;
+                labelDiv.style.top = `${canvasPosition.y}px`;
+            }
+        }
+
+        // 위치 업데이트 및 화면 리사이즈 시에도 위치 갱신
+        viewer.scene.postRender.addEventListener(updateDivPosition);
+        window.addEventListener('resize', updateDivPosition);
+
+        // Cleanup function
+        return () => {
+            viewer.scene.postRender.removeEventListener(updateDivPosition);
+            window.removeEventListener('resize', updateDivPosition);
+        };
+    }, [viewer, options.objectPosition, options.isOpenObjectTool]);
+
+    return options.isOpenObjectTool && (
+        <div ref={divRef} id="object-toolbox">
+            <button onClick={() => {toggleTranslation();}}>이동</button>
+            <button onClick={() => {toggleRotation();}}>회전</button>
+            <button onClick={() => {toggleScaling();}}>크기</button>
+            <button onClick={() => {toggleCopyObject();}}>복사</button>
+            <button onClick={() => {toggleRemoveObject();}}>삭제</button>
+            <button onClick={() => {toggleAddFloor();}}>층+</button>
+            <button onClick={() => {toggleRemoveFloor();}}>층-</button>
+            <button onClick={() => {toggleColoring();}}>색상</button>
+            <button onClick={() => {toggleBoundingVolume();}}>경계</button>
+        </div>
+    )
+}

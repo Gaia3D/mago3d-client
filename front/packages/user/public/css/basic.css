@@ -250,8 +250,9 @@ img.icon-24 {width: 24px;height: 24px;}
 .default-layer.camera-tool label > span {font-weight: bold;}
 
 /*object label*/
-#object-toolbox {position: absolute;z-index: 999;pointer-events: none;color: white;font-size: 12px;background: rgba(0, 0, 0, 0.5);padding: 5px;border-radius: 3px;}
-
+#object-toolbox {position: absolute;z-index: 999;color: white;font-size: 12px;background: rgba(0, 0, 0, 0.5);border-radius: 3px;}
+#object-toolbox button {width: 32px;height: 32px;margin: 2px;background-color: rgba(0, 0, 0, 0.6);color: white;}
+#object-toolbox button:hover {background-color: black;}
 /* aside */
 aside {width:350px; height:100vh; position:absolute; box-shadow:0 0 10px rgba(28,28,28,0.5);}
 aside.basic {background:white; height:100%; position:absolute; }
