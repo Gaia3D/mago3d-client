@@ -2,7 +2,6 @@ import {useCallback, useEffect, useState} from "react";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 import { offFirstPersonView, onFirstPersonView } from "@/api/camera/magoFirstPersonView.ts";
 import {offViewCenter, onViewCenter} from "@/api/camera/magoViewCenter.ts";
-import {offFloorEvents} from "@/api/object/magoBuildingFloor.ts";
 import {offViewPoint, onViewPoint} from "@/api/camera/magoViewPoint.ts";
 import {offViewAxis, onViewAxis} from "@/api/camera/magoViewAxis.ts";
 import {offCameraInformation, onCameraInformation} from "@/api/camera/magoCameraInformation.ts";
@@ -19,6 +18,7 @@ export const useViewTool = () => {
         isViewPoint: false,
         isViewAxis: false,
         isCameraTool: false,
+        isBoundingVolume: false,
     });
 
     type ToolName = keyof typeof localOptions;
@@ -68,12 +68,30 @@ export const useViewTool = () => {
             }
         }));
     }
+    const toggleBoundingVolume = () => {
+        const { viewer } = globeController;
+        if (!viewer) return;
+        const primitives = viewer.scene.primitives;
+        const length = primitives.length;
+        if (localOptions.isBoundingVolume) {
+            for (let i = 0; i < length; i++) {
+                primitives.get(i).debugShowBoundingVolume = false;
+            }
+            localOptions.isBoundingVolume = false;
+        } else {
+            for (let i = 0; i < length; i++) {
+                primitives.get(i).debugShowBoundingVolume = true;
+            }
+            localOptions.isBoundingVolume = true;
+        }
+    }
 
     return {
         toggleFirstPersonView,
         toggleViewCenter,
         toggleViewPoint,
         toggleViewAxis,
-        toggleCameraTool
+        toggleCameraTool,
+        toggleBoundingVolume
     };
 };

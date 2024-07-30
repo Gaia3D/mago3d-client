@@ -198,18 +198,21 @@ nav .logout:hover {opacity:1;}
 #toolbox-view-tool button.go-to-point {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 #toolbox-view-tool button.axis-view {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 #toolbox-view-tool button.camera-info {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
+#toolbox-view-tool button.bounding-volume {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -172px -301px;}
 
 #toolbox-view-tool button.first-person-view:hover, #toolbox-view-tool button.first-person-view.active {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 #toolbox-view-tool button.indoors:hover, #toolbox-view-tool button.indoors.active {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 #toolbox-view-tool button.go-to-point:hover, #toolbox-view-tool button.go-to-point.active {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 #toolbox-view-tool button.axis-view:hover, #toolbox-view-tool button.axis-view.active {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 #toolbox-view-tool button.camera-info:hover, #toolbox-view-tool button.camera-info.active {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
+#toolbox-view-tool button.bounding-volume:hover, #toolbox-view-tool button.bounding-volume.active {background:rgba(0,0,0,0.8) url(../images/icon.png) no-repeat -246px -301px;}
 
 #toolbox-view-tool button.first-person-view:hover .toolbox-txt {display:block;}
 #toolbox-view-tool button.indoors:hover .toolbox-txt {display:block;}
 #toolbox-view-tool button.go-to-point:hover .toolbox-txt {display:block;}
 #toolbox-view-tool button.axis-view:hover .toolbox-txt {display:block;}
 #toolbox-view-tool button.camera-info:hover .toolbox-txt {display:block;}
+#toolbox-view-tool button.bounding-volume:hover .toolbox-txt {display:block;}
 
 
 /*clock*/

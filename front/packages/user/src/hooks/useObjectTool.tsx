@@ -100,9 +100,5 @@ export const useObjectTool = () => {
         onObjectColoring(viewer, event.target.value);
     }
 
-    const toggleBoundingVolume = () => {
-        console.log("경계 표출");
-    }
-
-    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, objectColoring, toggleBoundingVolume}
+    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, objectColoring}
 }

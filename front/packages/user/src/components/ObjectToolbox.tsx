@@ -13,7 +13,7 @@ export const ObjectToolbox = () => {
     const { globeController } = useGlobeController();
     const { viewer } = globeController;
 
-    const { toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, objectColoring, toggleBoundingVolume } = useObjectTool();
+    const { toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, objectColoring } = useObjectTool();
 
     useEffect(() => {
         const labelDiv = divRef.current;
@@ -54,7 +54,6 @@ export const ObjectToolbox = () => {
             {options.isColoring && (
                 <input type="color" onChange={objectColoring}/>
             )}
-            <button onClick={toggleBoundingVolume}>경계</button>
         </div>
     );
 };

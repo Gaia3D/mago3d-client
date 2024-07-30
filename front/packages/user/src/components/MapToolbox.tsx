@@ -52,7 +52,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
     } = useMapTool();
     const {
         toggleFirstPersonView, toggleViewCenter, toggleViewPoint,
-        toggleViewAxis, toggleCameraTool
+        toggleViewAxis, toggleCameraTool, toggleBoundingVolume
     } = useViewTool();
 
     const { toggleSelector } = useObjectTool();
@@ -78,7 +78,8 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         { toolBoxIndex: 4, className: "go-to-point", label: "시점이동", group: CLICK_EVENT_GROUP, onClick: toggleViewPoint },
         { toolBoxIndex: 4, className: "axis-view", label: "축시점", group: CLICK_EVENT_GROUP, onClick: toggleViewAxis },
         { toolBoxIndex: 4, className: "camera-info", label: "카메라정보", group: TOOLBOX_SEP, onClick: toggleCameraTool },
-    ], [onClickHome, onClickLength, onClickArea, onClickAngle, onClickComplex, onClickSave, onClickExpand, onClickReduce, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool]);
+        { toolBoxIndex: 4, className: "bounding-volume", label: "경계선표시", group: TOOLBOX_SEP, onClick: toggleBoundingVolume },
+    ], [onClickHome, onClickLength, onClickArea, onClickAngle, onClickComplex, onClickSave, onClickExpand, onClickReduce, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool, toggleBoundingVolume]);
 
     const [tools, setTools] = useState<MapTool[]>(initialTools);
     const [expandedTools, setExpandedTools] = useState<{ [key: string]: boolean }>({
