@@ -8,7 +8,7 @@ import {offObjectScaling, onObjectScaling} from "@/api/object/useObjectScaling.t
 
 export const useObjectTool = () => {
     const { globeController } = useGlobeController();
-    const {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor} = useObjectSelector();
+    const {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor} = useObjectSelector();
     const {onObjectTranslation, offObjectTranslation} = useObjectTranslation();
 
     const [ localOptions, setLocalOptions ] = useState({
@@ -77,7 +77,9 @@ export const useObjectTool = () => {
     }
 
     const objectRemoveFloor = () => {
-        console.log("층 -");
+        const { viewer } = globeController;
+        if (!viewer) return;
+        removeBuildingFloor(viewer);
     }
 
     const toggleColoring = () => {

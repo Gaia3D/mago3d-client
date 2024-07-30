@@ -76,6 +76,8 @@ export const useObjectSelector = () => {
         leftClickHandler = async function (movement: any) {
             silhouetteGreen.selected = [];
             let pickedFeature = viewer.scene.pick(movement.position);
+            if(!pickedFeature) return;
+
             currentFeature = pickedFeature;
 
             if (pickedFeature?.id instanceof Cesium.Entity) {
@@ -226,10 +228,37 @@ export const useObjectSelector = () => {
         }, 100);
     }
 
+    const removeBuildingFloor = (viewer: Cesium.Viewer) => {
+        const entityCollection = currentFeature.id.entityCollection;
+        const entities = entityCollection.values;
+        const length = entities.length;
+        const lastEntity = entities[length - 1];
+
+        entityCollection.remove(lastEntity);
+
+        // relocate the building
+        const modelMatrix = currentFeature.primitive.modelMatrix;
+        currentFeature.id.entityCollection.show = false;
+        setTimeout(() => {
+            if (currentFeature) {
+                const owner = currentFeature.id.entityCollection.owner;
+                const primitives = owner._primitives._primitives;
+                for (let i = 1; i < primitives.length; i++) {
+                    const primitive = primitives[i];
+                    if (primitive instanceof Cesium.Primitive) {
+                        primitive.modelMatrix = modelMatrix;
+                    }
+                }
+                currentFeature.id.entityCollection.show = true;
+            }
+        }, 100);
+    }
+
     return {
         onObjectSelector,
         offObjectSelector,
         onRemoveObject,
         addBuildingFloor,
+        removeBuildingFloor,
     };
 }
