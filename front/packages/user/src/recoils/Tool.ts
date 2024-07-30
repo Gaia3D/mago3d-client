@@ -4,6 +4,7 @@ import {Cartesian3} from "cesium";
 const ATOM_KEYS = {
   PRINT_PORTAL_OPEN: 'PrintPotalOpenState',
   MEASURE_POSITION_OPEN: 'MeasurePositionOpenState',
+  MEASURE_RADIUS_OPEN: 'MeasureRadiusOpenState',
   MEASURE_DISTANCE_OPEN: 'MeasureDistanceOpenState',
   MEASURE_AREA_OPEN: 'MeasureAreaOpenState',
   MEASURE_ANGLE_OPEN: 'MeasureAngleOpenState',
@@ -70,6 +71,11 @@ export const PrintPotalOpenState = atom<boolean>({
 
 export const MeasurePositionOpenState = atom<boolean>({
   key: ATOM_KEYS.MEASURE_POSITION_OPEN,
+  default: false,
+});
+
+export const MeasureRadiusOpenState = atom<boolean>({
+  key: ATOM_KEYS.MEASURE_RADIUS_OPEN,
   default: false,
 });
 
@@ -153,7 +159,7 @@ export const OptionsState = atom<Options>({
   }
 })
 
-export type ToolStatus = "position" | "angles" | "length" | "area" | "composite" | "search" | null;
+export type ToolStatus = "position" | "radius" | "angles" | "length" | "area" | "composite" | "search" | null;
 
 export const ToolStatusState = atom<ToolStatus>({
   key: 'ToolStatusState',

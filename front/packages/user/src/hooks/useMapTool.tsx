@@ -6,7 +6,7 @@ import {
   MeasureAngleOpenState,
   MeasureAreaOpenState,
   MeasureComplexOpenState,
-  MeasureDistanceOpenState, MeasurePositionOpenState,
+  MeasureDistanceOpenState, MeasurePositionOpenState, MeasureRadiusOpenState,
   Options,
   OptionsState,
   PrintPotalOpenState,
@@ -26,6 +26,7 @@ export const useMapTool = () => {
   const setLoadingState = useSetRecoilState<LoadingStateType>(loadingState);
   const [printPortalOpen, setPrintPortalOpen] = useRecoilState(PrintPotalOpenState);
   const setMeasurePositionOpen = useSetRecoilState(MeasurePositionOpenState);
+  const setMeasureRadiusOpen = useSetRecoilState(MeasureRadiusOpenState);
   const setMeasureDistanceOpen = useSetRecoilState(MeasureDistanceOpenState);
   const setMeasureAreaOpen = useSetRecoilState(MeasureAreaOpenState);
   const setMeasureAngleOpen = useSetRecoilState(MeasureAngleOpenState);
@@ -124,6 +125,11 @@ export const useMapTool = () => {
   const toggleCoordinate = () => {
     setToolStatus((prev) => (prev === "position" ? null : "position"));
     setMeasurePositionOpen((prev) => !prev);
+  }
+
+  const toggleMeasureRadius = () => {
+    setToolStatus((prev) => (prev === "radius" ? null : "radius"));
+    setMeasureRadiusOpen((prev) => !prev);
   }
 
   const onClickLength = () => {
@@ -294,5 +300,5 @@ export const useMapTool = () => {
     }));
   };
 
-  return { toggleCoordinate, angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, initWebStorage, toolStatus};
+  return { toggleCoordinate, toggleMeasureRadius, angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, initWebStorage, toolStatus};
 };

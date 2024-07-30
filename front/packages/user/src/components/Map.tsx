@@ -15,6 +15,7 @@ import {SettingTool} from "./maptool/SettingTool.tsx";
 import {CameraInfoDisplay} from "@/components/maptool/CameraInfoDisplay.tsx";
 import {ObjectToolbox} from "./ObjectToolbox.tsx";
 import {MeasurePosition} from "@/components/maptool/MeasurePosition.tsx";
+import {MeasureRadius} from "@/components/maptool/MeasureRadius.tsx";
 
 const Globe = () => {
     const cesiumContainer = useRef<HTMLDivElement>(null);
@@ -29,6 +30,7 @@ const Globe = () => {
             <MeasureArea />
             <MeasureAngle />
             <MeasureComplex />
+            <MeasureRadius />
             <SearchCoordinate />
             <AnalysisFilter />
             <AnalResult />

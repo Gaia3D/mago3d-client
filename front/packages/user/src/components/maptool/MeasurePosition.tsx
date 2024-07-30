@@ -19,7 +19,6 @@ const getUnitFactor = (unit: string) => {
     }
 }
 
-
 export const MeasurePosition = () => {
     const el = document.querySelector("#map");
     const [open, setOpen] = useRecoilState(MeasurePositionOpenState);
@@ -33,7 +32,6 @@ export const MeasurePosition = () => {
         const { toolDataSource } = globeController;
         toolDataSource.entities.removeAll();
         setResult({ lat: 0, lon: 0, height: 0 });
-        console.log("init")
     }
 
     useEffect(() => {
@@ -45,7 +43,6 @@ export const MeasurePosition = () => {
 
             handler.setInputAction((movement: any) => {
                 const cartesian = globeController.pickPosition(movement.position);
-                console.log(cartesian);
                 if ( !cartesian ) return;
 
                 const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
