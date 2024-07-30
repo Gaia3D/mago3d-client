@@ -6,7 +6,7 @@ import {
   MeasureAngleOpenState,
   MeasureAreaOpenState,
   MeasureComplexOpenState,
-  MeasureDistanceOpenState,
+  MeasureDistanceOpenState, MeasurePositionOpenState,
   Options,
   OptionsState,
   PrintPotalOpenState,
@@ -25,6 +25,7 @@ export const useMapTool = () => {
   const [toolStatus, setToolStatus] = useRecoilState(ToolStatusState);
   const setLoadingState = useSetRecoilState<LoadingStateType>(loadingState);
   const [printPortalOpen, setPrintPortalOpen] = useRecoilState(PrintPotalOpenState);
+  const setMeasurePositionOpen = useSetRecoilState(MeasurePositionOpenState);
   const setMeasureDistanceOpen = useSetRecoilState(MeasureDistanceOpenState);
   const setMeasureAreaOpen = useSetRecoilState(MeasureAreaOpenState);
   const setMeasureAngleOpen = useSetRecoilState(MeasureAngleOpenState);
@@ -119,6 +120,11 @@ export const useMapTool = () => {
     viewer.camera.zoomOut(20000);
     setToolStatus(null);
   };
+
+  const toggleCoordinate = () => {
+    setToolStatus((prev) => (prev === "position" ? null : "position"));
+    setMeasurePositionOpen((prev) => !prev);
+  }
 
   const onClickLength = () => {
     setToolStatus((prev) => (prev === "length" ? null : "length"));
@@ -288,5 +294,5 @@ export const useMapTool = () => {
     }));
   };
 
-  return { angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, initWebStorage, toolStatus};
+  return { toggleCoordinate, angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, initWebStorage, toolStatus};
 };

@@ -27,7 +27,7 @@ const ToolButton = ({ tool, handleClick }: { tool: MapTool, handleClick: (tool: 
     >{tool.label}</button>
 );
 
-export const ObjectToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
+export const ObjectToolbox = () => {
     const [options] = useRecoilState(OptionsState);
     const SIDE_MENU_WIDTH = 350;
 
