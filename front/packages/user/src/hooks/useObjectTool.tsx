@@ -4,12 +4,11 @@ import {useCallback, useState} from "react";
 import {useObjectSelector} from "@/api/object/useObjectSelector.ts";
 import {useObjectTranslation} from "@/api/object/useObjectTranslation.ts";
 import {offObjectRotation, onObjectRotation} from "@/api/object/useObjectRotation.ts";
-import {offFirstPersonView, onFirstPersonView} from "@/api/camera/magoFirstPersonView.ts";
 import {offObjectScaling, onObjectScaling} from "@/api/object/useObjectScaling.ts";
 
 export const useObjectTool = () => {
     const { globeController } = useGlobeController();
-    const {onObjectSelector, offObjectSelector} = useObjectSelector();
+    const {onObjectSelector, offObjectSelector, onRemoveObject} = useObjectSelector();
     const {onObjectTranslation, offObjectTranslation} = useObjectTranslation();
 
     const [ localOptions, setLocalOptions ] = useState({
@@ -18,7 +17,6 @@ export const useObjectTool = () => {
         isRotation: false,
         isScaling: false,
         isCopyObject: false,
-        isRemoveObject: false,
         isAddFloor: false,
         isRemoveFloor: false,
         isColoring: false,
@@ -65,9 +63,11 @@ export const useObjectTool = () => {
     const toggleCopyObject = () => {
         console.log("건물 복사");
     }
-    
-    const toggleRemoveObject = () => {
-        console.log("건물 삭제");
+
+    const removeObject = () => {
+        const { viewer } = globeController;
+        if (!viewer) return;
+        onRemoveObject(viewer);
     }
 
     const toggleAddFloor = () => {
@@ -86,5 +86,5 @@ export const useObjectTool = () => {
         console.log("경계 표출");
     }
 
-    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, toggleRemoveObject, toggleAddFloor, toggleRemoveFloor, toggleColoring, toggleBoundingVolume}
+    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, toggleAddFloor, toggleRemoveFloor, toggleColoring, toggleBoundingVolume}
 }

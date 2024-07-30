@@ -13,7 +13,7 @@ export const ObjectToolbox = () => {
     const { globeController } = useGlobeController();
     const { viewer } = globeController;
 
-    const { toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, toggleRemoveObject, toggleAddFloor, toggleRemoveFloor, toggleColoring, toggleBoundingVolume } = useObjectTool();
+    const { toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, toggleAddFloor, toggleRemoveFloor, toggleColoring, toggleBoundingVolume } = useObjectTool();
 
     useEffect(() => {
         const labelDiv = divRef.current;
@@ -21,7 +21,7 @@ export const ObjectToolbox = () => {
 
         // 위치 업데이트 함수
         function updateDivPosition() {
-            if(!options.pickedObject.position) return;
+            if (!options.pickedObject || !options.pickedObject.position) return;
 
             const canvasPosition = viewer?.scene.cartesianToCanvasCoordinates(options.pickedObject.position);
             if (Cesium.defined(canvasPosition) && labelDiv) {
@@ -39,7 +39,7 @@ export const ObjectToolbox = () => {
             viewer.scene.postRender.removeEventListener(updateDivPosition);
             window.removeEventListener('resize', updateDivPosition);
         };
-    }, [viewer, options.pickedObject.position]);
+    }, [viewer, options.pickedObject?.position]);
 
     return options.isOpenObjectTool && (
         <div ref={divRef} id="object-toolbox">
@@ -47,7 +47,7 @@ export const ObjectToolbox = () => {
             <button onClick={toggleRotation}>회전</button>
             <button onClick={toggleScaling}>크기</button>
             <button onClick={toggleCopyObject}>복사</button>
-            <button onClick={toggleRemoveObject}>삭제</button>
+            <button onClick={removeObject}>삭제</button>
             <button onClick={toggleAddFloor}>층+</button>
             <button onClick={toggleRemoveFloor}>층-</button>
             <button onClick={toggleColoring}>색상</button>

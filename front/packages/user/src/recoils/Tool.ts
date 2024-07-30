@@ -108,7 +108,6 @@ export type Options = {
   defaultRenderOptions: RenderOptions;
   viewOptions: ViewOptions;
   pickedObject: PickedObject;
-  objectPosition: any;
   magoSsao?: any;
   magoEdge?: any;
   dateObject?: any;
@@ -136,7 +135,6 @@ export const OptionsState = atom<Options>({
     defaultRenderOptions: { ...DEFAULT_RENDER_OPTIONS },
     viewOptions: { ...DEFAULT_VIEW_OPTIONS },
     pickedObject: { ...DEFAULT_PICKED_OBJECT },
-    objectPosition: undefined,
     magoSsao: undefined,
     magoEdge: undefined,
     dateObject: undefined,

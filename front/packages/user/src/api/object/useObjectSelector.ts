@@ -1,6 +1,8 @@
 import * as Cesium from "cesium";
 import { useRecoilState } from "recoil";
 import { OptionsState } from "@/recoils/Tool.ts";
+let currentFeature: any = undefined;
+
 
 export const useObjectSelector = () => {
     const [options, setOptions] = useRecoilState(OptionsState);
@@ -10,9 +12,10 @@ export const useObjectSelector = () => {
     };
     const selectedEntity = new Cesium.Entity();
 
-    let mouseMoveHandler: any;
-    let leftClickHandler: any;
-    let silhouetteStage: any;
+    let mouseMoveHandler: any = undefined;
+    let leftClickHandler: any = undefined;
+    let silhouetteStage: any = undefined;
+
 
     function addDivElement() {
         setOptions((prevOptions) => ({
@@ -71,6 +74,7 @@ export const useObjectSelector = () => {
         leftClickHandler = async function (movement: any) {
             silhouetteGreen.selected = [];
             let pickedFeature = viewer.scene.pick(movement.position);
+            currentFeature = pickedFeature;
 
             if (pickedFeature?.id instanceof Cesium.Entity) {
                 pickedFeature = pickedFeature.id;
@@ -132,12 +136,45 @@ export const useObjectSelector = () => {
         setOptions((prevOptions) => ({
             ...prevOptions,
             isOpenObjectTool: false,
-            objectPosition: undefined,
+            pickedObject: {
+                ...prevOptions.pickedObject,
+                position: undefined
+            }
         }));
+        currentFeature = undefined;
     };
+
+    const onRemoveObject = (viewer: Cesium.Viewer) => {
+        if(!confirm("해당 건물을 삭제하시겠습니까?")) return;
+        if (!currentFeature || !viewer) return;
+        if (currentFeature && Cesium.defined(currentFeature)) {
+            if (currentFeature?.primitive instanceof Cesium.Primitive) {
+                const entityCollection = currentFeature.id.entityCollection;
+                entityCollection.removeAll()
+            } else if (currentFeature?.primitive instanceof Cesium.Cesium3DTileset) {
+                const tileset = currentFeature.primitive;
+                viewer.scene.primitives.remove(tileset);
+            } else if (currentFeature?.primitive instanceof Cesium.Model) {
+                const model = currentFeature.primitive;
+                viewer.scene.primitives.remove(model);
+            }
+        }
+        currentFeature = undefined;
+        setOptions((prevOptions) => ({
+            ...prevOptions,
+            isOpenObjectTool: false,
+            pickedObject: {
+                id: '',
+                name: '',
+                position: undefined,
+            },
+        }));
+    }
 
     return {
         onObjectSelector,
         offObjectSelector,
+        onRemoveObject,
+
     };
 }
