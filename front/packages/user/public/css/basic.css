@@ -256,6 +256,7 @@ img.icon-24 {width: 24px;height: 24px;}
 #object-toolbox {position: absolute;z-index: 999;color: white;font-size: 12px;background: rgba(0, 0, 0, 0.5);border-radius: 3px;}
 #object-toolbox button {width: 32px;height: 32px;margin: 2px;background-color: rgba(0, 0, 0, 0.6);color: white;}
 #object-toolbox button:hover {background-color: black;}
+#object-toolbox button.active {background-color: white; color: black}
 #object-toolbox input {padding: 0;width: 32px;height: 20px;margin: 2px;background-color: rgba(0, 0, 0, 0.6);color: white;}
 
 /* aside */
