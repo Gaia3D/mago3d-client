@@ -34,13 +34,9 @@ export const useObjectTranslation = () => {
                 // 위치 선택이 지원되는 경우
                 localStartCartesian = viewer.scene.pickPosition(event.position);
             }
-            if (!localStartCartesian) {
-                // 위치 선택이 지원되지 않는 경우
-                localStartCartesian = viewer.camera.pickEllipsoid(
-                    event.position,
-                    scene.globe.ellipsoid
-                );
-            }
+            localStartCartesian = localStartCartesian || viewer.camera.pickEllipsoid(event.position, scene.globe.ellipsoid);
+            if (!localStartCartesian) return;
+
             startCartesian = localStartCartesian;
             const originCartographic = Cesium.Cartographic.fromCartesian(localStartCartesian);
             // 시작 위치에서 위로 50m 이동한 위치 계산 왜 50인지는 모름

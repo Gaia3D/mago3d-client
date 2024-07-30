@@ -4,7 +4,6 @@ import { OptionsState } from "@/recoils/Tool.ts";
 
 let currentFeature: any = undefined;
 const color = Cesium.Color.ORANGE;
-let tempColor : any = undefined;
 
 export const useObjectSelector = () => {
     const [options, setOptions] = useRecoilState(OptionsState);
@@ -176,11 +175,7 @@ export const useObjectSelector = () => {
     }
 
     const addBuildingFloor = (viewer : Cesium.Viewer) => {
-
-        const scene = viewer.scene;
-        if (currentFeature?.primitive instanceof Cesium.Primitive) {
-            tempColor = currentFeature.id.polygon.material;
-        } else {
+        if (!(currentFeature?.primitive instanceof Cesium.Primitive)) {
             return;
         }
 
@@ -294,12 +289,68 @@ export const useObjectSelector = () => {
         }
     }
 
-    return {
-        onObjectSelector,
-        offObjectSelector,
-        onRemoveObject,
-        addBuildingFloor,
-        removeBuildingFloor,
-        onObjectColoring
-    };
+    const onObjectCopy = (viewer: Cesium.Viewer) => {
+        if (currentFeature && Cesium.defined(currentFeature)) {
+            if (currentFeature?.primitive instanceof Cesium.Primitive) {
+                const entityCollection = currentFeature.id.entityCollection;
+                const customDataSource = new Cesium.CustomDataSource();
+                const entities = entityCollection._entities._array;
+                for (let i = 0; i < entities.length; i++) {
+                    const entity = entities[i];
+                    const polygon = entity.polygon;
+                    const newEntity = new Cesium.Entity({
+                        polygon: {
+                            hierarchy: polygon.hierarchy._value,
+                            material: polygon.material,
+                            outline: polygon.outline._value,
+                            height: polygon.height._value,
+                            extrudedHeight: polygon.extrudedHeight._value,
+                            shadows: polygon.shadows._value,
+                            outlineColor: polygon.outlineColor._value,
+                        },
+                        //show: false,
+                    });
+                    customDataSource.entities.add(newEntity);
+                    customDataSource.show = false;
+                }
+
+                setTimeout(() => {
+                    const modelMatrix = currentFeature.primitive.modelMatrix;
+                    /* @ts-expect-error: null */
+                    const primitives = customDataSource._primitives._primitives;
+                    for (let i = 1; i < primitives.length; i++) {
+                        const primitive = primitives[i];
+                        if (primitive instanceof Cesium.Primitive) {
+                            primitive.modelMatrix = modelMatrix;
+                        }
+                    }
+                    customDataSource.show = true;
+                }, 100);
+                viewer.dataSources.add(customDataSource);
+            } else if (currentFeature?.primitive instanceof Cesium.Cesium3DTileset) {
+                const tileset = currentFeature.primitive;
+                const tilesetCopy = tileset.clone();
+                tilesetCopy.readyPromise.then(() => {
+                    tilesetCopy.show = true;
+                    viewer.scene.primitives.add(tilesetCopy);
+                });
+            } else if (currentFeature?.primitive instanceof Cesium.Model) {
+                const model = currentFeature.primitive;
+                const url = model._resource.url;
+
+                const modelCopy = Cesium.Model.fromGltfAsync({
+                    url: url,
+                    //show: false,
+                    modelMatrix: model.modelMatrix,
+                    scale: model.scale,
+                });
+                modelCopy.then((modelCopy) => {
+                    //modelCopy.show = true;
+                    viewer.scene.primitives.add(modelCopy);
+                });
+            }
+        }
+    }
+
+    return {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor, onObjectColoring, onObjectCopy};
 }

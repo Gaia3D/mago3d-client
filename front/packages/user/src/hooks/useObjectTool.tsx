@@ -1,4 +1,3 @@
-import * as Cesium from "cesium";
 import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
 import {useCallback, useState} from "react";
 import {useObjectSelector} from "@/api/object/useObjectSelector.ts";
@@ -7,11 +6,10 @@ import {offObjectRotation, onObjectRotation} from "@/api/object/useObjectRotatio
 import {offObjectScaling, onObjectScaling} from "@/api/object/useObjectScaling.ts";
 import {useRecoilState} from "recoil";
 import {OptionsState} from "@/recoils/Tool.ts";
-import {paddedDate, paddedTime} from "@/components/dateUtils.ts";
 
 export const useObjectTool = () => {
     const { globeController } = useGlobeController();
-    const {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor, onObjectColoring} = useObjectSelector();
+    const {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor, onObjectColoring, onObjectCopy} = useObjectSelector();
     const {onObjectTranslation, offObjectTranslation} = useObjectTranslation();
 
     const [options, setOptions] = useRecoilState(OptionsState);
@@ -65,8 +63,10 @@ export const useObjectTool = () => {
         if (globeController.viewer) onObjectScaling(globeController.viewer);
     }, () => {offObjectScaling();});
 
-    const toggleCopyObject = () => {
-        console.log("건물 복사");
+    const copyObject = () => {
+        const { viewer } = globeController;
+        if (!viewer) return;
+        onObjectCopy(viewer);
     }
 
     const removeObject = () => {
@@ -100,5 +100,5 @@ export const useObjectTool = () => {
         onObjectColoring(viewer, event.target.value);
     }
 
-    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, objectColoring}
+    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, copyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, objectColoring}
 }
