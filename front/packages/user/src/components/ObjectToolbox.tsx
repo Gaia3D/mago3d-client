@@ -13,7 +13,7 @@ export const ObjectToolbox = () => {
     const { globeController } = useGlobeController();
     const { viewer } = globeController;
 
-    const { toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, toggleAddFloor, toggleRemoveFloor, toggleColoring, toggleBoundingVolume } = useObjectTool();
+    const { toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, toggleBoundingVolume } = useObjectTool();
 
     useEffect(() => {
         const labelDiv = divRef.current;
@@ -48,8 +48,8 @@ export const ObjectToolbox = () => {
             <button onClick={toggleScaling}>크기</button>
             <button onClick={toggleCopyObject}>복사</button>
             <button onClick={removeObject}>삭제</button>
-            <button onClick={toggleAddFloor}>층+</button>
-            <button onClick={toggleRemoveFloor}>층-</button>
+            <button onClick={objectAddFloor}>층+</button>
+            <button onClick={objectRemoveFloor}>층-</button>
             <button onClick={toggleColoring}>색상</button>
             <button onClick={toggleBoundingVolume}>경계</button>
         </div>

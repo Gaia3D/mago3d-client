@@ -1,8 +1,10 @@
 import * as Cesium from "cesium";
 import { useRecoilState } from "recoil";
 import { OptionsState } from "@/recoils/Tool.ts";
-let currentFeature: any = undefined;
 
+let currentFeature: any = undefined;
+const color = Cesium.Color.ORANGE;
+let tempColor : any = undefined;
 
 export const useObjectSelector = () => {
     const [options, setOptions] = useRecoilState(OptionsState);
@@ -171,10 +173,63 @@ export const useObjectSelector = () => {
         }));
     }
 
+    const addBuildingFloor = (viewer : Cesium.Viewer) => {
+
+        const scene = viewer.scene;
+        if (currentFeature?.primitive instanceof Cesium.Primitive) {
+            tempColor = currentFeature.id.polygon.material;
+        } else {
+            return;
+        }
+
+        const entityCollection = currentFeature.id.entityCollection;
+        const entities = entityCollection.values;
+        const length = entities.length;
+        const lastEntity = entities[length - 1];
+        const lastPolygon = lastEntity.polygon;
+
+        const polygonHierarchy = lastPolygon.hierarchy;
+        const positions = polygonHierarchy.getValue().positions;
+
+        const floorHeight = lastPolygon.extrudedHeight.getValue() - lastPolygon.height.getValue(); // 2.5
+        const altitude = lastPolygon.extrudedHeight.getValue();
+        const extrudedHeight = lastPolygon.extrudedHeight.getValue() + floorHeight;
+        const newEntity = new Cesium.Entity({
+            polygon: {
+                hierarchy: new Cesium.PolygonHierarchy(positions),
+                material: color,
+                outline: false,
+                height: altitude,
+                extrudedHeight: extrudedHeight,
+                shadows: Cesium.ShadowMode.ENABLED,
+                outlineColor: color.withAlpha(0.5),
+            }
+        });
+        entityCollection.add(newEntity);
+
+        // relocate the building
+        const modelMatrix = currentFeature.primitive.modelMatrix;
+        currentFeature.id.entityCollection.show = false;
+
+        setTimeout(() => {
+            if (currentFeature) {
+                const owner = currentFeature.id.entityCollection.owner;
+                const primitives = owner._primitives._primitives;
+                for (let i = 1; i < primitives.length; i++) {
+                    const primitive = primitives[i];
+                    if (primitive instanceof Cesium.Primitive) {
+                        primitive.modelMatrix = modelMatrix;
+                    }
+                }
+                currentFeature.id.entityCollection.show = true;
+            }
+        }, 100);
+    }
+
     return {
         onObjectSelector,
         offObjectSelector,
         onRemoveObject,
-
+        addBuildingFloor,
     };
 }

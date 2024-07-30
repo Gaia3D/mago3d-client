@@ -8,7 +8,7 @@ import {offObjectScaling, onObjectScaling} from "@/api/object/useObjectScaling.t
 
 export const useObjectTool = () => {
     const { globeController } = useGlobeController();
-    const {onObjectSelector, offObjectSelector, onRemoveObject} = useObjectSelector();
+    const {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor} = useObjectSelector();
     const {onObjectTranslation, offObjectTranslation} = useObjectTranslation();
 
     const [ localOptions, setLocalOptions ] = useState({
@@ -70,11 +70,13 @@ export const useObjectTool = () => {
         onRemoveObject(viewer);
     }
 
-    const toggleAddFloor = () => {
-        console.log("층 +");
+    const objectAddFloor = () => {
+        const { viewer } = globeController;
+        if (!viewer) return;
+        addBuildingFloor(viewer);
     }
 
-    const toggleRemoveFloor = () => {
+    const objectRemoveFloor = () => {
         console.log("층 -");
     }
 
@@ -86,5 +88,5 @@ export const useObjectTool = () => {
         console.log("경계 표출");
     }
 
-    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, toggleAddFloor, toggleRemoveFloor, toggleColoring, toggleBoundingVolume}
+    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, toggleBoundingVolume}
 }
