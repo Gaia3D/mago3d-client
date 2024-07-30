@@ -254,11 +254,52 @@ export const useObjectSelector = () => {
         }, 100);
     }
 
+    const onObjectColoring = (viewer:Cesium.Viewer, pickedColor: string) => {
+        if (currentFeature.primitive instanceof Cesium.Primitive) {
+            if (currentFeature.id.entityCollection) {
+                const modelMatrix = currentFeature.primitive.modelMatrix;
+                const entityCollection = currentFeature.id.entityCollection;
+                const entities = entityCollection._entities._array;
+                entities.forEach((entity : any) => {
+                    const polygon = entity.polygon;
+                    if (polygon) {
+                        polygon.material = Cesium.Color.fromCssColorString(pickedColor);
+                    }
+                });
+
+                currentFeature.id.entityCollection.show = false;
+                setTimeout(() => {
+                    if (currentFeature) {
+                        const owner = currentFeature.id.entityCollection.owner;
+                        const primitives = owner._primitives._primitives;
+                        for (let i = 1; i < primitives.length; i++) {
+                            const primitive = primitives[i];
+                            if (primitive instanceof Cesium.Primitive) {
+                                primitive.modelMatrix = modelMatrix;
+                            }
+                        }
+                        currentFeature.id.entityCollection.show = true;
+                    }
+                }, 100);
+            } else {
+                currentFeature.primitive.color = Cesium.Color.fromCssColorString(pickedColor);
+            }
+
+        } else if (currentFeature.primitive instanceof Cesium.Model) {
+            currentFeature.primitive.color = Cesium.Color.fromCssColorString(pickedColor);
+        } else if (currentFeature.primitive instanceof Cesium.Cesium3DTileset) {
+            currentFeature.primitive.style = new Cesium.Cesium3DTileStyle({
+                color: `color('${pickedColor}')`
+            });
+        }
+    }
+
     return {
         onObjectSelector,
         offObjectSelector,
         onRemoveObject,
         addBuildingFloor,
         removeBuildingFloor,
+        onObjectColoring
     };
 }

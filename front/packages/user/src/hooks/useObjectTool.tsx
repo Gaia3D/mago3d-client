@@ -5,11 +5,16 @@ import {useObjectSelector} from "@/api/object/useObjectSelector.ts";
 import {useObjectTranslation} from "@/api/object/useObjectTranslation.ts";
 import {offObjectRotation, onObjectRotation} from "@/api/object/useObjectRotation.ts";
 import {offObjectScaling, onObjectScaling} from "@/api/object/useObjectScaling.ts";
+import {useRecoilState} from "recoil";
+import {OptionsState} from "@/recoils/Tool.ts";
+import {paddedDate, paddedTime} from "@/components/dateUtils.ts";
 
 export const useObjectTool = () => {
     const { globeController } = useGlobeController();
-    const {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor} = useObjectSelector();
+    const {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor, onObjectColoring} = useObjectSelector();
     const {onObjectTranslation, offObjectTranslation} = useObjectTranslation();
+
+    const [options, setOptions] = useRecoilState(OptionsState);
 
     const [ localOptions, setLocalOptions ] = useState({
         onSelector: false,
@@ -83,12 +88,21 @@ export const useObjectTool = () => {
     }
 
     const toggleColoring = () => {
-        console.log("색상 변경");
+        setOptions((prevOptions) => ({
+            ...prevOptions,
+            isColoring: !prevOptions.isColoring
+        }));
+    }
+
+    const objectColoring = (event: any) => {
+        const { viewer } = globeController;
+        if (!viewer) return;
+        onObjectColoring(viewer, event.target.value);
     }
 
     const toggleBoundingVolume = () => {
         console.log("경계 표출");
     }
 
-    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, toggleBoundingVolume}
+    return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, toggleCopyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, objectColoring, toggleBoundingVolume}
 }
