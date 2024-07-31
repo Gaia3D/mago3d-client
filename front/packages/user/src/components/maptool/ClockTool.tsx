@@ -18,8 +18,8 @@ export const ClockTool = () => {
 
     return options.isOpenClock && (
         <div className="default-layer clock">
-            <input type="date" value={options.date} onChange={onChangeDate}/>
-            <input type="time" value={options.time} onChange={onChangeDate}/>
+            <input type="date" name="date" value={options.date} onChange={onChangeDate}/>
+            <input type="time" name="time" value={options.time} onChange={onChangeDate}/>
             <div>
                 <label>Multiplier</label>
                 <input type="range" list="tickmarks" value={options.speed} onChange={onChangeSpeed} min="1" max="4096"/>
