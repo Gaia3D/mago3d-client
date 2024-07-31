@@ -46,7 +46,7 @@ export const useObjectTool = () => {
     const toggleObjectTool = useCallback((toolName: ToolName, onAction: () => void, offAction: () => void) => {
         const { viewer } = globeController;
         if (!viewer) return;
-        console.log(`${toolName} 불렀으`)
+
         setLocalOptions((prevState) => {
             const newState = { ...prevState, [toolName]: !prevState[toolName] };
             if (newState[toolName]) {

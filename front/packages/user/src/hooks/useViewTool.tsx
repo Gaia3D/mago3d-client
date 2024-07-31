@@ -4,7 +4,6 @@ import { offFirstPersonView, onFirstPersonView } from "@/api/camera/magoFirstPer
 import {offViewCenter, onViewCenter} from "@/api/camera/magoViewCenter.ts";
 import {offViewPoint, onViewPoint} from "@/api/camera/magoViewPoint.ts";
 import {offViewAxis, onViewAxis} from "@/api/camera/magoViewAxis.ts";
-import {offCameraInformation, onCameraInformation} from "@/api/camera/magoCameraInformation.ts";
 import { OptionsState } from "@/recoils/Tool";
 import {useRecoilState} from "recoil";
 
@@ -68,23 +67,19 @@ export const useViewTool = () => {
             }
         }));
     }
-    const toggleBoundingVolume = () => {
+    const toggleBoundingVolume = useCallback(() => {
         const { viewer } = globeController;
         if (!viewer) return;
         const primitives = viewer.scene.primitives;
-        const length = primitives.length;
-        if (localOptions.isBoundingVolume) {
-            for (let i = 0; i < length; i++) {
-                primitives.get(i).debugShowBoundingVolume = false;
-            }
-            localOptions.isBoundingVolume = false;
-        } else {
-            for (let i = 0; i < length; i++) {
-                primitives.get(i).debugShowBoundingVolume = true;
-            }
-            localOptions.isBoundingVolume = true;
+        const showBoundingVolume = !localOptions.isBoundingVolume;
+        for (let i = 0; i < primitives.length; i++) {
+            primitives.get(i).debugShowBoundingVolume = showBoundingVolume;
         }
-    }
+        setLocalOptions(prevState => ({
+            ...prevState,
+            isBoundingVolume: showBoundingVolume
+        }));
+    }, [globeController, localOptions.isBoundingVolume]);
 
     return {
         toggleFirstPersonView,

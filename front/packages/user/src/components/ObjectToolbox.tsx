@@ -27,7 +27,7 @@ const ToolButton = ({ tool, handleClick }: { tool: MapTool, handleClick: (tool: 
     >{tool.label}</button>
 );
 
-export const ObjectToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
+export const ObjectToolbox = () => {
     const [options] = useRecoilState(OptionsState);
     const SIDE_MENU_WIDTH = 350;
 
@@ -70,7 +70,6 @@ export const ObjectToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         setTools(prevState =>
             prevState.map(tool => {
                 if (isPrevTool(tool, clickedTool) && tool.active) {
-                    console.log(`이전 ${tool.className} 도구 끄기`)
                     tool.onClick?.();  // 이전 활성화된 도구의 onClick 호출
                 }
                 return tool;

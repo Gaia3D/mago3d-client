@@ -46,7 +46,7 @@ const ExpandableToolBox = ({ tools, toolBoxIndex, handleClick, expanded, toggleE
 export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
     const {
         angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea,
-        onClickLength, onClickAngle, onClickSave, onClickPrint, onClickComplex,
+        onClickLength, onClickAngle, onClickSave, onClickPrint, onClickComplex, toggleCoordinate, toggleMeasureRadius,
         toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent,
         toggleClock, toggleSetting
     } = useMapTool();
@@ -59,10 +59,12 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
 
     const initialTools: MapTool[] = useMemo(() => [
         { toolBoxIndex: 1, className: "home", label: "초기화", group: TOOLBOX_SEP, onClick: onClickHome },
+        { toolBoxIndex: 1, className: "position", label: "위치측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleCoordinate },
         { toolBoxIndex: 1, className: "length", label: "길이측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickLength },
         { toolBoxIndex: 1, className: "area", label: "면적측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickArea },
         { toolBoxIndex: 1, className: "angles", label: "각도", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickAngle },
         { toolBoxIndex: 1, className: "composite", label: "복합거리", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickComplex },
+        { toolBoxIndex: 1, className: "radius", label: "반지름측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleMeasureRadius },
         { toolBoxIndex: 1, className: "save", label: "저장하기", group: TOOLBOX_SEP, onClick: onClickSave },
         { toolBoxIndex: 1, className: "selector", label: "객체선택", group: CLICK_EVENT_GROUP, onClick: toggleSelector },
         { toolBoxIndex: 2, className: "expand", label: "확대", group: TOOLBOX_SEP, onClick: onClickExpand },
