@@ -1,9 +1,9 @@
-import * as Cesium from 'cesium';
-import { MeasureRadiusOpenState, ToolStatus, ToolStatusState } from "@/recoils/Tool";
-import { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
+import * as Cesium from 'cesium';
+import { MeasureRadiusOpenState, ToolStatus, ToolStatusState } from "@/recoils/Tool";
+import ReactDOM from "react-dom";
 
 const color = Cesium.Color.RED;
 const getUnitFactor = (unit: string) => {
@@ -19,7 +19,6 @@ const getUnitFactor = (unit: string) => {
     }
 }
 
-let status = false;
 let startCartesian : Cesium.Cartesian3 | undefined = undefined;
 let endCartesian : Cesium.Cartesian3 | undefined = undefined;
 
@@ -29,12 +28,12 @@ let lineEntity : Cesium.Entity | undefined = undefined;
 let radiusEntity : Cesium.Entity | undefined = undefined;
 
 const clearEntities = (toolDataSource: Cesium.CustomDataSource) => {
-    if( !lineEntity || !startEntity || !endEntity || !radiusEntity) return;
+    if(!lineEntity || !startEntity || !endEntity || !radiusEntity) return;
     toolDataSource.entities.remove(lineEntity);
     toolDataSource.entities.remove(startEntity);
     toolDataSource.entities.remove(endEntity);
     toolDataSource.entities.remove(radiusEntity);
-    lineEntity = undefined
+    lineEntity = undefined;
     startEntity = undefined;
     endEntity = undefined;
     radiusEntity = undefined;
@@ -45,8 +44,9 @@ export const MeasureRadius = () => {
     const [open, setOpen] = useRecoilState(MeasureRadiusOpenState);
     const [unit, setUnit] = useState("m");
     const [result, setResult] = useState('0 m');
+    const status = useRef(false);
     const {globeController} = useGlobeController();
-    const setSelectedTool = useSetRecoilState<ToolStatus>(ToolStatusState);
+    const setSelectedTool = useSetRecoilState(ToolStatusState);
 
     const getUnitDistance = (distance:number) => `${Math.round(distance / getUnitFactor(unit) * 100) / 100} ${unit}`;
 
@@ -55,7 +55,6 @@ export const MeasureRadius = () => {
         toolDataSource.entities.removeAll();
         setResult(`0 ${unit}`);
     }
-
 
     useEffect(() => {
         const { handler, toolDataSource } = globeController;
@@ -68,8 +67,8 @@ export const MeasureRadius = () => {
                 const cartesian = globeController.pickPosition(movement.position);
                 if ( !cartesian ) return;
 
-                if (!status) {
-                    status = true;
+                if (!status.current) {
+                    status.current = true;
                     clearEntities(toolDataSource);
                     startCartesian = cartesian;
                     endCartesian = cartesian;
@@ -138,9 +137,8 @@ export const MeasureRadius = () => {
                         },
                     });
 
-
                 } else {
-                    status = false;
+                    status.current = false;
                     endCartesian = cartesian;
 
                     if (startCartesian && endCartesian) {
@@ -151,7 +149,7 @@ export const MeasureRadius = () => {
             }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
             handler.setInputAction((moveEvent: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
-                if (!status) {return;}
+                if (!status.current) return;
                 const cartesian = globeController.pickPosition(moveEvent.endPosition);
                 if (!cartesian) return;
 
