@@ -1,4 +1,5 @@
 import { atom } from "recoil";
+import {Cartesian3} from "cesium";
 
 const ATOM_KEYS = {
   PRINT_PORTAL_OPEN: 'PrintPotalOpenState',
@@ -30,7 +31,12 @@ interface ViewOptions {
   compass: string,
 }
 
-// 기본 렌더 옵션 상수
+interface PickedObject {
+  id: string,
+  name: string,
+  position: Cartesian3 | undefined,
+}
+
 const DEFAULT_RENDER_OPTIONS = {
   isFxaa: true,
   isShadow: true,
@@ -48,6 +54,12 @@ const DEFAULT_VIEW_OPTIONS = {
   height: 0,
   heading: 360,
   compass: 'N',
+}
+
+const DEFAULT_PICKED_OBJECT = {
+  id: '',
+  name: '',
+  position: undefined,
 }
 
 export const PrintPotalOpenState = atom<boolean>({
@@ -89,11 +101,14 @@ export type Options = {
   isTerrainTranslucent: boolean;
   isOpenClock: boolean;
   isOpenSetting: boolean;
+  isOpenObjectTool: boolean;
   isAnimation: boolean;
   isSetting: boolean;
+  isColoring: boolean;
   renderOptions: RenderOptions;
   defaultRenderOptions: RenderOptions;
   viewOptions: ViewOptions;
+  pickedObject: PickedObject;
   magoSsao?: any;
   magoEdge?: any;
   dateObject?: any;
@@ -114,11 +129,14 @@ export const OptionsState = atom<Options>({
     isTerrainTranslucent: false,
     isOpenClock: false,
     isOpenSetting: false,
+    isOpenObjectTool: false,
     isAnimation: false,
     isSetting: false,
+    isColoring: false,
     renderOptions: { ...DEFAULT_RENDER_OPTIONS },
     defaultRenderOptions: { ...DEFAULT_RENDER_OPTIONS },
     viewOptions: { ...DEFAULT_VIEW_OPTIONS },
+    pickedObject: { ...DEFAULT_PICKED_OBJECT },
     magoSsao: undefined,
     magoEdge: undefined,
     dateObject: undefined,
