@@ -1,11 +1,15 @@
 import * as Cesium from "cesium";
 import { useRecoilState } from "recoil";
 import { OptionsState } from "@/recoils/Tool.ts";
+import {useEffect, useState} from "react";
+import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
 
 let currentFeature: any = undefined;
 const color = Cesium.Color.ORANGE;
 
 export const useObjectSelector = () => {
+    const { globeController } = useGlobeController();
+    const { viewer } = globeController;
     const [options, setOptions] = useRecoilState(OptionsState);
     const selected = {
         feature: undefined,
@@ -16,7 +20,14 @@ export const useObjectSelector = () => {
     let mouseMoveHandler: any = undefined;
     let leftClickHandler: any = undefined;
     let silhouetteStage: any = undefined;
+    // let silhouetteStage: Cesium.PostProcessStage | undefined = undefined;
+    // const [currentFeature, setCurrentFeature] = useState<any>(undefined);
 
+    useEffect(() => {
+        return () => {
+            if (viewer) offObjectSelector(viewer); // 컴포넌트 언마운트 시 이벤트 핸들러 제거
+        };
+    }, []);
 
     function addDivElement() {
         setOptions((prevOptions) => ({
@@ -204,23 +215,7 @@ export const useObjectSelector = () => {
         });
         entityCollection.add(newEntity);
 
-        // relocate the building
-        const modelMatrix = currentFeature.primitive.modelMatrix;
-        currentFeature.id.entityCollection.show = false;
-
-        setTimeout(() => {
-            if (currentFeature) {
-                const owner = currentFeature.id.entityCollection.owner;
-                const primitives = owner._primitives._primitives;
-                for (let i = 1; i < primitives.length; i++) {
-                    const primitive = primitives[i];
-                    if (primitive instanceof Cesium.Primitive) {
-                        primitive.modelMatrix = modelMatrix;
-                    }
-                }
-                currentFeature.id.entityCollection.show = true;
-            }
-        }, 100);
+        relocateBuilding(currentFeature);
     }
 
     const removeBuildingFloor = (viewer: Cesium.Viewer) => {
@@ -231,28 +226,12 @@ export const useObjectSelector = () => {
 
         entityCollection.remove(lastEntity);
 
-        // relocate the building
-        const modelMatrix = currentFeature.primitive.modelMatrix;
-        currentFeature.id.entityCollection.show = false;
-        setTimeout(() => {
-            if (currentFeature) {
-                const owner = currentFeature.id.entityCollection.owner;
-                const primitives = owner._primitives._primitives;
-                for (let i = 1; i < primitives.length; i++) {
-                    const primitive = primitives[i];
-                    if (primitive instanceof Cesium.Primitive) {
-                        primitive.modelMatrix = modelMatrix;
-                    }
-                }
-                currentFeature.id.entityCollection.show = true;
-            }
-        }, 100);
+        relocateBuilding(currentFeature);
     }
 
     const onObjectColoring = (viewer:Cesium.Viewer, pickedColor: string) => {
         if (currentFeature.primitive instanceof Cesium.Primitive) {
             if (currentFeature.id.entityCollection) {
-                const modelMatrix = currentFeature.primitive.modelMatrix;
                 const entityCollection = currentFeature.id.entityCollection;
                 const entities = entityCollection._entities._array;
                 entities.forEach((entity : any) => {
@@ -263,19 +242,7 @@ export const useObjectSelector = () => {
                 });
 
                 currentFeature.id.entityCollection.show = false;
-                setTimeout(() => {
-                    if (currentFeature) {
-                        const owner = currentFeature.id.entityCollection.owner;
-                        const primitives = owner._primitives._primitives;
-                        for (let i = 1; i < primitives.length; i++) {
-                            const primitive = primitives[i];
-                            if (primitive instanceof Cesium.Primitive) {
-                                primitive.modelMatrix = modelMatrix;
-                            }
-                        }
-                        currentFeature.id.entityCollection.show = true;
-                    }
-                }, 100);
+                relocateBuilding(currentFeature);
             } else {
                 currentFeature.primitive.color = Cesium.Color.fromCssColorString(pickedColor);
             }
@@ -350,7 +317,26 @@ export const useObjectSelector = () => {
                 });
             }
         }
+        alert("건물이 복사되었습니다.");
     }
+
+    const relocateBuilding = (feature: any) => {
+        const modelMatrix = feature.primitive.modelMatrix;
+        feature.id.entityCollection.show = false;
+        setTimeout(() => {
+            if (feature) {
+                const owner = feature.id.entityCollection.owner;
+                const primitives = owner._primitives._primitives;
+                for (let i = 1; i < primitives.length; i++) {
+                    const primitive = primitives[i];
+                    if (primitive instanceof Cesium.Primitive) {
+                        primitive.modelMatrix = modelMatrix;
+                    }
+                }
+                feature.id.entityCollection.show = true;
+            }
+        }, 100);
+    };
 
     return {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor, onObjectColoring, onObjectCopy};
 }

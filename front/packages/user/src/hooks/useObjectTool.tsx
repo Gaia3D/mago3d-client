@@ -1,16 +1,15 @@
 import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useObjectSelector} from "@/api/object/useObjectSelector.ts";
-import {useObjectTranslation} from "@/api/object/useObjectTranslation.ts";
-import {offObjectRotation, onObjectRotation} from "@/api/object/useObjectRotation.ts";
-import {offObjectScaling, onObjectScaling} from "@/api/object/useObjectScaling.ts";
 import {useRecoilState} from "recoil";
 import {OptionsState} from "@/recoils/Tool.ts";
+import ObjectTranslationHandler from "@/api/object/useObjectTranslation.ts";
+import ObjectRotationHandler from "@/api/object/useObjectRotation.ts";
+import ObjectScalingHandler from "@/api/object/useObjectScaling.ts";
 
 export const useObjectTool = () => {
     const { globeController } = useGlobeController();
     const {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor, onObjectColoring, onObjectCopy} = useObjectSelector();
-    const {onObjectTranslation, offObjectTranslation} = useObjectTranslation();
 
     const [options, setOptions] = useRecoilState(OptionsState);
 
@@ -26,12 +25,28 @@ export const useObjectTool = () => {
         isBoundingVolume: false,
     });
 
+    const transitionHandlerRef = useRef<ObjectTranslationHandler | null>(null);
+    const rotationHandlerRef = useRef<ObjectRotationHandler | null>(null);
+    const scalingHandlerRef = useRef<ObjectScalingHandler | null>(null);
+
+    useEffect(() => {
+        if (globeController.viewer && !transitionHandlerRef.current) {
+            transitionHandlerRef.current = new ObjectTranslationHandler(globeController.viewer, setOptions);
+        }
+        if (globeController.viewer && !rotationHandlerRef.current) {
+            rotationHandlerRef.current = new ObjectRotationHandler(globeController.viewer);
+        }
+        if (globeController.viewer && !scalingHandlerRef.current) {
+            scalingHandlerRef.current = new ObjectScalingHandler(globeController.viewer);
+        }
+    }, [globeController.viewer]);
+
     type ToolName = keyof typeof localOptions;
 
     const toggleObjectTool = useCallback((toolName: ToolName, onAction: () => void, offAction: () => void) => {
         const { viewer } = globeController;
         if (!viewer) return;
-
+        console.log(`${toolName} 불렀으`)
         setLocalOptions((prevState) => {
             const newState = { ...prevState, [toolName]: !prevState[toolName] };
             if (newState[toolName]) {
@@ -50,55 +65,59 @@ export const useObjectTool = () => {
     });
 
     const toggleTranslation = () => toggleObjectTool('isTranslation', () => {
-        if (globeController.viewer) onObjectTranslation(globeController.viewer);
-    }, () => {offObjectTranslation();});
+        transitionHandlerRef.current?.enable();
+    }, () => {
+        transitionHandlerRef.current?.disable();
+    });
 
     const toggleRotation = () => toggleObjectTool('isRotation', () => {
-        if (globeController.viewer) onObjectRotation(globeController.viewer);
+        rotationHandlerRef.current?.enable();
     }, () => {
-        if (globeController.viewer) offObjectRotation(globeController.viewer);
+        rotationHandlerRef.current?.disable();
     });
 
     const toggleScaling = () => toggleObjectTool('isScaling', () => {
-        if (globeController.viewer) onObjectScaling(globeController.viewer);
-    }, () => {offObjectScaling();});
+        scalingHandlerRef.current?.enable();
+    }, () => {
+        scalingHandlerRef.current?.disable();
+    });
 
-    const copyObject = () => {
+    const copyObject = useCallback(() => {
         const { viewer } = globeController;
         if (!viewer) return;
         onObjectCopy(viewer);
-    }
+    }, [globeController, onObjectCopy]);
 
-    const removeObject = () => {
+    const removeObject = useCallback(() => {
         const { viewer } = globeController;
         if (!viewer) return;
         onRemoveObject(viewer);
-    }
+    }, [globeController, onRemoveObject]);
 
-    const objectAddFloor = () => {
+    const objectAddFloor = useCallback(() => {
         const { viewer } = globeController;
         if (!viewer) return;
         addBuildingFloor(viewer);
-    }
+    }, [globeController, addBuildingFloor]);
 
-    const objectRemoveFloor = () => {
+    const objectRemoveFloor = useCallback(() => {
         const { viewer } = globeController;
         if (!viewer) return;
         removeBuildingFloor(viewer);
-    }
+    }, [globeController, removeBuildingFloor]);
 
-    const toggleColoring = () => {
+    const toggleColoring = useCallback(() => {
         setOptions((prevOptions) => ({
             ...prevOptions,
             isColoring: !prevOptions.isColoring
         }));
-    }
+    }, [setOptions]);
 
-    const objectColoring = (event: any) => {
+    const objectColoring = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const { viewer } = globeController;
         if (!viewer) return;
         onObjectColoring(viewer, event.target.value);
-    }
+    }, [globeController, onObjectColoring]);
 
     return {toggleSelector, toggleTranslation, toggleRotation, toggleScaling, copyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, objectColoring}
 }
