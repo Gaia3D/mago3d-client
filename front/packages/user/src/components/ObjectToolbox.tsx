@@ -41,7 +41,7 @@ export const ObjectToolbox = () => {
         { toolBoxIndex: 1, className: "translation", label: "이동", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleTranslation },
         { toolBoxIndex: 1, className: "rotation", label: "회전", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleRotation },
         { toolBoxIndex: 1, className: "scaling", label: "크기", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleScaling },
-        { toolBoxIndex: 1, className: "copy", label: "복사", group: CLICK_EVENT_GROUP, toggle: true, onClick: copyObject },
+        { toolBoxIndex: 1, className: "copy", label: "복사", onClick: copyObject },
         { toolBoxIndex: 1, className: "remove", label: "삭제", onClick: removeObject },
         { toolBoxIndex: 1, className: "add-floor", label: "층+", onClick: objectAddFloor },
         { toolBoxIndex: 1, className: "remove-floor", label: "층-", onClick: objectRemoveFloor },
@@ -55,7 +55,6 @@ export const ObjectToolbox = () => {
         tool.group !== undefined && tool.className !== clickedTool.className;
 
     const updateToolActiveState = useCallback((clickedTool: MapTool) => {
-        console.log(clickedTool.className)
         setTools(prevState =>
             prevState.map(tool =>
                 isPrevTool(tool, clickedTool)
