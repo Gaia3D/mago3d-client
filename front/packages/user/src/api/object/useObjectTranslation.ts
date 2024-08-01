@@ -121,10 +121,7 @@ class ObjectTranslationHandler {
         const pickedModel = this.getPickedModel(this.pickedObject);
         if (!pickedModel) return;
 
-        const intersection = this.calculateIntersection(moveEvent, this.horizontalPlane);
-        if (!intersection) return;
-
-        const translation = this.calculateTranslation(intersection);
+        const translation = this.calculateTranslation(moveEvent);
         this.updateModelMatrix(pickedModel, translation);
     }
 
@@ -160,19 +157,42 @@ class ObjectTranslationHandler {
         return { surface, offset };
     }
 
-    private calculateIntersection(moveEvent: Cesium.ScreenSpaceEventHandler.MotionEvent, plane: Cesium.Plane | undefined): Cesium.Cartesian3 | undefined {
-        if (!plane) return undefined;
-        const ray = this.viewer.camera.getPickRay(moveEvent.endPosition);
-        if (!ray) return undefined;
-        return Cesium.IntersectionTests.rayPlane(ray, plane, new Cesium.Cartesian3());
-    }
+    private calculateTranslation(moveEvent: Cesium.ScreenSpaceEventHandler.MotionEvent): Cesium.Cartesian3 {
+        const ellipsoid = Cesium.Ellipsoid.WGS84;
+        if (!this.startCartesian || !this.startHeight || !this.horizontalPlane) {
+            return new Cesium.Cartesian3();
+        }
+        const startCartographic = Cesium.Cartographic.fromCartesian(this.startCartesian, ellipsoid);
+        const startHeight = this.startHeight;
+        const startRay = this.viewer.camera.getPickRay(moveEvent.startPosition);
+        const endRay = this.viewer.camera.getPickRay(moveEvent.endPosition);
 
-    private calculateTranslation(intersection: Cesium.Cartesian3): Cesium.Cartesian3 {
-        const inverseMatrix = new Cesium.Matrix4();
-        const transform = Cesium.Transforms.eastNorthUpToFixedFrame(this.startCartesian!);
-        Cesium.Matrix4.inverse(transform, inverseMatrix);
-        const intersectionLocal = Cesium.Matrix4.multiplyByPoint(inverseMatrix, intersection, new Cesium.Cartesian3());
-        return Cesium.Cartesian3.fromElements(0, 0, intersectionLocal.z, new Cesium.Cartesian3());
+        if (!startRay || !endRay || !startCartographic || !startHeight) {
+            return new Cesium.Cartesian3();
+        }
+        const startIntersection = Cesium.IntersectionTests.rayPlane(startRay, this.horizontalPlane, new Cesium.Cartesian3());
+        const endIntersection = Cesium.IntersectionTests.rayPlane(endRay, this.horizontalPlane, new Cesium.Cartesian3());
+
+        if (!startIntersection || !endIntersection || !startCartographic || !startHeight) {
+            return new Cesium.Cartesian3();
+        }
+        const startRayHeight = startIntersection.z;
+        const endRayHeight = endIntersection.z;
+
+        const left = Cesium.Cartesian3.fromRadians(
+            startCartographic.longitude,
+            startCartographic.latitude,
+            startHeight - startRayHeight,
+            ellipsoid
+        );
+        const right = Cesium.Cartesian3.fromRadians(
+            startCartographic.longitude,
+            startCartographic.latitude,
+            startHeight - endRayHeight,
+            ellipsoid
+        );
+
+        return Cesium.Cartesian3.subtract(left, right, new Cesium.Cartesian3());
     }
 
     private updateModelMatrix(pickedModel: any, translation: Cesium.Cartesian3) {
