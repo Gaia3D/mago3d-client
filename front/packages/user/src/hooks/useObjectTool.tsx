@@ -107,10 +107,12 @@ export const useObjectTool = () => {
     }, [globeController, removeBuildingFloor]);
 
     const toggleColoring = useCallback(() => {
-        setOptions((prevOptions) => ({
-            ...prevOptions,
-            isColoring: !prevOptions.isColoring
-        }));
+        setTimeout(() => {
+            setOptions((prevOptions) => ({
+                ...prevOptions,
+                isColoring: !prevOptions.isColoring
+            }));
+        }, 0);
     }, [setOptions]);
 
     const objectColoring = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
