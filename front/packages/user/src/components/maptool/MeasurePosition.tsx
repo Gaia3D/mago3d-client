@@ -84,7 +84,7 @@ export const MeasurePosition = () => {
         <div className="dialog-distance darkMode">
             <div className="dialog-title">
                 <h3>위치측정</h3>
-                <button className="close floatRight" onClick={()=>{setOpen(false); setSelectedTool(null);}}></button>
+                {/*<button className="close floatRight" onClick={()=>{setOpen(false); setSelectedTool(null);}}></button>*/}
             </div>
             <div className="dialog-content">
                 <div>
