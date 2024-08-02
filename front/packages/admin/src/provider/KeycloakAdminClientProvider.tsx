@@ -12,11 +12,14 @@ export const useKcAdminClient = () => useContext(KeycloakAdminClientContext);
 const KeycloakAdminClientProvider = ({ children }: {children:React.ReactNode}) => {
     //const [kcacAuth, setKcacAuth] = useState(false);
 
-    const { protocol, hostname, port } = window.location;
-    // 포트가 있는 경우 콜론과 함께 포트 번호를 추가
-    const portPart = port ? `:${port}` : '';
-    // 전체 URL 구성
-    const baseUrl = `${protocol}//${hostname}${portPart}${import.meta.env.VITE_AUTH_URL}`;
+    let baseUrl = `${import.meta.env.VITE_AUTH_URL}`;
+    if (import.meta.env.MODE !== 'development') {
+        const { protocol, hostname, port } = window.location;
+        // 포트가 있는 경우 콜론과 함께 포트 번호를 추가
+        const portPart = port ? `:${port}` : '';
+        // 전체 URL 구성
+        baseUrl = `${protocol}//${hostname}${portPart}${import.meta.env.VITE_AUTH_URL}`;
+    }
 
     const kcAdminClient = new KcAdminClient({
         baseUrl,

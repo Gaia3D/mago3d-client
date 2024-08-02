@@ -8,8 +8,10 @@ const SignInfo = () => {
 
   return (
     <>
-      <span className="user-info">{keycloak.profile?.firstName} 님</span>
-      <a href="#" className="logout" onClick={logout}></a>
+      <div style={{display:"flex"}}>
+        <span className="user-info">{keycloak.profile?.firstName} 님</span>
+        <a href="#" className="logout" onClick={logout}></a>
+      </div>
     </>
   )
 }

@@ -3,8 +3,10 @@ import {userSearchState} from "@src/recoils/User";
 import {produce} from "immer";
 import {UserSearchConditionDivision, UserSearchConditionTarget} from "@src/types/User";
 import {SubmitHandler, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 
 export const SearchCondition = () => {
+  const {t} = useTranslation();
   const [searchState, setSearchState] = useRecoilState(userSearchState);
   type FormType = {
     target: UserSearchConditionTarget;
@@ -42,39 +44,39 @@ export const SearchCondition = () => {
     <div className="search-bx">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="search-bx-01">
-          <label>검색어</label>
+          <label>{t("search-word")}</label>
           <select {...register("target")}>
-            <option value="">선택</option>
-            <option value="username">아이디</option>
-            <option value="name">사용자명</option>
-            <option value="unit">소속부대</option>
+            <option value="">{t("select")}</option>
+            <option value="username">{t("user-id")}</option>
+            <option value="name">{t("user-name")}</option>
+            <option value="unit">{t("division-unit")}</option>
           </select>
           {
             watchTarget === 'unit'
               ?
               <select {...register("division")}>
-                <option value="army">육군</option>
-                <option value="navy">해군</option>
-                <option value="airforce">공군</option>
-                <option value="marines">해병</option>
-                <option value="personnel">국직</option>
+                <option value="army">{t("army")}</option>
+                <option value="navy">{t("navy")}</option>
+                <option value="airforce">{t("airforce")}</option>
+                <option value="marines">{t("marines")}</option>
+                <option value="personnel">{t("personnel")}</option>
               </select>
               :
               <>
                 <select {...register("exact")}>
-                  <option value="true">일치</option>
-                  <option value="false">포함</option>
+                  <option value="true">{t("equals")}</option>
+                  <option value="false">{t("contains")}</option>
                 </select>
               </>
           }
           <input type="text" className="" {...register("keyword")}/>
         </div>
         <div className="search-bx-02">
-          <label>상태</label>
+          <label>{t("state")}</label>
           <select {...register("enabled")}>
-            <option value="">전체</option>
-            <option value="true">사용중</option>
-            <option value="false">사용중지</option>
+            <option value="">{t("all")}</option>
+            <option value="true">{t("use")}</option>
+            <option value="false">{t("stop-using")}</option>
           </select>
         </div>
         {/* <div className="search-bx-01">
@@ -82,14 +84,14 @@ export const SearchCondition = () => {
                 <input type="date" /><span className="txt">~</span><input type="date" />
             </div> */}
         <div className="search-bx-02">
-          <label>표시개수</label>
+          <label>{t("display-count")}</label>
           <select {...register("pageSize")}>
-            <option value={10}>10개씩</option>
-            <option value={50}>50개씩</option>
-            <option value={100}>100개씩</option>
+            <option value={10}>{t("10-each")}</option>
+            <option value={50}>{t("50-each")}</option>
+            <option value={100}>{t("100-each")}</option>
           </select>
         </div>
-        <button type="submit" className="btn-search">검색</button>
+        <button type="submit" className="btn-search">{t("search")}</button>
       </form>
     </div>
   )

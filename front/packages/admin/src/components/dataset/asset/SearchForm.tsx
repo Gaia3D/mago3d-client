@@ -12,8 +12,10 @@ import {
 import {DataItemSize, DataSearchQueryOption, DataSearchTarget} from "@src/types/Data";
 import {useRef} from "react";
 import {AssetType, ProcessTaskStatus} from "@src/generated/gql/dataset/graphql";
+import {useTranslation} from "react-i18next";
 
 const SearchForm = () => {
+    const {t} = useTranslation();
     const setPage = useSetRecoilState<number>(dataCurrentPageState);
     const [dataItemSize, setDataItemSize] = useRecoilState<DataItemSize>(dataItemSizeState);
     const [createDateFrom, setCreateDateFrom] = useRecoilState<string | undefined>(dataCreateDateFromState);
@@ -68,21 +70,21 @@ const SearchForm = () => {
     return (
         <div className="search-bx">
             <div className="search-bx-01">
-                <label htmlFor="data-list-search-text">검색어</label>
+                <label htmlFor="data-list-search-text">{t('search-word')}</label>
                 <select defaultValue={currentSearchTarget} ref={searchTargetRef}>
-                    <option value="data">데이터명</option>
-                    <option value="group">데이터그룹</option>
+                    <option value="data">{t('data-name')}</option>
+                    <option value="group">{t('group')}</option>
                 </select>
                 <select defaultValue={currentSearchQueryOption} ref={searchQueryOptionRef}>
-                    <option value="eq">일치</option>
-                    <option value="contains">포함</option>
+                    <option value="eq">{t('equals')}</option>
+                    <option value="contains">{t('contains')}</option>
                 </select>
                 <input id="data-list-search-text" type="text" className="" defaultValue={currentSearchText} ref={searchTextRef}/>
             </div>
             <div className="search-bx-02">
-                <label>타입</label>
+                <label>{t('type')}</label>
                 <select defaultValue={dataAssetType} ref={dataAssetTypeRef}>
-                    <option value="">전체</option>
+                    <option value="">{t('all')}</option>
                     {
                         Object.keys(AssetType).map((key) => {
                             return <option key={key} value={AssetType[key]}>{AssetType[key]}</option>
@@ -91,36 +93,34 @@ const SearchForm = () => {
                 </select>
             </div>
             <div className="search-bx-01">
-                <label htmlFor="data-list-create-date-from">등록일</label>
+                <label htmlFor="data-list-create-date-from">{t('created-at')}</label>
                 <input type="date" id="data-list-create-date-from" defaultValue={createDateFrom} ref={createDateFromRef}/>
                 <span className="txt">~</span>
                 <label htmlFor="data-list-create-date-to"></label>
                 <input type="date" id="data-list-create-date-to" defaultValue={createDateTo} ref={createDateToRef}/>
             </div>
             <div className="search-bx-02">
-                <label htmlFor="data-list-process-status">상태</label>
+                <label htmlFor="data-list-process-status">{t('status')}</label>
                 <select id="data-list-process-status" defaultValue={processStatus} ref={processStatusRef}>
-                    <option value="">전체</option>
-                    <option value="None">없음</option>
-                    <option value="Ready">준비</option>
-                    <option value="Running">진행중</option>
-                    <option value="Terminating">종료중</option>
-                    <option value="Terminated">종료</option>
-                    <option value="Done">완료</option>
-                    <option value="Error">에러</option>
+                    <option value="">{t('all')}</option>
+                    {
+                        Object.keys(ProcessTaskStatus).map((key) => {
+                            return <option key={key} value={ProcessTaskStatus[key]}>{t(ProcessTaskStatus[key])}</option>
+                        })
+                    }
                 </select>
             </div>
             <div className="search-bx-01">
-                <label>표시개수</label>
+                <label>{t('display-count')}</label>
                 <select defaultValue={dataItemSize} ref={dataItemSizeRef}>
-                    <option value={10}>10개씩</option>
-                    <option value={50}>50개씩</option>
-                    <option value={100}>100개씩</option>
+                    <option value={10}>{t('10-each')}</option>
+                    <option value={50}>{t('50-each')}</option>
+                    <option value={100}>{t('100-each')}</option>
                 </select>
             </div>
             <div style={{float: "right"}}>
-                <button type="button" className="btn-search-init" onClick={resetSearchParam}>초기화</button>
-                <button type="button" className="btn-search" onClick={setSearchParam}>검색</button>
+                <button type="button" className="btn-search-init" onClick={resetSearchParam}>{t('reset')}</button>
+                <button type="button" className="btn-search" onClick={setSearchParam}>{t('search')}</button>
             </div>
         </div>
     )
