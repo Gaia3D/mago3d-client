@@ -147,20 +147,24 @@ export const useObjectSelector = () => {
             viewer.scene.postProcessStages.remove(silhouetteStage);
             silhouetteStage = undefined;
         }
-        setOptions((prevOptions) => ({
-            ...prevOptions,
-            isOpenObjectTool: false,
-            pickedObject: {
-                ...prevOptions.pickedObject,
-                position: undefined
-            }
-        }));
+        setTimeout(() => {
+            setOptions((prevOptions) => ({
+                ...prevOptions,
+                isOpenObjectTool: false,
+                pickedObject: {
+                    id: '',
+                    name: '',
+                    position: undefined
+                }
+            }));
+        }, 0);
         currentFeature = undefined;
     };
 
     const onRemoveObject = (viewer: Cesium.Viewer) => {
         if(!confirm("해당 건물을 삭제하시겠습니까?")) return;
         if (!currentFeature || !viewer) return;
+
         if (currentFeature && Cesium.defined(currentFeature)) {
             if (currentFeature?.primitive instanceof Cesium.Primitive) {
                 const entityCollection = currentFeature.id.entityCollection;
@@ -174,15 +178,17 @@ export const useObjectSelector = () => {
             }
         }
         currentFeature = undefined;
-        setOptions((prevOptions) => ({
-            ...prevOptions,
-            isOpenObjectTool: false,
-            pickedObject: {
-                id: '',
-                name: '',
-                position: undefined,
-            },
-        }));
+        setTimeout(() => {
+            setOptions((prevOptions) => ({
+                ...prevOptions,
+                isOpenObjectTool: false,
+                pickedObject: {
+                    id: '',
+                    name: '',
+                    position: undefined,
+                },
+            }));
+        }, 0);
     }
 
     const addBuildingFloor = (viewer : Cesium.Viewer) => {
