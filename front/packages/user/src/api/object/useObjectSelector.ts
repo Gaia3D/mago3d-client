@@ -201,9 +201,7 @@ export const useObjectSelector = () => {
     }
 
     const addBuildingFloor = (viewer : Cesium.Viewer) => {
-        if (!(currentFeature?.primitive instanceof Cesium.Primitive)) {
-            return;
-        }
+        if (!(currentFeature?.primitive instanceof Cesium.Primitive)) return;
 
         const entityCollection = currentFeature.id.entityCollection;
         const entities = entityCollection.values;
@@ -245,7 +243,7 @@ export const useObjectSelector = () => {
     }
 
     const onObjectColoring = (viewer:Cesium.Viewer, pickedColor: string) => {
-        if (currentFeature.primitive instanceof Cesium.Primitive) {
+        if (currentFeature?.primitive instanceof Cesium.Primitive) {
             if (currentFeature.id.entityCollection) {
                 const entityCollection = currentFeature.id.entityCollection;
                 const entities = entityCollection._entities._array;
@@ -257,7 +255,7 @@ export const useObjectSelector = () => {
                 });
 
                 currentFeature.id.entityCollection.show = false;
-                relocateBuilding(currentFeature);
+                relocationAnimationBuilding(currentFeature);
             } else {
                 currentFeature.primitive.color = Cesium.Color.fromCssColorString(pickedColor);
             }
@@ -296,8 +294,8 @@ export const useObjectSelector = () => {
                     customDataSource.show = false;
                 }
 
-                setTimeout(() => {
-                    const modelMatrix = currentFeature.primitive.modelMatrix;
+                requestAnimationFrame(() => {
+                    const modelMatrix = Cesium.Matrix4.clone(currentFeature.primitive.modelMatrix);
                     /* @ts-expect-error: null */
                     const primitives = customDataSource._primitives._primitives;
                     for (let i = 1; i < primitives.length; i++) {
@@ -307,7 +305,8 @@ export const useObjectSelector = () => {
                         }
                     }
                     customDataSource.show = true;
-                }, 100);
+                    viewer.scene.requestRender();
+                });
                 viewer.dataSources.add(customDataSource);
             } else if (currentFeature?.primitive instanceof Cesium.Cesium3DTileset) {
                 const tileset = currentFeature.primitive;
@@ -335,6 +334,29 @@ export const useObjectSelector = () => {
         alert("건물이 복사되었습니다.");
     }
 
+    const relocationAnimationBuilding = (feature: any) => {
+        if (!feature || !viewer) return;
+
+        const modelMatrix = Cesium.Matrix4.clone(feature.primitive.modelMatrix);
+        feature.id.entityCollection.show = false;
+
+        requestAnimationFrame(() => {
+            if (feature) {
+                const owner = feature.id.entityCollection.owner;
+                const primitives = owner._primitives._primitives;
+
+                for (let i = 1; i < primitives.length; i++) {
+                    const primitive = primitives[i];
+                    if (primitive instanceof Cesium.Primitive) {
+                        primitive.modelMatrix = modelMatrix;
+                    }
+                }
+                feature.id.entityCollection.show = true;
+                viewer.scene.requestRender();
+            }
+        });
+    };
+
     const relocateBuilding = (feature: any) => {
         const modelMatrix = feature.primitive.modelMatrix;
         feature.id.entityCollection.show = false;
@@ -351,7 +373,7 @@ export const useObjectSelector = () => {
                 feature.id.entityCollection.show = true;
             }
         }, 100);
-    };
+    }
 
     return {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor, onObjectColoring, onObjectCopy};
 }
