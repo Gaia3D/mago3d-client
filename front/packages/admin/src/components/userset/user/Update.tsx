@@ -4,12 +4,15 @@ import {Suspense} from "react";
 import {AppLoader} from "@mnd/shared";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {UpdateUserForm, updateUserForm, useGetUserInfoById} from "@src/api/User";
+import {UpdateUserForm, useFormSchemas, useGetUserInfoById} from "@src/api/User";
 import {useNavigate} from "react-router-dom";
 import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
 import {toast} from "react-toastify";
+import {useTranslation} from "react-i18next";
 
 export const Update = ({id}: { id: string }) => {
+  const {t} = useTranslation();
+  const { updateUserForm } = useFormSchemas();
   const navigate = useNavigate();
   const kcAdminClient = useKcAdminClient();
 
@@ -61,25 +64,25 @@ export const Update = ({id}: { id: string }) => {
     updateMutateAsync({id, user},
       {
         onSuccess() {
-          toast('수정되었습니다')
+          toast(t("success.edited"))
           navigate(-1);
         },
         onError(e: unknown) {
           console.error(e);
-          alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+          alert(t("error.admin"));
         }
       });
   };
   return (
     <Suspense fallback={<AppLoader/>}>
       <div className="contents">
-        <h2>사용자 수정</h2>
+        <h2>{t("update-user")}</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="register">
-            <label htmlFor="user-create-username">아이디(군번)</label>
+            <label htmlFor="user-create-username">{t("user-id-army-number")}</label>
             <input type="text" id="user-update-username"  {...register("username")} readOnly disabled/>
 
-            <label htmlFor="user-create-groups">사용자 그룹</label>
+            <label htmlFor="user-create-groups">{t("user-group")}</label>
             <select id="user-update-groups" {...register("groups")}>
               {
                 groups?.map(({id, name}) => (
@@ -88,34 +91,34 @@ export const Update = ({id}: { id: string }) => {
               }
             </select>
             {errors.firstName && <div className="input-error">{errors.firstName.message}</div>}
-            <label htmlFor="user-create-firstName">이름</label>
+            <label htmlFor="user-create-firstName">{t("name")}</label>
             <input type="text" id="user-update-firstName" {...register("firstName")} />
 
             {errors.email && <div className="input-error">{errors.email.message}</div>}
-            <label htmlFor="user-create-email">군 이메일</label>
+            <label htmlFor="user-create-email">{t("army-email")}</label>
             <input type="email" id="user-update-email" {...register("email")}/>
 
             {(errors.attributes?.phone?.message && typeof errors.attributes?.phone?.message === 'string')
               && <div className="input-error">{errors.attributes.phone.message}</div>}
-            <label htmlFor="user-create-attributes.phone">휴대폰 번호</label>
+            <label htmlFor="user-create-attributes.phone">{t("phone-number")}</label>
             <input type="text" id="user-update-attributes.phone" {...register("attributes.phone")}/>
 
             {errors.attributes?.division && <div className="input-error">{errors.attributes.division.message}</div>}
             {errors.attributes?.unit && <div className="input-error">{errors.attributes.unit.message}</div>}
-            <label htmlFor="user-create-attributes.division">소속부대</label>
+            <label htmlFor="user-create-attributes.division">{t("division-unit")}</label>
             <select id="user-update-attributes.division" {...register("attributes.division")}>
-              <option value="army">육군</option>
-              <option value="navy">해군</option>
-              <option value="airforce">공군</option>
-              <option value="marines">해병</option>
-              <option value="personnel">국직</option>
+              <option value="army">{t("army")}</option>
+              <option value="navy">{t("navy")}</option>
+              <option value="airforce">{t("airforce")}</option>
+              <option value="marines">{t("marines")}</option>
+              <option value="personnel">{t("division")}</option>
             </select>
             <input type="text" {...register("attributes.unit")} id="user-update-attributes.unit"/>
 
-            <label>계급</label>
+            <label>{t("rank")}</label>
             <input type="text" {...register("attributes.level")} id="user-update-attributes.level"/>
 
-            <label htmlFor="user-update-attributes.enabled">사용여부</label>
+            <label htmlFor="user-update-attributes.enabled">{t("user-status")}</label>
             <label className="switch mt8">
               <input type="checkbox"
                      id="user-update-attributes.enabled"
@@ -128,11 +131,11 @@ export const Update = ({id}: { id: string }) => {
           <div className="alg-right mar-t50">
             {
               isDirty
-                ? <button type="submit" className="btn-l-save">수정</button>
-                : <button type="submit" className="btn-l-save-disabled" disabled>수정</button>
+                ? <button type="submit" className="btn-l-save">{t("edit")}</button>
+                : <button type="submit" className="btn-l-save-disabled" disabled>{t("edit")}</button>
             }
-            <button type="button" className="btn-l-cancel" onClick={() => reset()}>초기화</button>
-            <button type="button" className="btn-l-cancel" onClick={() => navigate(-1)}>목록</button>
+            <button type="button" className="btn-l-cancel" onClick={() => reset()}>{t("reset")}</button>
+            <button type="button" className="btn-l-cancel" onClick={() => navigate(-1)}>{t("list")}</button>
           </div>
         </form>
       </div>

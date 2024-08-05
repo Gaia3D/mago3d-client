@@ -1,5 +1,4 @@
 import downloadExcelFile, {XLSXWorkSheetProps} from "../../../api/Excel";
-import {divisionToKor} from "@src/api/User";
 import {useLazyQuery} from "@apollo/client";
 import {
   UsersetUserExcelDocument,
@@ -60,7 +59,7 @@ export const EnabledAndExcel = ({fetchFunc}:
     fetchUserExcel()
       .then(({data}) => {
         return data.users.items.map(user => {
-          const division = divisionToKor(user.properties?.division?.[0]);
+          const division = t(user.properties?.division?.[0].toLowerCase() ?? 'division-blank');
           const unit =user.properties?.unit?.[0];
 
           return {
@@ -75,9 +74,9 @@ export const EnabledAndExcel = ({fetchFunc}:
       .then((users) => {
         const sheet = {
           data: users,
-          sheetName: '사용자 목록',
+          sheetName: t("sheet-title"),
         } as XLSXWorkSheetProps;
-        downloadExcelFile([sheet], '사용자목록.xlsx');
+        downloadExcelFile([sheet], t("excel-title")+'.xlsx');
       });
 
     // timestampFormatter(user.createdAt, 'YYYY-MM-DD HH:mm:ss');

@@ -2,10 +2,10 @@ import {useKcAdminClient} from "@src/provider/KeycloakAdminClientProvider";
 import {useSuspenseQuery} from "@tanstack/react-query";
 import {useOutletContext} from "react-router-dom";
 import type UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
-import {divisionToKor} from "@src/api/User";
 import {dateFormat} from "@mnd/shared";
 import {first} from "lodash";
 import {format} from "ol/coordinate";
+import {useTranslation} from "react-i18next";
 
 export const UpdateUser = () => {
     const groupId = useOutletContext<string>();
@@ -54,7 +54,8 @@ export const UpdateUser = () => {
 
 
 const UserItem = ({user, index}: {user:UserRepresentation, index:number}) => {
-  const division = user.attributes.division?.[0] && divisionToKor(user.attributes.division?.[0]) || '소속미입력';
+    const {t} = useTranslation();
+  const division = user.attributes.division?.[0] && t(user.attributes.division?.[0]) || '소속미입력';
   const unit = user.attributes.unit?.[0];
     return (
         <tr>

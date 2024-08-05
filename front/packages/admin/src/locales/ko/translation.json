@@ -1,5 +1,7 @@
 {
   "title": "디지털트윈 플랫폼",
+  "excel-title": "사용자목록",
+  "sheet-title": "사용자목록",
   "subtitle": "관리자 화면",
   "user": "사용자",
   "data": "데이터",
@@ -20,12 +22,21 @@
   "spatial-analysis-service": "공간분석",
   "user-management": "사용자 관리",
   "user-group-management": "사용자 그룹 관리",
+  "user-group-select": "사용자 그룹 선택",
   "data-management": "데이터 관리",
   "data-group-management": "데이터 그룹 관리",
   "search-word": "검색어",
   "select": "선택",
+  "name": "이름",
+  "password": "비밀번호",
+  "password-confirm": "비밀번호 확인",
+  "army-email": "군 이메일",
+  "phone-number": "휴대폰 번호",
   "user-id": "아이디",
+  "user-id-army-number": "아이디(군번)",
+  "duplicate-check": "중복확인",
   "user-name": "사용자명",
+  "user-group": "사용자 그룹",
   "division-unit": "소속부대",
   "division-blank": "소속미입력",
   "user-status": "사용여부",
@@ -56,6 +67,8 @@
   "upload": "업로드",
   "add": "추가",
   "add-user": "사용자 추가",
+  "create-user": "사용자 등록",
+  "update-user": "사용자 등록",
   "group-name": "그룹명",
   "data-name": "데이터명",
   "add-group": "그룹 추가",
@@ -89,14 +102,18 @@
     "add": "추가하시겠습니까?"
   },
   "success": {
+    "created": "등록되었습니다.",
     "edited": "수정되었습니다.",
     "deleted": "삭제되었습니다.",
-    "added": "추가되었습니다."
+    "added": "추가되었습니다.",
+    "duplicated": "사용 가능한 아이디입니다."
   },
   "error": {
     "edit": "수정에 실패했습니다.",
     "delete": "삭제에 실패했습니다.",
-    "add": "추가에 실패했습니다."
+    "add": "추가에 실패했습니다.",
+    "admin": "에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.",
+    "duplicated": "사용 불가능한 아이디입니다."
   },
   "not-found": {
     "user": "사용자가 없습니다.",
@@ -106,6 +123,20 @@
   "validation": {
     "required": "필수 입력 항목입니다.",
     "invalid": "유효하지 않은 값입니다.",
-    "duplicated": "중복된 값입니다."
+    "duplicated": "중복된 값입니다.",
+    "id": "아이디(군번)을 입력해주시기 바랍니다.",
+    "id-regex": "아이디4~12자리의 소문자,숫자,특수문자(-)만 사용가능합니다.",
+    "id-duplicated": "아이디(군번) 중복확인을 해주시기 바랍니다.",
+    "password-min": "비밀번호는 8자리 이상 입력해주시기 바랍니다.",
+    "password-max": "비밀번호는 20자리 이하로 입력해주시기 바랍니다.",
+    "password-regex": "대문자,소문자,특수문자를 포함해야 합니다.",
+    "password-confirm": "비밀번호가 일치하지 않습니다.",
+    "groups": "그룹을 선택해주시기 바랍니다.",
+    "first-name": "이름을 입력해주시기 바랍니다.",
+    "email": "이메일을 입력해주시기 바랍니다.",
+    "email-regex": "이메일 형식이 올바르지 않습니다.",
+    "phone": "휴대폰 번호를 입력해주시기 바랍니다.",
+    "unit": "부대명을 입력해주시기 바랍니다.",
+    "division": "군종을 선택해주시기 바랍니다."
   }
 }

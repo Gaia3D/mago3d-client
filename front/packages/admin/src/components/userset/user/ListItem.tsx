@@ -1,7 +1,6 @@
 import {dataFormatter} from "@mnd/shared";
 import {useMutation} from "@tanstack/react-query";
 import {useKcAdminClient} from "@src/provider/KeycloakAdminClientProvider";
-import {divisionToKor} from "@src/api/User";
 import {useNavigate} from "react-router-dom";
 import {gql} from "graphql-tag";
 import {FragmentType, useFragment} from "@src/generated/gql/userset";
@@ -26,7 +25,7 @@ export const ListItem = (props: { key: string, user: FragmentType<UserListItemFr
   }
   const deleteUser = () => {
     if (!id) return;
-    if (!confirm('삭제하시겠습니까?')) return;
+    if (!confirm(t("question.delete"))) return;
 
     deleteMutateAsync(id, {
       onSuccess: () => props.refetchFunc()
@@ -38,7 +37,7 @@ export const ListItem = (props: { key: string, user: FragmentType<UserListItemFr
       <td>{username}</td>
       <td>{firstName ?? ''}</td>
       <td>{properties?.level?.length > 0 ? t(properties.division) : ''}</td>
-      <td>{!properties ? t('division-blank') : `${divisionToKor(properties.division?.length > 0 ? properties.division[0] : t('division-blank'))} ${properties.unit?.length > 0 ? properties.unit[0] : ''}`}</td>
+      <td>{!properties ? t('division-blank') : `${t(properties.division?.length > 0 ? (properties.division[0]).toLowerCase() : 'division-blank')} ${properties.unit?.length > 0 ? properties.unit[0] : ''}`}</td>
       <td>{enabled ? t('using') : t('stop-using')}</td>
       <td>
           <button type="button" className="btn-s-edit" onClick={updateUser}>{t('edit')}</button>
