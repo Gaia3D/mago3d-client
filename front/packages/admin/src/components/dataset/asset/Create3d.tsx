@@ -14,22 +14,30 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {CreateAssetOutletContext} from "./AssetOutletContext";
 import {useMutation} from "@apollo/client";
+import {useTranslation} from "react-i18next";
+import {toast} from "react-toastify";
 
-const FormSchema = z.object({
-  groupId: z.string().nonempty('그룹을 선택하세요.'),
-  name: z.string().trim().nonempty('데이터명을 입력해주세요.'),
-  description: z.string().optional(),
-  assetType: z.nativeEnum(AssetType),
-  properties: z.object({
-    longitude: z.coerce.number().optional(),
-    latitude: z.coerce.number().optional(),
-    height: z.coerce.number().optional(),
-    heightReference: z.string().optional()
-  }).optional()
-});
-type FormType = z.infer<typeof FormSchema>;
+const FormSchema = () => {
+  const { t } = useTranslation();
+  return z.object({
+    groupId: z.string().nonempty(t("validation.group")),
+    name: z.string().trim().nonempty(t("validation.data-name")),
+    description: z.string().optional(),
+    assetType: z.nativeEnum(AssetType),
+    properties: z.object({
+      longitude: z.coerce.number().optional(),
+      latitude: z.coerce.number().optional(),
+      height: z.coerce.number().optional(),
+      heightReference: z.string().optional()
+    }).optional()
+  })
+}
+
+type FormSchemaType = ReturnType<typeof FormSchema>;
+type FormType = z.infer<FormSchemaType>;
 
 const Create3d = () => {
+  const {t} = useTranslation();
   const navigate = useNavigate();
   const [selectedAssetType, setSelectedAssetType] = useState<AssetType>(AssetType.Tiles3D);
   const currentLoadingState = useRecoilValue<LoadingStateType>(loadingState);
@@ -40,7 +48,7 @@ const Create3d = () => {
   const {data} = useOutletContext<CreateAssetOutletContext>();
 
   const {register, handleSubmit, formState: {errors}, setValue} = useForm<FormType>({
-    resolver: zodResolver(FormSchema)
+    resolver: zodResolver(FormSchema())
   });
 
   const {groups} = data;
@@ -70,16 +78,16 @@ const Create3d = () => {
 
   const onSubmit: SubmitHandler<FormType> = (data) => {
     if (currentLoadingState.loading) {
-      alert('파일 업로드 중입니다. 잠시만 기다려주세요.');
+      toast(t("uploading-file"));
       return;
     }
 
     if (uploadedFiles.length === 0) {
-      alert('파일을 업로드해주세요.');
+      toast(t("validation.file"));
       return;
     }
 
-    if (!confirm('등록하시겠습니까?')) return;
+    if (!confirm(t("question.create"))) return;
 
     const input: CreateAssetInput = {
       name: data.name,
@@ -97,7 +105,7 @@ const Create3d = () => {
       variables: {input}
     }).catch((e) => {
       console.error(e);
-      alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+      alert(t("error.admin"));
     });
   }
 
@@ -107,15 +115,15 @@ const Create3d = () => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <label htmlFor="data-create-3d-groups">데이터 그룹</label>
+            <label htmlFor="data-create-3d-groups">{t("data-group")}</label>
             <select id="data-create-3d-groups" {...register("groupId")}>
               {
                 groups.items.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)
               }
             </select>
-            <label htmlFor="data-create-3d-name">데이터명</label>
+            <label htmlFor="data-create-3d-name">{t("data-name")}</label>
             <input type="text" id="data-create-3d-name" {...register("name")}/>
-            <label htmlFor="data-create-3d-asset-type">데이터 타입</label>
+            <label htmlFor="data-create-3d-asset-type">{t("data-type")}</label>
             <select id="data-create-3d-asset-type" {...register("assetType")} onChange={changeAssetType}>
               {
                 asset3dTypeOptions.map((item, index) => {
@@ -167,18 +175,18 @@ const Create3d = () => {
             />
             <button type="button" className="map-check" onClick={toggleMap}>지도</button>
             */}
-            <label>설명</label>
+            <label>{t("description")}</label>
             <input type="text" id="data-create-3d-description" {...register("description")}/>
           </div>
           {/*<OlMapForGetCoordinate className="coordinate-map" on={onMap} callback={clickCallback}/>*/}
-          <label>업로드 파일</label>
+          <label>{t("upload-file")}</label>
           <StyledDropzone uploadedFilesState={uploadedFilesState} acceptFile={acceptFile}/>
         </form>
 
       </article>
       <div className="cboth alg-right">
-        <button type="submit" className="btn-l-save" onClick={handleSubmit(onSubmit)}>저장</button>
-        <button type="button" className="btn-l-cancel" onClick={toList}>취소</button>
+        <button type="submit" className="btn-l-save" onClick={handleSubmit(onSubmit)}>{t("save")}</button>
+        <button type="button" className="btn-l-cancel" onClick={toList}>{t("cancel")}</button>
       </div>
     </>
   )

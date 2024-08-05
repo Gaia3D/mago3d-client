@@ -65,13 +65,21 @@
   "excel": "Excel",
   "download": "Download",
   "upload": "Upload",
+  "upload-file": "Upload File",
+  "upload-method": "Drag and drop or click to upload files.",
+  "uploading-file": "Uploading file, please wait...",
+  "file-icon": "File Icon",
+  "file-type-img": "File Type Image",
   "add": "Add",
   "add-user": "Add User",
   "create-user": "Register User",
   "update-user": "Update User",
   "group-name": "Group Name",
   "data-name": "Data Name",
+  "data-type": "Data Type",
+  "data-group": "Data Group",
   "add-group": "Add Group",
+  "upload-data": "Upload Data",
   "create-user-group": "Register User Group",
   "create-data-group": "Register Data Group",
   "edit-data-group": "Edit Data Group",
@@ -98,6 +106,7 @@
     "timeseries": "Time Series Management Application"
   },
   "question": {
+    "create": "Do you want to register?",
     "edit": "Do you want to edit?",
     "delete": "Do you want to delete?",
     "add": "Do you want to add?"
@@ -114,7 +123,9 @@
     "delete": "Failed to delete.",
     "add": "Failed to add.",
     "admin": "An error occurred. Please contact the administrator.",
-    "duplicated": "The ID is not available."
+    "duplicated": "The ID is not available.",
+    "file-upload-start": "The file type is not allowed. Please try again. \nAllowed file types are ",
+    "file-upload-end": "."
   },
   "not-found": {
     "user": "No users found.",
@@ -134,11 +145,13 @@
     "password-confirm": "Passwords do not match.",
     "groups": "Please select a group.",
     "group-name": "Please enter the group name.",
+    "data-name": "Please enter the data name.",
     "first-name": "Please enter your name.",
     "email": "Please enter your email.",
     "email-regex": "Invalid email format.",
     "phone": "Please enter your phone number.",
     "unit": "Please enter your unit name.",
-    "division": "Please select a division."
+    "division": "Please select a division.",
+    "file": "Please upload a file."
   }
 }
