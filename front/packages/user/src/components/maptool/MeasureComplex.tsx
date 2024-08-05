@@ -249,7 +249,7 @@ export const MeasureComplex = () => {
     <div className="dialog-distance darkMode">
       <div className="dialog-title">
         <h3>복합거리 측정</h3>
-        <button className="close floatRight" onClick={()=>{setOpen(false);setSelectedTool(null)}}></button>						
+        {/*<button className="close floatRight" onClick={()=>{setOpen(false);setSelectedTool(null)}}></button>						*/}
       </div>
       <div className="dialog-result-02">
         <span className="dialog-result-text">천정각</span> <span className="dialog-result-value">{result.zenith}</span>

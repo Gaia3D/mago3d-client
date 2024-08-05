@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import { OptionsState } from "@/recoils/Tool.ts";
 import {useEffect, useState} from "react";
 import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
+import {current} from "immer";
 
 let currentFeature: any = undefined;
 const color = Cesium.Color.ORANGE;
@@ -18,6 +19,7 @@ export const useObjectSelector = () => {
     const selectedEntity = new Cesium.Entity();
 
     let mouseMoveHandler: any = undefined;
+    let leftDownHandler: any = undefined;
     let leftClickHandler: any = undefined;
     let silhouetteStage: any = undefined;
     // let silhouetteStage: Cesium.PostProcessStage | undefined = undefined;
@@ -83,33 +85,37 @@ export const useObjectSelector = () => {
 
         viewer.screenSpaceEventHandler.setInputAction(mouseMoveHandler, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
+        leftDownHandler = function (movement: any) {
+            const pickedFeature = viewer.scene.pick(movement.position);
+            if(pickedFeature) {
+                currentFeature = pickedFeature;
+            } else {
+                currentFeature = undefined;
+                setOptions((prevOptions) => ({
+                    ...prevOptions,
+                    isOpenObjectTool: false,
+                }));
+            }
+        }
+
         leftClickHandler = async function (movement: any) {
             silhouetteGreen.selected = [];
-            let pickedFeature = viewer.scene.pick(movement.position);
-            if(!pickedFeature) return;
-
-            currentFeature = pickedFeature;
-
-            if (pickedFeature?.id instanceof Cesium.Entity) {
-                pickedFeature = pickedFeature.id;
-            }
-
-            if (!Cesium.defined(pickedFeature)) {
+            // if (currentFeature?.id instanceof Cesium.Entity) {
+            //     currentFeature = currentFeature.id;
+            // }
+            if (!Cesium.defined(currentFeature)) {
                 if (clickHandler) {
                     clickHandler(movement);
                 }
                 return;
             }
-
-            if (silhouetteGreen.selected[0] === pickedFeature) {
+            if (silhouetteGreen.selected[0] === currentFeature) {
                 return;
             }
-
             const pickedPosition = viewer.scene.pickPosition(movement.position);
             if (pickedPosition) {
                 const terrainProvider = viewer.terrainProvider;
                 const cartographic = Cesium.Cartographic.fromCartesian(pickedPosition);
-
                 const positions = [cartographic];
                 const updatedPositions = await Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
                 const clampedPosition = Cesium.Cartesian3.fromRadians(
@@ -117,20 +123,19 @@ export const useObjectSelector = () => {
                     cartographic.latitude,
                     updatedPositions[0].height
                 );
-
                 // Cesium 객체를 직접 상태에 저장하지 않고, 필요한 최소한의 정보만 저장
                 setOptions((prevOptions) => ({
                     ...prevOptions,
-                    pickedObject: { id: pickedFeature._id, name: pickedFeature._name, position: clampedPosition },
+                    pickedObject: { id: currentFeature._id, name: currentFeature._name, position: clampedPosition },
                 }));
                 addDivElement();
             }
-
             silhouetteBlue.selected = [];
-            silhouetteGreen.selected = [pickedFeature];
+            silhouetteGreen.selected = [currentFeature];
             viewer.selectedEntity = selectedEntity;
         };
 
+        viewer.screenSpaceEventHandler.setInputAction(leftDownHandler, Cesium.ScreenSpaceEventType.LEFT_DOWN);
         viewer.screenSpaceEventHandler.setInputAction(leftClickHandler, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     };
 
@@ -138,6 +143,10 @@ export const useObjectSelector = () => {
         if (mouseMoveHandler) {
             viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
             mouseMoveHandler = undefined;
+        }
+        if (leftDownHandler) {
+            viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN);
+            leftDownHandler = undefined;
         }
         if (leftClickHandler) {
             viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -147,20 +156,24 @@ export const useObjectSelector = () => {
             viewer.scene.postProcessStages.remove(silhouetteStage);
             silhouetteStage = undefined;
         }
-        setOptions((prevOptions) => ({
-            ...prevOptions,
-            isOpenObjectTool: false,
-            pickedObject: {
-                ...prevOptions.pickedObject,
-                position: undefined
-            }
-        }));
+        setTimeout(() => {
+            setOptions((prevOptions) => ({
+                ...prevOptions,
+                isOpenObjectTool: false,
+                pickedObject: {
+                    id: '',
+                    name: '',
+                    position: undefined
+                }
+            }));
+        }, 0);
         currentFeature = undefined;
     };
 
     const onRemoveObject = (viewer: Cesium.Viewer) => {
         if(!confirm("해당 건물을 삭제하시겠습니까?")) return;
         if (!currentFeature || !viewer) return;
+
         if (currentFeature && Cesium.defined(currentFeature)) {
             if (currentFeature?.primitive instanceof Cesium.Primitive) {
                 const entityCollection = currentFeature.id.entityCollection;
@@ -174,21 +187,21 @@ export const useObjectSelector = () => {
             }
         }
         currentFeature = undefined;
-        setOptions((prevOptions) => ({
-            ...prevOptions,
-            isOpenObjectTool: false,
-            pickedObject: {
-                id: '',
-                name: '',
-                position: undefined,
-            },
-        }));
+        setTimeout(() => {
+            setOptions((prevOptions) => ({
+                ...prevOptions,
+                isOpenObjectTool: false,
+                pickedObject: {
+                    id: '',
+                    name: '',
+                    position: undefined,
+                },
+            }));
+        }, 0);
     }
 
     const addBuildingFloor = (viewer : Cesium.Viewer) => {
-        if (!(currentFeature?.primitive instanceof Cesium.Primitive)) {
-            return;
-        }
+        if (!(currentFeature?.primitive instanceof Cesium.Primitive)) return;
 
         const entityCollection = currentFeature.id.entityCollection;
         const entities = entityCollection.values;
@@ -230,7 +243,7 @@ export const useObjectSelector = () => {
     }
 
     const onObjectColoring = (viewer:Cesium.Viewer, pickedColor: string) => {
-        if (currentFeature.primitive instanceof Cesium.Primitive) {
+        if (currentFeature?.primitive instanceof Cesium.Primitive) {
             if (currentFeature.id.entityCollection) {
                 const entityCollection = currentFeature.id.entityCollection;
                 const entities = entityCollection._entities._array;
@@ -242,7 +255,7 @@ export const useObjectSelector = () => {
                 });
 
                 currentFeature.id.entityCollection.show = false;
-                relocateBuilding(currentFeature);
+                relocationAnimationBuilding(currentFeature);
             } else {
                 currentFeature.primitive.color = Cesium.Color.fromCssColorString(pickedColor);
             }
@@ -281,8 +294,8 @@ export const useObjectSelector = () => {
                     customDataSource.show = false;
                 }
 
-                setTimeout(() => {
-                    const modelMatrix = currentFeature.primitive.modelMatrix;
+                requestAnimationFrame(() => {
+                    const modelMatrix = Cesium.Matrix4.clone(currentFeature.primitive.modelMatrix);
                     /* @ts-expect-error: null */
                     const primitives = customDataSource._primitives._primitives;
                     for (let i = 1; i < primitives.length; i++) {
@@ -292,7 +305,8 @@ export const useObjectSelector = () => {
                         }
                     }
                     customDataSource.show = true;
-                }, 100);
+                    viewer.scene.requestRender();
+                });
                 viewer.dataSources.add(customDataSource);
             } else if (currentFeature?.primitive instanceof Cesium.Cesium3DTileset) {
                 const tileset = currentFeature.primitive;
@@ -320,6 +334,29 @@ export const useObjectSelector = () => {
         alert("건물이 복사되었습니다.");
     }
 
+    const relocationAnimationBuilding = (feature: any) => {
+        if (!feature || !viewer) return;
+
+        const modelMatrix = Cesium.Matrix4.clone(feature.primitive.modelMatrix);
+        feature.id.entityCollection.show = false;
+
+        requestAnimationFrame(() => {
+            if (feature) {
+                const owner = feature.id.entityCollection.owner;
+                const primitives = owner._primitives._primitives;
+
+                for (let i = 1; i < primitives.length; i++) {
+                    const primitive = primitives[i];
+                    if (primitive instanceof Cesium.Primitive) {
+                        primitive.modelMatrix = modelMatrix;
+                    }
+                }
+                feature.id.entityCollection.show = true;
+                viewer.scene.requestRender();
+            }
+        });
+    };
+
     const relocateBuilding = (feature: any) => {
         const modelMatrix = feature.primitive.modelMatrix;
         feature.id.entityCollection.show = false;
@@ -336,7 +373,7 @@ export const useObjectSelector = () => {
                 feature.id.entityCollection.show = true;
             }
         }, 100);
-    };
+    }
 
     return {onObjectSelector, offObjectSelector, onRemoveObject, addBuildingFloor, removeBuildingFloor, onObjectColoring, onObjectCopy};
 }

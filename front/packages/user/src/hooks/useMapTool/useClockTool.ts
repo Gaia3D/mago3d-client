@@ -34,6 +34,7 @@ export const useClockTool = () => {
         clock.currentTime = start;
         clock.clockRange = Cesium.ClockRange.UNBOUNDED;
         clock.multiplier = options.speed;
+        clock.shouldAnimate = false;
     };
 
     const onChangeDate = (event: React.ChangeEvent<HTMLInputElement>) => {

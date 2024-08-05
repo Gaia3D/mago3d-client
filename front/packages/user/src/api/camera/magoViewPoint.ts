@@ -5,15 +5,6 @@ let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | undefined = undefi
 let pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined = undefined;
 const MAN_HEIGHT = 1.5;
 
-const getStartCartesian = (pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined, defaultCartesian: Cesium.Cartesian3): Cesium.Cartesian3 => {
-  if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
-    return pickedObject.content.tile.boundingSphere.center;
-  } else if (pickedObject?.primitive instanceof Cesium.Primitive) {
-    return pickedObject.primitive.boundingSphere.center;
-  }
-  return defaultCartesian;
-};
-
 const getCenterHeight = (pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined, startCartesian: Cesium.Cartesian3, scene: Cesium.Scene): number => {
   if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
     return Cesium.Cartographic.fromCartesian(startCartesian).height;
@@ -44,7 +35,7 @@ export const onViewPoint = (viewer: Cesium.Viewer) => {
       return;
     }
 
-    const startCartesian = getStartCartesian(pickedObject, pickedEllipsoidPosition);
+    const startCartesian = pickedEllipsoidPosition;
     const cartographic = Cesium.Cartographic.fromCartesian(startCartesian);
     const centerHeight = getCenterHeight(pickedObject, startCartesian, scene);
     const startDestination = Cesium.Cartesian3.fromRadians(

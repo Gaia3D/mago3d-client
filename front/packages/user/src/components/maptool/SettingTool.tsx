@@ -13,9 +13,9 @@ export const SettingTool = () => {
         <div className="default-layer option-tool">
             <header>
                 <h2>Graphic Setting</h2>
-                <button className="close" onClick={toggleSetting}>
-                    <span className="minimize"></span>
-                </button>
+                {/*<button className="close" onClick={toggleSetting}>*/}
+                {/*    <span className="minimize"></span>*/}
+                {/*</button>*/}
             </header>
             <div className="group">
                 {/* Rendering Resolution */}

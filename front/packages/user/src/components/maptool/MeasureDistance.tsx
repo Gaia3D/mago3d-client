@@ -170,7 +170,7 @@ export const MeasureDistance = () => {
     <div className="dialog-distance darkMode">
       <div className="dialog-title">
         <h3>거리측정</h3>
-        <button className="close floatRight" onClick={()=>{setOpen(false);setSelectedTool(null)}}></button>						
+        {/*<button className="close floatRight" onClick={()=>{setOpen(false);setSelectedTool(null)}}></button>						*/}
       </div>
       <div className="dialog-content">
         <label> 거리단위</label>
