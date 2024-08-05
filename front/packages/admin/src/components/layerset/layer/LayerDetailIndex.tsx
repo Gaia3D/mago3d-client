@@ -21,6 +21,7 @@ import {dataFormatter} from "@mnd/shared";
 import {alertToast} from "@mnd/shared/src/utils/toast";
 import LayerPreviewRaster from "./LayerPreviewRaster";
 import LayerPreviewHybrid from "@src/components/layerset/layer/LayerPreviewHybrid";
+import {useTranslation} from "react-i18next";
 
 const getContext = (asset: LayerAsset): PublishContextValue => {
   const {type, id} = asset;
@@ -82,6 +83,7 @@ const getPreviewComponent = (asset: LayerAsset) => {
 }
 
 const LayerDetailIndex = ({id}: { id: string }) => {
+  const {t} = useTranslation();
   const {register, handleSubmit, formState: {errors}, setValue} = useForm<UpdateAssetInput>();
   const navigate = useNavigate();
   const toBack = () => {
@@ -159,7 +161,7 @@ const LayerDetailIndex = ({id}: { id: string }) => {
             />
             {errors?.name?.message && <span className="error">{errors.name.message}</span>}
             <label>상태</label>
-            <span>{getPublishStatusName(asset.status)}</span>
+            <span>{getPublishStatusName(asset.status, t)}</span>
             <label>사용여부</label>
             <label className="switch mt8">
               <input type="checkbox"

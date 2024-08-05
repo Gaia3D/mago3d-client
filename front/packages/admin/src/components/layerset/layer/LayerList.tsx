@@ -27,6 +27,7 @@ import {useMutation, useSuspenseQuery} from "@apollo/client";
 import CreatePopup from "../group/CreatePopup";
 import {FragmentType} from "@src/generated/gql/layerset";
 import {RenderParams} from "@minoru/react-dnd-treeview/dist/types";
+import {useTranslation} from "react-i18next";
 
 const LayerList = () => {
   const navigate = useNavigate();
@@ -222,6 +223,7 @@ const TreeNode = (props: TreeNodeProps) => {
 }
 
 const LayerNode = ({node, params }: TreeNodeProps) => {
+  const {t} = useTranslation();
   const navigate = useNavigate();
 
   const asset = node.data as LayersetAssetBasicFragment;
@@ -281,7 +283,7 @@ const LayerNode = ({node, params }: TreeNodeProps) => {
                 className={classifyAssetTypeClassNameByLayerAssetType((node.data as LayerAsset).type) + " mar-r20"}>
               {(node.data as LayerAsset).type === LayerAssetType.Layergroup ? 'HYBRID' : (node.data as LayerAsset).type}
         </button>
-        <span className="txt mar-r20">{getPublishStatusName(asset.status)}</span>
+        <span className="txt mar-r20">{getPublishStatusName(asset.status, t)}</span>
         <label className="switch">
             <input type="checkbox" onChange={toggleVisible} checked={(node.data as LayerAsset).visible}/>
             <span className="slider"></span>

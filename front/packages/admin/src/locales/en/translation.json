@@ -68,6 +68,7 @@
   "upload-file": "Upload File",
   "upload-method": "Drag and drop or click to upload files.",
   "uploading-file": "Uploading file, please wait...",
+  "uploading-data": "Processing time may vary depending on data size.",
   "file-icon": "File Icon",
   "file-type-img": "File Type Image",
   "add": "Add",
@@ -77,19 +78,37 @@
   "group-name": "Group Name",
   "data-name": "Data Name",
   "data-type": "Data Type",
+  "input-data-type": "Input Data Type",
   "data-group": "Data Group",
+  "data-transform": "Data Transform",
+  "transform-name": "Transform Name",
   "add-group": "Add Group",
   "upload-data": "Upload Data",
   "create-user-group": "Register User Group",
   "create-data-group": "Register Data Group",
   "edit-data-group": "Edit Data Group",
+  "original-encoding": "Original Encoding",
+  "transform-encoding": "Transform Encoding",
+  "epsg": "EPSG Code",
+  "proj": "PROJ Value",
+  "original-epsg": "Original EPSG Code",
+  "transform-epsg": "Transform EPSG Code",
   "description": "Description",
   "basic-info": "Basic Information",
   "type": "Type",
+  "height-setting": "Height Setting",
+  "detail-setting": "Detail Setting",
+  "main-position": "Main Position",
+  "lat": "Latitude",
+  "lon": "Longitude",
+  "height": "Height",
+  "record": "Record",
   "created-at": "Created At",
   "dashboard": "Dashboard",
   "publish": "Publish",
   "status": "Status",
+  "message": "Message",
+  "convert-texture": "Reverse Texture",
   "Done": "Done",
   "Error": "Error",
   "None": "None",
@@ -109,14 +128,16 @@
     "create": "Do you want to register?",
     "edit": "Do you want to edit?",
     "delete": "Do you want to delete?",
-    "add": "Do you want to add?"
+    "add": "Do you want to add?",
+    "transform": "Do you want to request transformation?"
   },
   "success": {
     "created": "Successfully registered.",
     "edited": "Successfully edited.",
     "deleted": "Successfully deleted.",
     "added": "Successfully added.",
-    "duplicated": "The ID is available."
+    "duplicated": "The ID is available.",
+    "transform": "Transformation request successful."
   },
   "error": {
     "edit": "Failed to edit.",
@@ -152,6 +173,45 @@
     "phone": "Please enter your phone number.",
     "unit": "Please enter your unit name.",
     "division": "Please select a division.",
-    "file": "Please upload a file."
+    "file": "Please upload a file.",
+    "data": "Please enter the data name.",
+    "data-type": "Please select a data type."
+  },
+  "publishing": {
+    "done": "Publish successful",
+    "error": "Publish failed",
+    "init": "Published",
+    "ready": "Preparing to publish",
+    "running": "Publishing in progress"
+  },
+  "transforming": {
+    "done": "Successfully completed.",
+    "error": "Data transformation request failed.",
+    "ready": "Waiting for request.",
+    "running": "Transforming...",
+    "terminated": "Transformation terminated.",
+    "terminating": "Terminating transformation..."
+  },
+  "placeholder": {
+    "proj": "Enter PROJ value. e.g., +proj=utm +zone=52 +datum=WGS84 +units=m +no_defs",
+    "epsg": "Enter EPSG code. e.g., 4326, 5186",
+    "transform-name": "Please enter the transform name.",
+    "node-max": "Enter the max node value. Default: 1024",
+    "lod-max": "Enter the max LOD (Level Of Detail). Default: 3",
+    "lod-min": "Enter the min LOD (Level Of Detail). Default: 0",
+    "pointer-max": "Enter the max number of points for point cloud data. Default: 20000"
+  },
+  "setting": {
+    "png-texture-mod": "PNG Texture Mode",
+    "y-axis": "Set Y-axis as height axis",
+    "refine-mod": "Add Refine Mode",
+    "node-max": "Max Node Value",
+    "lod-max": "Max LOD (Level Of Detail)",
+    "lod-min": "Min LOD (Level Of Detail)",
+    "pointer-max": "Max Number of Points for Point Cloud Data",
+    "convert-x-y": "Flip X and Y coordinates",
+    "auto-axis": "Auto Assign Height Axis",
+    "tile-status": "Tile Status",
+    "over-view": "Overview"
   }
 }

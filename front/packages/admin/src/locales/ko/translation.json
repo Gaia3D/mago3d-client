@@ -68,6 +68,7 @@
   "upload-file": "업로드 파일",
   "upload-method": "업로딩 하려면 파일을 올리거나 클릭하십시오.",
   "uploading-file": "파일 업로드 중입니다. 잠시만 기다려주세요.",
+  "uploading-data": "데이터 용량에 따라 처리 시간이 길어질 수 있습니다.",
   "file-icon": "파일 아이콘",
   "file-type-img": "파일타입 이미지",
   "add": "추가",
@@ -77,19 +78,37 @@
   "group-name": "그룹명",
   "data-name": "데이터명",
   "data-type": "데이터 타입",
+  "input-data-type": "입력 데이터 타입",
   "data-group": "데이터 그룹",
+  "data-transform": "데이터 변환",
+  "transform-name": "변환명",
   "add-group": "그룹 추가",
   "upload-data": "데이터 업로드",
   "create-user-group": "사용자 그룹 등록",
   "create-data-group": "데이터 그룹 등록",
   "edit-data-group": "데이터 그룹 수정",
+  "original-encoding": "원본 인코딩",
+  "transform-encoding": "변환 인코딩",
+  "epsg": "EPSG 코드",
+  "proj": "PROJ 값",
+  "original-epsg": "원본 EPSG 코드",
+  "transform-epsg": "변환 EPSG 코드",
   "description": "설명",
   "basic-info": "기본정보",
   "type": "유형",
+  "height-setting": "높이 설정",
+  "detail-setting": "상세 설정",
+  "main-position": "대표 위치",
+  "lat": "위도",
+  "lon": "경도",
+  "height": "높이",
+  "record": "이력",
   "created-at": "등록일",
   "dashboard": "대시보드",
   "publish": "발행",
   "status": "상태",
+  "message": "메시지",
+  "convert-texture": "텍스쳐를 반대로",
   "Done": "완료",
   "Error": "오류",
   "None": "없음",
@@ -109,14 +128,16 @@
     "create": "등록하시겠습니까?",
     "edit": "수정하시겠습니까?",
     "delete": "삭제하시겠습니까?",
-    "add": "추가하시겠습니까?"
+    "add": "추가하시겠습니까?",
+    "transform": "변환을 요청하시겠습니까?"
   },
   "success": {
     "created": "등록되었습니다.",
     "edited": "수정되었습니다.",
     "deleted": "삭제되었습니다.",
     "added": "추가되었습니다.",
-    "duplicated": "사용 가능한 아이디입니다."
+    "duplicated": "사용 가능한 아이디입니다.",
+    "transform": "성공적으로 변환요청되었습니다."
   },
   "error": {
     "edit": "수정에 실패했습니다.",
@@ -152,6 +173,46 @@
     "phone": "휴대폰 번호를 입력해주시기 바랍니다.",
     "unit": "부대명을 입력해주시기 바랍니다.",
     "division": "군종을 선택해주시기 바랍니다.",
-    "file": "파일을 업로드해주세요."
+    "file": "파일을 업로드해주세요.",
+    "data": "데이터명을 입력해주시기 바랍니다.",
+    "data-type": "데이터타입을 선택해주시기 바랍니다."
+
+  },
+  "publishing": {
+    "done": "발행 성공",
+    "error": "발행 실패",
+    "init": "발행되었습니다.",
+    "ready": "발행 준비중",
+    "running": "발행 진행중"
+  },
+  "transforming": {
+    "done": "성공적으로 완료되었습니다.",
+    "error": "데이터 변환요청이 실패했습니다.",
+    "ready": "요청 대기중입니다.",
+    "running": "변환중입니다.",
+    "terminated": "변환종료되었습니다.",
+    "terminating": "변환종료중입니다."
+  },
+  "placeholder": {
+    "proj": "PROJ 값을 입력하세요. ex) +proj=utm +zone=52 +datum=WGS84 +units=m +no_defs",
+    "epsg": "EPSG 코드를 입력해주세요. ex) 4326, 5186",
+    "transform-name": "변환명을 입력해주시기 바랍니다.",
+    "node-max": "노드 최대값을 입력하세요. 기본값: 1024",
+    "lod-max": "최대 LOD(Level Of Detail)를 입력하세요. 기본값: 3",
+    "lod-min": "최소 LOD(Level Of Detail)를 입력하세요. 기본값: 0",
+    "pointer-max": "포인트클라우드 데이터의 최대 포인트 수를 입력하세요. 기본값: 20000"
+  },
+  "setting": {
+    "png-texture-mod": "PNG 텍스쳐 모드",
+    "y-axis": "y축을 높이 축으로 설정",
+    "refine-mod": "구체화(Refine) 추가 모드",
+    "node-max": "노드 최대값",
+    "lod-max": "최대 LOD(Level Of Detail)",
+    "lod-min": "최소 LOD(Level Of Detail)",
+    "pointer-max": "포인트클라우드 데이터의 최대 포인트 수",
+    "convert-x-y": "x, y 좌표 뒤집기0",
+    "auto-axis": "자동 높이 축 할당",
+    "tile-status": "타일 여부",
+    "over-view": "오버뷰"
   }
 }

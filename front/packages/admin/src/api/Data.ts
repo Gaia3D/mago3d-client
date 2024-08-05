@@ -71,15 +71,15 @@ export const classifyAssetTypeAcceptFile = (assetType:AssetType) => {
     }
 }
 
-export const getProcessStatusName = (status: ProcessTaskStatus) => {
+export const getProcessStatusName = (status: ProcessTaskStatus, t: (key: string) => string) => {
     switch(status) {
-        case 'Done': return '완료';
-        case 'Error': return '에러';
-        case 'None': return '없음';
-        case 'Ready': return '준비';
-        case 'Running': return '진행중';
-        case 'Terminated': return '종료';
-        case 'Terminating': return '종료중';
+        case 'Done': return t("Done");
+        case 'Error': return t("Error");
+        case 'None': return t("None");
+        case 'Ready': return t("Ready");
+        case 'Running': return t("Running");
+        case 'Terminated': return t("Terminated");
+        case 'Terminating': return t("Terminating");
         default:
             return '없음';
     }
@@ -96,17 +96,17 @@ export const getProcessStatusName = (status: ProcessTaskStatus) => {
         case ProcessRequestStatus.Error:
             msg = '데이터 변환요청이 실패했습니다.';
             break; */
-export const getProcessStatusMessage = (status: ProcessTaskStatus) => {
+export const getProcessStatusMessage = (status: ProcessTaskStatus, t: (key: string) => string) => {
     switch(status) {
-        case 'Done': return '성공적으로 완료되었습니다.';
-        case 'Error': return '데이터 변환요청이 실패했습니다.';
-        case 'None': return '요청 대기중입니다.';
-        case 'Ready': return '요청 대기중입니다.';
-        case 'Running': return '변환중입니다.';
-        case 'Terminated': return '변환 종료 되었습니다';
-        case 'Terminating': return '변환 종료중 입니다.';
+        case 'Done': return t("transforming.done");
+        case 'Error': return t("transforming.error");
+        case 'None': return t("transforming.ready");
+        case 'Ready': return t("transforming.ready");
+        case 'Running': return t("transforming.running");
+        case 'Terminated': return t("transforming.terminated");
+        case 'Terminating': return t("transforming.terminating");
         default:
-            return '요청 대기중입니다.';
+            return t("transforming.ready");
     }
 }
 
@@ -138,12 +138,12 @@ export const getProcessStatusCssName = (status: ProcessTaskStatus) => {
     }
 }
 
-export const getPublishStatusName = (status: LayerAssetStatus) => {
+export const getPublishStatusName = (status: LayerAssetStatus, t: (key: string) => string) => {
     switch(status) {
-        case 'DONE': return '발행 성공';
-        case 'ERROR': return '발행 실패';
-        case 'INIT': return '발행 대기중';
-        case 'READY': return '발행 준비중';
-        case 'RUNNING': return '발행 진행중';
+        case 'DONE': return t("publishing.done");
+        case 'ERROR': return t("publishing.error");
+        case 'INIT': return t("publishing.init");
+        case 'READY': return t("publishing.ready");
+        case 'RUNNING': return t("publishing.running");
     }
 }

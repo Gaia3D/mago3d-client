@@ -11,13 +11,14 @@ import {
 import {toast} from "react-toastify";
 import {useMutation} from "@apollo/client";
 import {useEffect, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 const ProcessCog = (props: {
   data: DatasetAssetForDetailQuery,
   process: Process,
   resetProcess?: () => void
 }) => {
-
+  const {t} = useTranslation();
   const [lineHeight, setLineHeight] = useState(0);
   const [process, setProcess] = useState(props.process);
   const {register, handleSubmit, setValue} = useForm<CreateProcessInput>();
@@ -27,7 +28,7 @@ const ProcessCog = (props: {
   const [createMutation] = useMutation(DatasetCreateProcessDocument, {
     refetchQueries: [DatasetProcessLogDocument, DatasetAssetForDetailDocument],
     onCompleted(data) {
-      toast('성공적으로 변환요청되었습니다.');
+      toast(t("success.transform"));
     }
   });
 
@@ -63,7 +64,7 @@ const ProcessCog = (props: {
   }, [props.process]);
 
   const onSubmit: SubmitHandler<CreateProcessInput> = (input) => {
-    if (!confirm('변환을 요청하시겠습니까?')) return;
+    if (!confirm(t("question.transform"))) return;
     input.source = {assetId: [asset.id]};
     createMutation({variables: {input}});
   }
@@ -82,17 +83,17 @@ const ProcessCog = (props: {
         </div>
         <div className="data-convert" ref={convertBoxRef}>
           <div className="convert on">
-            <h4 className="stitle-on">데이터 변환
+            <h4 className="stitle-on">{t("data-transform")}
               <div className="data-button">
-                <button type="button" className="btn-s-default" onClick={toInit}>초기화</button>
+                <button type="button" className="btn-s-default" onClick={toInit}>{t("reset")}</button>
               </div>
             </h4>
             <div className="data-box">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <label htmlFor="data-process-cog-name" className="required">
-                  <span className="required-star">*</span>변환명
+                  <span className="required-star">*</span>{t("transform-name")}
                 </label>
-                <input type="text" placeholder="변환명을 입력하세요."
+                <input type="text" placeholder={t("placeholder.transform-name")}
                        id="data-process-cog-name"
                        {...register("name", {required: true, validate: value => !!value.trim()})}
                        value={process?.name ?? ''}
@@ -103,7 +104,7 @@ const ProcessCog = (props: {
                          })
                        }}
                 />
-                <label htmlFor="data-process-cog-tiled" style={{cursor: "pointer"}}>타일여부</label>
+                <label htmlFor="data-process-cog-tiled" style={{cursor: "pointer"}}>{t("setting.tile-status")}</label>
                 <label htmlFor="data-process-cog-tiled" className="switch">
                   <input type={"checkbox"}
                          id="data-process-cog-tiled"
@@ -127,7 +128,7 @@ const ProcessCog = (props: {
                   />
                   <span className="slider"></span>
                 </label>
-                <label htmlFor="data-process-cog-overviews" style={{cursor: "pointer"}}>오버뷰</label>
+                <label htmlFor="data-process-cog-overviews" style={{cursor: "pointer"}}>{t("setting.over-view")}</label>
                 <label htmlFor="data-process-cog-overviews" className="switch">
                   <input type={"checkbox"}
                          id="data-process-cog-overviews"
@@ -151,12 +152,12 @@ const ProcessCog = (props: {
                   />
                   <span className="slider"></span>
                 </label>
-                <button type="submit" className="btn-convert">데이터 변환</button>
+                <button type="submit" className="btn-convert">{t("data-transform")}</button>
               </form>
             </div>
           </div>
           <div className="sucess-box on">
-            <p>{getProcessStatusMessage(asset.process?.status)}</p>
+            <p>{getProcessStatusMessage(asset.process?.status, t)}</p>
           </div>
         </div>
       </div>

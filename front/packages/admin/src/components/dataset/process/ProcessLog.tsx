@@ -3,12 +3,14 @@ import {Suspense} from "react";
 import {DatasetProcessLogDocument, Process} from "@src/generated/gql/dataset/graphql";
 import {useSuspenseQuery} from "@apollo/client";
 import ProcessLogItem from "./ProcessLogItem";
+import {useTranslation} from "react-i18next";
 
 const ProcessLog = (props: {
   assetId: string
   onProcessChange?: (process: Process) => void
   resetProcess?: () => void
 }) => {
+  const { t } = useTranslation();
   const {onProcessChange, resetProcess} = props;
 
   const {data: {processes}} = useSuspenseQuery(DatasetProcessLogDocument, {
@@ -29,16 +31,16 @@ const ProcessLog = (props: {
 
   return (
       <Suspense fallback={<AppLoader/>}>
-        <h3>이력</h3>
+        <h3>{t("record")}</h3>
         <div className="list04-logs title-inner">
           <table>
-            <caption>이력</caption>
+            <caption>{t("record")}</caption>
             <thead>
             <tr>
-              <th>변환명 <a className="sort" href="#"></a></th>
-              <th>상태 <a className="sort" href="#"></a></th>
-              <th>메세지 <a className="sort" href="#"></a></th>
-              <th>등록일 <a className="sort" href="#"></a></th>
+              <th>{t("transform-name")} <a className="sort" href="#"></a></th>
+              <th>{t("status")} <a className="sort" href="#"></a></th>
+              <th>{t("message")} <a className="sort" href="#"></a></th>
+              <th>{t("created-at")} <a className="sort" href="#"></a></th>
             </tr>
             </thead>
           </table>
@@ -53,7 +55,7 @@ const ProcessLog = (props: {
                   })
                   :
                   <tr>
-                    <td colSpan={4} style={{textAlign: "center"}}>데이터가 없습니다.</td>
+                    <td colSpan={4} style={{textAlign: "center"}}>{t("not-found.data")}</td>
                   </tr>
             }
             </tbody>

@@ -11,13 +11,14 @@ import {
 import {useMutation} from "@apollo/client";
 import {toast} from "react-toastify";
 import {useEffect, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 const ProcessShp = (props: {
   data: DatasetAssetForDetailQuery,
   process: Process,
   resetProcess?: () => void
 }) => {
-
+  const { t } = useTranslation();
   const [lineHeight, setLineHeight] = useState(0);
   const [process, setProcess] = useState(props.process);
   const {register, handleSubmit, setValue} = useForm<CreateProcessInput>();
@@ -27,7 +28,7 @@ const ProcessShp = (props: {
   const [createMutation] = useMutation(DatasetCreateProcessDocument, {
     refetchQueries: [DatasetProcessLogDocument, DatasetAssetForDetailDocument],
     onCompleted(data) {
-      toast('성공적으로 변환요청되었습니다.');
+      toast(t("success.transform"));
     }
   });
 
@@ -66,7 +67,7 @@ const ProcessShp = (props: {
   }, [props.process]);
 
   const onSubmit: SubmitHandler<CreateProcessInput> = (input) => {
-    if (!confirm('변환을 요청하시겠습니까?')) return;
+    if (!confirm(t("question.transform"))) return;
     input.source = {assetId: [asset.id]};
     createMutation({variables: {input}});
   }
@@ -92,22 +93,22 @@ const ProcessShp = (props: {
         </div>
         <div className="data-convert" ref={convertBoxRef}>
           <div className="convert on">
-            <h4 className="stitle-on">데이터 변환
+            <h4 className="stitle-on">{t("data-transform")}
               <div className="data-button">
-                <button type="button" className="btn-s-default" onClick={toInit}>초기화</button>
+                <button type="button" className="btn-s-default" onClick={toInit}>{t("reset")}</button>
               </div>
             </h4>
             <div className="data-box">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <label htmlFor="data-process-shp-name" className="required">
-                  <span className="required-star">*</span>변환명
+                  <span className="required-star">*</span>{t("transform-name")}
                 </label>
-                <input type="text" placeholder="변환명을 입력하세요."
+                <input type="text" placeholder={t("placeholder.transform-name")}
                        id="data-process-shp-name"
                        {...register("name", {required: true, validate: value => !!value.trim()})}
                        value={process?.name ?? ''} onChange={handleChange}
                 />
-                <label htmlFor="data-process-shp-sourcecharset">원본인코딩</label>
+                <label htmlFor="data-process-shp-sourcecharset">{t("original-encoding")}</label>
                 <input type="text" placeholder="UTF-8"
                        id="data-process-shp-sourcecharset"
                        {...register("context.ogr2ogr.sourceCharset")}
@@ -128,7 +129,7 @@ const ProcessShp = (props: {
                          })
                        }}
                 />
-                <label htmlFor="data-process-shp-targetcharset">변환인코딩</label>
+                <label htmlFor="data-process-shp-targetcharset">{t("transform-encoding")}</label>
                 <input type="text" placeholder="UTF-8"
                        id="data-process-shp-targetcharset"
                        {...register("context.ogr2ogr.targetCharset")}
@@ -149,8 +150,8 @@ const ProcessShp = (props: {
                          })
                        }}
                 />
-                <label htmlFor="data-process-shp-sourcesrs">원본 EPSG 코드</label>
-                <input type="text" placeholder="EPSG 코드를 입력하세요. ex) 4326, 5186"
+                <label htmlFor="data-process-shp-sourcesrs">{t("original-epsg")}</label>
+                <input type="text" placeholder={t("placeholder.epsg")}
                        id="data-process-shp-sourcesrs"
                        {...register("context.ogr2ogr.sourceSrs")}
                        value={process?.properties?.payload?.ogr2ogr?.sourceSrs ?? ''}
@@ -170,8 +171,8 @@ const ProcessShp = (props: {
                          })
                        }}
                 />
-                <label htmlFor="data-process-shp-targetsrs">변환 EPSG 코드</label>
-                <input type="text" placeholder="EPSG 코드를 입력하세요. ex) 4326, 5186"
+                <label htmlFor="data-process-shp-targetsrs">{t("transform-epsg")}</label>
+                <input type="text" placeholder={t("placeholder.epsg")}
                        id="data-process-shp-targetsrs"
                        {...register("context.ogr2ogr.targetSrs")}
                        value={process?.properties?.payload?.ogr2ogr?.targetSrs ?? ''}
@@ -191,12 +192,12 @@ const ProcessShp = (props: {
                          })
                        }}
                 />
-                <button type="submit" className="btn-convert">데이터 변환</button>
+                <button type="submit" className="btn-convert">{t("data-transform")}</button>
               </form>
             </div>
           </div>
           <div className="sucess-box on">
-            <p>{getProcessStatusMessage(asset.process?.status)}</p>
+            <p>{getProcessStatusMessage(asset.process?.status, t)}</p>
           </div>
         </div>
       </div>

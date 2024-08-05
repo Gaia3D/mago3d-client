@@ -4,12 +4,14 @@ import {getProcessStatusName} from "@src/api/Data";
 import {DatasetProcessDocument, Process, ProcessTask} from "@src/generated/gql/dataset/graphql";
 import {useSuspenseQuery} from "@apollo/client";
 import DetailProcessLog from "./DetailProcessLog";
+import {useTranslation} from "react-i18next";
 
 const ProcessLogItem = (props: {
   processItem: Process
   onProcessChange?: (process: Process) => void
   resetProcess?: () => void
 }) => {
+  const {t} = useTranslation();
   const {processItem, onProcessChange, resetProcess} = props;
 
   const [processId, setProcessId] = useState<string>(processItem.id);
@@ -40,7 +42,7 @@ const ProcessLogItem = (props: {
       <Suspense fallback={<AppLoader/>}>
         <tr key={processItem.id} onClick={() => handleProcessClick(processItem.id)}>
           <td>{processItem.name}</td>
-          <td>{getProcessStatusName(processItem.status)}</td>
+          <td>{getProcessStatusName(processItem.status, t)}</td>
           {
             processItem.tasks.map((task, index) => {
               return (

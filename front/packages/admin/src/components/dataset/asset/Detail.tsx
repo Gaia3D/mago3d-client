@@ -13,10 +13,11 @@ import {DatasetAssetFileFragmentDoc, DatasetAssetForDetailDocument, Process} fro
 import {useSuspenseQuery} from "@apollo/client";
 import WarningMessage from "./WarningMessage";
 import fileImage from '/public/images/image-file.png';
+import {useTranslation} from "react-i18next";
 
 
 const Detail = ({id}: { id: string }) => {
-
+  const {t} = useTranslation();
   const [renderReady] = useState<boolean>(false);
   const [selectedAssetType] = useState<AssetType>(AssetType.Terrain);
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const Detail = ({id}: { id: string }) => {
       <article>
         <form style={{display: "flex", alignItems: "stretch"}}>
           <div style={{padding: "10px"}}>
-            <label htmlFor="data-update-3d-groups">데이터 그룹</label>
+            <label htmlFor="data-update-3d-groups">{t("data-group")}</label>
             {
               asset ? <select disabled>
                   {
@@ -56,12 +57,12 @@ const Detail = ({id}: { id: string }) => {
                 : null
             }
 
-            <label htmlFor="data-update-3d-name">데이터명</label>
+            <label htmlFor="data-update-3d-name">{t("data-name")}</label>
             <input type="text"
                    defaultValue={asset?.name}
                    disabled
             />
-            <label htmlFor="data-update-3d-asset-type">데이터 타입</label>
+            <label htmlFor="data-update-3d-asset-type">{t("data-type")}</label>
             {
               asset?.assetType ? <select disabled value={asset?.assetType}>
                   {
@@ -75,7 +76,7 @@ const Detail = ({id}: { id: string }) => {
                 : null
             }
 
-            <label>높이 설정</label>
+            <label>{t("height-setting")}</label>
             {
               asset ? <select disabled value={asset?.properties?.heightReference}>
                   {
@@ -89,29 +90,29 @@ const Detail = ({id}: { id: string }) => {
                 : null
             }
 
-            <label>대표 위치</label>
+            <label>{t("main-position")}</label>
             <input
               type="text"
               className="short"
               readOnly
-              placeholder="경도"
+              placeholder={t("lon")}
               defaultValue={asset?.properties?.longitude}
             />
             <input
               type="text"
               className="short"
               readOnly
-              placeholder="위도"
+              placeholder={t("lat")}
               defaultValue={asset?.properties?.latitude}
             />
             <input
               type="text"
               className="short"
-              placeholder="높이"
+              placeholder={t("height")}
               defaultValue={asset?.properties?.height}
               disabled
             />
-            <label>설명</label>
+            <label>{t("description")}</label>
             <input type="text"
                    readOnly
                    defaultValue={asset?.description}
@@ -128,12 +129,12 @@ const Detail = ({id}: { id: string }) => {
           }
         </form>
       </article>
-      <WarningMessage message="데이터 용량에 따라 처리 시간이 길어질 수 있습니다." />
+      <WarningMessage message={t("uploading-data")} />
       <ProcessComponent data={data} process={process} resetProcess={resetProcess}/>
       <ProcessLog assetId={asset.id} onProcessChange={handleProcessChange} resetProcess={resetProcess}/>
       <div className="cboth alg-right">
         {/* <button type="submit" className="btn-l-save" onClick={handleSubmit(onSubmit)}>저장</button> */}
-        <button type="button" className="btn-l-cancel" onClick={toList}>목록</button>
+        <button type="button" className="btn-l-cancel" onClick={toList}>{t("list")}</button>
       </div>
     </Suspense>
   );
@@ -142,12 +143,13 @@ const Detail = ({id}: { id: string }) => {
 function FileItem(props: {
   file: FragmentType<typeof DatasetAssetFileFragmentDoc>
 }) {
+  const {t} = useTranslation();
   const data = useFragment(DatasetAssetFileFragmentDoc, props.file);
 
   return (
     <div className="file" key={data.id}>
       <div className="thumbnail">
-        <img src={fileImage} alt="파일타입 이미지" className="image"/>
+        <img src={fileImage} alt={t("file-type-img")} className="image"/>
       </div>
       <div className="details">
         <div className="filename">
