@@ -4,8 +4,10 @@ import {useKcAdminClient} from "@src/provider/KeycloakAdminClientProvider";
 import {useOutletContext} from "react-router-dom";
 import {useCallback, useState} from "react";
 import GroupRepresentation from "@keycloak/keycloak-admin-client/lib/defs/groupRepresentation";
+import {useTranslation} from "react-i18next";
 
 export const UpdateRole = () => {
+  const { t } = useTranslation();
   const groupId = useOutletContext<string>();
   const kcAdminClient = useKcAdminClient();
 
@@ -67,12 +69,12 @@ export const UpdateRole = () => {
     <>
       <div className="list03 type02">
         <table>
-          <caption>사용자 그룹 관리</caption>
+          <caption>{t("user-group-management")}</caption>
           <thead>
           <tr>
             <th><input type="checkbox"/></th>
-            <th>권한명</th>
-            <th>설명</th>
+            <th>{t("authorities.name")}</th>
+            <th>{t("description")}</th>
           </tr>
           </thead>
           <tbody>
@@ -96,6 +98,7 @@ const RoleItem = ({group, roleMappings, role, onChange}: {
   roleMappings: RoleRepresentation[],
   role: RoleRepresentation
 }) => {
+  const { t } = useTranslation();
   const [isChecked, setChecked] = useState<boolean>(() => {
     return roleMappings?.some(roleMapping => roleMapping.id === role.id) ?? false;
   });
@@ -103,19 +106,19 @@ const RoleItem = ({group, roleMappings, role, onChange}: {
   const roleNaming = (name: string) => {
     switch (name) {
       case 'admin':
-        return '관리 권한';
+        return t("authorities.admin");
       case 'user':
-        return '접속 권한';
+        return t("authorities.user");
       case 'analyze':
-        return '분석 권한';
+        return t("authorities.analyze");
       case 'download':
-        return '다운로드 권한';
+        return t("authorities.download");
       default:
         return name;
     }
   }
 
-  const disabled = group.name === '시스템 관리자';
+  const disabled = group.name === t("authorities.system");
 
   const name = roleNaming(role.name);
 
