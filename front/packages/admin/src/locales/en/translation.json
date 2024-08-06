@@ -147,6 +147,10 @@
   "Running": "Running",
   "Terminated": "Terminated",
   "Terminating": "Terminating",
+  "quick-facts": "Quick Facts",
+  "jvm-memory": "JVM Memory",
+  "jvm-misc": "JVM Misc",
+  "i-o-overview": "I/O OverView",
   "authority": "Authority",
   "authorities": {
     "name": "Authority Name",

@@ -147,6 +147,10 @@
   "Running": "진행중",
   "Terminated": "종료",
   "Terminating": "종료중",
+  "quick-facts": "요약 정보",
+  "jvm-memory": "JVM 메모리",
+  "jvm-misc": "JVM 기타",
+  "i-o-overview": "입출력 개요",
   "authority": "권한",
   "authorities": {
     "name": "권한명",
