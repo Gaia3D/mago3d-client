@@ -75,7 +75,7 @@ export const SearchCondition = () => {
           <label>{t("state")}</label>
           <select {...register("enabled")}>
             <option value="">{t("all")}</option>
-            <option value="true">{t("use")}</option>
+            <option value="true">{t("using")}</option>
             <option value="false">{t("stop-using")}</option>
           </select>
         </div>
