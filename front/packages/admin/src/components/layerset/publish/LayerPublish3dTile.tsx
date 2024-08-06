@@ -13,11 +13,13 @@ import {
 } from "@src/generated/gql/layerset/graphql";
 import {useMutation} from "@apollo/client";
 import {toast} from "react-toastify";
+import {useTranslation} from "react-i18next";
 
 const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
   dataAsset: DatasetAssetForLayerQuery,
   groupsQuery: LayersetGroupListQuery
 }) => {
+  const { t } = useTranslation();
   const {register, handleSubmit, formState: {errors}, setValue} = useForm<CreateAssetInput>();
   const searchProps = useRecoilValue<DatasetAssetListQueryVariables>(dataSearchSelector);
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
   const [createMutation] = useMutation(LayersetCreateAssetDocument);
 
   const onSubmit: SubmitHandler<CreateAssetInput> = (data) => {
-    if (!confirm('등록하시겠습니까?')) return;
+    if (!confirm(t("question.create"))) return;
 
     //data.access = data.access ? LayerAccess.Private : LayerAccess.Public;
     data.access = LayerAccess.Public;
@@ -41,14 +43,14 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
 
     createMutation({variables: {input: data}})
       .then(() => {
-        toast('성공적으로 등록되었습니다.');
+        toast(t("success.created"));
         navigate('/layerset/layer');
         // getQueryClient().invalidateQueries({queryKey: ['assets', searchProps]})
         // navigate(-1);
       })
       .catch(e => {
         console.error(e);
-        toast('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+        toast(t("error.admin"));
       });
 
   }
@@ -63,13 +65,13 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
       </h2>
       <article>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label htmlFor="layer-publish-3d-groups">레이어 그룹</label>
+          <label htmlFor="layer-publish-3d-groups">{t("layer-group")}</label>
           <select
             id="layer-publish-3d-groups"
             {...register("groupIds", {
               required: {
                 value: true,
-                message: '그룹을 선택해주시기 바랍니다.'
+                message: t("validation.groups")
               },
             })}
           >
@@ -81,13 +83,13 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
               })
             }
           </select>
-          <label htmlFor="layer-publish-3d-name">레이어명</label>
+          <label htmlFor="layer-publish-3d-name">{t("layer-name")}</label>
           <input type="text"
                  id="layer-publish-3d-name"
                  {...register("name", {
                    required: {
                      value: true,
-                     message: "레이어명을 입력해주시기 바랍니다."
+                     message: t("validation.layer-name")
                    },
                  })}
           />
@@ -103,7 +105,7 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
             <span className="slider"></span>
           </label>
           */}
-          <label>사용여부</label>
+          <label>{t("use-status")}</label>
           <label className="switch mt8">
             <input type="checkbox"
                    defaultChecked={true}
@@ -112,7 +114,7 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
             />
             <span className="slider"></span>
           </label>
-          <label>켜기</label>
+          <label>{t("turn-on")}</label>
           <label className="switch mt8">
             <input type="checkbox"
                    defaultChecked={true}
@@ -122,8 +124,8 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
             <span className="slider"></span>
           </label>
           <div className="alg-right">
-            <button type="submit" className="btn-l-save">발행</button>
-            <button type="button" className="btn-l-cancel" onClick={toBack}>취소</button>
+            <button type="submit" className="btn-l-save">{t("publish")}</button>
+            <button type="button" className="btn-l-cancel" onClick={toBack}>{t("cancel")}</button>
           </div>
         </form>
       </article>

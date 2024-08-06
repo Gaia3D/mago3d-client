@@ -118,7 +118,7 @@ export const Update = ({id}: { id: string }) => {
             <label>{t("rank")}</label>
             <input type="text" {...register("attributes.level")} id="user-update-attributes.level"/>
 
-            <label htmlFor="user-update-attributes.enabled">{t("user-status")}</label>
+            <label htmlFor="user-update-attributes.enabled">{t("use-status")}</label>
             <label className="switch mt8">
               <input type="checkbox"
                      id="user-update-attributes.enabled"

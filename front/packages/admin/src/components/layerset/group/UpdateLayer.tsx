@@ -11,8 +11,10 @@ import {
 } from "@src/generated/gql/layerset/graphql";
 import {useFragment} from "@src/generated/gql/layerset";
 import {classifyAssetTypeClassNameByLayerAssetType} from "@src/api/Data";
+import {useTranslation} from "react-i18next";
 
 const UpdateLayer = () => {
+  const { t } = useTranslation();
   const back = useToPath('/layerset/group');
   const {data} = useOutletContext<UpdateLayerGroupOutletContext>();
   const assets = useFragment(LayerAssetBasicFragmentDoc, data.group.assets);
@@ -22,13 +24,13 @@ const UpdateLayer = () => {
   })
 
   const deleteAsset = (id: string) => {
-    if (!confirm('삭제하시겠습니까?')) return;
+    if (!confirm(t("question.delete"))) return;
     deleteMutation({
       variables: {
         ids: id
       }
     }).then(() => {
-      alertToast('삭제되었습니다.');
+      alertToast(t("success.deleted"));
     });
   }
 
@@ -36,13 +38,13 @@ const UpdateLayer = () => {
     <>
       <div className="list04-sort title-inner">
         <table>
-          <caption>그룹 하위 레이어 목록</caption>
+          <caption>{t("group-sub-layer-list")}</caption>
           <thead>
           <tr>
-            <th>데이터 <a className="sort" href="#"></a></th>
-            <th>타입 <a className="sort" href="#"></a></th>
-            <th>삭제</th>
-            <th>등록일 <a className="sort" href="#"></a></th>
+            <th>{t("data")} <a className="sort" href="#"></a></th>
+            <th>{t("type")} <a className="sort" href="#"></a></th>
+            <th>{t("delete")}</th>
+            <th>{t("created-at")} <a className="sort" href="#"></a></th>
           </tr>
           </thead>
         </table>
@@ -61,7 +63,7 @@ const UpdateLayer = () => {
                       </button>
                     </td>
                     <td>
-                      <button type="button" className="btn-s-edit" onClick={() => deleteAsset(id)}>삭제</button>
+                      <button type="button" className="btn-s-edit" onClick={() => deleteAsset(id)}>{t("delete")}</button>
                     </td>
                     <td>{dataFormatter(createdAt ?? new Date().toISOString(), 'YYYY-MM-DD HH:mm:ss')}</td>
                   </tr>
@@ -69,14 +71,14 @@ const UpdateLayer = () => {
               })
               :
               <tr>
-                <td colSpan={4}>데이터가 없습니다.</td>
+                <td colSpan={4}>{t("not-found.data")}</td>
               </tr>
           }
           </tbody>
         </table>
       </div>
       <div className="alg-right">
-        <button type="button" className="btn-l-cancel" onClick={back}>뒤로</button>
+        <button type="button" className="btn-l-cancel" onClick={back}>{t("cancel")}</button>
       </div>
     </>
   )

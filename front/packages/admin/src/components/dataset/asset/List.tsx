@@ -173,10 +173,10 @@ function DeleteButton({id, name}: { id: string, name: string }) {
   });
 
   const toDelete = () => {
-    if (window.confirm(`데이터 ${name}을 삭제하시겠습니까?`)) {
+    if (window.confirm(t("data")+name+t("question.black-delete"))) {
       deleteMutation({variables: {id}})
         .then(() => {
-          toast('삭제되었습니다.');
+          toast(t("success.deleted"));
         });
     }
   }
