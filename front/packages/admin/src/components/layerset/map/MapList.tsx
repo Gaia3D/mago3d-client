@@ -1,8 +1,9 @@
 import {useMutation} from "@apollo/client";
 import {LayersetReloadRemoteAssetDocument} from "@src/generated/gql/layerset/graphql";
+import {useTranslation} from "react-i18next";
 
 const MapList = () => {
-
+  const { t } = useTranslation();
   const [mutation] = useMutation(LayersetReloadRemoteAssetDocument);
 
   const reloadMap = (layerKey: string) => {
@@ -12,7 +13,7 @@ const MapList = () => {
         layerKey
       }
     }).then(() => {
-      alert('성공적으로 갱신되었습니다. 지도페이지에서 브라우저를 새로고치면 적용됩니다.');
+      alert(t("success.renewal-map"));
       // getClient().invalidateQueries({ queryKey: ['assets', searchProps] })
       // navigate(-1);
     });
@@ -20,17 +21,17 @@ const MapList = () => {
 
   return (
     <div className="contents">
-      <h2>지도</h2>
+      <h2>{t("map")}</h2>
       <ul className="map-form">
         <li className="map-general">
-          <button type="button" className="btn-update" onClick={() => reloadMap('baroemap')}>갱신</button>
-          <h5>일반지도</h5>
-          <span className="txt">국토지리정보원(EPSG:5179)</span>
+          <button type="button" className="btn-update" onClick={() => reloadMap('baroemap')}>{t("renewal")}</button>
+          <h5>{t("standard-map")}</h5>
+          <span className="txt">{t("ngii")}(EPSG:5179)</span>
         </li>
         <li className="map-hybrid">
-          <button type="button" className="btn-update" onClick={() => reloadMap('baroesat')}>갱신</button>
-          <h5>하이브리드지도</h5>
-          <span className="txt">국토지리정보원(EPSG:5179)</span>
+          <button type="button" className="btn-update" onClick={() => reloadMap('baroesat')}>{t("renewal")}</button>
+          <h5>{t("hybrid-map")}</h5>
+          <span className="txt">{t("ngii")}(EPSG:5179)</span>
         </li>
         {/*
                 <li className="map-terrain">

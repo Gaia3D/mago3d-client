@@ -30,6 +30,7 @@ import {RenderParams} from "@minoru/react-dnd-treeview/dist/types";
 import {useTranslation} from "react-i18next";
 
 const LayerList = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const mutationOptions = {
     refetchQueries: [LayersetGroupListWithAssetDocument]
@@ -163,12 +164,12 @@ const LayerList = () => {
   return (
     <Suspense fallback>
       <div className="contents">
-        <h2>레이어 관리</h2>
+        <h2>{t("layer-management")}</h2>
         <div className="layer-button mar-tm20 mar-b10">
-          <button type="button" className="btn-basic" onClick={() => setOnCreate(true)}>그룹 추가</button>
-          <button type="button" className="btn-basic" onClick={() => setCollapsed(!collapsed)}>전체 {collapsed ? '펼치기' : '접기'}</button>
-          <button type="button" className="btn-basic" onClick={toggleVisibleAll}>전체 {!visible ? '켜기' : '끄기'}</button>
-          <button type="button" className="btn-basic" onClick={toggleEnableAll}>전체 {!enable ? '사용가능' : '사용불가'}</button>
+          <button type="button" className="btn-basic" onClick={() => setOnCreate(true)}>{t("add-group")}</button>
+          <button type="button" className="btn-basic" onClick={() => setCollapsed(!collapsed)}>{collapsed ? t("all-expand") : t("all-fold")}</button>
+          <button type="button" className="btn-basic" onClick={toggleVisibleAll}>{!visible ? t("all-on") : t("all-off")}</button>
+          <button type="button" className="btn-basic" onClick={toggleEnableAll}>{!enable ? t("all-available") : t("all-unavailable")}</button>
         </div>
         <DndProvider backend={MultiBackend} options={getBackendOptions()}>
           <div style={{maxHeight:"600px", overflowY:"auto", paddingRight:"10px", width: "100%"}}>
@@ -269,7 +270,7 @@ const LayerNode = ({node, params }: TreeNodeProps) => {
   };
 
   const deleteLayer = () => {
-    if (!confirm('레이어를 삭제하시겠습니까?')) return;
+    if (!confirm(t("question.layer-delete"))) return;
     return deleteAssetMutation({
       variables: {ids: nodeModelIdToString(node.id)}
     });
@@ -288,19 +289,20 @@ const LayerNode = ({node, params }: TreeNodeProps) => {
             <input type="checkbox" onChange={toggleVisible} checked={(node.data as LayerAsset).visible}/>
             <span className="slider"></span>
         </label>
-        <span className="txt mar-r20">{(node.data as LayerAsset).visible ? "켜짐" : "꺼짐"}</span>
+        <span className="txt mar-r20">{(node.data as LayerAsset).visible ? t("on") : t("off")}</span>
         <label className="switch">
             <input type="checkbox" onChange={toggleEnable} checked={(node.data as LayerAsset).enabled}/>
             <span className="slider"></span>
         </label>
-        <span className="txt mar-r20">사용</span>
-        <button type="button" className={"btn-s-edit"} onClick={deleteLayer}>삭제</button>
+        <span className="txt mar-r20">{t("use")}</span>
+        <button type="button" className={"btn-s-edit"} onClick={deleteLayer}>{t("delete")}</button>
       </span>
     </>
   )
 }
 
 const GroupNode = ({node, params}: TreeNodeProps) => {
+  const { t } = useTranslation();
   const group = node.data as LayersetGroupBasicFragment;
 
   const [updateMutation] = useMutation(LayersetUpdateGroupDocument, {
@@ -312,7 +314,7 @@ const GroupNode = ({node, params}: TreeNodeProps) => {
   });
 
   const deleteGroup = useCallback(() => {
-    if (!confirm(`그룹을 삭제하시겠습니까?`)) return;
+    if (!confirm(t("question.group-delete"))) return;
     deleteMutation({
       variables: {
         id: group.id
@@ -365,13 +367,13 @@ const GroupNode = ({node, params}: TreeNodeProps) => {
           }} defaultChecked={group.access === LayerAccess.Public}/>
           <span className="slider"></span>
         </label>
-        <span className="txt mar-r20">{group.access === LayerAccess.Public ? "공개" : "비공개"}</span>
+        <span className="txt mar-r20">{group.access === LayerAccess.Public ? t("public") : t("private")}</span>
         <label className="switch">
           <input type="checkbox" onChange={toggleEnable} defaultChecked={group.enabled}/>
           <span className="slider"></span>
         </label>
-        <span className="txt mar-r20">사용</span>
-        <button type="button" className={"btn-s-edit"} onClick={deleteGroup}>삭제</button>
+        <span className="txt mar-r20">{t("use")}</span>
+        <button type="button" className={"btn-s-edit"} onClick={deleteGroup}>{t("delete")}</button>
       </span>
     </>
   )
