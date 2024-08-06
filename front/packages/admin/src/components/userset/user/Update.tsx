@@ -64,7 +64,7 @@ export const Update = ({id}: { id: string }) => {
     updateMutateAsync({id, user},
       {
         onSuccess() {
-          toast(t("success.edited"))
+          toast(t("success.edit"))
           navigate(-1);
         },
         onError(e: unknown) {

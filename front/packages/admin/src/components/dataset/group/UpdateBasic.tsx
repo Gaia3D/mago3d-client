@@ -23,7 +23,7 @@ const UpdateBasic = () => {
       DatasetGroupListForUpdateDocument
     ],
     onCompleted() {
-      alertToast(t('success.edited'));
+      alertToast(t('success.edit'));
     }
   });
 

@@ -41,7 +41,7 @@ export const UpdateBasic = () => {
 
         updateMutation.mutateAsync({id, group})
           .then(() => {
-              toast(t("success.edited"));
+              toast(t("success.edit"));
               toList();
           });
     }

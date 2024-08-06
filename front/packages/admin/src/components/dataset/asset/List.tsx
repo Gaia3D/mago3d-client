@@ -176,7 +176,7 @@ function DeleteButton({id, name}: { id: string, name: string }) {
     if (window.confirm(t("data")+name+t("question.black-delete"))) {
       deleteMutation({variables: {id}})
         .then(() => {
-          toast(t("success.deleted"));
+          toast(t("success.delete"));
         });
     }
   }

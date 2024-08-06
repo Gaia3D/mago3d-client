@@ -26,7 +26,7 @@ export const CreatePopup = ({popupToggle, refetch}: {
         const group: GroupRepresentation = createGroupFormToGroupRepresentation(data);
         createMutateAsync(group, {
             onSuccess() {
-                alert(t("success.created"));
+                alert(t("success.create"));
                 refetch();
                 closePopup();
             },

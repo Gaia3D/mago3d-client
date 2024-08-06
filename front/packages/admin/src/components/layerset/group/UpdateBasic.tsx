@@ -27,7 +27,7 @@ const UpdateBasic = () => {
       LayerGroupDocument,
     ],
     onCompleted() {
-      toast(t("success.edited"));
+      toast(t("success.edit"));
     }
   });
 

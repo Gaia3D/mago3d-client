@@ -30,7 +30,7 @@ const UpdateLayer = () => {
         ids: id
       }
     }).then(() => {
-      alertToast(t("success.deleted"));
+      alertToast(t("success.delete"));
     });
   }
 

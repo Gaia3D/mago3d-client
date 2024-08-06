@@ -43,7 +43,7 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
 
     createMutation({variables: {input: data}})
       .then(() => {
-        toast(t("success.created"));
+        toast(t("success.create"));
         navigate('/layerset/layer');
         // getQueryClient().invalidateQueries({queryKey: ['assets', searchProps]})
         // navigate(-1);
@@ -71,7 +71,7 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
             {...register("groupIds", {
               required: {
                 value: true,
-                message: t("validation.groups")
+                message: t("required.groups")
               },
             })}
           >
@@ -89,7 +89,7 @@ const LayerPublish3dTile = ({dataAsset, groupsQuery}: {
                  {...register("name", {
                    required: {
                      value: true,
-                     message: t("validation.layer-name")
+                     message: t("required.layer-name")
                    },
                  })}
           />

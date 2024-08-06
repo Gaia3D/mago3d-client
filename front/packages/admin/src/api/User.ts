@@ -11,7 +11,7 @@ export const useFormSchemas = () => {
 
   const username = z.string().trim().min(1, t('validation.id'))
       .regex(usernameRegex, t('validation.id-regex'));
-  const groups = z.string().trim().min(1, t('validation.groups'));
+  const groups = z.string().trim().min(1, t('required.groups'));
   const firstName = z.string().min(1, t('validation.first-name'));
   const email = z.string().min(1, t('validation.email')).email(t('validation.email-regex'));
   const enabled = z.boolean().optional();

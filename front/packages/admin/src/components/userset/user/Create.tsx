@@ -80,7 +80,7 @@ export const Create = () => {
     const user: UserRepresentation = createUserFormToUserRepresentation(data);
     createMutateAsync(user, {
       onSuccess() {
-        toast(t("success.created"));
+        toast(t("success.create"));
         navigate(-1);
       },
       onError(error) {
@@ -103,7 +103,7 @@ export const Create = () => {
     })
       .then((result) => {
         let dup: duplicatedType = 'success'
-        let message = t("success.duplicated");
+        let message = t("success.duplicate");
 
         if (result.length > 0) {
           dup = 'notyet';

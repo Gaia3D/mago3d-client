@@ -24,7 +24,7 @@ const UpdateData = () => {
         id
       }
     }).then(() => {
-      alertToast(t('success.deleted'));
+      alertToast(t('success.delete'));
     });
   }
 

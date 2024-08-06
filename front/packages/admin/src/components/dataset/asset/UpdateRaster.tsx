@@ -84,7 +84,7 @@ const UpdateRaster = () => {
 
     Object.assign(input, defaultUpdateAssetInput, data);
     updateMutation({variables: {id, input}}).then(() => {
-      alert(t("success.edited"));
+      alert(t("success.edit"));
       navigate(-1);
     });
   }
@@ -104,7 +104,7 @@ const UpdateRaster = () => {
                   {...register("groupId", {
                     required: {
                       value: true,
-                      message: t("validation.groups")
+                      message: t("required.groups")
                     },
                   })}
                   defaultValue={firstGroupId}
