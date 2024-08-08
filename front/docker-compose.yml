@@ -1,6 +1,6 @@
 version: '3.4'
 services:
   frontend:
-    image: carped99/mdtp-frontend:latest
+    image: carped99/geomatic-frontend:latest
     build:
       context: .
