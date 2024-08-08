@@ -6,8 +6,10 @@ import {NavLinkList} from "@src/layout";
 import {useSuspenseQuery} from "@apollo/client";
 import {UpdateGroupOutletContext} from "@src/components/dataset/group/GroupOutletContext";
 import {DatasetGroupListForUpdateDocument} from "@src/generated/gql/dataset/graphql";
+import {useTranslation} from "react-i18next";
 
 export function UpdateGroupIndex() {
+  const {t} = useTranslation();
   useNotFindId('/datagroup/list');
 
   const {id} = useParams();
@@ -20,18 +22,20 @@ export function UpdateGroupIndex() {
 
   const list = useMemo(() => {
     return [
-      {path: `/dataset/group/update/basic/${id}`, text: '설정'},
-      {path: `/dataset/group/update/data/${id}`, text: '데이터'},
+      {path: `/dataset/group/update/basic/${id}`, text: 'basic-info'},
+      {path: `/dataset/group/update/data/${id}`, text: 'data'},
     ] as NavLinkListProps[];
   }, [id]);
 
   return (
     <div className="contents">
-      <h2>데이터 그룹 수정</h2>
+      <h2>{t('edit-data-group')}</h2>
       <div className="tabmenu">
         <ul>
           {
-            list.map((item) => <NavLinkList key={item.path} {...item}/>)
+            list.map((item) =>
+              <NavLinkList key={item.path} {...item}/>
+            )
           }
         </ul>
       </div>

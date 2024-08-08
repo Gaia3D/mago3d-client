@@ -16,8 +16,10 @@ import { CoordinateFromReadCoordinateState, CurrentSymbolId, CurrentSymbolThumbn
 import { useRefetchMapNote } from "@/hooks/useMapNote";
 import { popupState } from "../MapPopup";
 import * as Cesium from "cesium";
+import {useTranslation} from "react-i18next";
 
 export const MapNoteCreateView = () => {
+    const {t} = useTranslation();
   const refetch = useRefetchMapNote();
   const setPopup = useSetRecoilState(popupState);
   const [coordinateFromReadCoordinate, setCoordinateFromReadCoordinate] = useRecoilState(CoordinateFromReadCoordinateState);
@@ -103,15 +105,15 @@ export const MapNoteCreateView = () => {
   }, [symbol]);
   
   const onSubmit: SubmitHandler<CreateMapNoteInput> = (data) => {
-    if (!confirm('등록하시겠습니까?')) return;
+    if (!confirm(t("question.create"))) return;
     if (!inputWkt) {
-        alert('지점을 지도상에 그려주세요.');
+        alert(t("required.point"));
         return;
     }
     const camera = globeController?.viewer?.camera;
 
     if (!camera) {
-        alert('카메라 정보를 가져올 수 없습니다.');
+        alert(t("error.camera"));
         return;
     }
     const {heading, pitch, roll, positionCartographic} = camera;
@@ -125,10 +127,10 @@ export const MapNoteCreateView = () => {
         .then((result) => {
             refetch();
             reset();
-            alert('등록되었습니다.');
+            alert(t("success.create"));
     })
         .catch((error) => {
-      alert('등록에 실패했습니다.');
+      alert(t("error.create"));
     });
   }
   
@@ -142,33 +144,33 @@ export const MapNoteCreateView = () => {
   return (
     <div className="dialog-registerPoint darkMode">
       <div className="dialog-title">
-          <h3>지점등록</h3>
+          <h3>{t("point-create")}</h3>
           <button className="close floatRight" onClick={()=>setPopup(null)}></button>						
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
           <div className="dialog-content">
               <ul className="pointer">
-                  <li className={`dot ${drawType === DrawType.Point && 'on'}`} onClick={()=>{toggleDrawType(DrawType.Point)}}><a href="#">점</a></li>
-                  <li className={`line ${drawType === DrawType.Line && 'on'}`} onClick={()=>{toggleDrawType(DrawType.Line)}}><a href="#">선</a></li>
-                  <li className={`polygon ${drawType === DrawType.Box && 'on'}`} onClick={()=>{toggleDrawType(DrawType.Box)}}><a href="#">면</a></li>
+                  <li className={`dot ${drawType === DrawType.Point && 'on'}`} onClick={()=>{toggleDrawType(DrawType.Point)}}><a href="#">{t("point")}</a></li>
+                  <li className={`line ${drawType === DrawType.Line && 'on'}`} onClick={()=>{toggleDrawType(DrawType.Line)}}><a href="#">{t("line")}</a></li>
+                  <li className={`polygon ${drawType === DrawType.Box && 'on'}`} onClick={()=>{toggleDrawType(DrawType.Box)}}><a href="#">{t("plane")}</a></li>
               </ul>	
-              <input type="text" className="width-100 marginTop-20" placeholder="지점명"
+              <input type="text" className="width-100 marginTop-20" placeholder={t("point-name")}
                   {...register("title", {
-                          required: '지점명을 입력해주세요.'
+                          required: t("required.point-name"),
                   })} />
               <input type="text" className="width-100" readOnly defaultValue={inputWkt} placeholder="POINT(127.917155 36.726391)" />
               <label className="symbol-image">
                   {
                           currentSymbolThumbnail && <img src={currentSymbolThumbnail} />
                   }
-                  <button type="button" className="btn-small" onClick={()=>setIsSymbolDefine(!isSymbolDefine)}>심볼변경</button>  
+                  <button type="button" className="btn-small" onClick={()=>setIsSymbolDefine(!isSymbolDefine)}>{t("symbol-edit")}</button>
               </label>
-              <textarea placeholder="설명" {...register("content")} ></textarea>
+              <textarea placeholder={t("description")} {...register("content")} ></textarea>
               <StyledDropzone uploadedFilesState={uploadedFilesState} reset={resetUploadFileState} acceptFile={{"image/*": [".png",".jpg",".jpeg",".bmp"]}}/>
           </div>     					
           <div className="darkMode-btn">
-              <button type="submit" className="register"><a>등록</a></button>
-              <button type="button" className="cancel" onClick={reset}><a>초기화</a></button>
+              <button type="submit" className="register"><a>{t("register")}</a></button>
+              <button type="button" className="cancel" onClick={reset}><a>{t("reset")}</a></button>
           </div>
       </form>
     </div>

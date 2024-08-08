@@ -15,8 +15,10 @@ import {
 import {ProcessStatus} from "../process/ProcessStatus";
 import {useMutation, useQuery} from "@apollo/client";
 import {toast} from "react-toastify";
+import {useTranslation} from "react-i18next";
 
 const List = () => {
+  const {t} = useTranslation();
   const navigate = useNavigate();
   const setPage = useSetRecoilState<number>(dataCurrentPageState);
   const searchProps = useRecoilValue<DatasetAssetListQueryVariables>(dataSearchSelector);
@@ -34,48 +36,64 @@ const List = () => {
   const {items, pageInfo} = data.assets;
 
   return (
-    <Suspense fallback={<AppLoader/>}>
+    <Suspense fallback={<AppLoader />}>
       <div className="contents">
-        <h2>데이터 관리</h2>
-        <SearchForm/>
+        <h2>{t("data-management")}</h2>
+        <SearchForm />
         <div className="alg-left mar-b10">
-          <span className="result-list">검색결과 : 총 <span className="skyblue">{pageInfo.totalItems}</span>건</span>,
+          <span className="result-list">
+            {t("search-result")} : {t("total")}{" "}
+            <span className="skyblue">{pageInfo.totalItems}</span>
+            {t("cases")}
+          </span>
+          ,
           <span className="result-page">
-            <span className="skyblue">{pageInfo.page + 1}</span>/{pageInfo.totalPages} 페이지
+            <span className="skyblue">{pageInfo.page + 1}</span>/
+            {pageInfo.totalPages} {t("page")}
           </span>
         </div>
         <div className="list07-sort">
           <table>
-            <caption>데이터 관리</caption>
+            <caption>{t("data-management")}</caption>
             <thead>
-            <tr>
-              {/* <th>데이터그룹 <a className="sort" href="#"></a></th> */}
-              <th>타입 <a className="sort" href="#"></a></th>
-              <th>데이터명 <a className="sort" href="#"></a></th>
-              <th>상태 <a className="sort" href="#"></a></th>
-              <th>발행</th>
-              <th>수정</th>
-              <th>삭제</th>
-              <th>등록일 <a className="sort" href="#"></a></th>
-            </tr>
+              <tr>
+                {/* <th>데이터그룹 <a className="sort" href="#"></a></th> */}
+                <th>
+                  {t("type")} <a className="sort" href="#"></a>
+                </th>
+                <th>
+                  {t("data-name")} <a className="sort" href="#"></a>
+                </th>
+                <th>
+                  {t("status")} <a className="sort" href="#"></a>
+                </th>
+                <th>{t("publish")}</th>
+                <th>{t("edit")}</th>
+                <th>{t("delete")}</th>
+                <th>
+                  {t("created-at")} <a className="sort" href="#"></a>
+                </th>
+              </tr>
             </thead>
             <tbody>
-            {
-              items.length > 0 ?
+              {items.length > 0 ? (
                 items.map((asset, index) => {
-
-                  const isDone = (asset.status === ProcessTaskStatus.Done) ||
-                    (asset.assetType === AssetType.Imagery && ProcessTaskStatus.Ready);
+                  const isDone =
+                    asset.status === ProcessTaskStatus.Done ||
+                    (asset.assetType === AssetType.Imagery &&
+                      ProcessTaskStatus.Ready);
 
                   return (
                     <tr key={index}>
                       {/* <td>group1</td> */}
-                      <td><span
-                        className={classifyAssetTypeClassName(asset.assetType)}>{classifyAssetTypeName(asset.assetType)}</span>
-                      </td>
-                      <AssetName id={asset.id} name={asset.name}/>
                       <td>
-                        <ProcessStatus status={asset.status}/>
+                        <span className={classifyAssetTypeClassName(asset.assetType)}>
+                          {classifyAssetTypeName(asset.assetType)}
+                        </span>
+                      </td>
+                      <AssetName id={asset.id} name={asset.name} />
+                      <td>
+                        <ProcessStatus status={asset.status} />
                       </td>
                       <td>
                         <button
@@ -83,37 +101,48 @@ const List = () => {
                           className="btn-s-edit"
                           onClick={() => toPublish(asset.id)}
                           disabled={!isDone}
-                          style={!isDone ? {cursor: "not-allowed"} : undefined}
+                          style={
+                            !isDone ? { cursor: "not-allowed" } : undefined
+                          }
                         >
-                          발행
+                          {t("publish")}
                         </button>
                       </td>
-                      <UpdateButton id={asset.id} assetType={asset.assetType}/>
-                      <DeleteButton id={asset.id} name={asset.name}/>
-                      <td>{dataFormatter(asset.createdAt ?? new Date().toISOString(), 'YYYY-MM-DD')}</td>
+                      <UpdateButton id={asset.id} assetType={asset.assetType} />
+                      <DeleteButton id={asset.id} name={asset.name} />
+                      <td>
+                        {dataFormatter(
+                          asset.createdAt ?? new Date().toISOString(),
+                          "YYYY-MM-DD"
+                        )}
+                      </td>
                     </tr>
-                  )
+                  );
                 })
-                :
+              ) : (
                 <tr>
-                  <td colSpan={7}>데이터가 없습니다.</td>
+                  <td colSpan={7}>{t("not-found.data")}</td>
                 </tr>
-            }
+              )}
             </tbody>
           </table>
         </div>
         <div className="alg-right">
-          <button type="button" className="btn-plus" onClick={toCreate}>업로드</button>
+          <button type="button" className="btn-plus" onClick={toCreate}>
+            {t("upload")}
+          </button>
         </div>
-        {
-          pageInfo.totalPages > 0 ?
-            <Pagination page={pageInfo.page} totalPages={pageInfo.totalPages} pagePerCount={pageInfo.size}
-                        handler={setPage}/>
-            : null
-        }
+        {pageInfo.totalPages > 0 ? (
+          <Pagination
+            page={pageInfo.page}
+            totalPages={pageInfo.totalPages}
+            pagePerCount={pageInfo.size}
+            handler={setPage}
+          />
+        ) : null}
       </div>
     </Suspense>
-  )
+  );
 }
 
 function AssetName({id, name}: { id: string, name: string }) {
@@ -126,33 +155,35 @@ function AssetName({id, name}: { id: string, name: string }) {
 }
 
 function UpdateButton({id, assetType}: { id: string, assetType: AssetType }) {
+  const {t} = useTranslation();
   const navigate = useNavigate();
   const toUpdate = () => navigate(`/dataset/asset/update/${classifyAssetTypeName(assetType)}/${id}`);
 
   return (
     <td>
-      <button type="button" className="btn-s-edit" onClick={toUpdate}>수정</button>
+      <button type="button" className="btn-s-edit" onClick={toUpdate}>{t("edit")}</button>
     </td>
   );
 }
 
 function DeleteButton({id, name}: { id: string, name: string }) {
+  const {t} = useTranslation();
   const [deleteMutation] = useMutation(DatasetDeleteAssetDocument, {
     refetchQueries: [DatasetAssetListDocument]
   });
 
   const toDelete = () => {
-    if (window.confirm(`데이터 ${name}을 삭제하시겠습니까?`)) {
+    if (window.confirm(t("data")+name+t("question.black-delete"))) {
       deleteMutation({variables: {id}})
         .then(() => {
-          toast('삭제되었습니다.');
+          toast(t("success.delete"));
         });
     }
   }
 
   return (
     <td>
-      <button type="button" className="btn-s-delete" onClick={toDelete}>삭제</button>
+      <button type="button" className="btn-s-delete" onClick={toDelete}>{t("delete")}</button>
     </td>
   );
 }

@@ -18,6 +18,8 @@ import {
 } from "@src/generated/gql/dataset/graphql";
 import {AssetOutletContext} from "./AssetOutletContext";
 import {useMutation, useSuspenseQuery} from "@apollo/client";
+import {useTranslation} from "react-i18next";
+import {toast} from "react-toastify";
 
 const defaultUpdateAssetInput = {
   enabled: true,
@@ -25,6 +27,7 @@ const defaultUpdateAssetInput = {
 } as UpdateAssetInput;
 
 const UpdateRaster = () => {
+  const {t} = useTranslation();
   const {id, data: {asset}} = useOutletContext<AssetOutletContext>();
   const {data : {groups}} = useSuspenseQuery(DatasetGroupListDocument);
 
@@ -69,11 +72,11 @@ const UpdateRaster = () => {
 
   const onSubmit: SubmitHandler<UpdateAssetInput> = (data) => {
     if (currentLoadingState.loading) {
-      alert('파일 업로드 중입니다. 잠시만 기다려주세요.');
+      toast(t("uploading-file"));
       return;
     }
 
-    if (!confirm('수정하시겠습니까?')) return;
+    if (!confirm(t("question.create"))) return;
     const input = {} as UpdateAssetInput;
 
     const uploadIds = uploadedFiles.filter(uploadedFile => !uploadedFile.uploded).map((uploadedFile) => uploadedFile.dbId);
@@ -81,7 +84,7 @@ const UpdateRaster = () => {
 
     Object.assign(input, defaultUpdateAssetInput, data);
     updateMutation({variables: {id, input}}).then(() => {
-      alert('성공적으로 수정되었습니다.');
+      alert(t("success.edit"));
       navigate(-1);
     });
   }
@@ -94,14 +97,14 @@ const UpdateRaster = () => {
       <article>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div style={{display: "inline-block"}}>
-            <label htmlFor="data-update-3d-groups">데이터 그룹</label>
+            <label htmlFor="data-update-3d-groups">{t("data-group")}</label>
             {
               asset ? <select
                   id="data-update-3d-groups"
                   {...register("groupId", {
                     required: {
                       value: true,
-                      message: '그룹을 선택해주시기 바랍니다.'
+                      message: t("required.groups")
                     },
                   })}
                   defaultValue={firstGroupId}
@@ -117,25 +120,25 @@ const UpdateRaster = () => {
                 : null
             }
 
-            <label htmlFor="data-update-3d-name">데이터명</label>
+            <label htmlFor="data-update-3d-name">{t("data-name")}</label>
             <input type="text"
                    id="data-update-3d-name"
                    defaultValue={asset?.name}
                    {...register("name", {
                      required: {
                        value: true,
-                       message: '데이터명을 입력해주시기 바랍니다.'
+                       message: t("validation.data")
                      },
                    })}
             />
-            <label htmlFor="data-update-3d-asset-type">데이터 타입</label>
+            <label htmlFor="data-update-3d-asset-type">{t("data-type")}</label>
             {
               asset?.assetType ? <select
                   id="data-update-3d-asset-type"
                   {...register("assetType", {
                     required: {
                       value: true,
-                      message: '데이터타입을 선택해주시기 바랍니다.'
+                      message: t("validation.data-type")
                     },
                   })}
                   onChange={changeAssetType}
@@ -151,7 +154,7 @@ const UpdateRaster = () => {
                 </select>
                 : null
             }
-            <label>설명</label>
+            <label>{t("description")}</label>
             <input type="text"
                    id="data-update-3d-description"
                    defaultValue={asset?.description}
@@ -161,7 +164,7 @@ const UpdateRaster = () => {
           {
             renderReady &&
               <>
-                  <label style={{width: "100%"}}>업로드 파일</label>
+                  <label style={{width: "100%"}}>{t("upload-file")}</label>
                   <div style={{marginTop: '45px'}}>
                       <StyledDropzone uploadedFilesState={uploadedFilesState} acceptFile={acceptFile}
                                       update={true}/>
@@ -172,8 +175,8 @@ const UpdateRaster = () => {
 
       </article>
       <div className="cboth alg-right">
-        <button type="submit" className="btn-l-save" onClick={handleSubmit(onSubmit)}>저장</button>
-        <button type="button" className="btn-l-cancel" onClick={toBack}>취소</button>
+        <button type="submit" className="btn-l-save" onClick={handleSubmit(onSubmit)}>{t("save")}</button>
+        <button type="button" className="btn-l-cancel" onClick={toBack}>{t("cancel")}</button>
       </div>
     </Suspense>
   )

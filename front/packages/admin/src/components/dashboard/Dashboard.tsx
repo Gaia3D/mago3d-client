@@ -1,8 +1,10 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import IframeContainer from "./IframeContainer";
-import { DashboardType, OptionsType, UrlListType } from "../../types/Dashboard";
+import { DashboardType, OptionsType, UrlListType } from "@src/types/Dashboard";
+import {useTranslation} from "react-i18next";
 
 function Dashboard() {
+  const {t} = useTranslation();
   const urlListGenerator = (type: DashboardType): UrlListType => {
     const baseUrl: string = import.meta.env.VITE_DASHBOARD_URL;
     const commonPath: string = "/jvm-micrometer";
@@ -31,27 +33,27 @@ function Dashboard() {
   const options: OptionsType[] = [
     {
       key: "BBS",
-      name: "게시판 관리 어플리케이션",
+      name: t("application.bbs"),
       url: bbsUrl,
     },
     {
       key: "DataSet",
-      name: "데이터 관리 어플리케이션",
+      name: t("application.data"),
       url: dataSetUrl,
     },
     {
       key: "LayerSet",
-      name: "레이어 관리 어플리케이션",
+      name: t("application.layer"),
       url: layerSetUrl,
     },
     {
       key: "Search",
-      name: "검색 관리 어플리케이션",
+      name: t("application.search"),
       url: searchUrl,
     },
     {
       key: "TimeSeries",
-      name: "시계열 관리 어플리케이션",
+      name: t("application.timeseries"),
       url: timeSeriesUrl,
     },
   ];
@@ -70,7 +72,7 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h1>대시보드</h1>
+        <h1>{t("dashboard")}</h1>
         <select onChange={handleSelectChange}>
           {options.map((option, index) => {
             return (

@@ -12,16 +12,24 @@ import {CreateAssetOutletContext} from "./AssetOutletContext";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useMutation} from "@apollo/client";
+import {useTranslation} from "react-i18next";
+import {toast} from "react-toastify";
 
-const FormSchema = z.object({
-  groupId: z.string().nonempty('그룹을 선택하세요.'),
-  name: z.string().trim().nonempty('데이터명을 입력해주세요.'),
-  description: z.string().optional(),
-  assetType: z.nativeEnum(AssetType),
-});
-type FormType = z.infer<typeof FormSchema>;
+const FormSchema = () => {
+  const { t } = useTranslation();
+  return z.object({
+    groupId: z.string().nonempty(t("validation.group")),
+    name: z.string().trim().nonempty(t("validation.data-name")),
+    description: z.string().optional(),
+    assetType: z.nativeEnum(AssetType),
+  });
+}
+
+type FormSchemaType = ReturnType<typeof FormSchema>;
+type FormType = z.infer<FormSchemaType>;
 
 const CreateVector = () => {
+  const {t} = useTranslation();
   const back = useToPath('/dataset/asset');
   const [selectedAssetType, setSelectedAssetType] = useState<AssetType>(AssetType.Terrain);
   const navigate = useNavigate();
@@ -31,7 +39,7 @@ const CreateVector = () => {
   const {data} = useOutletContext<CreateAssetOutletContext>();
 
   const {register, handleSubmit} = useForm<FormType>({
-    resolver: zodResolver(FormSchema)
+    resolver: zodResolver(FormSchema())
   });
 
   const acceptFile = classifyAssetTypeAcceptFile(selectedAssetType);
@@ -49,16 +57,16 @@ const CreateVector = () => {
 
   const onSubmit: SubmitHandler<FormType> = (data) => {
     if (currentLoadingState.loading) {
-      alert('파일 업로드 중입니다. 잠시만 기다려주세요.');
+      toast(t("uploading-file"));
       return;
     }
 
     if (uploadedFiles.length === 0) {
-      alert('파일을 업로드해주세요.');
+      toast(t("validation.file"));
       return;
     }
 
-    if (!confirm('등록하시겠습니까?')) return;
+    if (!confirm(t("question.create"))) return;
 
     const uploadId = uploadedFiles.map((uploadedFile) => uploadedFile.dbId);
     const input = {
@@ -82,33 +90,33 @@ const CreateVector = () => {
     <>
       <article>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label htmlFor="data-create-3d-groups">데이터 그룹</label>
+          <label htmlFor="data-create-3d-groups">{t("data-group")}</label>
           <select id="data-create-3d-groups"{...register("groupId")}>
             {
               groups.items.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)
             }
           </select>
 
-          <label htmlFor="data-create-3d-name">데이터명</label>
+          <label htmlFor="data-create-3d-name">{t("data-name")}</label>
           <input type="text" id="data-create-3d-name" {...register("name")}/>
 
-          <label htmlFor="data-create-3d-asset-type">데이터 타입</label>
+          <label htmlFor="data-create-3d-asset-type">{t("data-type")}</label>
           <select id="data-create-3d-asset-type" {...register("assetType")} onChange={changeAssetType}>
             <option value={AssetType.GeoJson}>GeoJson</option>
             <option value={AssetType.Shp}>Shp</option>
           </select>
 
-          <label>설명</label>
+          <label>{t("description")}</label>
           <input type="text" id="data-create-3d-description" {...register("description")}/>
 
-          <label>업로드 파일</label>
+          <label>{t("upload-file")}</label>
           <StyledDropzone uploadedFilesState={uploadedFilesState} acceptFile={acceptFile}/>
         </form>
       </article>
 
       <div className="cboth alg-right">
-        <button type="submit" className="btn-l-save" onClick={handleSubmit(onSubmit)}>저장</button>
-        <button type="button" className="btn-l-cancel" onClick={back}>취소</button>
+        <button type="submit" className="btn-l-save" onClick={handleSubmit(onSubmit)}>{t("save")}</button>
+        <button type="button" className="btn-l-cancel" onClick={back}>{t("cancel")}</button>
       </div>
     </>
   );

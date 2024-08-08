@@ -10,6 +10,7 @@ import WarningMessage from "../../dataset/asset/WarningMessage";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useLazyQuery, useMutation, useSuspenseQuery} from "@apollo/client";
 import {getWmsLayerImageProvider} from "@src/components/layerset/utils/utils";
+import {useTranslation} from "react-i18next";
 
 function extractPath(url: string): string {
     const parsedUrl = new URL(url);
@@ -17,7 +18,7 @@ function extractPath(url: string): string {
 }
 
 const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
-
+    const {t} = useTranslation();
     const {properties} = asset;
     const {layer} = properties;
     const {resource} = layer;
@@ -51,11 +52,11 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
         refetchQueries: [LayersetAssetDocument],
         onCompleted: (data) => {
             //console.info(data);
-            alert("스타일이 적용되었습니다.");
+            alert(t("success.style"));
         },
         onError: (error) => {
             console.error(error);
-            alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+            alert(t("error.admin"));
         }
     });
 
@@ -67,7 +68,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
         },
         onError: (error) => {
             console.error(error);
-            alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+            alert(t("error.admin"));
         }
     });
 
@@ -75,11 +76,11 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
         refetchQueries: [LayersetAssetDocument, RemoteDocument],
         onCompleted: (data) => {
             //console.info(data);
-            alert("스타일이 적용되었습니다.");
+            alert(t("success.style"));
         },
         onError: (error) => {
             console.error(error);
-            alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+            alert(t("error.admin"));
         }
     });
 
@@ -87,11 +88,11 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
         refetchQueries: [LayersetAssetDocument, RemoteDocument],
         onCompleted: (data) => {
             //console.info(data);
-            alert("스타일이 삭제되었습니다.");
+            alert(t("success.style-delete"));
         },
         onError: (error) => {
             console.error(error);
-            alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+            alert(t("error.admin"));
         }
     });
 
@@ -446,7 +447,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     const onSubmitStyle: SubmitHandler<CreateStyleInput> = (input) => {
         if (!styleName) {
-            alert("스타일명을 입력해주시기 바랍니다.");
+            alert(t("required.style-name"));
             return;
         }
 
@@ -510,13 +511,13 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
     }
 
     const toDelete = () => {
-        if (!confirm(`스타일 [${styleName}]을 삭제하시겠습니까?`)) return;
+        if (!confirm(t("style")+ `[${styleName}]` + t("question.blank-delete") )) return;
         deleteStyle({ variables: { id: defaultStyle?.id } });
     }
 
     const toClassify = () => {
         if (!selectedAttribute) {
-            alert("속성을 선택해주시기 바랍니다.");
+            alert(t("required.attribute"));
             return;
         }
         const promise = getData({ variables: { nativeName: nativeName, attribute: selectedAttribute } });
@@ -548,30 +549,30 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     return (
       <>
-          <button type="button" className="btn-l-save" onClick={() => setCount("")}>전체 미리보기</button>
-          <button type="button" className="btn-l-save" onClick={() => setCount("&count=1")}>한 객체만 미리보기</button>
-          <WarningMessage message="성능 상의 이유로 하나의 객체만 미리보기 됩니다."/>
+          <button type="button" className="btn-l-save" onClick={() => setCount("")}>{t("total-preview")}</button>
+          <button type="button" className="btn-l-save" onClick={() => setCount("&count=1")}>{t("object-preview")}</button>
+          <WarningMessage message={t("warning.object")}/>
           <div className="preview-layer" style={{width: "30%"}}>
               <form onSubmit={handleSubmit(onSubmitStyle)}>
                   <div className="mar-b10" style={{display: "inline-block"}}>
                       <button type="button" className={`btn-basic ${isPointStyleVisible ? 'on' : ''}`}
-                              onClick={() => setStyleComponent('point')}>점(Point)
+                              onClick={() => setStyleComponent('point')}>{t("point")}(Point)
                       </button>
                       <button type="button" className={`btn-basic ${isPolylineStyleVisible ? 'on' : ''}`}
-                              onClick={() => setStyleComponent('polyline')}>선(Line)
+                              onClick={() => setStyleComponent('polyline')}>{t("line")}(Line)
                       </button>
                       <button type="button" className={`btn-basic ${isPolygonStyleVisible ? 'on' : ''}`}
-                              onClick={() => setStyleComponent('polygon')}>면(Polygon)
+                              onClick={() => setStyleComponent('polygon')}>{t("plane")}(Polygon)
                       </button>
                       <button type="button" className={`btn-basic ${isAttributeStyleVisible ? 'on' : ''}`}
-                              onClick={() => setStyleComponent('attribute')}>속성(Attribute)
+                              onClick={() => setStyleComponent('attribute')}>{t("attribute")}(Attribute)
                       </button>
                   </div>
-                  <label>스타일명</label>
+                  <label>{t("style-name")}</label>
                   <input type="text" defaultValue={styleName} {...register("name", {
                       required: {
                           value: true,
-                          message: "스타일명을 입력해주시기 바랍니다."
+                          message: t("required.style-name")
                       },
                       value: styleName,
                       onChange: (event) => setStyleName(event.target.value)
@@ -579,48 +580,48 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                   {
                     isPointStyleVisible &&
                     <div>
-                        <label>점 모양</label>
+                        <label>{t("point-shape")}</label>
                         <select defaultValue={shape}
                                 {...register("context.point.shape", {
                                     value: shape,
                                     onChange: handleShapeChange
                                 })}>
-                            <option value="circle">원(Circle)</option>
-                            <option value="square">사각형(Square)</option>
-                            <option value="triangle">삼각형(Triangle)</option>
-                            <option value="cross">십자가(Cross)</option>
+                            <option value="circle">{t("circle")}</option>
+                            <option value="square">{t("square")}</option>
+                            <option value="triangle">{t("triangle")}</option>
+                            <option value="cross">{t("cross")}</option>
                         </select>
-                        <label>점 크기</label>
+                        <label>{t("point-size")}</label>
                         <input type="number" defaultValue={size}
                                {...register("context.point.size", {
                                    value: size,
                                    onChange: handleSizeChange
                                })}/>
-                        <label>외곽선 색상</label>
+                        <label>{t("stroke-color")}</label>
                         <input type="color" defaultValue={strokeColor}
                                {...register("context.point.strokeColor", {
                                    value: strokeColor,
                                    onChange: handleStrokeColorChange
                                })}/>
-                        <label>외곽선 두께</label>
+                        <label>{t("stroke-width")}</label>
                         <input type="number" defaultValue={lineWidth}
                                {...register("context.point.strokeWidth", {
                                    value: lineWidth,
                                    onChange: handleLineWidthChange
                                })}/>
-                        <label>외곽선 투명도</label>
+                        <label>{t("stroke-opacity")}</label>
                         <input type="range" min={0} max={100} defaultValue={strokeOpacity * 100}
                                {...register("context.point.strokeOpacity", {
                                    value: strokeOpacity * 100,
                                    onChange: handleStrokeOpacityChange
                                })}/>
-                        <label>채우기 색상</label>
+                        <label>{t("fill-color")}</label>
                         <input type="color" defaultValue={fillColor}
                                {...register("context.point.fillColor", {
                                    value: fillColor,
                                    onChange: handleFillColorChange
                                })}/>
-                        <label>채우기 투명도</label>
+                        <label>{t("fill-opacity")}</label>
                         <input type="range" min={0} max={100} defaultValue={fillOpacity * 100}
                                {...register("context.point.fillOpacity", {
                                    value: fillOpacity * 100,
@@ -631,19 +632,19 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                   {
                     isPolylineStyleVisible &&
                     <div>
-                        <label>외곽선 색상</label>
+                        <label>{t("stroke-color")}</label>
                         <input type="color" defaultValue={strokeColor}
                                {...register("context.line.strokeColor", {
                                    value: strokeColor,
                                    onChange: handleStrokeColorChange
                                })}/>
-                        <label>외곽선 두께</label>
+                        <label>{t("stroke-width")}</label>
                         <input type="number" defaultValue={lineWidth}
                                {...register("context.line.strokeWidth", {
                                    value: lineWidth,
                                    onChange: handleLineWidthChange
                                })}/>
-                        <label>외곽선 투명도</label>
+                        <label>{t("stroke-opacity")}</label>
                         <input type="range" min={0} max={100} defaultValue={strokeOpacity * 100}
                                {...register("context.line.strokeOpacity", {
                                    value: strokeOpacity * 100,
@@ -654,31 +655,31 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                   {
                     isPolygonStyleVisible &&
                     <div>
-                        <label>외곽선 색상</label>
+                        <label>{t("stroke-color")}</label>
                         <input type="color" defaultValue={strokeColor}
                                {...register("context.polygon.strokeColor", {
                                    value: strokeColor,
                                    onChange: handleStrokeColorChange,
                                })}/>
-                        <label>외곽선 두께</label>
+                        <label>{t("stroke-width")}</label>
                         <input type="number" defaultValue={lineWidth}
                                {...register("context.polygon.strokeWidth", {
                                    value: lineWidth,
                                    onChange: handleLineWidthChange,
                                })}/>
-                        <label>외곽선 투명도</label>
+                        <label>{t("stroke-opacity")}</label>
                         <input type="range" min={0} max={100} defaultValue={strokeOpacity * 100}
                                {...register("context.polygon.strokeOpacity", {
                                    value: strokeOpacity * 100,
                                    onChange: handleStrokeOpacityChange,
                                })}/>
-                        <label>채우기 색상</label>
+                        <label>{t("fill-color")}</label>
                         <input type="color" defaultValue={fillColor}
                                {...register("context.polygon.fillColor", {
                                    value: fillColor,
                                    onChange: handleFillColorChange,
                                })}/>
-                        <label>채우기 투명도</label>
+                        <label>{t("fill-opacity")}</label>
                         <input type="range" min={0} max={100} defaultValue={fillOpacity * 100}
                                {...register("context.polygon.fillOpacity", {
                                    value: fillOpacity * 100,
@@ -696,14 +697,14 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                     onChange: handleAttributeChange
                                 })}
                         >
-                            <option value="">속성선택</option>
+                            <option value="">{t("attribute-select")}</option>
                             {
                                 attribute.map((attr, index) => (
                                   <option key={index} value={attr.name}>{attr.name}</option>
                                 ))
                             }
                         </select>
-                        <button type="button" className="btn-l-apply" onClick={toClassify}>분류</button>
+                        <button type="button" className="btn-l-apply" onClick={toClassify}>{t("classify")}</button>
                         {
                           isNumberStyleVisible &&
                           rules.length > 0 &&
@@ -712,10 +713,10 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                               <table>
                                   <thead>
                                   <tr>
-                                      <th>최소</th>
-                                      <th>최대</th>
-                                      <th>색상</th>
-                                      <th>삭제</th>
+                                      <th>{t("min")}</th>
+                                      <th>{t("max")}</th>
+                                      <th>{t("color")}</th>
+                                      <th>{t("delete")}</th>
                                   </tr>
                                   </thead>
                                   <tbody>
@@ -742,7 +743,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                                 <button type="button" onClick={() => {
                                                     // @ts-ignore
                                                     deleteRule(rule.id)
-                                                }}>삭제
+                                                }}>{t("delete")}
                                                 </button>
                                             </td>
                                         </tr>
@@ -760,9 +761,9 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                               <table>
                                   <thead>
                                   <tr>
-                                      <th>값</th>
-                                      <th>색상</th>
-                                      <th>삭제</th>
+                                      <th>{t("value")}</th>
+                                      <th>{t("color")}</th>
+                                      <th>{t("delete")}</th>
                                   </tr>
                                   </thead>
                                   <tbody>
@@ -781,7 +782,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                                 <button type="button" onClick={() => {
                                                     // @ts-ignore
                                                     deleteRule(rule.id)
-                                                }}>삭제
+                                                }}>{t("delete")}
                                                 </button>
                                             </td>
                                         </tr>
@@ -794,14 +795,14 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                     </div>
                   }
                   <div className="alg-right">
-                      <button type="submit" className="btn-l-save">저장</button>
-                      <button type="button" className="btn-l-delete" onClick={toDelete}>삭제</button>
-                      <button type="button" className="btn-l-delete" onClick={resetStyle}>초기화</button>
+                      <button type="submit" className="btn-l-save">{t("save")}</button>
+                      <button type="button" className="btn-l-delete" onClick={toDelete}>{t("delete")}</button>
+                      <button type="button" className="btn-l-delete" onClick={resetStyle}>{t("reset")}</button>
                   </div>
               </form>
           </div>
           <div className="preview-layer" id="preview-layer" style={{width: "70%"}}></div>
-          <WarningMessage message="미리보기는 실제와 다를 수 있습니다."/>
+          <WarningMessage message={t("warning.preview")}/>
       </>
     )
 }

@@ -2,12 +2,15 @@ import { useNavigate, useOutletContext  } from "react-router-dom";
 import { useKcAdminClient } from "@src/provider/KeycloakAdminClientProvider";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { UpdateGroupForm, updateGroupForm } from "@src/api/Group";
+import {UpdateGroupForm, useGroupFormSchemas} from "@src/api/Group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import GroupRepresentation from "@keycloak/keycloak-admin-client/lib/defs/groupRepresentation";
 import {toast} from "react-toastify";
+import {useTranslation} from "react-i18next";
 
 export const UpdateBasic = () => {
+    const {t} = useTranslation();
+    const {createGroupForm} = useGroupFormSchemas();
     const id = useOutletContext<string>();
     const kcAdminClient = useKcAdminClient();
     const nav = useNavigate();
@@ -22,7 +25,7 @@ export const UpdateBasic = () => {
     });
 
     const { register, handleSubmit, formState: { errors}} = useForm<UpdateGroupForm>({
-        resolver: zodResolver(updateGroupForm)
+        resolver: zodResolver(createGroupForm)
     });
     const updateMutation = useMutation({
         mutationFn: ( {id, group}:{id:string, group: GroupRepresentation} ) => kcAdminClient.groups.update({id}, group)
@@ -38,7 +41,7 @@ export const UpdateBasic = () => {
 
         updateMutation.mutateAsync({id, group})
           .then(() => {
-              toast('수정되었습니다');
+              toast(t("success.edit"));
               toList();
           });
     }
@@ -47,13 +50,13 @@ export const UpdateBasic = () => {
         <>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <article>
-                    <label htmlFor="update-group-name">그룹명</label>
+                    <label htmlFor="update-group-name">{t("group-name")}</label>
                     <input type="text"
                            {...register("name")}
                            id="update-group-name"
                            defaultValue={data?.name}
                     /><br />
-                    <label htmlFor="update-group-description">설명</label>
+                    <label htmlFor="update-group-description">{t("description")}</label>
                     <input type="text"
                            {...register("attributes.description")}
                            id="update-group-description"
@@ -61,8 +64,8 @@ export const UpdateBasic = () => {
                     />
                 </article>
                 <div className="alg-right">
-                    <button type="submit" className="btn-l-save">저장</button>
-                    <button type="button" className="btn-l-cancel" onClick={toList}>취소</button>
+                    <button type="submit" className="btn-l-save">{t("save")}</button>
+                    <button type="button" className="btn-l-cancel" onClick={toList}>{t("cancel")}</button>
                 </div>
             </form>
         </>

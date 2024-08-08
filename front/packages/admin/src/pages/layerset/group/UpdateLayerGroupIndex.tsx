@@ -6,10 +6,11 @@ import {NavLinkList} from "@src/layout";
 import {useSuspenseQuery} from "@apollo/client";
 import {LayerGroupDocument} from "@src/generated/gql/layerset/graphql";
 import {UpdateLayerGroupOutletContext} from "@src/components/layerset/group/GroupOutletContext";
+import {useTranslation} from "react-i18next";
 
 export function UpdateLayerGroupIndex() {
   useNotFindId('/layerset/group');
-
+  const { t } = useTranslation();
   const {id} = useParams();
   const {data} = useSuspenseQuery(LayerGroupDocument, {
     variables: {
@@ -19,14 +20,14 @@ export function UpdateLayerGroupIndex() {
 
   const list = useMemo(() => {
     return [
-      {path: `/layerset/group/update/basic/${id}`, text: '설정'},
-      {path: `/layerset/group/update/data/${id}`, text: '레이어'},
+      {path: `/layerset/group/update/basic/${id}`, text: t("settings")},
+      {path: `/layerset/group/update/data/${id}`, text: t("layer")},
     ] as NavLinkListProps[];
   }, [id]);
 
   return (
     <div className="contents">
-      <h2>레이어 그룹 수정</h2>
+      <h2>{t("layer-group-edit")}</h2>
       <div className="tabmenu">
         <ul>
           {

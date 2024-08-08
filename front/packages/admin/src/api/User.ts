@@ -4,60 +4,67 @@ import {useSuspenseQueries, useSuspenseQuery} from "@tanstack/react-query";
 import {z} from "zod";
 import {UserQueryWithAdditionalPageInfo} from "../types/User";
 import {passwordRegex, phoneRegex, usernameRegex} from "@src/utils/Miscellaneous";
+import {useTranslation} from "react-i18next";
 
-const username = z.string().trim().min(1, '아이디(군번)을 입력해주시기 바랍니다.')
-  .regex(usernameRegex, '4~12자리의 소문자,숫자,특수문자(-)만 사용가능합니다..');
-const groups = z.string().trim().min(1, '그룹을 선택해주시기 바랍니다.');
-const firstName = z.string().min(1, '이름을 입력해주시기 바랍니다.');
-const email = z.string().min(1, '이메일을 입력해주시기 바랍니다.').email('이메일 형식이 올바르지 않습니다.');
-const enabled = z.boolean().optional();
-const attributes = z.object({
-  phone: z.string().regex(phoneRegex, '폰번호를 입력해주시기 바랍니다.'),
-  unit: z.string().trim().min(1, '부대명을 입력해주시기 바랍니다.'),
-  division: z.string({
-    required_error: '군종을 선택주시기 바랍니다.'
-  }),
-  level: z.string().optional()
-}).required({
-  phone: true,
-  unit: true,
-  division: true
-});
+export const useFormSchemas = () => {
+  const { t } = useTranslation();
 
-export const updateUserForm = z.object({
-  groups,
-  username,
-  firstName,
-  email,
-  enabled,
-  attributes,
-});
-
-export const isAnUpdateUserFormProperty = (str: string): str is keyof UpdateUserForm => {
-  return ['groups', 'firstName', 'email', 'attributes', 'enabled'].includes(str);
-}
-
-export const createUserForm = z.object({
-  password: z.string()
-    .min(8, '비밀번호는 8자리 이상 입력해주시기 바랍니다.')
-    .max(20, '비밀번호는 20자리 이하로 입력해주시기 바랍니다.')
-    .regex(passwordRegex, '대문자,소문자,특수문자를 포함해야 합니다.'),
-  passwordConfirm: z.string().min(8, '비밀번호는 8자리 이상 입력해주시기 바랍니다.').optional(),
-  groups,
-  username,
-  firstName,
-  email,
-  enabled,
-  attributes,
-})
-  .partial()
-  .refine((form) => form.password === form.passwordConfirm, {
-    path: ["passwordConfirm"],
-    message: "비밀번호가 일치하지 않습니다.",
+  const username = z.string().trim().min(1, t('validation.id'))
+      .regex(usernameRegex, t('validation.id-regex'));
+  const groups = z.string().trim().min(1, t('required.groups'));
+  const firstName = z.string().min(1, t('validation.first-name'));
+  const email = z.string().min(1, t('validation.email')).email(t('validation.email-regex'));
+  const enabled = z.boolean().optional();
+  const attributes = z.object({
+    phone: z.string().regex(phoneRegex, t('validation.phone')),
+    unit: z.string().trim().min(1, t('validation.unit')),
+    division: z.string({
+      required_error: t('validation.division')
+    }),
+    level: z.string().optional()
+  }).required({
+    phone: true,
+    unit: true,
+    division: true
   });
 
-export type CreateUserForm = z.infer<typeof createUserForm>;
-export type UpdateUserForm = z.infer<typeof updateUserForm>;
+  const updateUserForm = z.object({
+    groups,
+    username,
+    firstName,
+    email,
+    enabled,
+    attributes,
+  });
+
+  const createUserForm = z.object({
+    password: z.string()
+        .min(8, t('validation.password-min'))
+        .max(20, t('validation.password-max'))
+        .regex(passwordRegex, t('validation.password-regex')),
+    passwordConfirm: z.string().min(8, t('validation.password-min')).optional(),
+    groups,
+    username,
+    firstName,
+    email,
+    enabled,
+    attributes,
+  })
+      .partial()
+      .refine((form) => form.password === form.passwordConfirm, {
+        path: ["passwordConfirm"],
+        message: t('validation.password-confirm'),
+      });
+
+  return {
+    updateUserForm,
+    createUserForm
+  };
+};
+
+export type FormSchemas = ReturnType<typeof useFormSchemas>;
+export type CreateUserForm = z.infer<FormSchemas['createUserForm']>;
+export type UpdateUserForm = z.infer<FormSchemas['updateUserForm']>;
 
 export const createUserFormToUserRepresentation = (form: CreateUserForm): UserRepresentation => {
   return {
@@ -106,21 +113,6 @@ export const updateUserFormToUserRepresentation = (form: UpdateUserForm): UserRe
   }
 
   return userRepresentation
-}
-
-export const divisionToKor = (division: string): string => {
-  switch (division.toLowerCase()) {
-    case 'army':
-      return '육군';
-    case 'navy':
-      return '해군';
-    case 'airforce':
-      return '공군';
-    case 'marines':
-      return '해병대';
-    default:
-      return '국직';
-  }
 }
 
 const defaultUserUseQueryOptions = {

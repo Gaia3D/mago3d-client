@@ -6,8 +6,10 @@ import {dataFormatter} from "@mnd/shared";
 import {UpdateGroupOutletContext} from "./GroupOutletContext";
 import {useMutation} from "@apollo/client";
 import {DatasetDeleteAssetDocument, DatasetGroupListForUpdateDocument} from "@src/generated/gql/dataset/graphql";
+import {useTranslation} from "react-i18next";
 
 const UpdateData = () => {
+  const {t} = useTranslation();
   const back = useToPath('/dataset/group');
   const {data} = useOutletContext<UpdateGroupOutletContext>();
 
@@ -16,28 +18,29 @@ const UpdateData = () => {
   })
 
   const deleteDataAsset = (id: string) => {
-    if (!confirm('삭제하시겠습니까?')) return;
+    if (!confirm(t('question.delete'))) return;
     deleteMutation({
       variables: {
         id
       }
     }).then(() => {
-      alertToast('삭제되었습니다.');
+      alertToast(t('success.delete'));
     });
   }
 
   const {assets} = data.group;
+
   return (
     <>
       <div className="list04-sort title-inner">
         <table>
-          <caption>데이터 그룹 수정</caption>
+          <caption>{t('edit-data-group')}</caption>
           <thead>
           <tr>
-            <th>데이터 <a className="sort" href="#"></a></th>
-            <th>타입 <a className="sort" href="#"></a></th>
-            <th>삭제</th>
-            <th>등록일 <a className="sort" href="#"></a></th>
+            <th>{t('data')} <a className="sort" href="#"></a></th>
+            <th>{t('type')} <a className="sort" href="#"></a></th>
+            <th>{t('delete')}</th>
+            <th>{t('created-at')} <a className="sort" href="#"></a></th>
           </tr>
           </thead>
         </table>
@@ -49,11 +52,13 @@ const UpdateData = () => {
             assets.length > 0 ?
               assets.map(({id, name, assetType, createdAt}) => {
                 return (
-                  <tr key={id}>
+                  <tr key={id} style={{cursor:"default"}}>
                     <td>{name}</td>
                     <td><span className={classifyAssetTypeClassName(assetType)}>{assetType}</span></td>
                     <td>
-                      <button type="button" className="btn-s-edit" onClick={() => deleteDataAsset(id)}>삭제</button>
+                      <button type="button" className="btn-s-edit" onClick={() => deleteDataAsset(id)}>
+                        {t('delete')}
+                      </button>
                     </td>
                     <td>{dataFormatter(createdAt ?? new Date().toISOString(), 'YYYY-MM-DD HH:mm:ss')}</td>
                   </tr>
@@ -61,14 +66,14 @@ const UpdateData = () => {
               })
               :
               <tr>
-                <td colSpan={4}>데이터가 없습니다.</td>
+                <td colSpan={4}>{t('not-found.data')}</td>
               </tr>
           }
           </tbody>
         </table>
       </div>
       <div className="alg-right">
-        <button type="button" className="btn-l-cancel" onClick={back}>뒤로</button>
+        <button type="button" className="btn-l-cancel" onClick={back}>{t('cancel')}</button>
       </div>
     </>
   )

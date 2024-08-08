@@ -1,19 +1,21 @@
 import {useNavigate, useRouteError} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
+    const { t } = useTranslation();
   const navigate = useNavigate();
   const routeError = useRouteError();
   if (routeError) {
     return (
       <div>
         <h1>404</h1>
-        <p>페이지를 찾을 수 없습니다.</p>
+        <p>{t("not-found.page")}</p>
       </div>
     )
   }
 
   const title = error.message;
-  const buttonMessage = '새로고침';
+  const buttonMessage = t("refresh");
   const content = JSON.stringify(error)
 
 

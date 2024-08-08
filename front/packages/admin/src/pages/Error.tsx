@@ -1,7 +1,8 @@
 import {useNavigate, useRouteError} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 const ErrorPage = () => {
-
+  const { t } = useTranslation();
   const unknownError = useRouteError();
   const navigate = useNavigate();
 
@@ -11,12 +12,12 @@ const ErrorPage = () => {
         <div className="alert--popup">
           <div className="alert--wrapper">
             <div className="alert--icon warning3"></div>
-            <div className="message">권한이 없습니다.</div>
+            <div className="message">{t("error.authority")}</div>
           </div>
           <div className="alert--popup--button">
             <button type="button" onClick={() => {
               window.location.replace(import.meta.env.VITE_API_URL + '/portal');
-            }}>포탈 페이지로 가기
+            }}>{t("portal-page")}
             </button>
           </div>
         </div>
@@ -29,12 +30,12 @@ const ErrorPage = () => {
       <div className="alert--popup">
         <div className="alert--wrapper">
           <div className="alert--icon warning3"></div>
-          <div className="message">페이지를 찾을 수 없습니다.</div>
+          <div className="message">{t("not-found.page")}</div>
         </div>
         <div className="alert--popup--button">
           <button type="button" onClick={() => {
             navigate(-1);
-          }}>이전 페이지로 가기
+          }}>{t("prev-page")}
           </button>
         </div>
       </div>

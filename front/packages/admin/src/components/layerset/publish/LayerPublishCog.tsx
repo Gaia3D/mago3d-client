@@ -10,11 +10,13 @@ import {
 import {useMutation} from "@apollo/client";
 import {DatasetAssetForLayerQuery} from "@src/generated/gql/dataset/graphql";
 import {toast} from "react-toastify";
+import {useTranslation} from "react-i18next";
 
 const LayerPublishCog = ({dataAsset, groupsQuery}: {
   dataAsset: DatasetAssetForLayerQuery,
   groupsQuery: LayersetGroupListQuery
 }) => {
+  const {t} = useTranslation();
   const {register, handleSubmit, formState: {errors}, setValue} = useForm<CreateAssetInput>();
   const navigate = useNavigate();
 
@@ -30,7 +32,7 @@ const LayerPublishCog = ({dataAsset, groupsQuery}: {
     navigate(-1);
   }
   const onSubmit: SubmitHandler<CreateAssetInput> = (data) => {
-    if (!confirm('등록하시겠습니까?')) return;
+    if (!confirm(t("question.create"))) return;
 
     //data.access = data.access ? LayerAccess.Private : LayerAccess.Public;
     data.access = LayerAccess.Public;
@@ -43,14 +45,14 @@ const LayerPublishCog = ({dataAsset, groupsQuery}: {
 
     createMutation({variables: {input: data}})
       .then(() => {
-        toast('성공적으로 등록되었습니다.');
+        toast(t("success.create"));
         navigate('/layerset/layer');
         // getQueryClient().invalidateQueries({queryKey: ['assets', searchProps]})
         // navigate(-1);
       })
       .catch(e => {
           console.error(e);
-          toast('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+        toast(t("error.admin"));
       });
 
   }
@@ -65,15 +67,15 @@ const LayerPublishCog = ({dataAsset, groupsQuery}: {
       </h2>
       <article>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label htmlFor="layer-publish-cog-groups">레이어 그룹</label>
+          <label htmlFor="layer-publish-cog-groups">{t("layer-group")}</label>
           <select
-            id="layer-publish-cog-groups"
-            {...register("groupIds", {
-              required: {
-                value: true,
-                message: '그룹을 선택해주시기 바랍니다.'
-              },
-            })}
+              id="layer-publish-cog-groups"
+              {...register("groupIds", {
+                required: {
+                  value: true,
+                  message: t("required.groups")
+                },
+              })}
           >
             {
               groups.map((group, idx) => {
@@ -83,13 +85,13 @@ const LayerPublishCog = ({dataAsset, groupsQuery}: {
               })
             }
           </select>
-          <label htmlFor="layer-publish-cog-name">레이어명</label>
+          <label htmlFor="layer-publish-cog-name">{t("layer-name")}</label>
           <input type="text"
                  id="layer-publish-cog-name"
                  {...register("name", {
                    required: {
                      value: true,
-                     message: "레이어명을 입력해주시기 바랍니다."
+                     message: t("required.layer-name")
                    },
                  })}
           />
@@ -105,7 +107,7 @@ const LayerPublishCog = ({dataAsset, groupsQuery}: {
             <span className="slider"></span>
           </label>
           */}
-          <label>사용여부</label>
+          <label>{t("use-status")}</label>
           <label className="switch mt8">
             <input type="checkbox"
                    defaultChecked={true}
@@ -114,7 +116,7 @@ const LayerPublishCog = ({dataAsset, groupsQuery}: {
             />
             <span className="slider"></span>
           </label>
-          <label>켜기</label>
+          <label>{t("turn-on")}</label>
           <label className="switch mt8">
             <input type="checkbox"
                    defaultChecked={true}
@@ -124,8 +126,8 @@ const LayerPublishCog = ({dataAsset, groupsQuery}: {
             <span className="slider"></span>
           </label>
           <div className="alg-right">
-            <button type="submit" className="btn-l-save">발행</button>
-            <button type="button" className="btn-l-cancel" onClick={toBack}>취소</button>
+            <button type="submit" className="btn-l-save">{t("publish")}</button>
+            <button type="button" className="btn-l-cancel" onClick={toBack}>{t("cancel")}</button>
           </div>
         </form>
       </article>

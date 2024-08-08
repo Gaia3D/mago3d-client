@@ -11,12 +11,14 @@ import {
 } from "@src/generated/gql/dataset/graphql";
 import {toast} from "react-toastify";
 import {useMutation} from "@apollo/client";
+import {useTranslation} from "react-i18next";
 
 const Process3dTile = (props: {
   data: DatasetAssetForDetailQuery,
   process: Process,
   resetProcess?: () => void
 }) => {
+  const {t} = useTranslation();
   const [isFolded, setIsFolded] = useState(true);
   const [lineHeight, setLineHeight] = useState(0);
   const [process, setProcess] = useState(props.process);
@@ -28,7 +30,7 @@ const Process3dTile = (props: {
   const [createMutation] = useMutation(DatasetCreateProcessDocument, {
     refetchQueries: [DatasetProcessLogDocument, DatasetAssetForDetailDocument],
     onCompleted(data) {
-      toast('성공적으로 변환요청되었습니다.');
+      toast(t("success.transform"));
     }
   });
 
@@ -75,7 +77,7 @@ const Process3dTile = (props: {
   }, [props.process]);
 
   const onSubmit: SubmitHandler<CreateProcessInput> = (input) => {
-    if (!confirm('변환을 요청하시겠습니까?')) return;
+    if (!confirm(t("question.transform"))) return;
     input.source = {assetId: [id]};
     createMutation({variables: {input}});
   }
@@ -105,24 +107,24 @@ const Process3dTile = (props: {
         </div>
         <div className="data-convert" ref={convertBoxRef}>
           <div className="convert on">
-            <h4 className="stitle-on">데이터 변환
+            <h4 className="stitle-on">{t("data-transform")}
               <div className="data-button">
-                <button type="button" className="btn-s-default" onClick={toInit}>초기화</button>
-                <button type="button" className="btn-s-detail" onClick={toUnfold}>상세설정</button>
+                <button type="button" className="btn-s-default" onClick={toInit}>{t("reset")}</button>
+                <button type="button" className="btn-s-detail" onClick={toUnfold}>{t("detail-setting")}</button>
               </div>
             </h4>
             <div className="data-box">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <label htmlFor="data-process-t3d-name" className={'required'}>
-                  <span className="required-star">*</span>변환명
+                  <span className="required-star">*</span>{t("transform-name")}
                 </label>
-                <input type="text" placeholder="변환명을 입력하세요." id="data-process-t3d-name"
+                <input type="text" placeholder={t("placeholder.transform-name")} id="data-process-t3d-name"
                        {...register("name", {required: true, validate: value => !!value.trim(),})}
                        value={process?.name ?? ''}
                        onChange={handleChange}
                 />
                 <label htmlFor="data-process-t3d-input-type" className={'required'}>
-                  <span className="required-star">*</span>입력 데이터 타입
+                  <span className="required-star">*</span>{t("input-data-type")}
                 </label>
                 <select id="data-process-t3d-input-type"
                         {...register("context.t3d.inputType", {required: true,})}
@@ -158,8 +160,8 @@ const Process3dTile = (props: {
                   <option value="LWS">LWS (*.lws)</option>
                   <option value="DirectX">DirectX (*.x)</option>
                 </select>
-                <label htmlFor="data-process-t3d-crs">EPSG 코드</label>
-                <input type="text" placeholder="EPSG 코드를 입력하세요. ex) 4326, 5186"
+                <label htmlFor="data-process-t3d-crs">{t("epsg")}</label>
+                <input type="text" placeholder={t("placeholder.epsg")}
                        id="data-process-t3d-crs" {...register("context.t3d.crs")}
                        value={process?.context?.payload?.crs ?? ''}
                        onChange={(e) => {
@@ -175,8 +177,8 @@ const Process3dTile = (props: {
                          })
                        }}
                 />
-                <label htmlFor="data-process-t3d-proj">PROJ 값</label>
-                <input type="text" placeholder="PROJ 값을 입력하세요. ex) +proj=utm +zone=52 +datum=WGS84 +units=m +no_defs"
+                <label htmlFor="data-process-t3d-proj">{t("proj")}</label>
+                <input type="text" placeholder={t("placeholder.proj")}
                        id="data-process-t3d-proj"
                        {...register("context.t3d.proj")}
                        value={process?.context?.payload?.proj ?? ''}
@@ -196,7 +198,7 @@ const Process3dTile = (props: {
                 {
                   !isFolded &&
                     <>
-                      <label htmlFor="data-process-t3d-reverseTexCoord" style={{cursor: "pointer"}}>텍스쳐를 반대로</label>
+                      <label htmlFor="data-process-t3d-reverseTexCoord" style={{cursor: "pointer"}}>{t("convert-texture")}</label>
                       <label htmlFor="data-process-t3d-reverseTexCoord" className="switch">
                         <input type={"checkbox"}
                                id="data-process-t3d-reverseTexCoord"
@@ -217,7 +219,7 @@ const Process3dTile = (props: {
                         />
                         <span className="slider"></span>
                       </label>
-                      <label htmlFor="data-process-t3d-pngTexture" style={{cursor: "pointer"}}>png 텍스쳐 모드</label>
+                      <label htmlFor="data-process-t3d-pngTexture" style={{cursor: "pointer"}}>{t("setting.png-texture-mod")}</label>
                       <label htmlFor="data-process-t3d-pngTexture" className="switch">
                         <input type={"checkbox"}
                                id="data-process-t3d-pngTexture"
@@ -238,7 +240,7 @@ const Process3dTile = (props: {
                         />
                         <span className="slider"></span>
                       </label>
-                      <label htmlFor="data-process-t3d-yUpAxis" style={{cursor: "pointer"}}>y축을 높이 축으로 설정</label>
+                      <label htmlFor="data-process-t3d-yUpAxis" style={{cursor: "pointer"}}>{t("setting.y-axis")}</label>
                       <label htmlFor="data-process-t3d-yUpAxis" className="switch">
                         <input type={"checkbox"}
                                id="data-process-t3d-yUpAxis"
@@ -259,7 +261,7 @@ const Process3dTile = (props: {
                         />
                         <span className="slider"></span>
                       </label>
-                      <label htmlFor="data-process-t3d-refineAdd" style={{cursor: "pointer"}}>구체화(Refine) 추가 모드</label>
+                      <label htmlFor="data-process-t3d-refineAdd" style={{cursor: "pointer"}}>{t("setting.refine-mod")}</label>
                       <label htmlFor="data-process-t3d-refineAdd" className="switch">
                         <input type={"checkbox"}
                                id="data-process-t3d-refineAdd"
@@ -280,8 +282,8 @@ const Process3dTile = (props: {
                         />
                         <span className="slider"></span>
                       </label>
-                      <label htmlFor="data-process-t3d-maxCount">노드 최대값</label>
-                      <input type="number" placeholder="노드 최대값을 입력하세요. 기본값: 1024"
+                      <label htmlFor="data-process-t3d-maxCount">{t("setting.node-max")}</label>
+                      <input type="number" placeholder={t("placeholder.node-max")}
                              id="data-process-t3d-maxCount"
                              {...register("context.t3d.maxCount")}
                              value={process?.context?.payload?.maxCount ?? 1024}
@@ -298,8 +300,8 @@ const Process3dTile = (props: {
                                  })
                              }}
                       />
-                      <label htmlFor="data-process-t3d-maxLod">최대 LOD(Level Of Detail)</label>
-                      <input type="number" placeholder="최대 LOD(Level Of Detail)를 입력하세요. 기본값: 3"
+                      <label htmlFor="data-process-t3d-maxLod">{t("setting.lod-max")}</label>
+                      <input type="number" placeholder={t("placeholder.lod-max")}
                              id="data-process-t3d-maxLod"
                              {...register("context.t3d.maxLod")}
                              value={process?.context?.payload?.maxLod ?? 3}
@@ -316,8 +318,8 @@ const Process3dTile = (props: {
                                })
                              }}
                       />
-                      <label htmlFor="data-process-t3d-minLod">최소 LOD(Level Of Detail)</label>
-                      <input type="number" placeholder="최소 LOD(Level Of Detail)를 입력하세요. 기본값: 0"
+                      <label htmlFor="data-process-t3d-minLod">{t("setting.lod-min")}</label>
+                      <input type="number" placeholder={t("placeholder.lod-min")}
                              id="data-process-t3d-minLod"
                              {...register("context.t3d.minLod")}
                              value={process?.context?.payload?.minLod ?? 0}
@@ -334,8 +336,8 @@ const Process3dTile = (props: {
                                })
                              }}
                       />
-                      <label htmlFor="data-process-t3d-maxPoints">포인트클라우드 데이터의 최대 포인트 수</label>
-                      <input type="number" placeholder="포인트클라우드 데이터의 최대 포인트 수를 입력하세요. 기본값: 20000"
+                      <label htmlFor="data-process-t3d-maxPoints">{t("setting.pointer-max")}</label>
+                      <input type="number" placeholder={t("placeholder.pointer-max")}
                              id="data-process-t3d-maxPoints"
                              {...register("context.t3d.maxPoints")}
                              value={process?.context?.payload?.maxPoints ?? 20000}
@@ -352,7 +354,7 @@ const Process3dTile = (props: {
                                })
                              }}
                       />
-                      <label htmlFor="data-process-t3d-flipCoordinate" style={{cursor: "pointer"}}>x, y 좌표 뒤집기</label>
+                      <label htmlFor="data-process-t3d-flipCoordinate" style={{cursor: "pointer"}}>{t("setting.convert-x-y")}</label>
                       <label htmlFor="data-process-t3d-flipCoordinate" className="switch">
                         <input type={"checkbox"}
                                id="data-process-t3d-flipCoordinate"
@@ -373,7 +375,7 @@ const Process3dTile = (props: {
                         />
                         <span className="slider"></span>
                       </label>
-                      <label htmlFor="data-process-t3d-autoUpAxis" style={{cursor: "pointer"}}>자동 높이축 할당</label>
+                      <label htmlFor="data-process-t3d-autoUpAxis" style={{cursor: "pointer"}}>{t("setting.auto-axis")}</label>
                       <label htmlFor="data-process-t3d-autoUpAxis" className="switch">
                         <input type={"checkbox"}
                                id="data-process-t3d-autoUpAxis"
@@ -396,12 +398,12 @@ const Process3dTile = (props: {
                       </label>
                     </>
                 }
-                <button type="submit" className="btn-convert">데이터 변환</button>
+                <button type="submit" className="btn-convert">{t("data-transform")}</button>
               </form>
             </div>
           </div>
           <div className="sucess-box on">
-            <p>{getProcessStatusMessage(asset.process?.status)}</p>
+            <p>{getProcessStatusMessage(asset.process?.status, t)}</p>
           </div>
         </div>
       </div>

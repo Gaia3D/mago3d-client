@@ -21,6 +21,7 @@ import {dataFormatter} from "@mnd/shared";
 import {alertToast} from "@mnd/shared/src/utils/toast";
 import LayerPreviewRaster from "./LayerPreviewRaster";
 import LayerPreviewHybrid from "@src/components/layerset/layer/LayerPreviewHybrid";
+import {useTranslation} from "react-i18next";
 
 const getContext = (asset: LayerAsset): PublishContextValue => {
   const {type, id} = asset;
@@ -82,6 +83,7 @@ const getPreviewComponent = (asset: LayerAsset) => {
 }
 
 const LayerDetailIndex = ({id}: { id: string }) => {
+  const {t} = useTranslation();
   const {register, handleSubmit, formState: {errors}, setValue} = useForm<UpdateAssetInput>();
   const navigate = useNavigate();
   const toBack = () => {
@@ -91,11 +93,11 @@ const LayerDetailIndex = ({id}: { id: string }) => {
   const [ updateMutation ] = useMutation(LayersetUpdateAssetDocument, {
     refetchQueries: [LayersetAssetDocument],
     onCompleted(data) {
-      alert('성공적으로 수정되었습니다.');
+      alert(t("success.edit"));
     },
     onError(e) {
       console.error(e);
-      alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+      alert(t("error.admin"));
     }
   });
 
@@ -113,7 +115,7 @@ const LayerDetailIndex = ({id}: { id: string }) => {
   }, [asset]);
 
   const onSubmit: SubmitHandler<UpdateAssetInput> = (data) => {
-    if (!confirm('수정하시겠습니까?')) return;
+    if (!confirm(t("question.edit"))) return;
     const {id} = asset;
     const input = {} as UpdateAssetInput;
     Object.assign(input, data);
@@ -121,9 +123,9 @@ const LayerDetailIndex = ({id}: { id: string }) => {
   }
 
   const toDelete = () => {
-    if (!confirm(`레이어 ${asset.name}을 삭제하시겠습니까?`)) return;
+    if (!confirm(t("layer") + asset.name + t("question.blank-delete"))) return;
     deleteAssetMutation({variables: {ids: id}}).then(() => {
-      alertToast('삭제되었습니다.');
+      alertToast(t("success.delete"));
       navigate(-1);
     });
   }
@@ -137,7 +139,7 @@ const LayerDetailIndex = ({id}: { id: string }) => {
         </h2>
         <article>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <label htmlFor="layer-detail-groups">레이어 그룹</label>
+            <label htmlFor="layer-detail-groups">{t("layer-group")}</label>
             {
               groups ? <select disabled>
                   {
@@ -146,21 +148,21 @@ const LayerDetailIndex = ({id}: { id: string }) => {
                 </select>
                 : null
             }
-            <label htmlFor="layer-detail-name">레이어명</label>
+            <label htmlFor="layer-detail-name">{t("layer-name")}</label>
             <input type="text"
                    id="layer-detail-name"
                    defaultValue={asset.name}
                    {...register("name", {
                      required: {
                        value: true,
-                       message: "레이어명을 입력해주시기 바랍니다."
+                       message: t("required.layer-name")
                      },
                    })}
             />
             {errors?.name?.message && <span className="error">{errors.name.message}</span>}
-            <label>상태</label>
-            <span>{getPublishStatusName(asset.status)}</span>
-            <label>사용여부</label>
+            <label>{t("state")}</label>
+            <span>{getPublishStatusName(asset.status, t)}</span>
+            <label>{t("use-status")}</label>
             <label className="switch mt8">
               <input type="checkbox"
                      defaultChecked={asset.enabled}
@@ -169,7 +171,7 @@ const LayerDetailIndex = ({id}: { id: string }) => {
               />
               <span className="slider"></span>
             </label>
-            <label>켜기</label>
+            <label>{t("turn-on")}</label>
             <label className="switch mt8">
               <input type="checkbox"
                      defaultChecked={asset.visible}
@@ -179,24 +181,24 @@ const LayerDetailIndex = ({id}: { id: string }) => {
               <span className="slider"></span>
             </label>
             <div className="alg-right">
-              <button type="submit" className="btn-l-save">수정</button>
-              <button type="button" className="btn-l-delete" onClick={toDelete}>삭제</button>
-              <button type="button" className="btn-l-cancel" onClick={toBack}>취소</button>
+              <button type="submit" className="btn-l-save">{t("edit")}</button>
+              <button type="button" className="btn-l-delete" onClick={toDelete}>{t("delete")}</button>
+              <button type="button" className="btn-l-cancel" onClick={toBack}>{t("cancel")}</button>
             </div>
           </form>
-            <label>레이어 미리보기</label>
+            <label>{t("layer-preview")}</label>
             <div style={{width:"100%", display:"inline-block"}}>
               {getPreviewComponent(asset)}
             </div>
-            <label>발행 이력</label>
+            <label>{t("publish-record")}</label>
             <div className="cboth list03-sort title-inner">
               <table>
-                <caption>이력</caption>
+                <caption>{t("record")}</caption>
                 <thead>
                 <tr>
-                  <th>내용</th>
-                  <th>타입 <a className="sort" href="#"></a></th>
-                  <th>등록일 <a className="sort" href="#"></a></th>
+                  <th>{t("content")}</th>
+                  <th>{t("type")} <a className="sort" href="#"></a></th>
+                  <th>{t("created-at")} <a className="sort" href="#"></a></th>
                 </tr>
                 </thead>
               </table>

@@ -13,9 +13,11 @@ import {
   LayerGroupDocument,
 } from "@src/generated/gql/layerset/graphql";
 import {useFragment} from "@src/generated/gql/layerset";
+import {useTranslation} from "react-i18next";
 
 
 const UpdateBasic = () => {
+  const { t } = useTranslation();
   const back = useToPath('/layerset/group');
   const {data} = useOutletContext<UpdateLayerGroupOutletContext>();
   const group = useFragment(LayerGroupBasicFragmentDoc, data.group);
@@ -25,7 +27,7 @@ const UpdateBasic = () => {
       LayerGroupDocument,
     ],
     onCompleted() {
-      toast('수정되었습니다');
+      toast(t("success.edit"));
     }
   });
 
@@ -44,21 +46,21 @@ const UpdateBasic = () => {
       <Suspense fallback={<AppLoader/>}>
         <article>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <label>그룹명</label>
+            <label>{t("group-name")}</label>
             <input type="text" defaultValue={group.name} {...register("name", {
               validate: value => !!value.trim()
             })}/>
             {errors.name && <span className="error">{errors.name.message}</span>}
             <br/>
 
-            <label>설명</label>
+            <label>{t("description")}</label>
             <input type="text" defaultValue={group.description} {...register("description")}/>
             {errors.description && <span className="error">{errors.description.message}</span>}
           </form>
         </article>
         <div className="alg-right">
-          <button type="button" className="btn-l-save" onClick={handleSubmit(onSubmit)}>저장</button>
-          <button type="button" className="btn-l-cancel" onClick={back}>뒤로</button>
+          <button type="button" className="btn-l-save" onClick={handleSubmit(onSubmit)}>{t("save")}</button>
+          <button type="button" className="btn-l-cancel" onClick={back}>{t("cancel")}</button>
         </div>
       </Suspense>
   )

@@ -1,17 +1,25 @@
 import GroupRepresentation from "@keycloak/keycloak-admin-client/lib/defs/groupRepresentation";
 import {z} from "zod";
+import {useTranslation} from "react-i18next";
 
-export const createGroupForm = z.object({
-  name: z.string().min(1, '그룹명을 입력해주시기 바랍니다.'),
-  attributes: z.object({
-    description: z.string().optional()
+export const useGroupFormSchemas = () => {
+  const { t } = useTranslation();
+
+  const createGroupForm = z.object({
+    name: z.string().min(1, t("validation.group-name")),
+    attributes: z.object({
+      description: z.string().optional()
+    }).required()
   })
-}).required();
 
-export const updateGroupForm = createGroupForm;
+  return {
+    createGroupForm
+  }
+}
 
-export type CreateGroupForm = z.infer<typeof createGroupForm>;
-export type UpdateGroupForm = z.infer<typeof updateGroupForm>;
+export type GroupFormSchemas = ReturnType<typeof useGroupFormSchemas>;
+export type CreateGroupForm = z.infer<GroupFormSchemas['createGroupForm']>;
+export type UpdateGroupForm = CreateGroupForm;
 
 export const createGroupFormToGroupRepresentation = (form: CreateGroupForm): GroupRepresentation => {
   const group = {

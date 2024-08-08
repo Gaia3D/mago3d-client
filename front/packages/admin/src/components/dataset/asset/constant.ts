@@ -29,7 +29,7 @@ export const assetTypeOptions = [
 ];
 
 export const heightReferenceOptions = [
-  {value: 'none', label: '기본'},
+  {value: 'none', label: 'basic'},
   {value: 'clamp', label: 'clamp'},
   {value: 'relative', label: 'relative'},
 ];

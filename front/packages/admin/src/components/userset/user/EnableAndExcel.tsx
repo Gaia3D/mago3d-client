@@ -1,8 +1,4 @@
-import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
-import {useKcAdminClient} from "../../../provider/KeycloakAdminClientProvider";
 import downloadExcelFile, {XLSXWorkSheetProps} from "../../../api/Excel";
-import {timestampFormatter} from "@mnd/shared";
-import {divisionToKor} from "../../../api/User";
 import {useLazyQuery} from "@apollo/client";
 import {
   UsersetUserExcelDocument,
@@ -14,14 +10,7 @@ import {userSearchSelector} from "@src/recoils/User";
 import {gql} from "graphql-tag";
 import {useCallback} from "react";
 import {useUpdateUserEnabled} from "@src/hooks/UserInfo";
-
-const refineUser = ({username, firstName, enabled, createdTimestamp, attributes}: UserRepresentation) => ({
-  "아이디": username,
-  "이름": firstName,
-  "부대": divisionToKor(`${attributes?.division}`) + ` ${attributes?.unit}`,
-  "상태": enabled ? '사용' : '사용중지',
-  "가입일자": timestampFormatter(createdTimestamp ?? 0, 'YYYY-MM-DD HH:mm:ss')
-})
+import {useTranslation} from "react-i18next";
 
 gql`
     query UsersetUserIdList($filter: UserFilter) @api(name: userset) {
@@ -52,6 +41,7 @@ export const EnabledAndExcel = ({fetchFunc}:
                                     // query: UserQueryWithAdditionalPageInfo,
                                     fetchFunc: () => void
                                   }) => {
+  const {t} = useTranslation();
   const searchVariables = useRecoilValue<UsersetUserListQueryVariables>(userSearchSelector);
   const updateEnabled = useUpdateUserEnabled();
 
@@ -59,7 +49,7 @@ export const EnabledAndExcel = ({fetchFunc}:
   const [fetchUserExcel] = useLazyQuery(UsersetUserExcelDocument, {variables: searchVariables});
 
   const enableUpdate = useCallback((enabled: boolean) => {
-    if (!confirm('수정하시겠습니까?')) return;
+    if (!confirm(t('question.edit'))) return;
     fetchUserId()
       .then(({data}) => updateEnabled(data.users.items.map(({id}) => id), enabled))
       .then(fetchFunc);
@@ -69,23 +59,24 @@ export const EnabledAndExcel = ({fetchFunc}:
     fetchUserExcel()
       .then(({data}) => {
         return data.users.items.map(user => {
-          const division = divisionToKor(user.properties?.division?.[0]);
+          const division = t(user.properties?.division?.[0].toLowerCase() ?? 'division-blank');
           const unit =user.properties?.unit?.[0];
+
           return {
-            "아이디": user.username,
-            "이름": user.firstName,
-            "소속부대": division + '/' + unit,
-            "사용여부": user.enabled,
-            "생성일자": user.createdAt
-          }
+            [t("user-id")]: user.username,
+            [t("user-name")]: user.firstName,
+            [t("division-unit")]: division + "/" + unit,
+            [t("user-status")]: user.enabled,
+            [t("join-date")]: user.createdAt,
+          };
         });
       })
       .then((users) => {
         const sheet = {
           data: users,
-          sheetName: '사용자 목록',
+          sheetName: t("sheet-title"),
         } as XLSXWorkSheetProps;
-        downloadExcelFile([sheet], '사용자목록.xlsx');
+        downloadExcelFile([sheet], t("excel-title")+'.xlsx');
       });
 
     // timestampFormatter(user.createdAt, 'YYYY-MM-DD HH:mm:ss');
@@ -104,9 +95,9 @@ export const EnabledAndExcel = ({fetchFunc}:
 
   return (
     <div className="alg-right mar-b10">
-      <button type="button" className="btn-basic" onClick={() => enableUpdate(true)}>전체 사용중</button>
-      <button type="button" className="btn-basic" onClick={() => enableUpdate(false)}>전체 사용중지</button>
-      <button type="button" className="btn-basic" onClick={download}>엑셀 다운로드</button>
+      <button type="button" className="btn-basic" onClick={() => enableUpdate(true)}>{t('all')} {t('using')}</button>
+      <button type="button" className="btn-basic" onClick={() => enableUpdate(false)}>{t('all')} {t('stop-using')}</button>
+      <button type="button" className="btn-basic" onClick={download}>{t('excel')} {t('download')}</button>
     </div>
   )
 }

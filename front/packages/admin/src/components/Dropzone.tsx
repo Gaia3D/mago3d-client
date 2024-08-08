@@ -9,6 +9,7 @@ import {useMutation} from "@apollo/client";
 import {DatasetDeleteAssetFileDocument} from "@src/generated/gql/dataset/graphql";
 import uploadImage from '/public/images/upload-img.png';
 import fileImage from '/public/images/image-file.png';
+import {useTranslation} from "react-i18next";
 
 
 const focusedStyle = {
@@ -23,33 +24,35 @@ const rejectStyle = {
   borderColor: '#ff1744'
 };
 
-function FileItem({name, progress = 0, deleteFunc, uuid}: {
+const FileItem = ({name, progress = 0, deleteFunc, uuid}: {
   uuid: string,
   name: string,
   progress?: number,
   deleteFunc: (uuid: string) => void
-}) {
+}) => {
+  const {t} = useTranslation();
+
   return (
-    <div className="file">
-      <div className="thumbnail">
-        <img src={fileImage} alt="파일타입 이미지" className="image"/>
-      </div>
-      <div className="details">
-        <div className="filename">
-          <span className="name">{name}</span>
-          {
-            progress === 100 ?
-              <button type="button" className="file-delete" onClick={() => {
-                deleteFunc(uuid)
-              }}></button>
-              : <></>
-          }
+      <div className="file">
+        <div className="thumbnail">
+          <img src={fileImage} alt={t("file-type-img")} className="image"/>
         </div>
-        <div className="progress">
-          <div className="bar" style={{width: `${progress}%`}}></div>
+        <div className="details">
+          <div className="filename">
+            <span className="name">{name}</span>
+            {
+              progress === 100 ?
+                  <button type="button" className="file-delete" onClick={() => {
+                    deleteFunc(uuid)
+                  }}></button>
+                  : <></>
+            }
+          </div>
+          <div className="progress">
+            <div className="bar" style={{width: `${progress}%`}}></div>
+          </div>
         </div>
       </div>
-    </div>
   )
 }
 
@@ -194,7 +197,7 @@ function StyledDropzone({uploadedFilesState, update = false, acceptFile = {}}: {
   }, [fileItems]);
 
   const deleteFile = async (uuid: string) => {
-    if (!confirm('삭제하시겠습니까?')) return;
+    if (!confirm(t("question.delete"))) return;
 
     const {remain, deleteFileId, deleteAssetId} = uploadedFiles.reduce((accum, file) => {
       if (file.clientId !== uuid) {
@@ -231,7 +234,7 @@ function StyledDropzone({uploadedFilesState, update = false, acceptFile = {}}: {
     }
 
     if (!deleteSuccess) {
-      alert('삭제에 실패했습니다.');
+      alert(t("error.delete"));
       return;
     }
 
@@ -257,7 +260,7 @@ function StyledDropzone({uploadedFilesState, update = false, acceptFile = {}}: {
     onDrop(acceptedFiles) {
       if (acceptedFiles.length === 0) {
         // 허용되지 않는 파일이 드래그 앤 드롭된 경우, 경고창을 띄웁니다.
-        alert('허용되지 않는 파일 유형입니다. 다시 시도해주세요. \n허용되는 파일 유형은 ' + Object.values(acceptFile).join(', ') + ' 입니다.');
+        alert(t("error.file-upload-start") + Object.values(acceptFile).join(', ') + t("error.file-upload-end"));
       } else {
         const uuidFiles = acceptedFiles.map((file: File): UploadFile => {
           const f = file as UploadFile;
@@ -269,7 +272,7 @@ function StyledDropzone({uploadedFilesState, update = false, acceptFile = {}}: {
       }
     },
   });
-
+  const {t} = useTranslation();
   const style = useMemo(() => ({
     ...(isFocused ? focusedStyle : {}),
     ...(isDragAccept ? acceptStyle : {}),
@@ -285,10 +288,10 @@ function StyledDropzone({uploadedFilesState, update = false, acceptFile = {}}: {
         <div className="upload-box">
           <div  {...getRootProps({style})} className="drag-file">
             <label className="file-label" htmlFor="dropzone-upload-file">
-              <img src={uploadImage} id="dropzone-upload-file" width={50} height={50} alt="파일 아이콘"/>
+              <img src={uploadImage} id="dropzone-upload-file" width={50} height={50} alt={t("file-icon")}/>
               <br/><br/>
               <input {...getInputProps()} />
-              <p className="message">업로딩 하려면 파일을 올리거나 클릭하십시오.</p>
+              <p className="message">{t("upload-method")}</p>
             </label>
           </div>
         </div>

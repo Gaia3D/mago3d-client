@@ -2,12 +2,13 @@ import {useKcAdminClient} from "@src/provider/KeycloakAdminClientProvider";
 import {useSuspenseQuery} from "@tanstack/react-query";
 import {useOutletContext} from "react-router-dom";
 import type UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
-import {divisionToKor} from "@src/api/User";
 import {dateFormat} from "@mnd/shared";
 import {first} from "lodash";
 import {format} from "ol/coordinate";
+import {useTranslation} from "react-i18next";
 
 export const UpdateUser = () => {
+    const { t } = useTranslation();
     const groupId = useOutletContext<string>();
     const kcAdminClient = useKcAdminClient();
     const {data} = useSuspenseQuery({
@@ -24,17 +25,17 @@ export const UpdateUser = () => {
         <>
             <div className="list08 title-inner">
                 <table>
-                    <caption>사용자 그룹 수정</caption>
+                    <caption>{t("user-group-edit")}</caption>
                     <thead>
                         <tr>
-                            <th>번호</th>
-                            <th>아이디</th>
-                            <th>이름</th>
-                            <th>소속부대</th>
-                            <th>상태</th>
+                            <th>{t("number")}</th>
+                            <th>{t("user-id")}</th>
+                            <th>{t("name")}</th>
+                            <th>{t("division-unit")}</th>
+                            <th>{t("status")}</th>
                             {/*<th>수정</th>*/}
-                            <th>마지막 로그인</th>
-                            <th>등록일</th>
+                            <th>{t("last-login")}</th>
+                            <th>{t("created-at")}</th>
                         </tr>
                     </thead>
                 </table>
@@ -54,7 +55,8 @@ export const UpdateUser = () => {
 
 
 const UserItem = ({user, index}: {user:UserRepresentation, index:number}) => {
-  const division = user.attributes.division?.[0] && divisionToKor(user.attributes.division?.[0]) || '소속미입력';
+    const {t} = useTranslation();
+  const division = user.attributes.division?.[0] && t(user.attributes.division?.[0]) || t("division-blank");
   const unit = user.attributes.unit?.[0];
     return (
         <tr>
@@ -62,7 +64,7 @@ const UserItem = ({user, index}: {user:UserRepresentation, index:number}) => {
             <td>{user.username}</td>
             <td>{user.firstName}</td>
             <td>{division} {unit}</td>
-            <td>{user.enabled ? '사용중' : '사용불가'}</td>
+            <td>{user.enabled ? t("using") : t("cant-using")}</td>
             {/*<td>*/}
             {/*    <button type="button" className="btn-s-edit">수정</button>*/}
             {/*</td>*/}

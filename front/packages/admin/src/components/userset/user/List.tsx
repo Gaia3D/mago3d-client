@@ -9,6 +9,7 @@ import {UsersetUserListDocument, UsersetUserListQueryVariables, UserSort} from "
 import gql from "graphql-tag";
 import {produce} from "immer";
 import {includes} from "lodash";
+import {useTranslation} from "react-i18next";
 
 gql`
     query UsersetUserList($filter: UserFilter, $pageable: UserPageable) @api(name: userset) {
@@ -28,6 +29,7 @@ gql`
 `
 
 export const List = () => {
+  const {t} = useTranslation();
   const navigate = useNavigate();
 
   const setSearchState = useSetRecoilState(userSearchState);
@@ -63,52 +65,73 @@ export const List = () => {
       }
     }));
   }
-  console.info(items);
 
   return (
-    <Suspense fallback={<AppLoader/>}>
+    <Suspense fallback={<AppLoader />}>
       <div className="contents">
-        <h2>사용자 관리</h2>
-        <SearchCondition/>
+        <h2>{t("user-management")}</h2>
+        <SearchCondition />
         <div className="alg-left">
-          <span className="result-list">검색결과 : 총 <span className="skyblue">{pageInfo.totalItems}</span>건</span>,
-          <span className="result-page"><span
-            className="skyblue">{pageInfo.page + 1}</span>/{pageInfo.totalPages} 페이지</span>
+          <span className="result-list">
+            {t("search-result")} : {t("total")}{" "}
+            <span className="skyblue">{pageInfo.totalItems}</span>
+            {t("cases")}
+          </span>
+          ,
+          <span className="result-page">
+            <span className="skyblue">{pageInfo.page + 1}</span>/
+            {pageInfo.totalPages} {t("page")}
+          </span>
         </div>
-        <EnabledAndExcel fetchFunc={refetch}/>
+        <EnabledAndExcel fetchFunc={refetch} />
         <div className="list09">
           <table>
-            <caption>사용자 관리</caption>
+            <caption>{t("user-management")}</caption>
             <thead>
-            <tr>
-              <th onClick={() => sortBy('username')}>아이디 <a className="sort"></a></th>
-              <th onClick={() => sortBy('firstName')}>이름 <a className="sort"></a></th>
-              <th>계급</th>
-              <th>소속부대</th>
-              <th>상태</th>
-              <th>수정</th>
-              <th>삭제</th>
-              <th  onClick={() => sortBy('createdAt')}>가입일 <a className="sort"></a></th>
-            </tr>
+              <tr>
+                <th onClick={() => sortBy("username")}>
+                  {t("user-id")} <a className="sort"></a>
+                </th>
+                <th onClick={() => sortBy("firstName")}>
+                  {t("user-name")} <a className="sort"></a>
+                </th>
+                <th>{t("rank")}</th>
+                <th>{t("division-unit")}</th>
+                <th>{t("state")}</th>
+                <th>{t("edit")}</th>
+                <th>{t("delete")}</th>
+                <th onClick={() => sortBy("createdAt")}>
+                  {t("join-date")} <a className="sort"></a>
+                </th>
+              </tr>
             </thead>
             <tbody>
-            {
-              items && items.length > 0 ? items.map(user =>
-                <ListItem key={user.id} user={user} refetchFunc={refetch}/>) : <tr><td colSpan={8}>데이터가 없습니다.</td></tr>
-            }
+              {items && items.length > 0 ? (
+                items.map((user) => (
+                  <ListItem key={user.id} user={user} refetchFunc={refetch} />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8}>{t("not-found.user")}</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
         <div className="alg-right">
-          <button type="button" className="btn-plus" onClick={create}>사용자 추가</button>
+          <button type="button" className="btn-plus" onClick={create}>
+            {t("add-user")}
+          </button>
         </div>
-        {
-          pageInfo.totalPages > 0 ?
-            <Pagination page={pageInfo.page} totalPages={pageInfo.totalPages} pagePerCount={pageInfo.size}
-                        handler={setPage}/>
-            : null
-        }
+        {pageInfo.totalPages > 0 ? (
+          <Pagination
+            page={pageInfo.page}
+            totalPages={pageInfo.totalPages}
+            pagePerCount={pageInfo.size}
+            handler={setPage}
+          />
+        ) : null}
       </div>
     </Suspense>
-  )
+  );
 }

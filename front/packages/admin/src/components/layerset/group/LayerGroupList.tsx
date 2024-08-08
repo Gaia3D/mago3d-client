@@ -5,8 +5,10 @@ import {LayerAccess, LayersetDeleteGroupDocument, LayersetGroupListDocument, Lay
 import {useMutation, useSuspenseQuery} from "@apollo/client";
 import {useNavigate} from "react-router-dom";
 import {alertToast} from "@mnd/shared/src/utils/toast";
+import {useTranslation} from "react-i18next";
 
 const LayerGroupList = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [onCreate, setOnCreate] = useState<boolean>(false);
   const {data} = useSuspenseQuery(LayersetGroupListDocument);
@@ -36,11 +38,11 @@ const LayerGroupList = () => {
   }, [updateMutation]);
 
   const deleteGroup = useCallback((group) => {
-    if (!confirm('삭제하시겠습니까?')) return;
+    if (!confirm(t("question.delete"))) return;
     deleteMutation(
       {variables: {id: group.id}}
     ).then((data) => {
-      alertToast('삭제되었습니다.');
+      alertToast(t("success.delete"));
     }).catch((e) => {
       alert(e.message);
     });
@@ -51,15 +53,15 @@ const LayerGroupList = () => {
   return (
       <Suspense fallback>
       <div className="contents">
-        <h2>레이어 그룹 관리</h2>
+        <h2>{t("layer-group-management")}</h2>
         <div className="list type-04 blue-title-inner">
           <table>
-            <caption>레이어 그룹 관리</caption>
+            <caption>{t("layer-group-management")}</caption>
             <thead>
             <tr>
-              <th>레이어 그룹</th>
-              <th>권한</th>
-              <th>삭제</th>
+              <th>{t("layer-group")}</th>
+              <th>{t("authority")}</th>
+              <th>{t("delete")}</th>
             </tr>
             </thead>
           </table>
@@ -82,12 +84,12 @@ const LayerGroupList = () => {
                               <span className="slider"></span>
                             </label>
                             <label htmlFor={`access-${group.id}`} style={{cursor: "pointer", marginLeft: "5px"}}>
-                              {group.access === LayerAccess.Public ? '공개' : '비공개'}
+                              {group.access === LayerAccess.Public ? t("public") : t("private")}
                             </label>
                           </td>
                           <td>
                             <button type="button" className="btn-s-delete" onClick={() => deleteGroup(group)}>
-                              삭제
+                              {t("delete")}
                             </button>
                           </td>
                         </tr>
@@ -96,7 +98,7 @@ const LayerGroupList = () => {
                   :
                   (
                       <tr>
-                        <td className="group" style={{textAlign: 'center'}} colSpan={3}>그룹이 없습니다.</td>
+                        <td className="group" style={{textAlign: 'center'}} colSpan={3}>{t("not-found.group")}</td>
                       </tr>
                   )
             }
@@ -104,7 +106,7 @@ const LayerGroupList = () => {
           </table>
         </div>
         <div className="alg-right">
-          <button type="button" className="btn-plus" onClick={() => setOnCreate(true)}>그룹 추가</button>
+          <button type="button" className="btn-plus" onClick={() => setOnCreate(true)}>{t("add-group")}</button>
         </div>
       </div>
       {

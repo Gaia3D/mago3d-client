@@ -3,7 +3,6 @@ import {Suspense} from "react";
 import {AppLoader} from "@mnd/shared";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useToPath} from "@src/hooks/common";
-import {toast} from "react-toastify";
 import {UpdateGroupOutletContext} from "./GroupOutletContext";
 import {useMutation} from "@apollo/client";
 import {
@@ -11,19 +10,20 @@ import {
   DatasetUpdateGroupDocument,
   UpdateGroupInput
 } from "@src/generated/gql/dataset/graphql";
+import {useTranslation} from "react-i18next";
+import {alertToast} from "@mnd/shared/src/utils/toast";
 
 const UpdateBasic = () => {
+  const {t} = useTranslation();
   const back = useToPath('/dataset/group');
-  const {
-    data: {group}
-  } = useOutletContext<UpdateGroupOutletContext>();
+  const {data: {group}} = useOutletContext<UpdateGroupOutletContext>();
 
   const [updateMutation] = useMutation(DatasetUpdateGroupDocument, {
     refetchQueries: [
       DatasetGroupListForUpdateDocument
     ],
     onCompleted() {
-      toast('수정되었습니다');
+      alertToast(t('success.edit'));
     }
   });
 
@@ -42,21 +42,22 @@ const UpdateBasic = () => {
     <Suspense fallback={<AppLoader/>}>
       <article>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label>그룹명</label>
+          <label>{t("group-name")}</label>
           <input type="text" defaultValue={group.name} {...register("name", {
-            validate: value => !!value.trim()
+            validate: value => !!value.trim(),
+            required: t("validation.required"),
           })}/>
           {errors.name && <span className="error">{errors.name.message}</span>}
           <br/>
 
-          <label>설명</label>
+          <label>{t("description")}</label>
           <input type="text" defaultValue={group.description} {...register("description")}/>
           {errors.description && <span className="error">{errors.description.message}</span>}
         </form>
       </article>
       <div className="alg-right">
-        <button type="button" className="btn-l-save" onClick={handleSubmit(onSubmit)}>저장</button>
-        <button type="button" className="btn-l-cancel" onClick={back}>뒤로</button>
+        <button type="button" className="btn-l-save" onClick={handleSubmit(onSubmit)}>{t('save')}</button>
+        <button type="button" className="btn-l-cancel" onClick={back}>{t('cancel')}</button>
       </div>
     </Suspense>
   )
