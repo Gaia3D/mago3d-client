@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { NavLinkListProps } from "../types/Common";
 import {useTranslation} from "react-i18next";
 
-export function NavLinkList({path, text, className, activeClassName}: NavLinkListProps) {
+export function NavLinkList({path, className, activeClassName='on', text}: NavLinkListProps) {
     const {t} = useTranslation();
     return (
         <NavLink to={path} >
