@@ -72,14 +72,15 @@ export const classifyAssetTypeAcceptFile = (assetType:AssetType) => {
 }
 
 export const getProcessStatusName = (status: ProcessTaskStatus, t: (key: string) => string) => {
-    switch(status) {
-        case 'Done': return t(status);
-        case 'Error': return t(status);
-        case 'None': return t(status);
-        case 'Ready': return t(status);
-        case 'Running': return t(status);
-        case 'Terminated': return t(status);
-        case 'Terminating': return t(status);
+    switch (status) {
+        case 'Done':
+        case 'Error':
+        case 'None':
+        case 'Ready':
+        case 'Running':
+        case 'Terminated':
+        case 'Terminating':
+            return t(status);
         default:
             return '없음';
     }
