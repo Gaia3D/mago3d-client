@@ -6,5 +6,32 @@
   "nim": "님",
   "graphic": "그래픽",
   "time": "날짜/시간",
-  "logout": "로그아웃"
+  "logout": "로그아웃",
+  "tool": {
+    "home": "초기화",
+    "save":"저장하기",
+    "reset-direction": "방향초기화",
+    "set-terrain-trans":"지형불투명설정",
+    "open-clock-tool": "시간도구",
+    "open-setting-tool":"설정도구",
+    "visible":"시야도구",
+    "ruler":"측정도구",
+    "my-point": "사람시점",
+    "indoor":"실내시점",
+    "position": "시점이동",
+    "direction":"축시점",
+    "video": "카메라정보",
+    "bounding-volume":"경계선표시",
+    "point": "위치측정",
+    "length":"길이측정",
+    "area": "면적측정",
+    "angle":"각도",
+    "multiple-areas": "복합거리",
+    "radius":"반지름측정",
+    "object": "객체선택",
+    "full-screen":"전체화면",
+    "terrain-opacity": "지형설정",
+    "zoom-in":"확대",
+    "zoom-out": "축소"
+  }
 }

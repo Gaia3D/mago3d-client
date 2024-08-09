@@ -429,7 +429,7 @@ table {
     position: absolute;
     border-radius:10px;
     background-color: var(--background-color-gray);
-    z-index:99999;
+    z-index:9;
     box-shadow: var(--box-shadow);
     animation: slideDown 0.5s forwards;
 
@@ -768,15 +768,18 @@ ul.prop {
         }
     }
 }
-.visible:hover .toolbox-description--content, 
-.object:hover .toolbox-description--content, 
-.ruler:hover .toolbox-description--content, 
-.full-screen:hover .toolbox-description--content, 
-.terrain-opacity:hover .toolbox-description--content, 
+.zoom-in:hover .toolbox-description--content,
+.zoom-out:hover .toolbox-description--content,
+.visible:hover:not(.selected)>.toolbox-description--content,
+.object:hover .toolbox-description--content,
+.ruler:hover:not(.selected)>.toolbox-description--content,
+.full-screen:hover .toolbox-description--content,
+.terrain-opacity:hover .toolbox-description--content,
 .light-mode:hover .toolbox-description--content {
     display:block;    
     opacity: 1;
     visibility: visible;
+    z-index: 9;
 }
 .toolbox-description--content {
     margin:0;
@@ -838,35 +841,46 @@ ul.prop {
         opacity: 1;
     }
 }
-.toolbox-poplayer {
+.toolbox-pop-layer {
     position: absolute;
     right:50px;
-    width:auto;
-    height:33px;  
+    width: auto;
+    height:33px;
     display: flex;
     flex-direction: row;
     justify-content: center;
     animation: slideLeft 0.5s forwards;
-    &.control {
-        top:230px;
+    border-radius: 6px;
+
+    &.visible {
+        z-index: 1;
+        //top:230px;
     }
     &.ruler {
-        top:267px;
-    }  
-    &.object {
-        top:460px;        
-        animation: slideRight 0.5s forwards;
-    }      
-    button {
-        background:var(--background-color-gray);
-        width:34px;
-        height:34px;  
-        display:inline-block;
-        border-radius:0;
-        margin-bottom:3px;
+        //top:267px;
+        top:37px;
+    }
+    &.expand {
         box-shadow: var(--small-box-shadow);
         border:1px solid #535353 !important;
-        border-right:1px solid rgba(73, 73, 73, 0.6) !important;  
+    }
+    &.expand button:not(.selected) {
+        display:inline-block;
+    }
+    button:not(.selected) {
+        display:none;
+    }
+
+    button {
+        display:inline-block;
+        position: relative;
+        background:var(--background-color-gray);
+        width:34px;
+        height:34px;
+        border-radius:0;
+        margin-bottom:3px;
+        border:none !important;
+        border-right:1px solid rgba(73, 73, 73, 0.6) !important;
         &:hover {
             background: #2165A8;
             border: 1px solid #2c82f1 !important;
@@ -874,19 +888,8 @@ ul.prop {
         &.selected {
             background: #2a77c4;
             border: 1px solid #2c82f1 !important;
-        } 
-        &.my-point, &.point, &.move {       
-            width:35px;                       
-            border-top-left-radius:7px;              
-            border-bottom-left-radius:7px;
-        }   
-        &.video, &.radius, &.boundary {        
-            width:35px;                     
-            border-top-right-radius:7px;              
-            border-bottom-right-radius:7px;        
-        }      
-        &.my-point {            
-            width:35px;
+        }
+        &.my-point {
             @include icon-button(-176px, -644px);   
         } 
         &.indoor {
@@ -988,94 +991,14 @@ ul.prop {
     opacity: 0;
     width:auto;
     visibility: hidden;
-    transition: opacity 1s ease, visibility 1s ease;
     clear:both;
-    position: absolute;
-    top: 130%;
-    left:0;
-    z-index: 9999;
     transition: opacity 0.3s ease;
-    &.length, &.rotate, &.indoor {
-        left:35px;
-    }
-    &.multiple-lengths, &.scale {
-        left:calc(35px * 2);
-    }
-    &.area, &.copy {
-        left:calc(35px * 3);
-    }
-    &.multiple-areas {
-        left:calc(35px * 2);
-        .title::before {
-            left: 50%;
-        }
-    }
-    &.height{
-        left:calc(35px * 3);
-        .title::before {
-            left: 63%;
-        }
-    }
-    &.angle {
-        left:calc(35px * 4);
-        .title::before {
-            left: 65%;
-        }
-    }
-    &.radius{
-        left:136px;
-        .title::before {
-            left: 90%;
-        }
-    }
-    &.delete {
-        left:calc(35px * 4);
-    }
-    &.raising-floor {
-        left:150px;
-        .title::before {
-            left: 50%;
-        }
-    }
-    &.lowering-floor {
-        left:calc(35px * 5);
-        .title::before {
-            left: 50%;
-        }
-    }
-    &.paint {
-        left:calc(35px * 6);
-        .title::before {
-            left: 48%;
-        }
-    }
-    &.boundary {
-        left:208px;
-        .title::before {
-            left: 85%;
-        }
-    }
-    &.position {
-        left:52px;
-        .title::before {
-            left: 30%;
-        }
-    }
-    &.direction {
-        left:53px;
-        .title::before {
-            left: 60%;
-        }
-    }
-    &.video {
-        left:65px;
-        .title::before {
-            left: 84%;
-        }
-    }
+
     .title {
+        position: absolute;
+        top: 130%;
+        right: 0;
         margin:0;
-        padding:0;
         width:auto;
         padding:5px 10px;
         border-radius:6px;
@@ -1090,8 +1013,7 @@ ul.prop {
         content: "";
         position: absolute;
         bottom: 100%; 
-        left: 20px;
-        transform: translateX(-50%);
+        right: 12px;
         border-width: 4px;
         border-style: solid;
         border-color: transparent transparent var(--background-color-light) transparent; /* 삼각형을 아래쪽을 가리키도록 변경 */
@@ -1132,7 +1054,6 @@ ul.prop {
 
 // modal
 .modal {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;

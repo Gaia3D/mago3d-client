@@ -6,5 +6,32 @@
   "nim": "",
   "graphic": "Graphic",
   "time": "Date/Time",
-  "logout": "Logout"
+  "logout": "Logout",
+  "tool": {
+    "home": "Home",
+    "save":"Save",
+    "reset-direction": "Reset Direction",
+    "set-terrain-trans":"Set Terrain Transparency",
+    "open-clock-tool": "Open Clock Tool",
+    "open-setting-tool":"Open Settings Tool",
+    "visible":"Visibility Tool",
+    "ruler":"Ruler Tool",
+    "my-point": "First Person View",
+    "indoor":"Indoor View",
+    "position": "Move Position",
+    "direction":"Direction",
+    "video": "Camera Information",
+    "bounding-volume":"Show Bounding Volume",
+    "point": "Measure Position",
+    "length":"Measure Length",
+    "area": "Measure Area",
+    "angle":"Angle",
+    "multiple-areas": "Multiple Areas",
+    "radius":"Measure Radius",
+    "object": "Select Object",
+    "full-screen":"Full Screen",
+    "terrain-opacity": "Terrain Settings",
+    "zoom-in":"Zoom In",
+    "zoom-out": "Zoom Out"
+  }
 }
