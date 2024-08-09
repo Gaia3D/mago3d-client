@@ -1,0 +1,132 @@
+
+$font-path: '../font';
+
+$font-sizes: (
+    'title': 15px,
+    'xlarge': 14px,
+    'large': 13px,
+    'regular': 12px,
+    'small': 11px,
+    'xsmall': 10px
+);
+
+$font-families: (
+    'thin': 'Montserrat-thin',
+    'exlight': 'Montserrat-exlight',
+    'light': 'Montserrat-light',
+    'regular': 'Montserrat-regular',
+    'medium': 'Montserrat-medium',
+    'semibold': 'Montserrat-semibold',
+    'exbold': 'Montserrat-exbold',
+    'black': 'Montserrat-black'
+);
+
+// Montserrat 폰트
+@font-face {
+    font-family: "Montserrat-thin";
+    font-weight: 100;
+    font-style: normal;
+    src: url("#{$font-path}/Montserrat-Thin.woff2") format("woff2"),
+         url("#{$font-path}/Montserrat-Thin.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Montserrat-exlight";
+    font-weight: 200;
+    font-style: normal;
+    src: url("#{$font-path}/Montserrat-ExtraLight.woff2") format("woff2"),
+         url("#{$font-path}/Montserrat-ExtraLight.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Montserrat-light";
+    font-weight: 300;
+    font-style: normal;
+    src: url("#{$font-path}/Montserrat-Light.woff2") format("woff2"),
+         url("#{$font-path}/Montserrat-Light.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Montserrat-regular";
+    font-weight: 400;
+    font-style: normal;
+    src: url("#{$font-path}/Montserrat-Regular.woff2") format("woff2"),
+         url("#{$font-path}/Montserrat-Regular.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Montserrat-medium";
+    font-weight: 500;
+    font-style: normal;
+    src: url("#{$font-path}/Montserrat-Medium.woff2") format("woff2"),
+         url("#{$font-path}/Montserrat-Medium.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Montserrat-semibold";
+    font-weight: 600;
+    font-style: normal;
+    src: url("#{$font-path}/Montserrat-SemiBold.woff2") format("woff2"),
+         url("#{$font-path}/Montserrat-SemiBold.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Montserrat-exbold";
+    font-weight: 800;
+    font-style: normal;
+    src: url("#{$font-path}/Montserrat-ExtraBold.woff2") format("woff2"),
+         url("#{$font-path}/Montserrat-ExtraBold.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Montserrat-black";
+    font-weight: 900;
+    font-style: normal;
+    src: url("#{$font-path}/Montserrat-Black.woff2") format("woff2"),
+         url("#{$font-path}/Montserrat-Black.woff") format("woff");
+}
+
+// 기타 폰트
+@font-face {
+    font-family: 'sbaggro';
+    src: url("#{$font-path}/SBAggroMedium.woff2") format('woff2'),
+         url("#{$font-path}/SBAggroMedium.woff") format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NanumSquareNeo-l';
+    src: url("#{$font-path}/NanumSquareNeoTTF-aLt.woff2") format('eot'),
+         url("#{$font-path}/NanumSquareNeoTTF-aLt.woff") format('woff'),
+         url("#{$font-path}/NanumSquareNeoTTF-aLt.woff") format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NanumSquareNeo-r';
+    src: url("#{$font-path}/NanumSquareNeoTTF-bRg.woff2") format('eot'),
+         url("#{$font-path}/NanumSquareNeoTTF-bRg.woff") format('woff'),
+         url("#{$font-path}/NanumSquareNeoTTF-bRg.woff") format('woff2');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NanumSquareNeo-b';
+    src: url("#{$font-path}/NanumSquareNeoTTF-cBd.woff2") format('eot'),
+         url("#{$font-path}/NanumSquareNeoTTF-cBd.woff") format('woff'),
+         url("#{$font-path}/NanumSquareNeoTTF-cBd.woff") format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NanumSquareNeo-eb';
+    src: url("#{$font-path}/NanumSquareNeoTTF-dEb.woff2") format('eot'),
+         url("#{$font-path}/NanumSquareNeoTTF-dEb.woff") format('woff'),
+         url("#{$font-path}/NanumSquareNeoTTF-dEb.woff") format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
