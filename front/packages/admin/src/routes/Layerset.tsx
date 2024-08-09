@@ -3,7 +3,7 @@ import LayerIndex, {LayerDetail, LayerGroupList, LayerList, LayerPublish, MapLis
 
 export default {
   path: '/layerset', element: <LayerIndex/>, children: [
-    {element: <Navigate to="group" replace/>, index: true},
+    {element: <Navigate to="layer" replace/>, index: true},
     {path: 'group', children: [
         {element: <LayerGroupList/>, index: true},
         {

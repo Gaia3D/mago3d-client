@@ -13,13 +13,6 @@ export default {
   path: '/userset', children: [
     {element: <Navigate to="user" replace/>, index: true},
     {
-      path: 'user', element: <UserIndex/>, children: [
-        {element: <UserList/>, index: true},
-        {path: 'create', element: <UserCreate/>},
-        {path: 'update/:id', element: <UserUpdate/>},
-      ]
-    },
-    {
       path: 'group', element: <GroupIndex/>, children: [
         {element: <GroupList/>, index: true},
         {
@@ -30,6 +23,13 @@ export default {
           ]
         },
       ]
-    }
+    },
+    {
+      path: 'user', element: <UserIndex/>, children: [
+        {element: <UserList/>, index: true},
+        {path: 'create', element: <UserCreate/>},
+        {path: 'update/:id', element: <UserUpdate/>},
+      ]
+    },
   ]
 }

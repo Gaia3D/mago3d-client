@@ -4,7 +4,7 @@ import {GroupLayout, GroupList, UpdateGroupBasic, UpdateGroupData, UpdateGroupIn
 
 export default {
   path: '/dataset', children: [
-    {element: <Navigate to="group" replace/>, index: true},
+    {element: <Navigate to="asset" replace/>, index: true},
     {
       path: 'group', element: <GroupLayout/>, children: [
         {element: <GroupList/>, index: true},
