@@ -22,23 +22,23 @@ const MainPage = () => {
 
   return (
     <>
-      <nav>
-        <h1 className="logo"></h1>
-        <AsideMenu />
-      </nav>
       <main>
         <GlobeControllerProvider globeController={globeController}>
           <TimeSeriesProvider>
-            <div id="map">
+            <div id="map" className={"map"}>
               <MapPopup/>
               <Globe/>
               <AsidePanel/>
               <BoundarySearchWrapper/>
               <MapToolbox onToolClick={handleToolClick}/>
-              <Footer />
+              <Footer/>
             </div>
           </TimeSeriesProvider>
         </GlobeControllerProvider>
+        <nav>
+          <h1 className="logo"></h1>
+          <AsideMenu/>
+        </nav>
       </main>
     </>
   );

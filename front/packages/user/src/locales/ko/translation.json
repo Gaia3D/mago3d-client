@@ -1,4 +1,10 @@
 {
-  "layer": "레이어",
-  "search": "검색"
+  "assets": "저장소",
+  "layers": "레이어",
+  "props": "물체",
+  "search": "검색",
+  "nim": "님",
+  "graphic": "그래픽",
+  "time": "날짜/시간",
+  "logout": "로그아웃"
 }

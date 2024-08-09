@@ -1,5 +1,5 @@
 import { useCreateViewer } from "@/hooks/useCreateViewer";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import MapFunction from "./MapFunction";
 import RasterProfileChart from "./RasterProfileChart";
 import { PrintPortal } from "./maptool/PrintPortal";
@@ -16,12 +16,18 @@ import {CameraInfoDisplay} from "@/components/maptool/CameraInfoDisplay.tsx";
 import {ObjectToolbox} from "./ObjectToolbox.tsx";
 import {MeasurePosition} from "@/components/maptool/MeasurePosition.tsx";
 import {MeasureRadius} from "@/components/maptool/MeasureRadius.tsx";
+import SignInfo from "@/components/SignInfo.tsx";
+import LanguageSelector from "@/components/LanguageSelector.tsx";
 
 const Globe = () => {
     const cesiumContainer = useRef<HTMLDivElement>(null);
     useCreateViewer(cesiumContainer);
     return (
-        <div id="globe" ref={cesiumContainer} style={{float:"right", height:"100vh", width:"calc( 100% - 350px)", backgroundColor:"gray"}}>
+        <div id="globe" className={"globe"} ref={cesiumContainer}>
+            <header >
+                <LanguageSelector />
+                <SignInfo />
+            </header>
             <MapFunction />
             <RasterProfileChart />
             <PrintPortal />

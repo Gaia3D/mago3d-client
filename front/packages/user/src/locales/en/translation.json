@@ -1,4 +1,10 @@
 {
-  "layer": "Layer",
-  "search": "Search"
+  "assets": "Assets",
+  "layers": "Layers",
+  "props": "Props",
+  "search": "Search",
+  "nim": "",
+  "graphic": "Graphic",
+  "time": "Date/Time",
+  "logout": "Logout"
 }
