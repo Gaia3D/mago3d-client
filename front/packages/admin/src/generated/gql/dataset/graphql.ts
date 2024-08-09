@@ -536,6 +536,11 @@ export type IntCriteria = {
   notIn?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
 };
 
+export enum InterpolationType {
+  Bilinear = 'BILINEAR',
+  Nearest = 'NEAREST'
+}
+
 export type JsonPropertyInput = {
   /**  Using RFC6902 JSON Patch */
   merge?: InputMaybe<Scalars['JSON']['input']>;
@@ -662,6 +667,7 @@ export type Mutation = {
   appendAssetFile: Scalars['Boolean']['output'];
   /**  Asset */
   createAsset: CreateAssetResponse;
+  /**  Group */
   createGroup: CreateGroupResponse;
   /**  Label */
   createLabel: CreateLabelResponse;
@@ -671,11 +677,7 @@ export type Mutation = {
   deleteAssetFile: Scalars['Boolean']['output'];
   deleteGroup: Scalars['Boolean']['output'];
   deleteLabel: Scalars['Boolean']['output'];
-  /**
-   *  Upload
-   *  Use RestAPI instead of Graphql
-   *  createUploadFile()
-   */
+  /**  Upload */
   deleteUploadFile: Scalars['Boolean']['output'];
   locateAsset: Asset;
   locateGroup: Group;
@@ -847,6 +849,8 @@ export type ProcessContextInput = {
   ogr2ogr?: InputMaybe<ShpConvertInput>;
   smartTile?: InputMaybe<SmartTileConvertInput>;
   t3d?: InputMaybe<T3DConvertInput>;
+  terrain?: InputMaybe<TerrainConvertInput>;
+  warp?: InputMaybe<TiffConvertInput>;
 };
 
 export type ProcessEdge = {
@@ -932,6 +936,7 @@ export type Query = {
   /**  Asset */
   asset?: Maybe<Asset>;
   assets: AssetPaged;
+  /**  Group */
   group?: Maybe<Group>;
   groups: GroupPaged;
   /**  Label */
@@ -1163,6 +1168,23 @@ export enum T3DFormatType {
   Temp = 'TEMP'
 }
 
+/**  Terrain */
+export type TerrainConvertInput = {
+  calculateNormals?: InputMaybe<Scalars['Boolean']['input']>;
+  debug?: InputMaybe<Scalars['Boolean']['input']>;
+  help?: InputMaybe<Scalars['Boolean']['input']>;
+  interpolationType?: InputMaybe<InterpolationType>;
+  maxDepth: Scalars['Int']['input'];
+  minDepth: Scalars['Int']['input'];
+  strength?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type TiffConvertInput = {
+  ot?: InputMaybe<Type>;
+  sourceSrs?: Scalars['String']['input'];
+  targetSrs?: Scalars['String']['input'];
+};
+
 export type TimeCriteria = {
   between?: InputMaybe<Array<InputMaybe<Scalars['Time']['input']>>>;
   eq?: InputMaybe<Scalars['Time']['input']>;
@@ -1177,6 +1199,23 @@ export type TimeCriteria = {
   notBetween?: InputMaybe<Array<InputMaybe<Scalars['Time']['input']>>>;
   notIn?: InputMaybe<Array<InputMaybe<Scalars['Time']['input']>>>;
 };
+
+export enum Type {
+  Byte = 'Byte',
+  CFloat32 = 'CFloat32',
+  CFloat64 = 'CFloat64',
+  CInt16 = 'CInt16',
+  CInt32 = 'CInt32',
+  Float32 = 'Float32',
+  Float64 = 'Float64',
+  Int8 = 'Int8',
+  Int16 = 'Int16',
+  Int32 = 'Int32',
+  Int64 = 'Int64',
+  UInt16 = 'UInt16',
+  UInt32 = 'UInt32',
+  UInt64 = 'UInt64'
+}
 
 /**
  * ##################################################################################

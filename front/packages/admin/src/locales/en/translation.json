@@ -57,6 +57,7 @@
   "cancel": "Cancel",
   "reset": "Reset",
   "refresh": "Refresh",
+  "auto": "Auto",
   "login": "Login",
   "last-login": "Last Login",
   "logout": "Logout",
@@ -178,6 +179,13 @@
   "status": "Status",
   "message": "Message",
   "convert-texture": "Reverse Texture",
+  "output-type": "Output Data Type",
+  "interpolation-type": "Interpolation Type",
+  "bilinear": "Bilinear",
+  "nearest": "Nearest",
+  "min-depth": "Min Depth",
+  "max-depth": "Max Depth",
+  "calculate-normals": "Calculate Normals",
   "Done": "Done",
   "Error": "Error",
   "None": "None",
@@ -267,7 +275,8 @@
     "division": "Please select a division.",
     "file": "Please upload a file.",
     "data": "Please enter the data name.",
-    "data-type": "Please select a data type."
+    "data-type": "Please select a data type.",
+    "depth-range": "Enter a value between 0 and 22."
   },
   "publishing": {
     "done": "Publish successful",
