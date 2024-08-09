@@ -56,6 +56,7 @@
   "cancel": "취소",
   "reset": "초기화",
   "refresh": "새로고침",
+  "auto": "자동",
   "login": "로그인",
   "last-login": "미지막 로그인",
   "logout": "로그아웃",
@@ -177,6 +178,13 @@
   "status": "상태",
   "message": "메시지",
   "convert-texture": "텍스쳐를 반대로",
+  "output-type": "출력 데이터 타입",
+  "interpolation-type": "보간 타입",
+  "bilinear": "이중 선형 보간(Bilinear)",
+  "nearest": "최근접 보간(Nearest)",
+  "min-depth": "최소 깊이",
+  "max-depth": "최대 깊이",
+  "calculate-normals": "법선(Normal) 계산",
   "Done": "완료",
   "Error": "오류",
   "None": "없음",
@@ -266,8 +274,8 @@
     "division": "군종을 선택해주시기 바랍니다.",
     "file": "파일을 업로드해주세요.",
     "data": "데이터명을 입력해주시기 바랍니다.",
-    "data-type": "데이터타입을 선택해주시기 바랍니다."
-
+    "data-type": "데이터타입을 선택해주시기 바랍니다.",
+    "depth-range": "0 ~ 22 사이의 값을 입력하세요."
   },
   "publishing": {
     "done": "발행 성공",

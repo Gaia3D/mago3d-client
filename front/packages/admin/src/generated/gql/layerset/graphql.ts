@@ -853,6 +853,8 @@ export type Query = {
   remoteStyles: Array<Maybe<RemoteLayerStyle>>;
   /**  Style */
   style: LayerStyle;
+  /**  Terrain */
+  terrains: Array<Maybe<TerrainAsset>>;
   userAsset: UserLayerAsset;
   /**  UserLayerAsset */
   userAssets: Array<Maybe<UserLayerAsset>>;
@@ -1085,6 +1087,14 @@ export enum StyleType {
 
 export type T3DInput = {
   dataAssetId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type TerrainAsset = WithJsonProperty & {
+  __typename?: 'TerrainAsset';
+  id: Scalars['ID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  properties?: Maybe<Scalars['JSON']['output']>;
+  selected?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type TimeCriteria = {
