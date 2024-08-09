@@ -7,7 +7,7 @@ import {FragmentType, useFragment} from "@src/generated/gql/userset";
 import {UserListItemFragmentDoc} from "@src/generated/gql/userset/graphql";
 import {useTranslation} from "react-i18next";
 
-export const ListItem = (props: { key: string, user: FragmentType<UserListItemFragmentDoc>, refetchFunc: () => void }) => {
+export const ListItem = (props: { key: string, user: FragmentType<typeof UserListItemFragmentDoc>, refetchFunc: () => void }) => {
   const {t} = useTranslation();
   const user = useFragment(UserListItemFragmentDoc, props.user);
 

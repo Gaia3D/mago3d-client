@@ -46,7 +46,7 @@ export const List = () => {
                 ))
               ) : (
                 <tr>
-                  <td className="group" style={{ textalign: "center" }} colSpan={3}>
+                  <td className="group" style={{ textAlign: "center" }} colSpan={3}>
                     {t("not-found.group")}
                   </td>
                 </tr>
