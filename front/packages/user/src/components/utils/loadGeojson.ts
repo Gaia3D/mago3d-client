@@ -1,5 +1,9 @@
 import * as Cesium from "cesium";
 
+interface Viewer {
+    dataSources: Cesium.DataSourceCollection;
+}
+
 interface CustomPropertyBag extends Cesium.PropertyBag {
     height?: Cesium.Property;
     layer?: Cesium.Property;

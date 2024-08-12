@@ -2,10 +2,10 @@ import * as Cesium from 'cesium';
 
 let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | undefined = undefined;
 
-let pickedObject: any = undefined;
+let pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined = undefined;
 const MAN_HEIGHT = 1.5;
 
-const getCenterHeight = (pickedObject: any, startCartesian: Cesium.Cartesian3, scene: Cesium.Scene): number => {
+const getCenterHeight = (pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined, startCartesian: Cesium.Cartesian3, scene: Cesium.Scene): number => {
   if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
     return Cesium.Cartographic.fromCartesian(startCartesian).height;
   } else if (pickedObject?.primitive instanceof Cesium.Primitive) {

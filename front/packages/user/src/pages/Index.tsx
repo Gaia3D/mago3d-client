@@ -17,7 +17,7 @@ const MainPage = () => {
   const setPopup = useSetRecoilState(popupState);
 
   const handleToolClick = (tool: MapTool) => {
-    console.log(`도구가 선택되었습니다. 선택된 도구: ${tool.label}`);
+    console.log(`도구가 선택되었습니다. 선택된 도구: ${tool.className}`);
   };
 
   return (
