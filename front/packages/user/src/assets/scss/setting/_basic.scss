@@ -841,16 +841,26 @@ ul.prop {
         opacity: 1;
     }
 }
+
 .toolbox-pop-layer {
     position: absolute;
-    right:50px;
     width: auto;
     height:33px;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    animation: slideLeft 0.5s forwards;
+    //animation: slideLeft 0.5s forwards;
     border-radius: 6px;
+
+    &.object {
+        button {
+            display:inline-block !important;
+        }
+    }
+
+    &:not(.object) {
+        right: 50px;
+    }
 
     &.visible {
         z-index: 1;
@@ -864,11 +874,20 @@ ul.prop {
         box-shadow: var(--small-box-shadow);
         border:1px solid #535353 !important;
     }
-    &.expand button:not(.selected) {
+    &.expand button:not(.selected){
         display:inline-block;
     }
     button:not(.selected) {
         display:none;
+    }
+
+    input {
+        padding: 0;
+        width: 32px;
+        height: 20px;
+        margin: 2px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
     }
 
     button {
@@ -928,28 +947,28 @@ ul.prop {
         &.radius {
             @include icon-button(-626px, -709px);  
         } 
-        &.move {
+        &.translation {
             @include icon-button(-181px, -781px);    
         } 
-        &.rotate {
+        &.rotation {
             @include icon-button(-245px, -781px);       
         } 
-        &.scale {
+        &.scaling {
             @include icon-button(-314px, -780px);       
         } 
         &.copy {
             @include icon-button(-374px, -781px);       
         } 
-        &.delete {
+        &.remove {
             @include icon-button(-435px, -781px);       
         } 
-        &.raising-floor {
+        &.add-floor {
             @include icon-button(-493px, -781px);       
         } 
-        &.lowering-floor {
+        &.remove-floor {
             @include icon-button(-554px, -781px);       
         } 
-        &.paint {
+        &.coloring {
             @include icon-button(-618px, -781px);       
         } 
         &.boundary {
@@ -971,15 +990,14 @@ ul.prop {
 .height:hover .popuplayer-description--content, 
 .angle:hover .popuplayer-description--content, 
 .radius:hover .popuplayer-description--content, 
-.move:hover .popuplayer-description--content, 
-.rotate:hover .popuplayer-description--content, 
-.scale:hover .popuplayer-description--content, 
+.translation:hover .popuplayer-description--content,
+.rotation:hover .popuplayer-description--content,
+.scaling:hover .popuplayer-description--content,
 .copy:hover .popuplayer-description--content, 
-.delete:hover .popuplayer-description--content, 
-.delete:hover .popuplayer-description--content, 
-.raising-floor:hover .popuplayer-description--content, 
-.lowering-floor:hover .popuplayer-description--content, 
-.paint:hover .popuplayer-description--content, 
+.remove:hover .popuplayer-description--content,
+.add-floor:hover .popuplayer-description--content,
+.remove-floor:hover .popuplayer-description--content,
+.coloring:hover .popuplayer-description--content,
 .boundary:hover .popuplayer-description--content {
     display:block;    
     opacity: 1;

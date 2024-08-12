@@ -32,6 +32,14 @@
     "full-screen":"전체화면",
     "terrain-opacity": "지형설정",
     "zoom-in":"확대",
-    "zoom-out": "축소"
+    "zoom-out": "축소",
+    "translation": "이동",
+    "rotation": "회전",
+    "scaling": "크기",
+    "copy": "복사",
+    "remove": "삭제",
+    "add-floor": "층 더하기",
+    "remove-floor": "층 빼기",
+    "coloring": "색상"
   }
 }
