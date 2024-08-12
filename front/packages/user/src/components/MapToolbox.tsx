@@ -67,7 +67,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         onClickHome, onClickExpand, onClickReduce, onClickArea,
         onClickLength, onClickAngle, onClickSave, onClickComplex, toggleCoordinate, toggleMeasureRadius,
         toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent,
-        toggleClock, toggleSetting
+        toggleClock, toggleSetting, toggleTheme
     } = useMapTool();
     const {
         toggleFirstPersonView, toggleViewCenter, toggleViewPoint,
@@ -83,21 +83,22 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         { toolBoxIndex: 0, className: "set-terrain-trans", group: TOOLBOX_SEP, toggle: true, onClick: toggleTerrainTranslucent },
         { toolBoxIndex: 0, className: "open-clock-tool", group: TOOLBOX_SEP, toggle: true, onClick: toggleClock },
         { toolBoxIndex: 0, className: "open-setting-tool", group: TOOLBOX_SEP, toggle: true, onClick: toggleSetting },
-        { toolBoxIndex: 1, className: "my-point", group: TOOLBOX_SEP, toggle: true, onClick: toggleFirstPersonView },
+        { toolBoxIndex: 1, className: "first-person-view", group: TOOLBOX_SEP, toggle: true, onClick: toggleFirstPersonView },
         { toolBoxIndex: 1, className: "indoor", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewCenter },
-        { toolBoxIndex: 1, className: "position", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewPoint },
-        { toolBoxIndex: 1, className: "direction", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewAxis },
-        { toolBoxIndex: 1, className: "video", group: TOOLBOX_SEP, toggle: true, onClick: toggleCameraTool },
+        { toolBoxIndex: 1, className: "go-to-point", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewPoint },
+        { toolBoxIndex: 1, className: "view-axis", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewAxis },
+        { toolBoxIndex: 1, className: "camera-info", group: TOOLBOX_SEP, toggle: true, onClick: toggleCameraTool },
         // { toolBoxIndex: 1, className: "bounding-volume", group: TOOLBOX_SEP, onClick: toggleBoundingVolume },
         { toolBoxIndex: 2, className: "point", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleCoordinate },
         { toolBoxIndex: 2, className: "length", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickLength },
         { toolBoxIndex: 2, className: "area", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickArea },
         { toolBoxIndex: 2, className: "angle", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickAngle },
-        { toolBoxIndex: 2, className: "multiple-areas", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickComplex },
+        { toolBoxIndex: 2, className: "composite", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickComplex },
         { toolBoxIndex: 2, className: "radius", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleMeasureRadius },
         { toolBoxIndex: 3, className: "object", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleSelector },
         { toolBoxIndex: 4, className: "full-screen", group: TOOLBOX_SEP, toggle: true, onClick: toggleFullscreen },
-        { toolBoxIndex: 4, className: "terrain-opacity", group: TOOLBOX_SEP, toggle: true, onClick: toggleDefaultTerrain },
+        { toolBoxIndex: 4, className: "terrain", group: TOOLBOX_SEP, toggle: true, onClick: toggleDefaultTerrain },
+        { toolBoxIndex: 4, className: "theme", group: TOOLBOX_SEP, toggle: true, onClick: toggleTheme },
         { toolBoxIndex: 5, className: "zoom-in", group: TOOLBOX_SEP, onClick: onClickExpand },
         { toolBoxIndex: 5, className: "zoom-out", group: TOOLBOX_SEP, onClick: onClickReduce },
     ], [onClickHome, onClickLength, onClickArea, onClickAngle, onClickComplex, onClickSave, onClickExpand, onClickReduce, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool, toggleBoundingVolume]);

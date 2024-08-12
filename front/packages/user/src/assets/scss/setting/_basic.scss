@@ -751,13 +751,13 @@ ul.prop {
         &.full-screen {
             @include icon-button(-107px, -844px);     
         }     
-        &.terrain-opacity {
+        &.terrain {
             @include icon-button(-107px, -890px); 
             &.toggle {
                 @include icon-button(-180px, -890px); 
             }
         }     
-        &.light-mode {
+        &.theme {
             @include icon-button(-106px, -940px);     
         }    
         &.zoom-in {
@@ -774,8 +774,8 @@ ul.prop {
 .object:hover .toolbox-description--content,
 .ruler:hover:not(.selected)>.toolbox-description--content,
 .full-screen:hover .toolbox-description--content,
-.terrain-opacity:hover .toolbox-description--content,
-.light-mode:hover .toolbox-description--content {
+.terrain:hover .toolbox-description--content,
+.theme:hover .toolbox-description--content {
     display:block;    
     opacity: 1;
     visibility: visible;
@@ -908,19 +908,19 @@ ul.prop {
             background: #2a77c4;
             border: 1px solid #2c82f1 !important;
         }
-        &.my-point {
+        &.first-person-view {
             @include icon-button(-176px, -644px);   
         } 
         &.indoor {
             @include icon-button(-239px, -643px);       
         } 
-        &.position {
+        &.go-to-point {
             @include icon-button(-302px, -643px);       
         } 
-        &.direction {
+        &.view-axis {
             @include icon-button(-357px, -642px);       
         } 
-        &.video {        
+        &.camera-info {
             @include icon-button(-411px, -643px);   
         } 
         &.point {
@@ -929,7 +929,7 @@ ul.prop {
         &.length {
             @include icon-button(-240px, -709px);       
         } 
-        &.multiple-lengths {
+        &.composite {
             @include icon-button(-305px, -709px);       
         } 
         &.area {
@@ -977,16 +977,16 @@ ul.prop {
     }
 }
 
-.my-point:hover .popuplayer-description--content, 
+.first-person-view:hover .popuplayer-description--content,
 .indoor:hover .popuplayer-description--content, 
-.position:hover .popuplayer-description--content, 
-.direction:hover .popuplayer-description--content, 
-.video:hover .popuplayer-description--content, 
-.point:hover .popuplayer-description--content, 
+.go-to-point:hover .popuplayer-description--content,
+.view-axis:hover .popuplayer-description--content,
+.camera-info:hover .popuplayer-description--content,
+.point:hover .popuplayer-description--content,
 .length:hover .popuplayer-description--content, 
-.multiple-lengths:hover .popuplayer-description--content, 
+//.multiple-lengths:hover .popuplayer-description--content,
 .area:hover .popuplayer-description--content, 
-.multiple-areas:hover .popuplayer-description--content, 
+.composite:hover .popuplayer-description--content,
 .height:hover .popuplayer-description--content, 
 .angle:hover .popuplayer-description--content, 
 .radius:hover .popuplayer-description--content, 
