@@ -277,7 +277,7 @@ export const useMapTool = () => {
     });
   };
 
-  const toggleClock = () => {
+  const onClockTool = () => {
     setOptions((prevOptions) => ({
       ...prevOptions,
       isOpenClock: !prevOptions.isOpenClock,
@@ -291,7 +291,7 @@ export const useMapTool = () => {
     }
   };
 
-  const toggleSetting = () => {
+  const onSettingTool = () => {
     setOptions((prevOptions) => ({
       ...prevOptions,
       isSetting: !prevOptions.isSetting,
@@ -305,5 +305,5 @@ export const useMapTool = () => {
     document.documentElement.setAttribute('data-theme', newTheme);
   }
 
-  return { toggleCoordinate, toggleMeasureRadius, angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, toggleTheme, initWebStorage, toolStatus};
+  return { toggleCoordinate, toggleMeasureRadius, angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, onClockTool, onSettingTool, toggleTheme, initWebStorage, toolStatus};
 };

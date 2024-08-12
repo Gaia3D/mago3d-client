@@ -68,7 +68,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         onClickHome, onClickExpand, onClickReduce, onClickArea,
         onClickLength, onClickAngle, onClickSave, onClickComplex, toggleCoordinate, toggleMeasureRadius,
         toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent,
-        toggleClock, toggleSetting, toggleTheme
+        toggleTheme
     } = useMapTool();
     const {
         toggleFirstPersonView, toggleViewCenter, toggleViewPoint,
@@ -80,16 +80,12 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
     const initialTools: MapTool[] = useMemo(() => [
         { toolBoxIndex: 0, className: "home", group: TOOLBOX_SEP, onClick: onClickHome },
         { toolBoxIndex: 0, className: "save", group: TOOLBOX_SEP, onClick: onClickSave },
-        // { toolBoxIndex: 0, className: "reset-direction", group: TOOLBOX_SEP, onClick: resetDirection },
         { toolBoxIndex: 0, className: "set-terrain-trans", group: TOOLBOX_SEP, toggle: true, onClick: toggleTerrainTranslucent },
-        { toolBoxIndex: 0, className: "open-clock-tool", group: TOOLBOX_SEP, toggle: true, onClick: toggleClock },
-        { toolBoxIndex: 0, className: "open-setting-tool", group: TOOLBOX_SEP, toggle: true, onClick: toggleSetting },
         { toolBoxIndex: 1, className: "first-person-view", group: TOOLBOX_SEP, toggle: true, onClick: toggleFirstPersonView },
         { toolBoxIndex: 1, className: "indoor", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewCenter },
         { toolBoxIndex: 1, className: "go-to-point", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewPoint },
         { toolBoxIndex: 1, className: "view-axis", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewAxis },
         { toolBoxIndex: 1, className: "camera-info", group: TOOLBOX_SEP, toggle: true, onClick: toggleCameraTool },
-        // { toolBoxIndex: 1, className: "bounding-volume", group: TOOLBOX_SEP, onClick: toggleBoundingVolume },
         { toolBoxIndex: 2, className: "point", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleCoordinate },
         { toolBoxIndex: 2, className: "length", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickLength },
         { toolBoxIndex: 2, className: "area", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickArea },
@@ -102,7 +98,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         { toolBoxIndex: 4, className: "theme", group: TOOLBOX_SEP, toggle: true, onClick: toggleTheme },
         { toolBoxIndex: 5, className: "zoom-in", group: TOOLBOX_SEP, onClick: onClickExpand },
         { toolBoxIndex: 5, className: "zoom-out", group: TOOLBOX_SEP, onClick: onClickReduce },
-    ], [onClickHome, onClickLength, onClickArea, onClickAngle, onClickComplex, onClickSave, onClickExpand, onClickReduce, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool, toggleBoundingVolume]);
+    ], [onClickHome, onClickLength, onClickArea, onClickAngle, onClickComplex, onClickSave, onClickExpand, onClickReduce, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool, toggleBoundingVolume]);
 
     const [tools, setTools] = useState<MapTool[]>(initialTools);
     const [expandedTools, setExpandedTools] = useState<{ [key: string]: boolean }>({

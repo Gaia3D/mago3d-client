@@ -16,8 +16,17 @@ export const ClockTool = () => {
         fast: "data:image/png;base64,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",
     }
 
+    const closeClockTool= () => {
+        setOptions((prevOptions) => ({
+            ...prevOptions,
+            isOpenClock: false,
+        }))
+    }
+
+
     return options.isOpenClock && (
         <div className="default-layer clock">
+            <div className={"close"} onClick={closeClockTool}>close</div>
             <input type="date" name="date" value={options.date} onChange={onChangeDate}/>
             <input type="time" name="time" value={options.time} onChange={onChangeDate}/>
             <div>

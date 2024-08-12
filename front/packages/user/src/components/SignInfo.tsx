@@ -1,6 +1,7 @@
 import {useKeycloak} from "@react-keycloak/web";
 import {useTranslation} from "react-i18next";
 import {useCallback, useMemo, useRef} from "react";
+import {useMapTool} from "@/hooks/useMapTool.tsx";
 
 const SignInfo = () => {
 
@@ -8,19 +9,13 @@ const SignInfo = () => {
     const {keycloak} = useKeycloak();
     const popLayer = useRef<HTMLDivElement | null>(null);
 
+    const {onClockTool, onSettingTool} = useMapTool();
+
     const togglePopLayer = () => {
         if (popLayer.current) {
             popLayer.current.classList.toggle('on');
         }
     };
-
-    const toggleGraphic = () => {
-        console.log("GRAPHIC");
-    }
-
-    const toggleDateTime = () => {
-        console.log("DATE/TIME");
-    }
 
     const logout = useCallback(() => {
         keycloak.logout({
@@ -30,8 +25,8 @@ const SignInfo = () => {
 
     const settingItems = useMemo(() => {
         return [
-            {className: "graphic", text: "graphic", onClick: toggleGraphic},
-            {className: "time", text: "time", onClick: toggleDateTime},
+            {className: "graphic", text: "graphic", onClick: onSettingTool},
+            {className: "time", text: "time", onClick: onClockTool},
         ];
     }, []);
 
