@@ -882,12 +882,15 @@ ul.prop {
     }
 
     input {
-        padding: 0;
-        width: 32px;
-        height: 20px;
-        margin: 2px;
-        background-color: rgba(0, 0, 0, 0.6);
-        color: white;
+        display:inline-block;
+        position: relative;
+        background:var(--background-color-gray);
+        width:34px;
+        height:34px;
+        border-radius:0;
+        margin-bottom:3px;
+        border:none !important;
+        border-right:1px solid rgba(73, 73, 73, 0.6) !important;
     }
 
     button {
