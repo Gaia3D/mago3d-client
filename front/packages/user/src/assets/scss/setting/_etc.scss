@@ -1,0 +1,14 @@
+#map {
+  .compass {
+    bottom: 12px;
+    right: 12px;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    .compass-direction {
+      margin: 0;
+    }
+  }
+}

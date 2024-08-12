@@ -229,8 +229,6 @@ export const useMapTool = () => {
         roll: viewer.camera.roll,
       },
     });
-
-    setToolStatus(null);
   };
 
   function isEllipsoidTerrainProvider(provider: any): provider is Cesium.EllipsoidTerrainProvider {

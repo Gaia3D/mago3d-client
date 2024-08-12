@@ -4,6 +4,7 @@ import NavigationRoundedIcon from '@mui/icons-material/NavigationRounded';
 import { useViewTool } from "@/hooks/useViewTool.tsx";
 import {useObjectTool} from "@/hooks/useObjectTool.tsx";
 import {useTranslation} from "react-i18next";
+import {Compass} from "@/components/maptool/Compass.tsx";
 
 interface ToolButtonProps {
     tool: MapTool;
@@ -79,7 +80,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
     const initialTools: MapTool[] = useMemo(() => [
         { toolBoxIndex: 0, className: "home", group: TOOLBOX_SEP, onClick: onClickHome },
         { toolBoxIndex: 0, className: "save", group: TOOLBOX_SEP, onClick: onClickSave },
-        { toolBoxIndex: 0, className: "reset-direction", group: TOOLBOX_SEP, onClick: resetDirection },
+        // { toolBoxIndex: 0, className: "reset-direction", group: TOOLBOX_SEP, onClick: resetDirection },
         { toolBoxIndex: 0, className: "set-terrain-trans", group: TOOLBOX_SEP, toggle: true, onClick: toggleTerrainTranslucent },
         { toolBoxIndex: 0, className: "open-clock-tool", group: TOOLBOX_SEP, toggle: true, onClick: toggleClock },
         { toolBoxIndex: 0, className: "open-setting-tool", group: TOOLBOX_SEP, toggle: true, onClick: toggleSetting },
@@ -168,6 +169,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
                     <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
                 ))}
             </div>
+            <Compass handleClick={resetDirection} />
         </>
     );
 };
