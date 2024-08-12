@@ -10,8 +10,8 @@ interface CustomPropertyBag extends Cesium.PropertyBag {
 }
 
 interface EntityWithHeight extends Cesium.Entity {
-    properties?: CustomPropertyBag;
-    polygon?: Cesium.PolygonGraphics;
+    properties: CustomPropertyBag;
+    polygon: Cesium.PolygonGraphics;
 }
 
 export const loadGeojson = async (viewer: any, url: string) => {

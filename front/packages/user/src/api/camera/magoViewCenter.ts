@@ -58,6 +58,7 @@ export const onViewCenter = (viewer: Cesium.Viewer) => {
     }
 
     if(!centerHeight){ return; }
+    if(!startCartesian){ return; }
 
     const startDestination = calculateCartesian(startCartographic, centerHeight, manHeight);
 
