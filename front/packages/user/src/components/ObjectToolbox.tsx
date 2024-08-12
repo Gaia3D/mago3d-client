@@ -4,32 +4,46 @@ import { useRecoilState } from "recoil";
 import { OptionsState } from "@/recoils/Tool.ts";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 import { useObjectTool } from "@/hooks/useObjectTool.tsx";
+import {useTranslation} from "react-i18next";
 
 interface MapTool {
     toolBoxIndex: number;
     className: string;
-    label: string;
     active?: boolean;
     toggle?: boolean;
     group?: string;
     onClick: () => void;
 }
 
+interface ToolButtonProps {
+    tool: MapTool;
+    handleClick: (tool: MapTool) => void;
+    isExpand?: boolean; // 선택적으로 isExpand를 받을 수 있게 합니다.
+}
+
 type ToolClicked = (tool: MapTool) => void;
 
 const CLICK_EVENT_GROUP = "clickEvent";
 
-const ToolButton = ({ tool, handleClick }: { tool: MapTool, handleClick: (tool: MapTool) => void }) => (
-    <button
-        type="button"
-        className={`${tool.className} ${ (tool.active && tool.toggle) ? 'active' : ''}`}
-        onClick={() => handleClick(tool)}
-    >{tool.label}</button>
-);
+const ToolButton = ({ tool, handleClick }: ToolButtonProps) => {
+    const { t } = useTranslation();
+    return (
+        <button
+            type={"button"}
+            className={`${tool.className} ${tool.active && tool.toggle ? 'selected' : ''}`}
+            onClick={() => handleClick(tool)}
+        >
+            <div className={`popuplayer-description--content ${tool.className}`}>
+                <div className={"title"}>
+                    {t(`tool.${tool.className}`)}
+                </div>
+            </div>
+        </button>
+    )};
+
 
 export const ObjectToolbox = () => {
     const [options] = useRecoilState(OptionsState);
-    const SIDE_MENU_WIDTH = 350;
 
     const divRef = useRef<HTMLDivElement>(null);
     const { globeController } = useGlobeController();
@@ -38,14 +52,14 @@ export const ObjectToolbox = () => {
     const { toggleTranslation, toggleRotation, toggleScaling, copyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring, objectColoring } = useObjectTool();
 
     const initialTools: MapTool[] = useMemo(() => [
-        { toolBoxIndex: 1, className: "translation", label: "이동", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleTranslation },
-        { toolBoxIndex: 1, className: "rotation", label: "회전", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleRotation },
-        { toolBoxIndex: 1, className: "scaling", label: "크기", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleScaling },
-        { toolBoxIndex: 1, className: "copy", label: "복사", onClick: copyObject },
-        { toolBoxIndex: 1, className: "remove", label: "삭제", onClick: removeObject },
-        { toolBoxIndex: 1, className: "add-floor", label: "층+", onClick: objectAddFloor },
-        { toolBoxIndex: 1, className: "remove-floor", label: "층-", onClick: objectRemoveFloor },
-        { toolBoxIndex: 1, className: "coloring", label: "색상", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleColoring },
+        { toolBoxIndex: 1, className: "translation", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleTranslation },
+        { toolBoxIndex: 1, className: "rotation", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleRotation },
+        { toolBoxIndex: 1, className: "scaling", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleScaling },
+        { toolBoxIndex: 1, className: "copy", onClick: copyObject },
+        { toolBoxIndex: 1, className: "remove", onClick: removeObject },
+        { toolBoxIndex: 1, className: "add-floor", onClick: objectAddFloor },
+        { toolBoxIndex: 1, className: "remove-floor", onClick: objectRemoveFloor },
+        { toolBoxIndex: 1, className: "coloring", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleColoring },
     ], [toggleTranslation, toggleRotation, toggleScaling, copyObject, removeObject, objectAddFloor, objectRemoveFloor, toggleColoring ]);
 
 
@@ -94,7 +108,7 @@ export const ObjectToolbox = () => {
 
             const canvasPosition = viewer?.scene.cartesianToCanvasCoordinates(options.pickedObject.position);
             if (Cesium.defined(canvasPosition) && labelDiv) {
-                labelDiv.style.left = `${canvasPosition.x + SIDE_MENU_WIDTH}px`;
+                labelDiv.style.left = `${canvasPosition.x}px`;
                 labelDiv.style.top = `${canvasPosition.y}px`;
             }
         }
@@ -111,7 +125,7 @@ export const ObjectToolbox = () => {
     }, [viewer, options.pickedObject?.position]);
 
     return options.isOpenObjectTool && (
-        <div ref={divRef} id="object-toolbox">
+        <div ref={divRef} id="object-toolbox" className={"toolbox-pop-layer object"}>
             {tools.map(tool => (
                 <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
             ))}

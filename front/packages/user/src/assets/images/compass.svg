@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="107" height="107" viewBox="0 0 107 107">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.21" y1="0.185" x2="0.616" y2="0.681" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#9a9a9a"/>
+      <stop offset="1" stop-color="#4b4b4b"/>
+    </linearGradient>
+    <filter id="패스_216" x="0" y="0" width="107" height="107" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-opacity="0.302"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="그룹_257" data-name="그룹 257" transform="translate(-1813 -974)">
+    <g transform="matrix(1, 0, 0, 1, 1813, 974)" filter="url(#패스_216)">
+      <path id="패스_216-2" data-name="패스 216" d="M38.5,0A38.5,38.5,0,1,1,0,38.5,38.5,38.5,0,0,1,38.5,0Z" transform="translate(15 15)" fill="url(#linear-gradient)"/>
+    </g>
+    <g id="타원_12" data-name="타원 12" transform="translate(1833 994)" fill="none" stroke="#fff" stroke-width="2">
+      <circle cx="34" cy="34" r="34" stroke="none"/>
+      <circle cx="34" cy="34" r="33" fill="none"/>
+    </g>
+    <g id="그룹_135" data-name="그룹 135" transform="translate(1839.839 1001.339)">
+      <circle id="타원_13" data-name="타원 13" cx="10.5" cy="10.5" r="10.5" transform="translate(15.161 15.661)" fill="#fff"/>
+      <g id="그룹_134" data-name="그룹 134" transform="translate(25.5)">
+        <path id="패스_92" data-name="패스 92" d="M1863.313,1001.15l.911-16.317.911,16.317Z" transform="translate(-1863.313 -984.833)" fill="#fff"/>
+        <path id="패스_93" data-name="패스 93" d="M0,16.317.911,0l.911,16.317Z" transform="translate(1.821 52.745) rotate(180)" fill="#fff"/>
+      </g>
+      <g id="그룹_133" data-name="그룹 133" transform="translate(0 25.5)">
+        <path id="패스_94" data-name="패스 94" d="M0,16.317.911,0l.911,16.317Z" transform="translate(52.746 0) rotate(90)" fill="#fff"/>
+        <path id="패스_95" data-name="패스 95" d="M0,16.317.911,0l.911,16.317Z" transform="translate(0 1.821) rotate(-90)" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>

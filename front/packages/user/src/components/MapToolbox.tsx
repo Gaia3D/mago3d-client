@@ -3,11 +3,18 @@ import { useState, useMemo, useCallback } from "react";
 import NavigationRoundedIcon from '@mui/icons-material/NavigationRounded';
 import { useViewTool } from "@/hooks/useViewTool.tsx";
 import {useObjectTool} from "@/hooks/useObjectTool.tsx";
+import {useTranslation} from "react-i18next";
+
+interface ToolButtonProps {
+    tool: MapTool;
+    handleClick: (tool: MapTool) => void;
+    isExpand?: boolean; // 선택적으로 isExpand를 받을 수 있게 합니다.
+}
+
 
 export interface MapTool {
     toolBoxIndex: number;
     className: string;
-    label: string;
     active?: boolean;
     toggle?: boolean;
     group?: string;
@@ -19,36 +26,48 @@ type ToolClicked = (tool: MapTool) => void;
 const TOOLBOX_SEP = "sep";
 const CLICK_EVENT_GROUP = "clickEvent";
 
-const ToolButton = ({ tool, handleClick }: { tool: MapTool, handleClick: (tool: MapTool) => void }) => (
+const ToolButton = ({ tool, handleClick, isExpand = false }: ToolButtonProps) => {
+    const { t } = useTranslation();
+    return (
     <button
-        type="button"
-        className={`${tool.className} ${tool.active ? 'active' : ''}`}
+        type={"button"}
+        className={`${tool.className} ${tool.active && tool.toggle ? 'selected' : ''}`}
         onClick={() => handleClick(tool)}
     >
-        <div className="toolbox-txt">
-            <div className="title">{tool.label}</div>
-            <div className="rect"></div>
+        <div className={`${isExpand ? 'popuplayer' : 'toolbox' }-description--content ${tool.className}`}>
+            <div className={"title"}>
+                {t(`tool.${tool.className}`)}
+            </div>
         </div>
     </button>
-);
+)};
 
-const ExpandableToolBox = ({ tools, toolBoxIndex, handleClick, expanded, toggleExpand, eleId }: { tools: MapTool[], toolBoxIndex: number, handleClick: (tool: MapTool) => void, expanded: boolean, toggleExpand: (eleId: string) => void, eleId: string }) => (
-    <>
-        <div id={`${eleId}-expand-button`} className='expand-button' onClick={() => toggleExpand(eleId)}></div>
-        <div id={eleId} className={`expand-tool-box ${expanded ? 'expand' : ''}`}>
-            {tools.filter(tool => tool.toolBoxIndex === toolBoxIndex).map(tool => (
-                <ToolButton key={tool.className} tool={tool} handleClick={handleClick}/>
-            ))}
-        </div>
-    </>
-);
+const ExpandableToolBox = ({ tools, toolBoxIndex, handleClick, expanded, toggleExpand, eleId }: { tools: MapTool[], toolBoxIndex: number, handleClick: (tool: MapTool) => void, expanded: boolean, toggleExpand: (eleId: string) => void, eleId: string }) => {
+    const { t } = useTranslation();
+    return (
+        <>
+            <button className={`${eleId} ${expanded ? 'selected' : ''}`}
+                    onClick={() => toggleExpand(eleId)}>
+                <div className={"toolbox-description--content"}>
+                    <div className={"title"}>
+                        {t(`tool.${eleId}`)}
+                    </div>
+                </div>
+            </button>
+            <div className={`toolbox-pop-layer ${eleId} ${expanded ? 'expand' : ''}`}>
+                {tools.filter(tool => tool.toolBoxIndex === toolBoxIndex).map(tool => (
+                    <ToolButton key={tool.className} tool={tool} handleClick={handleClick} isExpand={true} />
+                ))}
+            </div>
+        </>
+    )};
 
 export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
     const {
-        angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickArea,
-        onClickLength, onClickAngle, onClickSave, onClickPrint, onClickComplex, toggleCoordinate, toggleMeasureRadius,
+        onClickHome, onClickExpand, onClickReduce, onClickArea,
+        onClickLength, onClickAngle, onClickSave, onClickComplex, toggleCoordinate, toggleMeasureRadius,
         toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent,
-        toggleClock, toggleSetting
+        toggleClock, toggleSetting, toggleTheme
     } = useMapTool();
     const {
         toggleFirstPersonView, toggleViewCenter, toggleViewPoint,
@@ -58,35 +77,36 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
     const { toggleSelector } = useObjectTool();
 
     const initialTools: MapTool[] = useMemo(() => [
-        { toolBoxIndex: 1, className: "home", label: "초기화", group: TOOLBOX_SEP, onClick: onClickHome },
-        { toolBoxIndex: 1, className: "position", label: "위치측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleCoordinate },
-        { toolBoxIndex: 1, className: "length", label: "길이측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickLength },
-        { toolBoxIndex: 1, className: "area", label: "면적측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickArea },
-        { toolBoxIndex: 1, className: "angles", label: "각도", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickAngle },
-        { toolBoxIndex: 1, className: "composite", label: "복합거리", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickComplex },
-        { toolBoxIndex: 1, className: "radius", label: "반지름측정", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleMeasureRadius },
-        { toolBoxIndex: 1, className: "save", label: "저장하기", group: TOOLBOX_SEP, onClick: onClickSave },
-        { toolBoxIndex: 1, className: "selector", label: "객체선택", group: CLICK_EVENT_GROUP, onClick: toggleSelector },
-        { toolBoxIndex: 2, className: "expand", label: "확대", group: TOOLBOX_SEP, onClick: onClickExpand },
-        { toolBoxIndex: 2, className: "reduce", label: "축소", group: TOOLBOX_SEP, onClick: onClickReduce },
-        { toolBoxIndex: 3, className: "fullscreen", label: "전체화면", group: TOOLBOX_SEP, toggle: true, onClick: toggleFullscreen },
-        { toolBoxIndex: 3, className: "reset-direction", label: "방향초기화", group: TOOLBOX_SEP, onClick: resetDirection },
-        { toolBoxIndex: 3, className: "set-terrain", label: "지형설정", group: TOOLBOX_SEP, toggle: true, onClick: toggleDefaultTerrain },
-        { toolBoxIndex: 3, className: "set-terrain-trans", label: "지형불투명설정", group: TOOLBOX_SEP, toggle: true, onClick: toggleTerrainTranslucent },
-        { toolBoxIndex: 3, className: "open-clock-tool", label: "시간도구", group: TOOLBOX_SEP, toggle: true, onClick: toggleClock },
-        { toolBoxIndex: 3, className: "open-setting-tool", label: "설정도구", group: TOOLBOX_SEP, toggle: true, onClick: toggleSetting },
-        { toolBoxIndex: 4, className: "first-person-view", label: "사람시점", group: TOOLBOX_SEP, onClick: toggleFirstPersonView },
-        { toolBoxIndex: 4, className: "indoors", label: "실내시점", group: CLICK_EVENT_GROUP, onClick: toggleViewCenter },
-        { toolBoxIndex: 4, className: "go-to-point", label: "시점이동", group: CLICK_EVENT_GROUP, onClick: toggleViewPoint },
-        { toolBoxIndex: 4, className: "axis-view", label: "축시점", group: CLICK_EVENT_GROUP, onClick: toggleViewAxis },
-        { toolBoxIndex: 4, className: "camera-info", label: "카메라정보", group: TOOLBOX_SEP, onClick: toggleCameraTool },
-        { toolBoxIndex: 4, className: "bounding-volume", label: "경계선표시", group: TOOLBOX_SEP, onClick: toggleBoundingVolume },
+        { toolBoxIndex: 0, className: "home", group: TOOLBOX_SEP, onClick: onClickHome },
+        { toolBoxIndex: 0, className: "save", group: TOOLBOX_SEP, onClick: onClickSave },
+        { toolBoxIndex: 0, className: "reset-direction", group: TOOLBOX_SEP, onClick: resetDirection },
+        { toolBoxIndex: 0, className: "set-terrain-trans", group: TOOLBOX_SEP, toggle: true, onClick: toggleTerrainTranslucent },
+        { toolBoxIndex: 0, className: "open-clock-tool", group: TOOLBOX_SEP, toggle: true, onClick: toggleClock },
+        { toolBoxIndex: 0, className: "open-setting-tool", group: TOOLBOX_SEP, toggle: true, onClick: toggleSetting },
+        { toolBoxIndex: 1, className: "first-person-view", group: TOOLBOX_SEP, toggle: true, onClick: toggleFirstPersonView },
+        { toolBoxIndex: 1, className: "indoor", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewCenter },
+        { toolBoxIndex: 1, className: "go-to-point", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewPoint },
+        { toolBoxIndex: 1, className: "view-axis", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleViewAxis },
+        { toolBoxIndex: 1, className: "camera-info", group: TOOLBOX_SEP, toggle: true, onClick: toggleCameraTool },
+        // { toolBoxIndex: 1, className: "bounding-volume", group: TOOLBOX_SEP, onClick: toggleBoundingVolume },
+        { toolBoxIndex: 2, className: "point", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleCoordinate },
+        { toolBoxIndex: 2, className: "length", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickLength },
+        { toolBoxIndex: 2, className: "area", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickArea },
+        { toolBoxIndex: 2, className: "angle", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickAngle },
+        { toolBoxIndex: 2, className: "composite", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickComplex },
+        { toolBoxIndex: 2, className: "radius", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleMeasureRadius },
+        { toolBoxIndex: 3, className: "object", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleSelector },
+        { toolBoxIndex: 4, className: "full-screen", group: TOOLBOX_SEP, toggle: true, onClick: toggleFullscreen },
+        { toolBoxIndex: 4, className: "terrain", group: TOOLBOX_SEP, toggle: true, onClick: toggleDefaultTerrain },
+        { toolBoxIndex: 4, className: "theme", group: TOOLBOX_SEP, toggle: true, onClick: toggleTheme },
+        { toolBoxIndex: 5, className: "zoom-in", group: TOOLBOX_SEP, onClick: onClickExpand },
+        { toolBoxIndex: 5, className: "zoom-out", group: TOOLBOX_SEP, onClick: onClickReduce },
     ], [onClickHome, onClickLength, onClickArea, onClickAngle, onClickComplex, onClickSave, onClickExpand, onClickReduce, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleClock, toggleSetting, toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool, toggleBoundingVolume]);
 
     const [tools, setTools] = useState<MapTool[]>(initialTools);
     const [expandedTools, setExpandedTools] = useState<{ [key: string]: boolean }>({
-        "toolbox-cesium-map-tool": false,
-        "toolbox-view-tool": false
+        "visible": false,
+        "ruler": false
     });
 
     const isSameGroupAndNotSelfAndNotSep = (tool: MapTool, clickedTool: MapTool) =>
@@ -131,21 +151,23 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
 
     return (
         <>
-            <div id="toolbox">
-                <button type="button" onClick={onClickCompas} style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
-                    <NavigationRoundedIcon style={{ color: '#FCFCFD', transform: `rotate(${angle}deg)` }} />
-                </button>
-                {tools.filter(tool => tool.toolBoxIndex === 1).map(tool => (
+            <div className={"toolbox control"}>
+                <ExpandableToolBox tools={tools} toolBoxIndex={1} handleClick={handleToolClick} expanded={expandedTools["visible"]} toggleExpand={toggleExpand} eleId="visible" />
+                <ExpandableToolBox tools={tools} toolBoxIndex={2} handleClick={handleToolClick} expanded={expandedTools["ruler"]} toggleExpand={toggleExpand} eleId="ruler" />
+                {tools.filter(tool => tool.toolBoxIndex === 3).map(tool => (
                     <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
                 ))}
             </div>
-            <div id="toolbox-view">
-                {tools.filter(tool => tool.toolBoxIndex === 2).map(tool => (
+            <div className={"toolbox setup"}>
+                {tools.filter(tool => tool.toolBoxIndex === 4).map(tool => (
                     <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
                 ))}
             </div>
-            <ExpandableToolBox tools={tools} toolBoxIndex={3} handleClick={handleToolClick} expanded={expandedTools["toolbox-cesium-map-tool"]} toggleExpand={toggleExpand} eleId="toolbox-cesium-map-tool" />
-            <ExpandableToolBox tools={tools} toolBoxIndex={4} handleClick={handleToolClick} expanded={expandedTools["toolbox-view-tool"]} toggleExpand={toggleExpand} eleId="toolbox-view-tool" />
+            <div className={"toolbox zoom"}>
+                {tools.filter(tool => tool.toolBoxIndex === 5).map(tool => (
+                    <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
+                ))}
+            </div>
         </>
     );
 };
