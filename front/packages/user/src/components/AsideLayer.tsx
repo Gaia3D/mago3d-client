@@ -115,7 +115,7 @@ const nodeModlesToCreateUserGroupInput = (nodeModels:NodeModel[]):CreateUserGrou
     });
 }
 
-export const AsideLayer: FC = () => {
+export const AsideLayers: FC = () => {
   const {mutateAsync: saveUserLayerMutateAsync} = useMutation({
     mutationFn:({input}:{input:CreateUserGroupInput[]}) => layersetGraphqlFetcher<Mutation>(SAVE_USERLAYER, {input})
   });

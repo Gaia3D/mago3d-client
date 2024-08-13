@@ -19,7 +19,6 @@ export const AsideMenu = () => {
       {className: "assets", text: "assets"},
       {className: "layers", text: "layers"},
       {className: "props", text: "props"},
-      {className: "search", text: "search"},
     ];
   }, [userInfo]);
 

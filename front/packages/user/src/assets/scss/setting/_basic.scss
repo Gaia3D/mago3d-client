@@ -642,7 +642,7 @@ ul.prop {
     text-indent:12px; 
     font-size:var(--font-size-small); 
     letter-spacing: -0.5px;    
-    &.sucess {
+    &.success {
         background-color:#25c25a;
         @include icon-button(-257px, -176px);         
     }

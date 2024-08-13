@@ -1,20 +1,18 @@
 import { mainMenuState } from "@/recoils/MainMenuState";
 import { useRecoilValue } from "recoil";
-import { AsideLayer } from "@/components/AsideLayer";
-import { AsideTimeSeries } from "@/components/AsideTimeSeries";
-import { AsideSearch } from "@/components/AsideSearch";
-import { AsideAnalysis } from "@/components/AsideAnalysis";
-import { AsideCoord } from "@/components/AsideCoord";
-import { AsideMapNote } from "./AsideMapNote";
-
+import {AsideLayers} from "@/components/AsideLayer";
+import AsideProps from "@/components/AsideProps.tsx";
+import AsideAssets from "@/components/AsideAssets.tsx";
 export const AsidePanel = () => {
   const menu = useRecoilValue(mainMenuState);
 
   switch (menu.SelectedId) {
+    case "assets":
+      return <AsideAssets />; // 레이어
     case "layer":
-      return <AsideLayer />; // 레이어
-    case "search":
-      return <AsideSearch />; // 검색
+      return <AsideLayers />; // 레이어
+    case "props":
+      return <AsideProps />; // 검색
     default:
       return <></>;
   }
