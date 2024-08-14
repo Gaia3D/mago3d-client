@@ -6,8 +6,9 @@ import {
 } from "@/generated/gql/dataset/graphql.ts";
 import {useQuery} from "@apollo/client";
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import {dataCurrentPageState, dataSearchSelector} from "@/recoils/Data.ts";
+import {dataCurrentPageState, dataSearchSelector, dataSearchTextState} from "@/recoils/Data.ts";
 import {Asset} from "@/types/assets/Data.ts";
+import {useDebounce} from "@/hooks/useDebounce.ts";
 
 type AssetRowProps = {
     item: Asset;
@@ -58,6 +59,7 @@ const AsideAssets = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
     const setPage = useSetRecoilState<number>(dataCurrentPageState);
+    const setSearch = useSetRecoilState<string|undefined>(dataSearchTextState);
     const statusTh = useRef<HTMLTableCellElement>(null);
 
     const toggleStatusPop = () => {
@@ -118,6 +120,15 @@ const AsideAssets = () => {
             if (observerRef.current) observerRef.current.disconnect();
         };
     }, [getMore, isFetching]);
+
+    const debouncedSearch = useDebounce(searchTerm, 300);
+    useEffect(() => {
+        if (loading || !data) return;
+        setDataArr([]);
+        setPage(0);
+        setSearch(searchTerm.toLowerCase());
+        setIsFetching(true);
+    }, [debouncedSearch]);
 
     return (
         <div className="side-bar-wrapper">

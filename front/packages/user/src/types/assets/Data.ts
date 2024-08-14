@@ -18,7 +18,7 @@ export type Asset = {
     | null;
 
 export type DataSearchTarget = "group" | "data";
-export type DataSearchQueryOption = "eq" | "contains";
+export type DataSearchQueryOption = "eq" | "contains" | "containsIgnoreCase";
 export type DataItemSize = 10 | 20 | 50 | 100;
 
 export type AssetSearchProps = {

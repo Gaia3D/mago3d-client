@@ -19,7 +19,7 @@ export const dataItemSizeState = atom<DataItemSize>({
 
 export const dataSearchQueryOptionState = atom<DataSearchQueryOption>({
   key: 'dataSearchQueryOptionState',
-  default: 'contains'
+  default: 'containsIgnoreCase'
 });
 
 export const dataSearchTextState = atom<string | undefined>({
