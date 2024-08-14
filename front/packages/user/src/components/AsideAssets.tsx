@@ -9,6 +9,7 @@ import {useRecoilValue, useSetRecoilState} from "recoil";
 import {dataCurrentPageState, dataProcessStatusState, dataSearchSelector, dataSearchTextState} from "@/recoils/Data.ts";
 import {Asset} from "@/types/assets/Data.ts";
 import {useDebounce} from "@/hooks/useDebounce.ts";
+import {useInfiniteScroll} from "@/hooks/useInfiniteScroll.ts";
 
 type AssetRowProps = {
     item: Asset;
@@ -78,56 +79,35 @@ const AsideAssets = () => {
 
     const [dataArr, setDataArr] = useState<Asset[]>([]);
     const containerRef = useRef<HTMLDivElement>(null);
-    const loadMoreRef = useRef<HTMLTableRowElement | null>(null);
-    const observerRef = useRef<IntersectionObserver | null>(null);
     const [isFetching, setIsFetching] = useState(false);
 
-    const {data, loading} = useQuery(DatasetAssetListDocument, {
+    const { data, loading } = useQuery(DatasetAssetListDocument, {
         variables: searchProps,
         fetchPolicy: 'network-only',
     });
 
     const getMore = useCallback(() => {
         if (loading || !data) return;
-        const {pageInfo} = data.assets;
+        const { pageInfo } = data.assets;
         const nowPage = pageInfo.page + 1;
         if (nowPage >= pageInfo.totalPages) return;
         setPage(nowPage);
         setIsFetching(true);
     }, [data, setPage, loading]);
 
+    const loadMoreRef = useInfiniteScroll({
+        root: containerRef.current,
+        fetchMore: getMore,
+        isLoading: isFetching || loading,
+    });
+
     useEffect(() => {
         if (data) {
-            const {items} = data.assets;
+            const { items } = data.assets;
             setDataArr(prevDataArr => [...prevDataArr, ...items]);
             setIsFetching(false);
         }
-
     }, [data]);
-
-    useEffect(() => {
-        if (observerRef.current) observerRef.current.disconnect();
-
-        const callback = (entries: IntersectionObserverEntry[]) => {
-            if (entries[0].isIntersecting && !isFetching) {
-                getMore();
-            }
-        };
-
-        observerRef.current = new IntersectionObserver(callback, {
-            root: containerRef.current,
-            rootMargin: '0px',
-            threshold: 1.0,
-        });
-
-        if (loadMoreRef.current) {
-            observerRef.current.observe(loadMoreRef.current);
-        }
-
-        return () => {
-            if (observerRef.current) observerRef.current.disconnect();
-        };
-    }, [getMore, isFetching]);
 
     const debouncedSearch = useDebounce(searchTerm, 300);
     useEffect(() => {
