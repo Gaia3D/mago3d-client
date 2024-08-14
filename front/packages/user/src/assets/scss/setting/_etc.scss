@@ -19,6 +19,24 @@
 }
 
 #map {
+  .side-bar-wrapper {
+    &.on {
+      .side-bar {
+        transform: translateX(0);
+        transition: 0.4s;
+        opacity: 1;
+      }
+    }
+
+    &.off {
+      .side-bar {
+        transform: translateX(-120%);
+        transition: 0.4s;
+        opacity: 0;
+      }
+    }
+  }
+
   .compass {
     bottom: 12px;
     right: 12px;

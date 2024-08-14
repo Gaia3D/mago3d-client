@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback, memo} from 'react';
+import React, {useEffect, useState, useRef, useCallback, memo, FC} from 'react';
 import {
     DatasetAssetListDocument,
     DatasetAssetListQueryVariables,
@@ -10,6 +10,9 @@ import {dataCurrentPageState, dataProcessStatusState, dataSearchSelector, dataSe
 import {Asset} from "@/types/assets/Data.ts";
 import {useDebounce} from "@/hooks/useDebounce.ts";
 import {useInfiniteScroll} from "@/hooks/useInfiniteScroll.ts";
+import {dataFormatter} from "@mnd/shared";
+import {mainMenuState} from "@/recoils/MainMenuState.tsx";
+import {AsideDisplayProps} from "@/components/AsidePanel.tsx";
 
 type AssetRowProps = {
     item: Asset;
@@ -46,7 +49,10 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item }) => {
             <td>{item.assetType}</td>
             <td>
                 <div className="name">{item.name}</div>
-                <div className="date clear">{item.updatedAt}</div>
+                <div className="date clear">{dataFormatter(
+                    item.updatedAt ?? new Date().toISOString(),
+                    "YYYY-MM-DD HH:mm:ss"
+                )} </div>
             </td>
             <td>
                 <button type="button" className={`status-button ${status}`}>{status}</button>
@@ -62,7 +68,7 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item }) => {
 
 AssetRow.displayName = 'AssetRow';
 
-const AsideAssets = () => {
+const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     const searchProps = useRecoilValue<DatasetAssetListQueryVariables>(dataSearchSelector);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
@@ -126,18 +132,17 @@ const AsideAssets = () => {
         setIsFetching(true);
     }, [filterStatus]);
 
+    const setMenu = useSetRecoilState(mainMenuState);
+
     return (
-        <div className="side-bar-wrapper">
-            <input type="checkbox" id="toggleButton" />
+        <div className={`side-bar-wrapper ${display?"on":"off"}`}>
             <div className="side-bar">
                 <div className="side-bar-header">
-                    <label htmlFor="toggleButton">
-                        <div className="button side">
-                            <div className="description--content">
-                                <div className="title">Close sidebar</div>
-                            </div>
+                    <div className="button side" onClick={() =>setMenu({SelectedId: ''})}>
+                        <div className="description--content">
+                            <div className="title">Close sidebar</div>
                         </div>
-                    </label>
+                    </div>
                     <div className="search-container">
                         <button type="button" className="button search"></button>
                         <input

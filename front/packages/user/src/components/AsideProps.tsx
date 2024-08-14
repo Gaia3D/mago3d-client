@@ -1,11 +1,10 @@
 import React from 'react';
+import {AsideDisplayProps} from "@/components/AsidePanel.tsx";
 
-const AsideProps = () => {
+export  const AsideProps: React.FC<AsideDisplayProps>  = ({display}) => {
     return (
         <div>
             
         </div>
     );
 };
-
-export default AsideProps;
