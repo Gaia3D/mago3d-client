@@ -1,50 +1,55 @@
 import React, {useState} from 'react';
-
-const assetsData: Asset[]  = [
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "3D",  name: "3DS-ICQF-QEYS-DKZA-JKT",  upload: "2022-07-15 18:16:46",  status: "fail"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "Wea.",  name: "QEYS-DKZA-JKT",  upload: "2023-07-15 18:16:46",  status: "running"},
-    { type: "Wea.",  name: "QEYS-DKZA-JKT",  upload: "2023-07-15 18:16:46",  status: "running"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "3D",  name: "3DS-ICQF-QEYS-DKZA-JKT",  upload: "2022-07-15 18:16:46",  status: "fail"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "Wea.",  name: "QEYS-DKZA-JKT",  upload: "2023-07-15 18:16:46",  status: "running"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "3D",  name: "3DS-ICQF-QEYS-DKZA-JKT",  upload: "2022-07-15 18:16:46",  status: "fail"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "Wea.",  name: "QEYS-DKZA-JKT",  upload: "2023-07-15 18:16:46",  status: "running"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "2D",  name: "Seoul",  upload: "2024-07-15 18:16:46",  status: "success"},
-    { type: "3D",  name: "3DS-ICQF-QEYS-DKZA-JKT",  upload: "2022-07-15 18:16:46",  status: "fail"},
-    { type: "Wea.",  name: "QEYS-DKZA-JKT",  upload: "2023-07-15 18:16:46",  status: "running"},
-    { type: "Wea.",  name: "QEYS-DKZA-JKT",  upload: "2023-07-15 18:16:46",  status: "running"},
-]
+import {
+    AssetType,
+    Access,
+    DatasetAssetListDocument,
+    DatasetAssetListQueryVariables,
+    ProcessTaskStatus
+} from "@/generated/gql/dataset/graphql.ts";
+import {useQuery} from "@apollo/client";
+import {useRecoilValue} from "recoil";
+import {dataSearchSelector} from "@/recoils/Data.ts";
 
 type Asset = {
-    type: string;
-    name: string;
-    upload: string;
-    status: string;
-};
+    __typename?: "Asset" | undefined;
+    id: string; name: string;
+    assetType: AssetType;
+    enabled: boolean;
+    access: Access;
+    status?: ProcessTaskStatus | null | undefined;
+    createdAt?: string | null | undefined;
+    updatedAt?: string | null | undefined; }
+    | null;
 
 type AssetRowProps = {
     item: Asset;
 };
 
-const AssetRow: React.FC<AssetRowProps> = ({ item }) => (
-    <tr>
-        <td>{item.type}</td>
+const getStatus = (status: ProcessTaskStatus | null | undefined) => {
+    if (status === "Done") {
+        return "success";
+    } else if (status === "Running" || status === "Ready") {
+        return "running";
+    } else if (status === "None") {
+      return "none";
+    } else if (status === undefined || status === null) {
+        return "fail";
+    } else {
+        return "fail";
+    }
+};
+
+const AssetRow: React.FC<AssetRowProps> = ({ item }) =>{
+    if (!item) return null;
+    const status: "success" | "running" | "fail" | "none" = getStatus(item.status)
+    return ( <tr>
+        <td>{item.assetType}</td>
         <td>
             <div className="name">{item.name}</div>
-            <div className="date clear">{item.upload}</div>
+            <div className="date clear">{item.updatedAt}</div>
         </td>
         <td>
-            <button type="button" className={`status-button ${item.status}`}>{item.status}</button>
+            <button type="button" className={`status-button ${status}`}>{status}</button>
         </td>
         <td>
             <button type="button" className="function-button log"></button>
@@ -52,16 +57,29 @@ const AssetRow: React.FC<AssetRowProps> = ({ item }) => (
             <button type="button" className="function-button delete"></button>
         </td>
     </tr>
-);
+)};
 
 const AsideAssets = () => {
+    const searchProps = useRecoilValue<DatasetAssetListQueryVariables>(dataSearchSelector);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
 
-    const filteredAssets = assetsData.filter(asset =>
-        (filterStatus === 'all' || asset.status === filterStatus) &&
-        asset.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const {data, loading} = useQuery(DatasetAssetListDocument, {
+        variables: searchProps,
+    });
+
+    if(loading || !data) return <></>;
+
+    const {items, pageInfo} = data.assets;
+
+    console.log(items);
+    console.log(pageInfo);
+
+    const filteredAssets = items
+        .filter(item => (
+            item && (filterStatus === 'all' || item.status === filterStatus) &&
+            item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ));
 
     return (
         <div className="side-bar-wrapper">
@@ -112,8 +130,8 @@ const AsideAssets = () => {
                     <div className="y-scroll">
                         <table className="assets-list">
                             <tbody>
-                            {filteredAssets.map((item, index) => (
-                                <AssetRow key={index} item={item} />
+                            {filteredAssets.map((asset, index) => (
+                                <AssetRow key={index} item={asset} />
                             ))}
                             </tbody>
                         </table>

@@ -1,0 +1,71 @@
+mutation DatasetCreateProcess($input:CreateProcessInput!) @api(name: dataset) {
+    createProcess (
+        input: $input
+    )
+    {
+        id
+        status
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+    }
+}
+
+mutation DatasetCreateGroup($input:CreateGroupInput!) @api(name: dataset) {
+    createGroup (
+        input: $input
+    )
+    {
+        id
+        parentId
+        name
+        description
+        createdAt
+        createdBy
+        enabled
+        updatedAt
+        updatedBy
+    }
+}
+
+mutation DatasetUpdateGroup($id: ID!, $input: UpdateGroupInput!) @api(name: dataset) {
+    updateGroup(id: $id, input: $input) {
+        id
+    }
+}
+
+
+mutation DatasetDeleteGroup($id: ID!) @api(name: dataset) {
+    deleteGroup(id: $id)
+}
+
+mutation DatasetCreateAsset($input: CreateAssetInput!) @api(name: dataset) {
+    createAsset(input: $input) {
+        id
+    }
+}
+
+mutation DatasetUpdateAsset($id: ID!, $input:UpdateAssetInput!) @api(name: dataset) {
+    updateAsset (
+        id: $id
+        input: $input
+    )
+    {
+        id
+        name
+    }
+}
+
+mutation DatasetDeleteAsset($id:ID!) @api(name: dataset) {
+    deleteAsset (
+        id: $id
+    )
+}
+
+mutation DatasetDeleteAssetFile($id:ID!, $fileId:[ID]!) @api(name: dataset) {
+    deleteAssetFile (
+        id: $id
+        fileId: $fileId
+    )
+}

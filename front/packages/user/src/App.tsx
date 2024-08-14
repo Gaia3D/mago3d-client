@@ -11,6 +11,8 @@ import {authenticateState} from "./recoils/Auth";
 import keycloak from "./api/keycloak";
 import {Suspense} from "react";
 import UserInfoLoadableProvider from "@/components/providers/UserInfoLoadableProvider.tsx";
+import {ApolloProvider} from "@apollo/client";
+import apolloClients from "@/api/ApolloClients.ts";
 
 function App() {
   const router = createBrowserRouter(routes, {
@@ -43,10 +45,12 @@ function App() {
         >
             <Suspense fallback={<AppLoader />}>
                 <QueryClientProvider client={queryClient}>
-                  <UserInfoLoadableProvider>
-                    <RouterProvider router={router} />
-                    <LoadingSpinner />
-                  </UserInfoLoadableProvider>
+                    <ApolloProvider client={apolloClients}>
+                      <UserInfoLoadableProvider>
+                        <RouterProvider router={router} />
+                        <LoadingSpinner />
+                      </UserInfoLoadableProvider>
+                    </ApolloProvider>
                 </QueryClientProvider>
             </Suspense>
         </ReactKeycloakProvider>  

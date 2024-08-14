@@ -12,9 +12,11 @@
     "codegen": "pnpm graphql-codegen --config ./codegen.ts --verbose --watch"
   },
   "dependencies": {
+    "@apollo/client": "^3.9.2",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@graphql-typed-document-node/core": "^3.2.0",
+    "@habx/apollo-multi-endpoint-link": "^2.9.0",
     "@minoru/react-dnd-treeview": "^3.4.4",
     "@mnd/shared": "workspace:*",
     "@mui/icons-material": "^5.15.14",
