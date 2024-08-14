@@ -28,9 +28,9 @@ export const AsideMenu = () => {
         {items.map((item) => (
           <li key={item.className} className={`menu ${menu.SelectedId === item.className ? "on" : ""} ${item.className}`}
               onClick={(e) => handleMenuClick(e, item.className)}>
-            <a className={"text"} href="#">
+            <span className={"text"}>
                 {t(item.text)}
-            </a>
+            </span>
           </li>
         ))}
       </ul>

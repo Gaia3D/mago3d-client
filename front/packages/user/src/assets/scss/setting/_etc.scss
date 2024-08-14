@@ -1,3 +1,23 @@
+.spin-loader {
+  width: 20px;
+  height: 20px;
+  border: 5px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 #map {
   .compass {
     bottom: 12px;
@@ -9,6 +29,46 @@
 
     .compass-direction {
       margin: 0;
+    }
+  }
+
+  .assets-list {
+
+    .status-th {
+      &:hover {
+        cursor: pointer;
+      }
+
+      &.on {
+        .status-view {
+            @include icon-button(-408px, -117px);
+            opacity:0.8;
+        }
+        .pop-layer {
+          display: block;
+        }
+      }
+
+      .status-view {
+        display: inline-block;
+        width:12px;
+        height:12px;
+        @include icon-button(-408px, -54px);
+        opacity:0.5;
+
+      }
+
+      .pop-layer {
+        &.status {
+          left: 0;
+          top: 32px;
+          .text {
+            display: block;
+            color: var(--text-color);
+            padding: 5px 20px 5px 30px;
+          }
+        }
+      }
     }
   }
 }
@@ -257,7 +317,6 @@ img.icon-24 {
     clear: both;
     line-height: 30px;
     width: 88%;
-    margin: 0 auto;
     padding: 0;
     margin-left: 7.5%;
   }
@@ -269,7 +328,6 @@ img.icon-24 {
     clear: both;
     line-height: 30px;
     width: 88%;
-    margin: 0 auto;
     margin: 20px 0 0 7.5% !important;
   }
 
@@ -309,7 +367,6 @@ img.icon-24 {
 select {
   font-size: 12px;
   background: transparent;
-  font-size: 13px;
   border-radius: 3px;
   border: 1px solid #585858;
   -webkit-appearance: none;
@@ -353,7 +410,6 @@ textarea {
   }
 
   input[type="text"] {
-    background: black;
     color: white;
     font-size: 11px;
     background: transparent;
