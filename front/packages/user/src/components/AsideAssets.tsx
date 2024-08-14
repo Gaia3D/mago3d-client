@@ -6,7 +6,7 @@ import {
 } from "@/generated/gql/dataset/graphql.ts";
 import {useQuery} from "@apollo/client";
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import {dataCurrentPageState, dataSearchSelector, dataSearchTextState} from "@/recoils/Data.ts";
+import {dataCurrentPageState, dataProcessStatusState, dataSearchSelector, dataSearchTextState} from "@/recoils/Data.ts";
 import {Asset} from "@/types/assets/Data.ts";
 import {useDebounce} from "@/hooks/useDebounce.ts";
 
@@ -14,20 +14,27 @@ type AssetRowProps = {
     item: Asset;
 };
 
-const formatStatus = (status: ProcessTaskStatus | null | undefined) => {
-    switch (status) {
-        case "Done":
-            return "success";
-        case "Running":
-        case "Ready":
-            return "running";
-        case "None":
-            return "none";
-        case "Error":
-            return "fail";
-        default:
-            return status;
+const statusMap: Partial<Record<ProcessTaskStatus, string>> = {
+    "Done": "success",
+    "Running": "running",
+    "None": "none",
+    "Error": "fail",
+};
+
+const formatStatus = (status: ProcessTaskStatus | null | undefined): string | undefined => {
+    if (status === null || status === undefined) {
+        return undefined;
     }
+    return statusMap[status] || status;
+};
+
+const reverseStatusMap = Object.entries(statusMap).reduce<Record<string, ProcessTaskStatus>>((acc, [key, value]) => {
+    acc[value] = key as ProcessTaskStatus;
+    return acc;
+}, {});
+
+const reverseFormatStatus = (status: string): ProcessTaskStatus | undefined => {
+    return reverseStatusMap[status];
 };
 
 const AssetRow: React.FC<AssetRowProps> = memo(({ item }) => {
@@ -60,6 +67,7 @@ const AsideAssets = () => {
     const [filterStatus, setFilterStatus] = useState('all');
     const setPage = useSetRecoilState<number>(dataCurrentPageState);
     const setSearch = useSetRecoilState<string|undefined>(dataSearchTextState);
+    const setStatus = useSetRecoilState<ProcessTaskStatus|undefined>(dataProcessStatusState);
     const statusTh = useRef<HTMLTableCellElement>(null);
 
     const toggleStatusPop = () => {
@@ -129,6 +137,14 @@ const AsideAssets = () => {
         setSearch(searchTerm.toLowerCase());
         setIsFetching(true);
     }, [debouncedSearch]);
+
+    useEffect(() => {
+        if (loading || !data) return;
+        setDataArr([]);
+        setPage(0);
+        setStatus(reverseFormatStatus(filterStatus));
+        setIsFetching(true);
+    }, [filterStatus]);
 
     return (
         <div className="side-bar-wrapper">
