@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback, memo, FC} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
     DatasetAssetListDocument,
     DatasetAssetListQueryVariables,
@@ -10,26 +10,17 @@ import {dataCurrentPageState, dataProcessStatusState, dataSearchSelector, dataSe
 import {Asset} from "@/types/assets/Data.ts";
 import {useDebounce} from "@/hooks/useDebounce.ts";
 import {useInfiniteScroll} from "@/hooks/useInfiniteScroll.ts";
-import {dataFormatter} from "@mnd/shared";
 import {mainMenuState} from "@/recoils/MainMenuState.tsx";
 import {AsideDisplayProps} from "@/components/AsidePanel.tsx";
+import AssetRow from "@/components/AssetRow.tsx";
 
-type AssetRowProps = {
-    item: Asset;
-};
 
-const statusMap: Partial<Record<ProcessTaskStatus, string>> = {
+
+export const statusMap: Partial<Record<ProcessTaskStatus, string>> = {
     "Done": "success",
     "Running": "running",
     "None": "none",
     "Error": "fail",
-};
-
-const formatStatus = (status: ProcessTaskStatus | null | undefined): string | undefined => {
-    if (status === null || status === undefined) {
-        return undefined;
-    }
-    return statusMap[status] || status;
 };
 
 const reverseStatusMap = Object.entries(statusMap).reduce<Record<string, ProcessTaskStatus>>((acc, [key, value]) => {
@@ -40,33 +31,6 @@ const reverseStatusMap = Object.entries(statusMap).reduce<Record<string, Process
 const reverseFormatStatus = (status: string): ProcessTaskStatus | undefined => {
     return reverseStatusMap[status];
 };
-
-const AssetRow: React.FC<AssetRowProps> = memo(({ item }) => {
-    if (!item) return null;
-    const status = formatStatus(item.status);
-    return (
-        <tr>
-            <td>{item.assetType}</td>
-            <td>
-                <div className="name">{item.name}</div>
-                <div className="date clear">{dataFormatter(
-                    item.updatedAt ?? new Date().toISOString(),
-                    "YYYY-MM-DD HH:mm:ss"
-                )} </div>
-            </td>
-            <td>
-                <button type="button" className={`status-button ${status}`}>{status}</button>
-            </td>
-            <td>
-                <button type="button" className="function-button log"></button>
-                <button type="button" className="function-button down"></button>
-                <button type="button" className="function-button delete"></button>
-            </td>
-        </tr>
-    );
-});
-
-AssetRow.displayName = 'AssetRow';
 
 const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     const searchProps = useRecoilValue<DatasetAssetListQueryVariables>(dataSearchSelector);

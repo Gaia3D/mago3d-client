@@ -37,6 +37,12 @@
     }
   }
 
+  .function-button {
+    &.convert {
+      @include icon-button(-257px, -176px);
+    }
+  }
+
   .compass {
     bottom: 12px;
     right: 12px;
