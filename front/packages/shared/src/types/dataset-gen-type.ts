@@ -336,6 +336,27 @@ export type CreateProcessResponse = {
   updatedBy?: Maybe<Scalars['ID']>;
 };
 
+/**
+ * ##################################################################################
+ * # Create
+ * ##################################################################################
+ */
+export type CreatePropInput = {
+  name: Scalars['String'];
+  uploadId: Array<Scalars['ID']>;
+};
+
+export type CreatePropResponse = WithAuditable & {
+  __typename?: 'CreatePropResponse';
+  createdAt?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<Scalars['ID']>;
+  files: Array<PropFile>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt?: Maybe<Scalars['String']>;
+  updatedBy?: Maybe<Scalars['ID']>;
+};
+
 export type CreateUploadFileResponse = {
   __typename?: 'CreateUploadFileResponse';
   contentSize: Scalars['Int'];
@@ -524,6 +545,11 @@ export type IntCriteria = {
   notIn?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
+export enum InterpolationType {
+  Bilinear = 'BILINEAR',
+  Nearest = 'NEAREST'
+}
+
 export type JsonPropertyInput = {
   /**  Using RFC6902 JSON Patch */
   merge?: InputMaybe<Scalars['JSON']>;
@@ -655,10 +681,12 @@ export type Mutation = {
   createLabel: CreateLabelResponse;
   /**  Process */
   createProcess: CreateProcessResponse;
+  createProp: CreatePropResponse;
   deleteAsset: Scalars['Boolean'];
   deleteAssetFile: Scalars['Boolean'];
   deleteGroup: Scalars['Boolean'];
   deleteLabel: Scalars['Boolean'];
+  deleteProp?: Maybe<Scalars['Boolean']>;
   /**
    *  Upload
    *  Use RestAPI instead of Graphql
@@ -672,6 +700,7 @@ export type Mutation = {
   updateGroup: UpdateGroupResponse;
   updateLabel: UpdateLabelResponse;
   updateProcess: UpdateProcessResponse;
+  updateProp: UpdatePropResponse;
 };
 
 
@@ -707,6 +736,11 @@ export type MutationCreateProcessArgs = {
 };
 
 
+export type MutationCreatePropArgs = {
+  input: CreatePropInput;
+};
+
+
 export type MutationDeleteAssetArgs = {
   id: Scalars['ID'];
 };
@@ -725,6 +759,11 @@ export type MutationDeleteGroupArgs = {
 
 export type MutationDeleteLabelArgs = {
   id: Array<InputMaybe<Scalars['ID']>>;
+};
+
+
+export type MutationDeletePropArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -771,6 +810,12 @@ export type MutationUpdateLabelArgs = {
 export type MutationUpdateProcessArgs = {
   id: Scalars['ID'];
   input: UpdateProcessInput;
+};
+
+
+export type MutationUpdatePropArgs = {
+  id: Scalars['ID'];
+  input: UpdatePropInput;
 };
 
 /**
@@ -835,6 +880,8 @@ export type ProcessContextInput = {
   ogr2ogr?: InputMaybe<ShpConvertInput>;
   smartTile?: InputMaybe<SmartTileConvertInput>;
   t3d?: InputMaybe<T3DConvertInput>;
+  terrain?: InputMaybe<TerrainConvertInput>;
+  warp?: InputMaybe<TiffConvertInput>;
 };
 
 export type ProcessEdge = {
@@ -915,6 +962,69 @@ export type ProcessTaskStatusCriteria = {
   notIn?: InputMaybe<Array<InputMaybe<ProcessTaskStatus>>>;
 };
 
+/**
+ * ##################################################################################
+ * # Query
+ * ##################################################################################
+ */
+export type Prop = WithAuditable & {
+  __typename?: 'Prop';
+  createdAt?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<Scalars['ID']>;
+  files: Array<PropFile>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt?: Maybe<Scalars['String']>;
+  updatedBy?: Maybe<Scalars['ID']>;
+};
+
+export type PropCursored = {
+  __typename?: 'PropCursored';
+  content: Array<Prop>;
+  hasNext?: Maybe<Scalars['Boolean']>;
+  hasPrevious?: Maybe<Scalars['Boolean']>;
+  number?: Maybe<Scalars['Long']>;
+  size?: Maybe<Scalars['Int']>;
+  totalElements?: Maybe<Scalars['Int']>;
+  totalPages?: Maybe<Scalars['Int']>;
+};
+
+export type PropFile = WithAuditable & {
+  __typename?: 'PropFile';
+  contentSize?: Maybe<Scalars['String']>;
+  contentType?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['String']>;
+  createdBy: Scalars['ID'];
+  createdByUser: User;
+  download?: Maybe<Scalars['String']>;
+  filename: Scalars['String'];
+  height?: Maybe<Scalars['Int']>;
+  id: Scalars['ID'];
+  thumbnail?: Maybe<PropFileThumbnail>;
+  updatedAt?: Maybe<Scalars['String']>;
+  updatedBy: Scalars['ID'];
+  updatedByUser: User;
+  width?: Maybe<Scalars['Int']>;
+};
+
+export type PropFileThumbnail = {
+  __typename?: 'PropFileThumbnail';
+  contentSize?: Maybe<Scalars['String']>;
+  contentType?: Maybe<Scalars['String']>;
+  download?: Maybe<Scalars['String']>;
+  filename: Scalars['String'];
+};
+
+export type PropFilterInput = {
+  and?: InputMaybe<Array<InputMaybe<PropFilterInput>>>;
+  createdAt?: InputMaybe<DateTimeCriteria>;
+  createdBy?: InputMaybe<SimpleCriteria>;
+  id?: InputMaybe<SimpleCriteria>;
+  name?: InputMaybe<StringCriteria>;
+  not?: InputMaybe<PropFilterInput>;
+  or?: InputMaybe<Array<InputMaybe<PropFilterInput>>>;
+};
+
 export type Query = {
   __typename?: 'Query';
   /**  Asset */
@@ -928,6 +1038,8 @@ export type Query = {
   /**  Process */
   process?: Maybe<Process>;
   processes: ProcessPaged;
+  prop?: Maybe<Prop>;
+  props: PropCursored;
   /**  Upload */
   uploadFile?: Maybe<UploadFile>;
   uploadFiles: UploadFilePaged;
@@ -975,6 +1087,18 @@ export type QueryProcessArgs = {
 export type QueryProcessesArgs = {
   filter?: InputMaybe<ProcessFilterInput>;
   pageable?: InputMaybe<ProcessPageableInput>;
+};
+
+
+export type QueryPropArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryPropsArgs = {
+  cursor?: InputMaybe<Scalars['Long']>;
+  filter?: InputMaybe<PropFilterInput>;
+  size?: Scalars['Int'];
 };
 
 
@@ -1151,6 +1275,23 @@ export enum T3DFormatType {
   Temp = 'TEMP'
 }
 
+/**  Terrain */
+export type TerrainConvertInput = {
+  calculateNormals?: InputMaybe<Scalars['Boolean']>;
+  debug?: InputMaybe<Scalars['Boolean']>;
+  help?: InputMaybe<Scalars['Boolean']>;
+  interpolationType?: InputMaybe<InterpolationType>;
+  maxDepth: Scalars['Int'];
+  minDepth: Scalars['Int'];
+  strength?: InputMaybe<Scalars['Float']>;
+};
+
+export type TiffConvertInput = {
+  ot?: InputMaybe<Type>;
+  sourceSrs?: Scalars['String'];
+  targetSrs?: Scalars['String'];
+};
+
 export type TimeCriteria = {
   between?: InputMaybe<Array<InputMaybe<Scalars['Time']>>>;
   eq?: InputMaybe<Scalars['Time']>;
@@ -1165,6 +1306,23 @@ export type TimeCriteria = {
   notBetween?: InputMaybe<Array<InputMaybe<Scalars['Time']>>>;
   notIn?: InputMaybe<Array<InputMaybe<Scalars['Time']>>>;
 };
+
+export enum Type {
+  Byte = 'Byte',
+  CFloat32 = 'CFloat32',
+  CFloat64 = 'CFloat64',
+  CInt16 = 'CInt16',
+  CInt32 = 'CInt32',
+  Float32 = 'Float32',
+  Float64 = 'Float64',
+  Int8 = 'Int8',
+  Int16 = 'Int16',
+  Int32 = 'Int32',
+  Int64 = 'Int64',
+  UInt16 = 'UInt16',
+  UInt32 = 'UInt32',
+  UInt64 = 'UInt64'
+}
 
 /**
  * ##################################################################################
@@ -1294,6 +1452,27 @@ export type UpdateProcessResponse = {
   name?: Maybe<Scalars['String']>;
   properties?: Maybe<Scalars['JSON']>;
   status?: Maybe<ProcessTaskStatus>;
+  updatedAt?: Maybe<Scalars['String']>;
+  updatedBy?: Maybe<Scalars['ID']>;
+};
+
+/**
+ * ##################################################################################
+ * # Update
+ * ##################################################################################
+ */
+export type UpdatePropInput = {
+  name?: InputMaybe<Scalars['String']>;
+  uploadId?: InputMaybe<Array<Scalars['ID']>>;
+};
+
+export type UpdatePropResponse = WithAuditable & {
+  __typename?: 'UpdatePropResponse';
+  createdAt?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<Scalars['ID']>;
+  files: Array<PropFile>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
   updatedAt?: Maybe<Scalars['String']>;
   updatedBy?: Maybe<Scalars['ID']>;
 };

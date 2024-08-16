@@ -1,11 +1,14 @@
 import {atom, selector, useResetRecoilState} from "recoil";
 import {DataItemSize, DataSearchQueryOption, DataSearchTarget} from "@/types/assets/Data.ts";
 import {
-    AssetFilterInput, AssetPageableInput, AssetSort,
     AssetType,
     DatasetAssetListQueryVariables,
-    ProcessTaskStatus
-} from "@/generated/gql/dataset/graphql.ts";
+    ProcessTaskStatus,
+    AssetFilterInput,
+    AssetPageableInput,
+    AssetSort
+} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+
 
 export const dataCurrentPageState = atom<number>({
   key: 'dataCurrentPageState',

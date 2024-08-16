@@ -1,9 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
-import {
-    DatasetAssetListDocument,
-    DatasetAssetListQueryVariables,
-    ProcessTaskStatus
-} from "@/generated/gql/dataset/graphql.ts";
+
 import {useQuery} from "@apollo/client";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {dataCurrentPageState, dataProcessStatusState, dataSearchSelector, dataSearchTextState} from "@/recoils/Data.ts";
@@ -13,6 +9,11 @@ import {useInfiniteScroll} from "@/hooks/useInfiniteScroll.ts";
 import {mainMenuState} from "@/recoils/MainMenuState.tsx";
 import {AsideDisplayProps} from "@/components/AsidePanel.tsx";
 import AssetRow from "@/components/AssetRow.tsx";
+import {
+    DatasetAssetListDocument,
+    DatasetAssetListQueryVariables,
+    ProcessTaskStatus
+} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 
 
 
