@@ -48,7 +48,7 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item }) => {
                 <button type="button" className={`status-button ${status}`}>{status}</button>
             </td>
             <td>
-                {status !== "fail" ? (
+                {status === "success" || status === "none" ? (
                     <button type="button" onClick={() => convertAsset(item.id)} className="function-button convert"></button>
                 ): (
                     <button type="button" onClick={() => showAssetLog(item.id)} className="function-button log"></button>
