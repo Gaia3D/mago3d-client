@@ -1,4 +1,4 @@
-import {atom, selector, useResetRecoilState} from "recoil";
+import {atom, selector, useRecoilValueLoadable, useResetRecoilState} from "recoil";
 import {DataItemSize, DataSearchQueryOption, DataSearchTarget} from "@/types/assets/Data.ts";
 import {
     AssetType,
@@ -8,6 +8,8 @@ import {
     AssetPageableInput,
     AssetSort
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+import {IUserInfo} from "@mnd/shared";
+import {currentUserProfileSelector} from "@/recoils/Auth.ts";
 
 
 export const dataCurrentPageState = atom<number>({
@@ -51,15 +53,18 @@ export const dataSearchSelector = selector<DatasetAssetListQueryVariables>({
       const searchQueryOption = get(dataSearchQueryOptionState);
       const searchText = get(dataSearchTextState);
       const processState = get(dataProcessStatusState);
+      const profile = get(currentUserProfileSelector);
 
       filter.name = {};
       filter.name[searchQueryOption] = searchText;
 
-      filter.createdAt = {};
-
       filter.status = {};
       if (processState) {
         filter.status.eq = processState;
+      }
+      filter.createdBy = {};
+      if (profile) {
+          filter.createdBy.eq = profile.id;
       }
 
       pageable.page = page;

@@ -14,6 +14,8 @@ import {
     DatasetAssetListQueryVariables,
     ProcessTaskStatus
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+import SearchInput from "@/components/SearchInput.tsx";
+import SideCloseButton from "@/components/SideCloseButton.tsx";
 
 
 
@@ -57,6 +59,12 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
         fetchPolicy: 'network-only',
     });
 
+    const dataReset = useCallback(() => {
+        setDataArr([]);
+        setPage(0);
+        setIsFetching(true);
+    }, []);
+
     const getMore = useCallback(() => {
         if (loading || !data) return;
         const { pageInfo } = data.assets;
@@ -83,39 +91,24 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     const debouncedSearch = useDebounce(searchTerm, 300);
     useEffect(() => {
         if (loading || !data) return;
-        setDataArr([]);
-        setPage(0);
         setSearch(searchTerm.toLowerCase());
-        setIsFetching(true);
+        dataReset();
     }, [debouncedSearch]);
 
     useEffect(() => {
         if (loading || !data) return;
-        setDataArr([]);
-        setPage(0);
         setStatus(reverseFormatStatus(filterStatus));
-        setIsFetching(true);
+        dataReset();
     }, [filterStatus]);
 
-    const setMenu = useSetRecoilState(mainMenuState);
+
 
     return (
         <div className={`side-bar-wrapper ${display?"on":"off"}`}>
             <div className="side-bar">
                 <div className="side-bar-header">
-                    <div className="button side" onClick={() =>setMenu({SelectedId: ''})}>
-                        <div className="description--content">
-                            <div className="title">Close sidebar</div>
-                        </div>
-                    </div>
-                    <div className="search-container">
-                        <button type="button" className="button search"></button>
-                        <input
-                            id="searchInput"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
+                    <SideCloseButton />
+                    <SearchInput value={searchTerm} change={setSearchTerm} />
                 </div>
                 <div className="content--wrapper">
                     <button type="button" className="table-button float-right">
@@ -151,7 +144,7 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
                                 asset && <AssetRow key={asset.id} item={asset}/>
                             ))}
                             <tr ref={loadMoreRef}>
-                            <td colSpan={4}>
+                                <td colSpan={4}>
                                     {(isFetching || loading) ?
                                         <span className="spin-loader"></span>
                                         :
