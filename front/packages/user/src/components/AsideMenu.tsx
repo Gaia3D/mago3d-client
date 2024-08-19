@@ -11,7 +11,10 @@ export const AsideMenu = () => {
 
   const handleMenuClick = (e: React.MouseEvent<HTMLLIElement>, menuName: string) => {
     e.preventDefault();
-    setMenu((prev) => ({...prev, SelectedId: menuName}));
+    setMenu((prev) => ({
+      ...prev,
+      SelectedId: prev.SelectedId === menuName ? '' : menuName
+    }));
   };
 
   const items = useMemo(() => {
