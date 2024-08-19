@@ -10,7 +10,7 @@ type AssetRowProps = {
 
 const formatStatus = (status: ProcessTaskStatus | null | undefined): string => {
     if (status === null || status === undefined) {
-        return "none";
+        return ProcessTaskStatus.None;
     }
     return statusMap[status] || status;
 };

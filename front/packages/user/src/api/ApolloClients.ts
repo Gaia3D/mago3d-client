@@ -4,6 +4,7 @@ import {MultiAPILink} from "@habx/apollo-multi-endpoint-link";
 import keycloak from "@/api/keycloak.ts";
 
 const link = new MultiAPILink({
+    httpSuffix: '/graphql',
     endpoints: {
         dataset: import.meta.env.VITE_GRAPHQL_DATASET_URL,
         // layerset: import.meta.env.VITE_GRAPHQL_LAYERSET_URL,
