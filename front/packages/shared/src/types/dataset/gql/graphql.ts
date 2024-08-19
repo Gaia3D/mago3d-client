@@ -348,6 +348,27 @@ export type CreateProcessResponse = {
   updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
+/**
+ * ##################################################################################
+ * # Create
+ * ##################################################################################
+ */
+export type CreatePropInput = {
+  name: Scalars['String']['input'];
+  uploadId: Array<Scalars['ID']['input']>;
+};
+
+export type CreatePropResponse = WithAuditable & {
+  __typename?: 'CreatePropResponse';
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
+  files: Array<PropFile>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+};
+
 export type CreateUploadFileResponse = {
   __typename?: 'CreateUploadFileResponse';
   contentSize: Scalars['Int']['output'];
@@ -536,6 +557,11 @@ export type IntCriteria = {
   notIn?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
 };
 
+export enum InterpolationType {
+  Bilinear = 'BILINEAR',
+  Nearest = 'NEAREST'
+}
+
 export type JsonPropertyInput = {
   /**  Using RFC6902 JSON Patch */
   merge?: InputMaybe<Scalars['JSON']['input']>;
@@ -667,10 +693,12 @@ export type Mutation = {
   createLabel: CreateLabelResponse;
   /**  Process */
   createProcess: CreateProcessResponse;
+  createProp: CreatePropResponse;
   deleteAsset: Scalars['Boolean']['output'];
   deleteAssetFile: Scalars['Boolean']['output'];
   deleteGroup: Scalars['Boolean']['output'];
   deleteLabel: Scalars['Boolean']['output'];
+  deleteProp?: Maybe<Scalars['Boolean']['output']>;
   /**
    *  Upload
    *  Use RestAPI instead of Graphql
@@ -684,6 +712,7 @@ export type Mutation = {
   updateGroup: UpdateGroupResponse;
   updateLabel: UpdateLabelResponse;
   updateProcess: UpdateProcessResponse;
+  updateProp: UpdatePropResponse;
 };
 
 
@@ -719,6 +748,11 @@ export type MutationCreateProcessArgs = {
 };
 
 
+export type MutationCreatePropArgs = {
+  input: CreatePropInput;
+};
+
+
 export type MutationDeleteAssetArgs = {
   id: Scalars['ID']['input'];
 };
@@ -737,6 +771,11 @@ export type MutationDeleteGroupArgs = {
 
 export type MutationDeleteLabelArgs = {
   id: Array<InputMaybe<Scalars['ID']['input']>>;
+};
+
+
+export type MutationDeletePropArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -783,6 +822,12 @@ export type MutationUpdateLabelArgs = {
 export type MutationUpdateProcessArgs = {
   id: Scalars['ID']['input'];
   input: UpdateProcessInput;
+};
+
+
+export type MutationUpdatePropArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdatePropInput;
 };
 
 /**
@@ -847,6 +892,8 @@ export type ProcessContextInput = {
   ogr2ogr?: InputMaybe<ShpConvertInput>;
   smartTile?: InputMaybe<SmartTileConvertInput>;
   t3d?: InputMaybe<T3DConvertInput>;
+  terrain?: InputMaybe<TerrainConvertInput>;
+  warp?: InputMaybe<TiffConvertInput>;
 };
 
 export type ProcessEdge = {
@@ -927,6 +974,69 @@ export type ProcessTaskStatusCriteria = {
   notIn?: InputMaybe<Array<InputMaybe<ProcessTaskStatus>>>;
 };
 
+/**
+ * ##################################################################################
+ * # Query
+ * ##################################################################################
+ */
+export type Prop = WithAuditable & {
+  __typename?: 'Prop';
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
+  files: Array<PropFile>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+};
+
+export type PropCursored = {
+  __typename?: 'PropCursored';
+  content: Array<Prop>;
+  hasNext?: Maybe<Scalars['Boolean']['output']>;
+  hasPrevious?: Maybe<Scalars['Boolean']['output']>;
+  number?: Maybe<Scalars['Long']['output']>;
+  size?: Maybe<Scalars['Int']['output']>;
+  totalElements?: Maybe<Scalars['Int']['output']>;
+  totalPages?: Maybe<Scalars['Int']['output']>;
+};
+
+export type PropFile = WithAuditable & {
+  __typename?: 'PropFile';
+  contentSize?: Maybe<Scalars['String']['output']>;
+  contentType?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy: Scalars['ID']['output'];
+  createdByUser: User;
+  download?: Maybe<Scalars['String']['output']>;
+  filename: Scalars['String']['output'];
+  height?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['ID']['output'];
+  thumbnail?: Maybe<PropFileThumbnail>;
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy: Scalars['ID']['output'];
+  updatedByUser: User;
+  width?: Maybe<Scalars['Int']['output']>;
+};
+
+export type PropFileThumbnail = {
+  __typename?: 'PropFileThumbnail';
+  contentSize?: Maybe<Scalars['String']['output']>;
+  contentType?: Maybe<Scalars['String']['output']>;
+  download?: Maybe<Scalars['String']['output']>;
+  filename: Scalars['String']['output'];
+};
+
+export type PropFilterInput = {
+  and?: InputMaybe<Array<InputMaybe<PropFilterInput>>>;
+  createdAt?: InputMaybe<DateTimeCriteria>;
+  createdBy?: InputMaybe<SimpleCriteria>;
+  id?: InputMaybe<SimpleCriteria>;
+  name?: InputMaybe<StringCriteria>;
+  not?: InputMaybe<PropFilterInput>;
+  or?: InputMaybe<Array<InputMaybe<PropFilterInput>>>;
+};
+
 export type Query = {
   __typename?: 'Query';
   /**  Asset */
@@ -940,6 +1050,8 @@ export type Query = {
   /**  Process */
   process?: Maybe<Process>;
   processes: ProcessPaged;
+  prop?: Maybe<Prop>;
+  props: PropCursored;
   /**  Upload */
   uploadFile?: Maybe<UploadFile>;
   uploadFiles: UploadFilePaged;
@@ -987,6 +1099,18 @@ export type QueryProcessArgs = {
 export type QueryProcessesArgs = {
   filter?: InputMaybe<ProcessFilterInput>;
   pageable?: InputMaybe<ProcessPageableInput>;
+};
+
+
+export type QueryPropArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryPropsArgs = {
+  cursor?: InputMaybe<Scalars['Long']['input']>;
+  filter?: InputMaybe<PropFilterInput>;
+  size?: Scalars['Int']['input'];
 };
 
 
@@ -1163,6 +1287,23 @@ export enum T3DFormatType {
   Temp = 'TEMP'
 }
 
+/**  Terrain */
+export type TerrainConvertInput = {
+  calculateNormals?: InputMaybe<Scalars['Boolean']['input']>;
+  debug?: InputMaybe<Scalars['Boolean']['input']>;
+  help?: InputMaybe<Scalars['Boolean']['input']>;
+  interpolationType?: InputMaybe<InterpolationType>;
+  maxDepth: Scalars['Int']['input'];
+  minDepth: Scalars['Int']['input'];
+  strength?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type TiffConvertInput = {
+  ot?: InputMaybe<Type>;
+  sourceSrs?: Scalars['String']['input'];
+  targetSrs?: Scalars['String']['input'];
+};
+
 export type TimeCriteria = {
   between?: InputMaybe<Array<InputMaybe<Scalars['Time']['input']>>>;
   eq?: InputMaybe<Scalars['Time']['input']>;
@@ -1177,6 +1318,23 @@ export type TimeCriteria = {
   notBetween?: InputMaybe<Array<InputMaybe<Scalars['Time']['input']>>>;
   notIn?: InputMaybe<Array<InputMaybe<Scalars['Time']['input']>>>;
 };
+
+export enum Type {
+  Byte = 'Byte',
+  CFloat32 = 'CFloat32',
+  CFloat64 = 'CFloat64',
+  CInt16 = 'CInt16',
+  CInt32 = 'CInt32',
+  Float32 = 'Float32',
+  Float64 = 'Float64',
+  Int8 = 'Int8',
+  Int16 = 'Int16',
+  Int32 = 'Int32',
+  Int64 = 'Int64',
+  UInt16 = 'UInt16',
+  UInt32 = 'UInt32',
+  UInt64 = 'UInt64'
+}
 
 /**
  * ##################################################################################
@@ -1312,6 +1470,27 @@ export type UpdateProcessResponse = {
 
 /**
  * ##################################################################################
+ * # Update
+ * ##################################################################################
+ */
+export type UpdatePropInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  uploadId?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+export type UpdatePropResponse = WithAuditable & {
+  __typename?: 'UpdatePropResponse';
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
+  files: Array<PropFile>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+};
+
+/**
+ * ##################################################################################
  * # Query
  * ##################################################################################
  */
@@ -1384,6 +1563,125 @@ export type WithSimpleTags = {
   tags: Array<Maybe<SimpleTagValue>>;
 };
 
+export type DatasetCreateProcessMutationVariables = Exact<{
+  input: CreateProcessInput;
+}>;
+
+
+export type DatasetCreateProcessMutation = { __typename?: 'Mutation', createProcess: { __typename?: 'CreateProcessResponse', id: string, status?: ProcessTaskStatus | null, createdAt?: string | null, createdBy?: string | null, updatedAt?: string | null, updatedBy?: string | null } };
+
+export type DatasetCreateGroupMutationVariables = Exact<{
+  input: CreateGroupInput;
+}>;
+
+
+export type DatasetCreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'CreateGroupResponse', id: string, parentId?: string | null, name: string, description?: string | null, createdAt?: string | null, createdBy?: string | null, enabled: boolean, updatedAt?: string | null, updatedBy?: string | null } };
+
+export type DatasetUpdateGroupMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: UpdateGroupInput;
+}>;
+
+
+export type DatasetUpdateGroupMutation = { __typename?: 'Mutation', updateGroup: { __typename?: 'UpdateGroupResponse', id: string } };
+
+export type DatasetDeleteGroupMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DatasetDeleteGroupMutation = { __typename?: 'Mutation', deleteGroup: boolean };
+
+export type DatasetCreateAssetMutationVariables = Exact<{
+  input: CreateAssetInput;
+}>;
+
+
+export type DatasetCreateAssetMutation = { __typename?: 'Mutation', createAsset: { __typename?: 'CreateAssetResponse', id: string } };
+
+export type DatasetUpdateAssetMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: UpdateAssetInput;
+}>;
+
+
+export type DatasetUpdateAssetMutation = { __typename?: 'Mutation', updateAsset: { __typename?: 'UpdateAssetResponse', id: string, name: string } };
+
+export type DatasetDeleteAssetMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DatasetDeleteAssetMutation = { __typename?: 'Mutation', deleteAsset: boolean };
+
+export type DatasetDeleteAssetFileMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  fileId: Array<InputMaybe<Scalars['ID']['input']>> | InputMaybe<Scalars['ID']['input']>;
+}>;
+
+
+export type DatasetDeleteAssetFileMutation = { __typename?: 'Mutation', deleteAssetFile: boolean };
+
+export type DatasetAssetFileFragment = { __typename?: 'AssetFile', id: string, filename: string, contentSize: number, contentType: string } & { ' $fragmentName'?: 'DatasetAssetFileFragment' };
+
+export type DatasetAssetListQueryVariables = Exact<{
+  filter?: InputMaybe<AssetFilterInput>;
+  pageable?: InputMaybe<AssetPageableInput>;
+}>;
+
+
+export type DatasetAssetListQuery = { __typename?: 'Query', assets: { __typename?: 'AssetPaged', items: Array<{ __typename?: 'Asset', id: string, name: string, assetType: AssetType, enabled: boolean, access: Access, status?: ProcessTaskStatus | null, createdAt?: string | null, updatedAt?: string | null } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number, totalItems: number, page: number, size: number } } };
+
+export type DatasetGroupListQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DatasetGroupListQuery = { __typename?: 'Query', groups: { __typename?: 'GroupPaged', items: Array<{ __typename?: 'Group', id: string, name: string } | null> } };
+
+export type DatasetGroupListForUpdateQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DatasetGroupListForUpdateQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: string, name: string, description?: string | null, assets?: Array<{ __typename?: 'Asset', id: string, name: string, assetType: AssetType, createdAt?: string | null } | null> | null } | null };
+
+export type DatasetAssetForDetailQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DatasetAssetForDetailQuery = { __typename?: 'Query', asset?: { __typename?: 'Asset', id: string, name: string, description?: string | null, assetType: AssetType, properties?: any | null, groups?: Array<{ __typename?: 'Group', id: string, name: string } | null> | null, files: Array<(
+      { __typename?: 'AssetFile', id: string }
+      & { ' $fragmentRefs'?: { 'DatasetAssetFileFragment': DatasetAssetFileFragment } }
+    ) | null>, process?: { __typename?: 'Process', id: string, status?: ProcessTaskStatus | null } | null } | null };
+
+export type DatasetAssetForUpdateQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DatasetAssetForUpdateQuery = { __typename?: 'Query', asset?: { __typename?: 'Asset', id: string, name: string, description?: string | null, assetType: AssetType, properties?: any | null, groups?: Array<{ __typename?: 'Group', id: string, name: string } | null> | null, files: Array<{ __typename?: 'AssetFile', id: string, filename: string, createdAt?: string | null } | null> } | null, groups: { __typename?: 'GroupPaged', items: Array<{ __typename?: 'Group', id: string, name: string } | null> } };
+
+export type DatasetAssetForLayerQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DatasetAssetForLayerQuery = { __typename?: 'Query', asset?: { __typename?: 'Asset', id: string, name: string, description?: string | null, assetType: AssetType, createdAt?: string | null, createdBy: string, enabled: boolean, updatedAt?: string | null, updatedBy: string, files: Array<{ __typename?: 'AssetFile', id: string, createdAt?: string | null, createdBy?: string | null, updatedAt?: string | null, updatedBy?: string | null } | null> } | null };
+
+export type DatasetProcessLogQueryVariables = Exact<{
+  assetId: Scalars['ID']['input'];
+}>;
+
+
+export type DatasetProcessLogQuery = { __typename?: 'Query', processes: { __typename?: 'ProcessPaged', items: Array<{ __typename?: 'Process', id: string, name?: string | null, status?: ProcessTaskStatus | null, createdAt?: string | null, tasks?: Array<{ __typename?: 'ProcessTask', id: string, error?: string | null, stacktrace?: string | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number, totalItems: number, page: number, size: number } } };
+
+export type DatasetProcessQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DatasetProcessQuery = { __typename?: 'Query', process?: { __typename?: 'Process', id: string, name?: string | null, status?: ProcessTaskStatus | null, context?: any | null, createdBy: string, createdAt?: string | null, updatedBy: string, updatedAt?: string | null, properties?: any | null, tasks?: Array<{ __typename?: 'ProcessTask', id: string, status?: ProcessTaskStatus | null, stacktrace?: string | null, error?: string | null } | null> | null } | null };
+
 export type DataGroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1397,6 +1695,22 @@ export type DataAssetsQueryVariables = Exact<{
 
 export type DataAssetsQuery = { __typename?: 'Query', assets: { __typename?: 'AssetPaged', items: Array<{ __typename?: 'Asset', id: string, name: string, description?: string | null, assetType: AssetType, enabled: boolean, access: Access, createdBy: string, createdAt?: string | null, updatedBy: string, updatedAt?: string | null, groups?: Array<{ __typename?: 'Group', id: string, name: string, description?: string | null, enabled: boolean, access: Access } | null> | null, process?: { __typename?: 'Process', id: string, name?: string | null, context?: any | null, properties?: any | null, status?: ProcessTaskStatus | null, tasks?: Array<{ __typename?: 'ProcessTask', id: string, status?: ProcessTaskStatus | null, error?: string | null, stacktrace?: string | null } | null> | null } | null } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number, totalItems: number, page: number, size: number } } };
 
-
+export const DatasetAssetFileFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DatasetAssetFile"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AssetFile"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"contentSize"}},{"kind":"Field","name":{"kind":"Name","value":"contentType"}}]}}]} as unknown as DocumentNode<DatasetAssetFileFragment, unknown>;
+export const DatasetCreateProcessDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DatasetCreateProcess"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateProcessInput"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createProcess"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}}]}}]}}]} as unknown as DocumentNode<DatasetCreateProcessMutation, DatasetCreateProcessMutationVariables>;
+export const DatasetCreateGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DatasetCreateGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateGroupInput"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}}]}}]}}]} as unknown as DocumentNode<DatasetCreateGroupMutation, DatasetCreateGroupMutationVariables>;
+export const DatasetUpdateGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DatasetUpdateGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateGroupInput"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DatasetUpdateGroupMutation, DatasetUpdateGroupMutationVariables>;
+export const DatasetDeleteGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DatasetDeleteGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DatasetDeleteGroupMutation, DatasetDeleteGroupMutationVariables>;
+export const DatasetCreateAssetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DatasetCreateAsset"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateAssetInput"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createAsset"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DatasetCreateAssetMutation, DatasetCreateAssetMutationVariables>;
+export const DatasetUpdateAssetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DatasetUpdateAsset"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateAssetInput"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateAsset"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<DatasetUpdateAssetMutation, DatasetUpdateAssetMutationVariables>;
+export const DatasetDeleteAssetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DatasetDeleteAsset"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteAsset"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DatasetDeleteAssetMutation, DatasetDeleteAssetMutationVariables>;
+export const DatasetDeleteAssetFileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DatasetDeleteAssetFile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fileId"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteAssetFile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"fileId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fileId"}}}]}]}}]} as unknown as DocumentNode<DatasetDeleteAssetFileMutation, DatasetDeleteAssetFileMutationVariables>;
+export const DatasetAssetListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DatasetAssetList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AssetFilterInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pageable"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AssetPageableInput"}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assets"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"pageable"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pageable"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"assetType"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"totalItems"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"size"}}]}}]}}]}}]} as unknown as DocumentNode<DatasetAssetListQuery, DatasetAssetListQueryVariables>;
+export const DatasetGroupListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DatasetGroupList"},"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"enabled"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pageable"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"page"},"value":{"kind":"IntValue","value":"0"}},{"kind":"ObjectField","name":{"kind":"Name","value":"size"},"value":{"kind":"IntValue","value":"1000"}},{"kind":"ObjectField","name":{"kind":"Name","value":"sort"},"value":{"kind":"EnumValue","value":"CREATED_AT_DESC"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<DatasetGroupListQuery, DatasetGroupListQueryVariables>;
+export const DatasetGroupListForUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DatasetGroupListForUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"assets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"assetType"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]} as unknown as DocumentNode<DatasetGroupListForUpdateQuery, DatasetGroupListForUpdateQueryVariables>;
+export const DatasetAssetForDetailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DatasetAssetForDetail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"asset"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"assetType"}},{"kind":"Field","name":{"kind":"Name","value":"properties"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"files"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"DatasetAssetFile"}}]}},{"kind":"Field","name":{"kind":"Name","value":"process"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DatasetAssetFile"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AssetFile"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"contentSize"}},{"kind":"Field","name":{"kind":"Name","value":"contentType"}}]}}]} as unknown as DocumentNode<DatasetAssetForDetailQuery, DatasetAssetForDetailQueryVariables>;
+export const DatasetAssetForUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DatasetAssetForUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"asset"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"assetType"}},{"kind":"Field","name":{"kind":"Name","value":"properties"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"files"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<DatasetAssetForUpdateQuery, DatasetAssetForUpdateQueryVariables>;
+export const DatasetAssetForLayerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DatasetAssetForLayer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"asset"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"assetType"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"files"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}}]}}]}}]}}]} as unknown as DocumentNode<DatasetAssetForLayerQuery, DatasetAssetForLayerQueryVariables>;
+export const DatasetProcessLogDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DatasetProcessLog"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"assetId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"processes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"assetId"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"assetId"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"stacktrace"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"totalItems"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"size"}}]}}]}}]}}]} as unknown as DocumentNode<DatasetProcessLogQuery, DatasetProcessLogQueryVariables>;
+export const DatasetProcessDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DatasetProcess"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"dataset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"process"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"context"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"stacktrace"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"properties"}}]}}]}}]} as unknown as DocumentNode<DatasetProcessQuery, DatasetProcessQueryVariables>;
 export const DataGroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"dataGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pageable"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"page"},"value":{"kind":"IntValue","value":"0"}},{"kind":"ObjectField","name":{"kind":"Name","value":"size"},"value":{"kind":"IntValue","value":"1000"}},{"kind":"ObjectField","name":{"kind":"Name","value":"sort"},"value":{"kind":"EnumValue","value":"CREATED_AT_DESC"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]} as unknown as DocumentNode<DataGroupsQuery, DataGroupsQueryVariables>;
 export const DataAssetsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"dataAssets"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AssetFilterInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pageable"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AssetPageableInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assets"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"pageable"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pageable"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"access"}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"assetType"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"process"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"context"}},{"kind":"Field","name":{"kind":"Name","value":"properties"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"stacktrace"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"totalItems"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"size"}}]}}]}}]}}]} as unknown as DocumentNode<DataAssetsQuery, DataAssetsQueryVariables>;

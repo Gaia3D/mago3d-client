@@ -1,4 +1,4 @@
-import { FC, RefObject, createRef, useEffect, useRef, useState } from "react";
+import React, { FC, RefObject, createRef, useEffect, useRef, useState } from "react";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import { layersetGraphqlFetcher } from "@/api/queryClient";
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query";
@@ -16,6 +16,7 @@ import { RESTORE_USERLAYER, SAVE_USERLAYER } from "@/graphql/layerset/Mutation";
 import { UserLayerGroupState, NodeModelsState, layersState, visibleToggledLayerIdState, InitialOpenState, visibleToggledLayerIdsState } from "@/recoils/Layer";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { AppLoader } from "@mnd/shared";
+import {AsideDisplayProps} from "@/components/AsidePanel.tsx";
 
 type CustomCreateUserGroupInput = CreateUserGroupInput & {
     linkId? : number;
@@ -115,7 +116,7 @@ const nodeModlesToCreateUserGroupInput = (nodeModels:NodeModel[]):CreateUserGrou
     });
 }
 
-export const AsideLayer: FC = () => {
+export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
   const {mutateAsync: saveUserLayerMutateAsync} = useMutation({
     mutationFn:({input}:{input:CreateUserGroupInput[]}) => layersetGraphqlFetcher<Mutation>(SAVE_USERLAYER, {input})
   });

@@ -59,6 +59,23 @@ export type AssetFilterInput = {
   or?: InputMaybe<Array<AssetFilterInput>>;
 };
 
+export type AttributeStyleInput = {
+  attribute?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  rules?: InputMaybe<Array<InputMaybe<RuleStyleInput>>>;
+};
+
+export enum AttributeType {
+  Array = 'ARRAY',
+  Boolean = 'BOOLEAN',
+  Date = 'DATE',
+  Geometry = 'GEOMETRY',
+  Number = 'NUMBER',
+  Object = 'OBJECT',
+  Other = 'OTHER',
+  String = 'STRING'
+}
+
 export type BooleanCriteria = {
   between?: InputMaybe<Array<InputMaybe<Scalars['Boolean']['input']>>>;
   eq?: InputMaybe<Scalars['Boolean']['input']>;
@@ -86,6 +103,12 @@ export type Channels = {
   gray?: InputMaybe<ChannelOptions>;
   green?: InputMaybe<ChannelOptions>;
   red?: InputMaybe<ChannelOptions>;
+};
+
+export type ClassifiedAttribute = {
+  __typename?: 'ClassifiedAttribute';
+  rules?: Maybe<Array<Maybe<Rule>>>;
+  type?: Maybe<AttributeType>;
 };
 
 export type CogInput = {
@@ -818,6 +841,7 @@ export type Query = {
   asset: LayerAsset;
   /**  Asset */
   assets: Array<Maybe<LayerAsset>>;
+  classifyAttribute: ClassifiedAttribute;
   group: LayerGroup;
   /**  Group */
   groups: Array<Maybe<LayerGroup>>;
@@ -829,6 +853,8 @@ export type Query = {
   remoteStyles: Array<Maybe<RemoteLayerStyle>>;
   /**  Style */
   style: LayerStyle;
+  /**  Terrain */
+  terrains: Array<Maybe<TerrainAsset>>;
   userAsset: UserLayerAsset;
   /**  UserLayerAsset */
   userAssets: Array<Maybe<UserLayerAsset>>;
@@ -845,6 +871,12 @@ export type QueryAssetArgs = {
 
 export type QueryAssetsArgs = {
   filter?: InputMaybe<AssetFilterInput>;
+};
+
+
+export type QueryClassifyAttributeArgs = {
+  attribute: Scalars['String']['input'];
+  nativeName: Scalars['String']['input'];
 };
 
 
@@ -933,6 +965,25 @@ export type RemoteT3DInput = {
   name: Scalars['String']['input'];
 };
 
+export type Rule = {
+  __typename?: 'Rule';
+  color?: Maybe<Scalars['String']['output']>;
+  eq?: Maybe<Scalars['String']['output']>;
+  max?: Maybe<Scalars['String']['output']>;
+  min?: Maybe<Scalars['String']['output']>;
+};
+
+export type RuleInput = {
+  eq?: InputMaybe<Scalars['String']['input']>;
+  max?: InputMaybe<Scalars['String']['input']>;
+  min?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type RuleStyleInput = {
+  rule?: InputMaybe<RuleInput>;
+  style?: InputMaybe<PolygonStyleInput>;
+};
+
 /**
  * #################################################################
  * # Default Filter Operators
@@ -1009,6 +1060,7 @@ export type StringCriteria = {
 };
 
 export type StyleContextValue = {
+  attribute?: InputMaybe<AttributeStyleInput>;
   line?: InputMaybe<LineStyleInput>;
   point?: InputMaybe<PointStyleInput>;
   polygon?: InputMaybe<PolygonStyleInput>;
@@ -1035,6 +1087,14 @@ export enum StyleType {
 
 export type T3DInput = {
   dataAssetId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type TerrainAsset = WithJsonProperty & {
+  __typename?: 'TerrainAsset';
+  id: Scalars['ID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  properties?: Maybe<Scalars['JSON']['output']>;
+  selected?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type TimeCriteria = {
