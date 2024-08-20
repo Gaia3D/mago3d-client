@@ -8,7 +8,6 @@ import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
 const Tile3DContent = () => {
 
     const [projectName, setProjectName] = useState<string>('');
-    const [file, setFile] = useState<File | null>(null);
     const [debugMode, setDebugMode] = useState<boolean>(false);
     // const [inputPath, setInputPath] = useState<string>('');
     // const [outputPath, setOutputPath] = useState<string>('');
@@ -28,11 +27,13 @@ const Tile3DContent = () => {
         setShowDetail(detailTitleRef.current.classList.contains("on"));
     }
 
+    const [fileArr, setFileArr] = useState<File[] | null>(null);
     const fileConvert = () => {
-        console.log("assetType: 3dtile");
-        console.log("swapUpAxis: ", swapUpAxis);
-        console.log("flipUpAxis: ", flipUpAxis);
-        console.log("debugMode: ", debugMode);
+        if(fileArr?.length === 0) {
+            alert ("파일을 업로드 해주세요.")
+            return;
+        }
+        console.log("Files to convert: ", fileArr);
     }
     // popLayer.current.classList.toggle('on');
     return (
@@ -90,7 +91,7 @@ const Tile3DContent = () => {
             </div>
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload onFileSelect={setFile}/>
+                <FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>
             </div>
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>

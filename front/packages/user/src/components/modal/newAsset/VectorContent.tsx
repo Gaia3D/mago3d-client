@@ -6,7 +6,6 @@ import FileUpload from "@/components/modal/FileUpload.tsx";
 const VectorContent = () => {
 
     const [projectName, setProjectName] = useState<string>('');
-    const [file, setFile] = useState<File | null>(null);
     const [inputFormat, setInputFormat] = useState<string>('auto');
     const [outputFormat, setOutputFormat] = useState<string>('auto');
     const [originEncoding, setOriginEncoding] = useState('UTF-8');
@@ -14,7 +13,7 @@ const VectorContent = () => {
     const [originProjection, setOriginProjection] = useState('');
     const [convertedProjection, setConvertedProjection] = useState('');
 
-
+    const [fileArr, setFileArr] = useState<File[] | null>(null);
     const fileConvert = () => {
         console.log("assetType: vector");
     }
@@ -83,7 +82,7 @@ const VectorContent = () => {
 
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload onFileSelect={setFile}/>
+                <FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>
             </div>
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>

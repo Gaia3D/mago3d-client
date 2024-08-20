@@ -15,11 +15,11 @@ const TerrainContent = () => {
     const [inputFormat, setInputFormat] = useState<string>('auto');
     const [outputFormat, setOutputFormat] = useState<string>('auto');
     const [interpolationType, setInterpolationType] = useState<string>('linear');
-    const [file, setFile] = useState<File | null>(null);
     const [debugMode, setDebugMode] = useState<boolean>(false);
     const [tileDepthMin, setTileDepthMin] = useState<number>(0);
     const [tileDepthMax, setTileDepthMax] = useState<number>(12);
 
+    const [fileArr, setFileArr] = useState<File[] | null>(null);
     const fileConvert = () => {
         console.log("assetType: terrain");
     }
@@ -83,7 +83,7 @@ const TerrainContent = () => {
 
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload onFileSelect={setFile}/>
+                <FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>
             </div>
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>

@@ -6,12 +6,12 @@ import FileUpload from "@/components/modal/FileUpload.tsx";
 const RasterContent = () => {
 
     const [projectName, setProjectName] = useState<string>('');
-    const [file, setFile] = useState<File | null>(null);
     const [inputFormat, setInputFormat] = useState<string>('auto');
     const [outputFormat, setOutputFormat] = useState<string>('auto');
     const [originProjection, setOriginProjection] = useState('');
     const [convertedProjection, setConvertedProjection] = useState('');
 
+    const [fileArr, setFileArr] = useState<File[] | null>(null);
     const fileConvert = () => {
         console.log("assetType: raster");
     }
@@ -62,7 +62,7 @@ const RasterContent = () => {
 
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload onFileSelect={setFile}/>
+                <FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>
             </div>
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>
