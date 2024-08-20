@@ -16,6 +16,7 @@ import {
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import SearchInput from "@/components/SearchInput.tsx";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
+import {IsNewAssetModalState} from "@/recoils/Modal.ts";
 
 
 
@@ -44,6 +45,7 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     const setStatus = useSetRecoilState<ProcessTaskStatus|undefined>(dataProcessStatusState);
     const statusTh = useRef<HTMLTableCellElement>(null);
 
+    const setIsNewAssetModal = useSetRecoilState<boolean>(IsNewAssetModalState);
     const toggleStatusPop = () => {
         if (statusTh.current) {
             statusTh.current.classList.toggle('on');
@@ -111,7 +113,7 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
                     <SearchInput value={searchTerm} change={setSearchTerm} />
                 </div>
                 <div className="content--wrapper">
-                    <button type="button" className="table-button float-right">
+                    <button type="button" className="table-button float-right" onClick={() => setIsNewAssetModal(true)}>
                         <span className="new-item"></span>
                         New Assets
                     </button>

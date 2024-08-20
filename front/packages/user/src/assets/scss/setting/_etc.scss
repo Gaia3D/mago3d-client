@@ -19,6 +19,70 @@
 }
 
 #map {
+  .modal {
+
+    ::-webkit-scrollbar {
+      background-color: var(--secondary-color);
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--secondary-color);
+    }
+
+    .modal-content{
+      position: relative;
+      padding: 0 0 20px 0;
+      display: flex;
+      flex-direction: column;
+
+      .modal-full-width, .file-upload-wrapper {
+        width: calc(720px - 224px);
+      }
+
+      .modal-popup-type {
+          display: flex;
+        .radio-label {
+          width: 100%;
+          .radio-text-span {
+            width: 100%;
+            display: flex;;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 0 12px 0;
+            border: 1px solid white;
+            border-top: 4px solid transparent;
+            margin: 0;
+            background-color: #e6e6e6;
+          }
+
+          input[type="radio"]:checked + .radio-text-span {
+            color: black;
+            border-top: 4px solid var(--secondary-color);
+            background-color: white;
+          }
+        }
+
+      }
+      .modal-popup-body {
+        max-height: calc(100vh - 240px);
+        overflow: auto;
+        margin-bottom: 40px;
+        .modal-bottom {
+          position: absolute;
+          bottom: 10px;
+          left: 0;
+          .button-full {
+            width: calc(100% - 40px);
+            margin: 0 20px;
+          }
+        }
+      }
+      .radio-label:hover {
+        cursor: pointer;
+      }
+      
+    }
+  }
+
   .side-bar-wrapper {
     &.on {
       .side-bar {
