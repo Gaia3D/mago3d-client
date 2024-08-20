@@ -7,12 +7,16 @@ export const assetTypeOptions: OptionArr = [
     { text: "Terrain", value: "terrain" },
     { text: "Vector", value: "vector" },
     { text: "Raster", value: "raster" },
-    { text: "Weather", value: "weather" },
+    // { text: "Weather", value: "weather" },
 ];
 
 export const projectionTypeOptions: OptionArr = [
     { text: "Coordinate Reference System (EPSG)", value: "epsg" },
     { text: "Projection Code (proj4)", value: "proj4" },
+];
+export const InterpolationTypeOptions: OptionArr = [
+    { text: "Bilinear (Linear)", value: "linear" },
+    { text: "Nearest", value: "nearest" },
 ];
 
 export const inputFormatOptions: ReferenceOptionArr = {
@@ -33,8 +37,16 @@ export const inputFormatOptions: ReferenceOptionArr = {
         { text: "IndoorGML", value: "indoorgml" }
     ],
     "terrain": [{ text: "AUTO", value: "auto" }],
-    "vector": [{ text: "AUTO", value: "auto" }],
-    "raster": [{ text: "AUTO", value: "auto" }],
+    "vector": [
+        { text: "AUTO", value: "auto" },
+        { text: "GeoJSON", value: "geojson" },
+        { text: "SHP", value: "shp" },
+    ],
+    "raster": [
+        { text: "AUTO", value: "auto" },
+        { text: "Imagery", value: "imagery" },
+        { text: "COG", value: "cog" },
+    ],
     "weather": [{ text: "AUTO", value: "auto" }]
 };
 
@@ -47,6 +59,22 @@ export const outputFormatOptions: ReferenceOptionArr = {
     ],
     "terrain": [{ text: "AUTO", value: "auto" }],
     "vector": [{ text: "AUTO", value: "auto" }],
-    "raster": [{ text: "AUTO", value: "auto" }],
+    "raster": [
+        { text: "AUTO", value: "auto" },
+        { text: "Byte", value: "byte" },
+        { text: "Int8", value: "int8" },
+        { text: "UInt16", value: "uint16" },
+        { text: "Int16", value: "int16" },
+        { text: "UInt32", value: "uint32" },
+        { text: "Int32", value: "int32" },
+        { text: "UInt64", value: "uint64" },
+        { text: "Int64", value: "int64" },
+        { text: "Float32", value: "float32" },
+        { text: "Float64", value: "float64" },
+        { text: "CInt16", value: "cint16" },
+        { text: "CInt32", value: "cint32" },
+        { text: "CFloat32", value: "cfloat32" },
+        { text: "CFloat64", value: "cfloat64" }
+    ],
     "weather": [{ text: "AUTO", value: "auto" }],
 };

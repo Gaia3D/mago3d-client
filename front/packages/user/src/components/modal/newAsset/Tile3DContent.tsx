@@ -1,8 +1,9 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useRef, useState} from 'react';
 import FormatList from "@/components/modal/FormatList.tsx";
 import RadioGroup from "@/components/modal/RadioGroup.tsx";
 import {inputFormatOptions, outputFormatOptions, projectionTypeOptions} from "@/components/utils/optionsData.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
+import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
 
 const Tile3DContent = () => {
 
@@ -15,13 +16,25 @@ const Tile3DContent = () => {
     const [outputFormat, setOutputFormat] = useState<string>('auto');
     const [projectionType, setProjectionType] = useState<string>('epsg');
     const [projectionValue, setProjectionValue] = useState<string>('');
-    const [swapUpAxis, setSwapUpAxis] = useState<number>(0);
-    const [flipUpAxis, setFlipUpAxis] = useState<number>(0);
+    const [swapUpAxis, setSwapUpAxis] = useState<boolean>(false);
+    const [flipUpAxis, setFlipUpAxis] = useState<boolean>(false);
+
+    const [showDetail, setShowDetail] = useState(false);
+
+    const detailTitleRef = useRef<HTMLDivElement>(null);
+    const detailToggle = () => {
+        if (!detailTitleRef.current) return;
+        detailTitleRef.current.classList.toggle("on");
+        setShowDetail(detailTitleRef.current.classList.contains("on"));
+    }
 
     const fileConvert = () => {
         console.log("assetType: 3dtile");
+        console.log("swapUpAxis: ", swapUpAxis);
+        console.log("flipUpAxis: ", flipUpAxis);
+        console.log("debugMode: ", debugMode);
     }
-
+    // popLayer.current.classList.toggle('on');
     return (
         <>
             <div className="title">Project name</div>
@@ -48,17 +61,32 @@ const Tile3DContent = () => {
             <div className="title">Origin projection</div>
             <div className="value">
                 <RadioGroup
-                    name="originProjection"
+                    name="projection"
                     value={projectionType}
                     onChange={setProjectionType}
                     options={projectionTypeOptions}
                 />
                 <input
                     type="text"
-                    className="width-140"
+                    className="modal-full-width"
                     value={projectionValue}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setProjectionValue(e.target.value)}
+                    placeholder={projectionType==='epsg' ? "ex) 4326, 5186" : "ex) +proj=utm +zone=52 +datum=WGS84 +units=m +no_defs"}
                 />
+            </div>
+            <div className="title detail-title" ref={detailTitleRef} onClick={detailToggle}>detail settings</div>
+            <div className="value detail-show-value">
+                {
+                    showDetail ? (
+                        <>
+                            <ToggleSetting text="Swap Up Axis" id="swapUpAxis" checked={swapUpAxis} onChange={setSwapUpAxis} />
+                            <ToggleSetting text="Flip Up Axis" id="flipUpAxis" checked={flipUpAxis} onChange={setFlipUpAxis} />
+                            <ToggleSetting text="Debug Mode" id="debugMode" checked={debugMode} onChange={setDebugMode} />
+                        </>
+                    ) : (
+                        <div className="detail-dot-value" onClick={detailToggle}>...</div>
+                    )
+                }
             </div>
             <div className="title">File upload</div>
             <div className="value">

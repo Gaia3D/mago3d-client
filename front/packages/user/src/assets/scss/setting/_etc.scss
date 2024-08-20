@@ -34,6 +34,10 @@
       display: flex;
       flex-direction: column;
 
+      .f-size-12 {
+        font-size: 12px;
+      }
+
       .modal-full-width, .file-upload-wrapper {
         width: calc(720px - 224px);
       }
@@ -66,6 +70,55 @@
         max-height: calc(100vh - 240px);
         overflow: auto;
         margin-bottom: 40px;
+        line-height: unset;
+
+        .format-list {
+          margin-bottom: 8px;
+          li {
+            margin: 0 4px 8px;
+          }
+        }
+
+        input[type=number] {
+          height: 30px;
+          border-radius: 5px;
+          border: 1px solid rgb(219, 219, 219);
+          text-indent: 3px;
+        }
+
+        .detail-title {
+          user-select: none;
+          &:hover{
+            cursor: pointer;
+          }
+          &:after {
+            margin-left: 8px;
+            font-size: 20px;
+            content: "◀"
+          }
+          &.on:after {
+            content: "▼";
+          }
+
+        }
+        .detail-show-value {
+          display: flex;
+          flex-direction: column;
+          margin-top: 4px;
+          .toggle-setting-container {
+            display: flex;
+            align-items: center;
+          }
+
+        }
+        .detail-dot-value {
+          &:hover{
+            cursor: pointer;
+          }
+        }
+
+
+
         .modal-bottom {
           position: absolute;
           bottom: 10px;
@@ -76,10 +129,13 @@
           }
         }
       }
-      .radio-label:hover {
-        cursor: pointer;
+      .radio-label{
+        margin-bottom: 8px;
+        &:hover {
+          cursor: pointer;
+        }
       }
-      
+
     }
   }
 
@@ -160,6 +216,141 @@
     }
   }
 }
+
+
+/* cool check box css */
+.checkbox-wrapper-9 {
+  .tgl {
+    display: none;
+    box-sizing: border-box;
+    &:after {
+      box-sizing: border-box;
+      &::-moz-selection {
+        background: none;
+      }
+      &::selection {
+        background: none;
+      }
+    }
+    &:before {
+      box-sizing: border-box;
+      &::-moz-selection {
+        background: none;
+      }
+      &::selection {
+        background: none;
+      }
+    }
+    * {
+      box-sizing: border-box;
+      &:after {
+        box-sizing: border-box;
+        &::-moz-selection {
+          background: none;
+        }
+        &::selection {
+          background: none;
+        }
+      }
+      &:before {
+        box-sizing: border-box;
+        &::-moz-selection {
+          background: none;
+        }
+        &::selection {
+          background: none;
+        }
+      }
+      &::-moz-selection {
+        background: none;
+      }
+      &::selection {
+        background: none;
+      }
+    }
+    + {
+      .tgl-btn {
+        box-sizing: border-box;
+        outline: 0;
+        display: block;
+        width: 4em;
+        height: 2em;
+        position: relative;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        &::-moz-selection {
+          background: none;
+        }
+        &::selection {
+          background: none;
+        }
+        &:after {
+          position: relative;
+          display: block;
+          content: "";
+          width: 50%;
+          height: 100%;
+          left: 0;
+        }
+        &:before {
+          position: relative;
+          display: block;
+          content: "";
+          width: 50%;
+          height: 100%;
+          display: none;
+        }
+      }
+    }
+    &::-moz-selection {
+      background: none;
+    }
+    &::selection {
+      background: none;
+    }
+    &:checked {
+      + {
+        .tgl-btn {
+          &:after {
+            left: 50%;
+          }
+        }
+      }
+    }
+  }
+  .tgl-flat {
+    + {
+      .tgl-btn {
+        padding: 2px;
+        transition: all 0.2s ease;
+        background: #fff;
+        border: 4px solid #d1d1d1;
+        border-radius: 2em;
+        &:after {
+          transition: all 0.2s ease;
+          background: #d1d1d1;
+          content: "";
+          border-radius: 1em;
+        }
+      }
+    }
+    &:checked {
+      + {
+        .tgl-btn {
+          border: 4px solid var(--secondary-color);
+          &:after {
+            left: 50%;
+            background: var(--secondary-color);
+          }
+        }
+      }
+    }
+  }
+}
+
 
 /*graphic setting modal*/
 .default-layer.option-tool {

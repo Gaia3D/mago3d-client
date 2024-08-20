@@ -28,8 +28,8 @@ const NewAssetModal: React.FC = () => {
                 return <VectorContent />;
             case 'raster':
                 return <RasterContent />;
-            case 'weather':
-                return <WeatherContent />;
+            // case 'weather':
+            //     return <WeatherContent />;
             default:
                 return null;
         }
