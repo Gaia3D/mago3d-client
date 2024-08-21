@@ -3,7 +3,7 @@ import React from 'react';
 interface ToggleSettingProps {
     text?: string;
     id: string;
-    onChange: (value: boolean) => void;
+    onChange: (key: string, value: boolean) => void;
     checked: boolean;
 }
 
@@ -13,7 +13,7 @@ const ToggleSetting: React.FC<ToggleSettingProps> = ({ text, id, checked, onChan
             <div className="checkbox-wrapper-9">
                 <input
                     checked={checked}
-                    onChange={() => onChange(!checked)}
+                    onChange={() => onChange(id, !checked)}
                     className="tgl tgl-flat"
                     id={id}
                     type="checkbox"

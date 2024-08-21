@@ -5,19 +5,27 @@ import {
     InterpolationTypeOptions,
     outputFormatOptions,
 } from "@/components/utils/optionsData.ts";
-import FileUpload from "@/components/modal/FileUpload.tsx";
 import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
 import RadioGroup from "@/components/modal/RadioGroup.tsx";
 
 const TerrainContent = () => {
 
-    const [projectName, setProjectName] = useState<string>('');
-    const [inputFormat, setInputFormat] = useState<string>('auto');
-    const [outputFormat, setOutputFormat] = useState<string>('auto');
-    const [interpolationType, setInterpolationType] = useState<string>('linear');
-    const [debugMode, setDebugMode] = useState<boolean>(false);
-    const [tileDepthMin, setTileDepthMin] = useState<number>(0);
-    const [tileDepthMax, setTileDepthMax] = useState<number>(12);
+    const [options, setOptions] = useState({
+        projectName: '',
+        inputFormat: 'auto',
+        outputFormat: 'auto',
+        interpolationType: 'linear',
+        debugMode: false,
+        tileDepthMin: 0,
+        tileDepthMax: 12,
+    });
+
+    const handleOptionChange = (key: string, value: string | boolean | number) => {
+        setOptions(prevOptions => ({
+            ...prevOptions,
+            [key]: value,
+        }));
+    };
 
     const [fileArr, setFileArr] = useState<File[] | null>(null);
     const fileConvert = () => {
@@ -31,20 +39,22 @@ const TerrainContent = () => {
                 <input
                     type="text"
                     className="modal-full-width"
-                    value={projectName}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setProjectName(e.target.value)}
+                    value={options.projectName}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('projectName', e.target.value)}
                 />
             </div>
             <div className="title">Input format</div>
             <FormatList
-                selected={inputFormat}
-                onSelect={setInputFormat}
+                name="inputFormat"
+                selected={options.inputFormat}
+                onSelect={handleOptionChange}
                 formats={inputFormatOptions['terrain']}
             />
             <div className="title">Output format</div>
             <FormatList
-                selected={outputFormat}
-                onSelect={setOutputFormat}
+                name="outputFormat"
+                selected={options.outputFormat}
+                onSelect={handleOptionChange}
                 formats={outputFormatOptions['terrain']}
             />
             <div className="title">Min Tile Depth</div>
@@ -52,8 +62,8 @@ const TerrainContent = () => {
                 <input
                     type="number"
                     className="width-140"
-                    value={tileDepthMin}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setTileDepthMin(Number(e.target.value))}
+                    value={options.tileDepthMin}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('tileDepthMin', Number(e.target.value))}
                 />
             </div>
             <div className="title">Max Tile Depth</div>
@@ -61,29 +71,29 @@ const TerrainContent = () => {
                 <input
                     type="number"
                     className="width-140"
-                    value={tileDepthMax}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setTileDepthMax(Number(e.target.value))}
+                    value={options.tileDepthMax}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('tileDepthMax', Number(e.target.value))}
                 />
             </div>
             <div className="title">Interpolation Type</div>
             <div className="value">
                 <RadioGroup
                     name="interpolationType"
-                    value={interpolationType}
-                    onChange={setInterpolationType}
+                    value={options.interpolationType}
+                    onChange={handleOptionChange}
                     options={InterpolationTypeOptions}
                 />
             </div>
             <div className="title">Debug Mode</div>
             <ToggleSetting
                 id="debugMode"
-                checked={debugMode}
-                onChange={setDebugMode}
+                checked={options.debugMode}
+                onChange={handleOptionChange}
             />
 
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>
+                {/*<FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>*/}
             </div>
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>

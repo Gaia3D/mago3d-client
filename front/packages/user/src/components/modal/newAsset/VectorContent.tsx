@@ -5,13 +5,22 @@ import FileUpload from "@/components/modal/FileUpload.tsx";
 
 const VectorContent = () => {
 
-    const [projectName, setProjectName] = useState<string>('');
-    const [inputFormat, setInputFormat] = useState<string>('auto');
-    const [outputFormat, setOutputFormat] = useState<string>('auto');
-    const [originEncoding, setOriginEncoding] = useState('UTF-8');
-    const [convertedEncoding, setConvertedEncoding] = useState('UTF-8');
-    const [originProjection, setOriginProjection] = useState('');
-    const [convertedProjection, setConvertedProjection] = useState('');
+    const [options, setOptions] = useState({
+        projectName: '',
+        inputFormat: 'auto',
+        outputFormat: 'auto',
+        originEncoding: 'UTF-8',
+        convertedEncoding: 'UTF-8',
+        originProjection: '',
+        convertedProjection: '',
+    });
+
+    const handleOptionChange = (key: string, value: string | boolean | number) => {
+        setOptions(prevOptions => ({
+            ...prevOptions,
+            [key]: value,
+        }));
+    };
 
     const [fileArr, setFileArr] = useState<File[] | null>(null);
     const fileConvert = () => {
@@ -25,20 +34,22 @@ const VectorContent = () => {
                 <input
                     type="text"
                     className="modal-full-width"
-                    value={projectName}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setProjectName(e.target.value)}
+                    value={options.projectName}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('projectName', e.target.value)}
                 />
             </div>
             <div className="title">Input format</div>
             <FormatList
-                selected={inputFormat}
-                onSelect={setInputFormat}
+                name="inputFormat"
+                selected={options.inputFormat}
+                onSelect={handleOptionChange}
                 formats={inputFormatOptions['vector']}
             />
             <div className="title">Output format</div>
             <FormatList
-                selected={outputFormat}
-                onSelect={setOutputFormat}
+                name="outputFormat"
+                selected={options.outputFormat}
+                onSelect={handleOptionChange}
                 formats={outputFormatOptions['vector']}
             />
             <div className="title">Origin Encoding</div>
@@ -46,8 +57,8 @@ const VectorContent = () => {
                 <input
                     type="text"
                     className="width-140"
-                    value={originEncoding}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setOriginEncoding(e.target.value)}
+                    value={options.originEncoding}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('originEncoding', e.target.value)}
                 />
             </div>
             <div className="title f-size-12">Converted Encoding</div>
@@ -55,8 +66,8 @@ const VectorContent = () => {
                 <input
                     type="text"
                     className="width-140"
-                    value={convertedEncoding}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setConvertedEncoding(e.target.value)}
+                    value={options.convertedEncoding}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('convertedEncoding', e.target.value)}
                 />
             </div>
             <div className="title">Origin Projection</div>
@@ -64,8 +75,8 @@ const VectorContent = () => {
                 <input
                     type="text"
                     className="width-140"
-                    value={originProjection}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setOriginProjection(e.target.value)}
+                    value={options.originProjection}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('originProjection', e.target.value)}
                     placeholder="ex) 4326, 5186"
                 />
             </div>
@@ -74,15 +85,15 @@ const VectorContent = () => {
                 <input
                     type="text"
                     className="width-140"
-                    value={convertedProjection}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setConvertedProjection(e.target.value)}
+                    value={options.convertedProjection}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('convertedProjection', e.target.value)}
                     placeholder="ex) 4326, 5186"
                 />
             </div>
 
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>
+                {/*<FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>*/}
             </div>
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>
