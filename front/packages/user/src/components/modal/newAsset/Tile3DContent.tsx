@@ -1,41 +1,92 @@
 import React, {ChangeEvent, useRef, useState} from 'react';
 import FormatList from "@/components/modal/FormatList.tsx";
 import RadioGroup from "@/components/modal/RadioGroup.tsx";
-import {inputFormatOptions, outputFormatOptions, projectionTypeOptions} from "@/components/utils/optionsData.ts";
+import {
+    classifyAssetTypeAcceptFile,
+    inputFormatOptions,
+    outputFormatOptions,
+    projectionTypeOptions
+} from "@/components/utils/optionsData.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
 import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
+import {useMutation} from "@apollo/client";
+import {AssetType, CreateAssetInput, DatasetCreateAssetDocument} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+import {UploadedFile} from "@/types/Common.ts";
+import {useSetRecoilState} from "recoil";
+import {assetsRefetchTriggerState} from "@/recoils/Data.ts";
+
+const ASSET_TYPE = "3dtile";
 
 const Tile3DContent = () => {
+    const setAssetsRefetchTrigger = useSetRecoilState<number>(assetsRefetchTriggerState);
+    const [options, setOptions] = useState({
+        projectName: '',
+        debugMode: false,
+        inputPath: '',
+        outputPath: '',
+        inputFormat: 'auto',
+        outputFormat: 'auto',
+        projectionType: 'epsg',
+        projectionValue: '',
+        swapUpAxis: false,
+        flipUpAxis: false,
+    });
 
-    const [projectName, setProjectName] = useState<string>('');
-    const [debugMode, setDebugMode] = useState<boolean>(false);
-    // const [inputPath, setInputPath] = useState<string>('');
-    // const [outputPath, setOutputPath] = useState<string>('');
-    const [inputFormat, setInputFormat] = useState<string>('auto');
-    const [outputFormat, setOutputFormat] = useState<string>('auto');
-    const [projectionType, setProjectionType] = useState<string>('epsg');
-    const [projectionValue, setProjectionValue] = useState<string>('');
-    const [swapUpAxis, setSwapUpAxis] = useState<boolean>(false);
-    const [flipUpAxis, setFlipUpAxis] = useState<boolean>(false);
+    const handleOptionChange = (key: string, value: string | boolean) => {
+        setOptions(prevOptions => ({
+            ...prevOptions,
+            [key]: value,
+        }));
+    };
 
     const [showDetail, setShowDetail] = useState(false);
-
     const detailTitleRef = useRef<HTMLDivElement>(null);
+    const fileUploadRef = useRef<{ readyUpload: () => Promise<void> }>(null);
+
+    const uploadedFilesState = useState<UploadedFile[]>([]);
+    const [uploadedFiles] = uploadedFilesState;
+
+    const acceptFile = classifyAssetTypeAcceptFile(ASSET_TYPE);
+
     const detailToggle = () => {
         if (!detailTitleRef.current) return;
         detailTitleRef.current.classList.toggle("on");
         setShowDetail(detailTitleRef.current.classList.contains("on"));
     }
 
-    const [fileArr, setFileArr] = useState<File[] | null>(null);
-    const fileConvert = () => {
-        if(fileArr?.length === 0) {
-            alert ("파일을 업로드 해주세요.")
-            return;
+    const [createMutation] = useMutation(DatasetCreateAssetDocument, {
+        update: (cache, { data }) => {
+            cache.evict({ fieldName: 'assets' });
+            console.log('update data:', data);
+        },
+        onCompleted(data) {
+            console.log('complete data:',data);
         }
-        console.log("Files to convert: ", fileArr);
-    }
-    // popLayer.current.classList.toggle('on');
+    });
+
+    const fileConvert = async () => {
+        await fileUploadRef.current?.readyUpload();
+
+        // `readyUpload`가 완료된 후에 `uploadedFiles` 상태가 업데이트되기를 기다리기 위해 `nextTick`을 사용하거나 상태를 명시적으로 확인
+        const uploadId = uploadedFiles.map((uploadedFile) => uploadedFile.dbId);
+        console.log('uploadId: ', uploadId);
+
+        const input: CreateAssetInput = {
+            name: options.projectName,
+            groupId: ["91"],    // Sample1
+            description: '사용자 추가 데이터입니다.',
+            assetType: AssetType.Tiles3D,
+            uploadId
+        };
+
+        await createMutation({
+            variables: { input },
+            onCompleted: () => {
+                setAssetsRefetchTrigger((prev) => prev + 1); // 상태를 업데이트하여 새로고침을 트리거
+            }
+        });
+    };
+
     return (
         <>
             <div className="title">Project name</div>
@@ -43,36 +94,38 @@ const Tile3DContent = () => {
                 <input
                     type="text"
                     className="modal-full-width"
-                    value={projectName}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setProjectName(e.target.value)}
+                    value={options.projectName}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('projectName', e.target.value)}
                 />
             </div>
             <div className="title">Input format</div>
             <FormatList
-                selected={inputFormat}
-                onSelect={setInputFormat}
-                formats={inputFormatOptions['3dtile']}
+                name="inputFormat"
+                selected={options.inputFormat}
+                onSelect={handleOptionChange}
+                formats={inputFormatOptions[ASSET_TYPE]}
             />
             <div className="title">Output format</div>
             <FormatList
-                selected={outputFormat}
-                onSelect={setOutputFormat}
-                formats={outputFormatOptions['3dtile']}
+                name="outputFormat"
+                selected={options.outputFormat}
+                onSelect={handleOptionChange}
+                formats={outputFormatOptions[ASSET_TYPE]}
             />
             <div className="title">Origin projection</div>
             <div className="value">
                 <RadioGroup
-                    name="projection"
-                    value={projectionType}
-                    onChange={setProjectionType}
+                    name="projectionType"
+                    value={options.projectionType}
+                    onChange={handleOptionChange}
                     options={projectionTypeOptions}
                 />
                 <input
                     type="text"
                     className="modal-full-width"
-                    value={projectionValue}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setProjectionValue(e.target.value)}
-                    placeholder={projectionType==='epsg' ? "ex) 4326, 5186" : "ex) +proj=utm +zone=52 +datum=WGS84 +units=m +no_defs"}
+                    value={options.projectionValue}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('projectionValue', e.target.value)}
+                    placeholder={options.projectionType === 'epsg' ? "ex) 4326, 5186" : "ex) +proj=utm +zone=52 +datum=WGS84 +units=m +no_defs"}
                 />
             </div>
             <div className="title detail-title" ref={detailTitleRef} onClick={detailToggle}>detail settings</div>
@@ -80,9 +133,9 @@ const Tile3DContent = () => {
                 {
                     showDetail ? (
                         <>
-                            <ToggleSetting text="Swap Up Axis" id="swapUpAxis" checked={swapUpAxis} onChange={setSwapUpAxis} />
-                            <ToggleSetting text="Flip Up Axis" id="flipUpAxis" checked={flipUpAxis} onChange={setFlipUpAxis} />
-                            <ToggleSetting text="Debug Mode" id="debugMode" checked={debugMode} onChange={setDebugMode} />
+                            <ToggleSetting text="Swap Up Axis" id="swapUpAxis" checked={options.swapUpAxis} onChange={handleOptionChange} />
+                            <ToggleSetting text="Flip Up Axis" id="flipUpAxis" checked={options.flipUpAxis} onChange={handleOptionChange} />
+                            <ToggleSetting text="Debug Mode" id="debugMode" checked={options.debugMode} onChange={handleOptionChange} />
                         </>
                     ) : (
                         <div className="detail-dot-value" onClick={detailToggle}>...</div>
@@ -91,7 +144,7 @@ const Tile3DContent = () => {
             </div>
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>
+                <FileUpload ref={fileUploadRef} uploadedFilesState={uploadedFilesState} acceptFile={acceptFile} />
             </div>
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>

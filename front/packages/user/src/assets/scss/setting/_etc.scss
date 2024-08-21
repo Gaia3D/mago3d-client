@@ -19,6 +19,18 @@
 }
 
 #map {
+
+  header {
+    display: flex;
+    .pop-layer {
+      margin-top: 52px;
+      right: 0;
+      top: 0;
+      &.lang {
+        margin-right: 52px;
+      }
+    }
+  }
   .modal {
     ::-webkit-scrollbar {
       background-color: var(--secondary-color);
@@ -42,6 +54,7 @@
           display: flex;
         .radio-label {
           width: 100%;
+          margin-bottom: 0;
           .radio-text-span {
             width: 100%;
             display: flex;;
@@ -134,13 +147,69 @@
     .file-upload-container {
       height: unset;
       min-height: 140px;
+
+
       .dropzone {
         width: 100%;
+        min-height: 140px;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        padding: 12px;
+      }
+      .file {
+        border: 2px solid var(--secondary-color);
+        width: 100%;
+        display: flex;
+        height: 48px;
+        padding: 4px;
+        margin: 2px;
+        .img, .file-delete {
+          width: 36px;
+          height: 36px;
+        }
+        .img {
+          background-image: url('/geomatic-user/src/assets/images/light-icon.svg');
+          background-position: 8px -18px;
+          background-size: 775px 1076px;
+          background-repeat: no-repeat;
+          border: none;
+          cursor: pointer
+        }
+
+        .details {
+          width: calc(100% - 72px);
+          padding: 0 20px;
+          .name {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .progress {
+            position: relative;
+            height: 6px;
+            float: left;
+            width: 100%;
+            background-color: #dbdbdb;
+            overflow: hidden;
+            margin-top: 0;
+            border-radius: 10px;
+            .bar {
+              position: absolute;
+              left: 0;
+              top: 0;
+              font-size: 13px;
+              height: 100%;
+              width: 100%;
+              background-color: var(--secondary-color);
+            }
+          }
+        }
+
       }
     }
   }

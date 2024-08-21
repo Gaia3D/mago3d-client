@@ -2,7 +2,13 @@ import React, {useEffect, useState, useRef, useCallback} from 'react';
 
 import {useQuery} from "@apollo/client";
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import {dataCurrentPageState, dataProcessStatusState, dataSearchSelector, dataSearchTextState} from "@/recoils/Data.ts";
+import {
+    assetsRefetchTriggerState,
+    dataCurrentPageState,
+    dataProcessStatusState,
+    dataSearchSelector,
+    dataSearchTextState
+} from "@/recoils/Data.ts";
 import {Asset} from "@/types/assets/Data.ts";
 import {useDebounce} from "@/hooks/useDebounce.ts";
 import {useInfiniteScroll} from "@/hooks/useInfiniteScroll.ts";
@@ -44,6 +50,7 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     const setSearch = useSetRecoilState<string|undefined>(dataSearchTextState);
     const setStatus = useSetRecoilState<ProcessTaskStatus|undefined>(dataProcessStatusState);
     const statusTh = useRef<HTMLTableCellElement>(null);
+    const assetsRefetchTrigger = useRecoilValue(assetsRefetchTriggerState);
 
     const setIsNewAssetModal = useSetRecoilState<boolean>(IsNewAssetModalState);
     const toggleStatusPop = () => {
@@ -56,10 +63,14 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isFetching, setIsFetching] = useState(false);
 
-    const { data, loading } = useQuery(DatasetAssetListDocument, {
+    const {  data, loading } = useQuery(DatasetAssetListDocument, {
         variables: searchProps,
         fetchPolicy: 'network-only',
     });
+
+    useEffect(() => {
+        dataReset();
+    }, [assetsRefetchTrigger]);
 
     const dataReset = useCallback(() => {
         setDataArr([]);

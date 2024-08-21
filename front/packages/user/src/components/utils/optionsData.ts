@@ -78,3 +78,32 @@ export const outputFormatOptions: ReferenceOptionArr = {
     ],
     "weather": [{ text: "AUTO", value: "auto" }],
 };
+
+export const classifyAssetTypeAcceptFile = (assetType: string): { [key: string]: string[] } | undefined => {
+    switch(assetType) {
+        case '3dtile':
+            return {
+                "application/vnd.google-earth.kml+xml": [".kml"],
+                "application/json": [".json", ".geojson"],
+                "image/*": [".png",".jpg",".jpeg",".bmp"],
+                "application/octet-stream": [".3ds",".obj",".ifc", ".las", ".laz", ".fbx", ".gltf", ".glb", ".kml", ".dae", ".ase", ".gml", ".lxo", ".lwo", ".lws", ".x"],
+                "application/zip":[".zip"]
+            };
+        case 'terrain':
+            return {
+                "image/tiff": [".tif",".tiff"],
+                "application/octet-stream": [".vrt"]
+            };
+        case 'raster':
+            return {
+                "image/tiff":[".tif",".tiff"]
+            };
+        case 'vector':
+            return {
+                "application/json": [".json", ".geojson"],
+                "application/zip":[".zip"]
+            };
+        default:
+            return undefined;  // 빈 객체 대신 undefined 반환
+    }
+}
