@@ -20,7 +20,8 @@ const ToggleSetting: React.FC<ToggleSettingProps> = ({ text, id, checked, onChan
                 />
                 <label className="tgl-btn" htmlFor={id}></label>
             </div>
-            {text ?? <span>{text}</span>}
+            <label htmlFor={id}>{text ?? <span>{text}</span>}</label>
+
         </div>
     );
 };

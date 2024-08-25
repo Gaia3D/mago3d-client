@@ -23,8 +23,8 @@ export const inputFormatOptions: ReferenceOptionArr = {
     "3dtile": [
         { text: "AUTO", value: "auto" },
         { text: "KML", value: "kml" },
-        { text: "3DS", value: "3ds" },
-        { text: "DAE", value: "dae" },
+        // { text: "3DS", value: "3ds" },
+        // { text: "DAE", value: "dae" },
         { text: "OBJ", value: "obj" },
         { text: "FBX", value: "fbx" },
         { text: "GLTF", value: "gltf" },
