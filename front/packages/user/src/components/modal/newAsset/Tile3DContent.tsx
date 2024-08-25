@@ -41,10 +41,7 @@ const Tile3DContent = () => {
 
     const [showDetail, setShowDetail] = useState(false);
     const detailTitleRef = useRef<HTMLDivElement>(null);
-    const fileUploadRef = useRef<{ readyUpload: () => Promise<void> }>(null);
-
-    const uploadedFilesState = useState<UploadedFile[]>([]);
-    const [uploadedFiles] = uploadedFilesState;
+    const fileUploadRef = useRef<{ readyUpload: () => Promise<UploadedFile[] |undefined> }>(null);
 
     const acceptFile = classifyAssetTypeAcceptFile(ASSET_TYPE);
 
@@ -57,34 +54,40 @@ const Tile3DContent = () => {
     const [createMutation] = useMutation(DatasetCreateAssetDocument, {
         update: (cache, { data }) => {
             cache.evict({ fieldName: 'assets' });
-            console.log('update data:', data);
         },
         onCompleted(data) {
             console.log('complete data:',data);
+            setAssetsRefetchTrigger((prev) => prev + 1);
         }
     });
 
     const fileConvert = async () => {
-        await fileUploadRef.current?.readyUpload();
-
-        // `readyUpload`가 완료된 후에 `uploadedFiles` 상태가 업데이트되기를 기다리기 위해 `nextTick`을 사용하거나 상태를 명시적으로 확인
-        const uploadId = uploadedFiles.map((uploadedFile) => uploadedFile.dbId);
-        console.log('uploadId: ', uploadId);
-
-        const input: CreateAssetInput = {
-            name: options.projectName,
-            groupId: ["91"],    // Sample1
-            description: '사용자 추가 데이터입니다.',
-            assetType: AssetType.Tiles3D,
-            uploadId
-        };
-
-        await createMutation({
-            variables: { input },
-            onCompleted: () => {
-                setAssetsRefetchTrigger((prev) => prev + 1); // 상태를 업데이트하여 새로고침을 트리거
+        try {
+            const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
+            console.log("uploadedFilesResult", uploadedFilesResult);
+            if (!uploadedFilesResult || uploadedFilesResult.length === 0) {
+                alert('파일 업로드에 실패했습니다. 관리자에게 문의 바랍니다.');
+                return;
             }
-        });
+
+            const uploadId = uploadedFilesResult.map((uploadedFile) => uploadedFile.dbId);
+            console.log('uploadId: ', uploadId);
+
+            const input: CreateAssetInput = {
+                name: options.projectName,
+                groupId: ["91"],    // Sample1
+                description: '사용자 추가 데이터입니다.',
+                assetType: AssetType.Tiles3D,
+                uploadId
+            };
+            console.log(input);
+            await createMutation({
+                variables: { input }
+            });
+        } catch (error) {
+            console.error('ApolloError:', error);
+            alert('데이터 처리 중 오류가 발생했습니다.');
+        }
     };
 
     return (
@@ -144,7 +147,7 @@ const Tile3DContent = () => {
             </div>
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload ref={fileUploadRef} uploadedFilesState={uploadedFilesState} acceptFile={acceptFile} />
+                <FileUpload ref={fileUploadRef} acceptFile={acceptFile} />
             </div>
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>

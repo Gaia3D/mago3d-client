@@ -4,27 +4,19 @@ import { v4 as uuidv4 } from 'uuid';
 import { UploadedFile, UploadFile, UploadItem, UploadState } from "@/types/Common.ts";
 import {useSetRecoilState} from "recoil";
 import {assetLoadingState, AssetLoadingStateType} from "@/recoils/Spinner.ts";
-import { bbsFileUpload } from "@/api/http.ts";
+import { datasetFileUpload } from "@/api/http.ts";
 import FileItem from "@/components/modal/FileItem.tsx";
 
 interface FileUploadProps {
-    uploadedFilesState: [UploadedFile[], Dispatch<SetStateAction<UploadedFile[]>>],
     update?: boolean,
     acceptFile?: { [key: string]: string[] }
 }
 
-const FileUpload = forwardRef(({ uploadedFilesState, acceptFile = {} }: FileUploadProps, ref) => {
+const FileUpload = forwardRef(({ acceptFile = {} }: FileUploadProps, ref) => {
     const setAssetLoadState = useSetRecoilState<AssetLoadingStateType>(assetLoadingState);
-    const [uploadedFiles, setUploadedFiles] = uploadedFilesState;
     const [files, setFiles] = useState<UploadFile[]>([]);
     const [fileItems, setFileItems] = useState<UploadItem[]>([]);
     const uploadingFilesRef = useRef(new Set<string>());
-
-    useEffect(() => {
-        console.log("files: ", files);
-        console.log("fileItems: ", fileItems);
-        console.log("uploadedFiles: ", uploadedFiles);
-    }, [files, fileItems, uploadedFiles]);
 
     // 업로드 진행상황을 알기위한 프로그래스
     const uploadProgress = (progress: number, file: UploadFile) => {
@@ -43,7 +35,6 @@ const FileUpload = forwardRef(({ uploadedFilesState, acceptFile = {} }: FileUplo
         });
     };
 
-    // 파일 업로드 기능
     const upload = async (file: UploadFile) => {
         // 파일 이진데이터 일기
         const arrayBuffer = await file.arrayBuffer();
@@ -54,7 +45,7 @@ const FileUpload = forwardRef(({ uploadedFilesState, acceptFile = {} }: FileUplo
         formData.append('files', blob, file.name);
 
         // 파일 업로드 요청
-        const response = await bbsFileUpload({
+        const response = await datasetFileUpload({
             data: formData,
             config: {
                 onUploadProgress({ progress }) {
@@ -64,8 +55,6 @@ const FileUpload = forwardRef(({ uploadedFilesState, acceptFile = {} }: FileUplo
                 }
             }
         });
-
-        // 응답처리
         const [uploadResponse] = response.data;
         console.log("uploadResponse: ", uploadResponse)
         return {
@@ -87,26 +76,27 @@ const FileUpload = forwardRef(({ uploadedFilesState, acceptFile = {} }: FileUplo
         const uploadPromises = files.map(file => {
             uploadingFilesRef.current.add(file.uuid);
             return upload(file).then(uploadedFile => {
-                setUploadedFiles(prev => [...prev, uploadedFile]);
                 return uploadedFile;
             });
         });
 
-        return Promise.all(uploadPromises).finally(() => {
-            setFileItems(prevItems =>
-                prevItems.map(item => {
-                    if (uploadingFilesRef.current.has(item.uuid)) {
-                        return {
-                            ...item,
-                            state: UploadState.COMPLETE
-                        };
-                    }
-                    return item;
-                })
-            );
-            uploadingFilesRef.current.clear();
-            setAssetLoadState(prev => ({ ...prev, loading: false }));
-        });
+        const uploadedFilesResult = await Promise.all(uploadPromises); // 업로드 완료 후 결과 반환
+
+        setFileItems(prevItems =>
+            prevItems.map(item => {
+                if (uploadingFilesRef.current.has(item.uuid)) {
+                    return {
+                        ...item,
+                        state: UploadState.COMPLETE
+                    };
+                }
+                return item;
+            })
+        );
+        uploadingFilesRef.current.clear();
+        setAssetLoadState(prev => ({ ...prev, loading: false }));
+
+        return uploadedFilesResult; // 업로드된 파일 리스트 반환
     };
 
     useImperativeHandle(ref, () => ({
@@ -116,25 +106,8 @@ const FileUpload = forwardRef(({ uploadedFilesState, acceptFile = {} }: FileUplo
     const deleteFile = async (uuid: string) => {
         if (!confirm('삭제하시겠습니까?')) return;
 
-        const { remain } = uploadedFiles.reduce((accum, file) => {
-            if (file.clientId !== uuid) {
-                accum.remain.push(file);
-            } else {
-                if (file.uploaded) {
-                    accum.deleteFileId = file.dbId;
-                    accum.deleteAssetId = file.assetId;
-                }
-            }
-            return accum;
-        }, {
-            remain: [] as UploadedFile[],
-            deleteFileId: undefined as string | undefined,
-            deleteAssetId: undefined as string | undefined
-        });
-
         setFiles(prev => prev.filter(file => file.uuid !== uuid));
         setFileItems(prev => prev.filter(item => item.uuid !== uuid));
-        setUploadedFiles(remain);
     };
 
     const { getRootProps, getInputProps } = useDropzone({
