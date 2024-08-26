@@ -24,7 +24,11 @@ import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
 
 const ASSET_TYPE = "3dtile";
 
-const Tile3DContent = () => {
+interface Tile3DContentProps {
+    display: boolean;
+}
+
+const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
     const setAssetsRefetchTrigger = useSetRecoilState<number>(assetsRefetchTriggerState);
     const [options, setOptions] = useState({
         projectName: '',
@@ -120,7 +124,7 @@ const Tile3DContent = () => {
             ifc: T3DFormatType.Ifc,
             geojson: T3DFormatType.Geojson,
         };
-        return formatMap[type] || T3DFormatType.Geojson;
+        return formatMap[type] || T3DFormatType.Kml;
     };
 
     const fileConvert = async (id: string) => {
@@ -156,7 +160,7 @@ const Tile3DContent = () => {
     };
 
     return (
-        <>
+        <div className={`modal-popup-body ${display ? "on" : "off"}`}>
             <InputWithLabel
                 type="text"
                 id="projectName"
@@ -199,45 +203,28 @@ const Tile3DContent = () => {
                 {
                     showDetail ? (
                         <>
-                            <ToggleSetting text="y축을 높이 축으로 설정" id="yUpAxis" checked={options.yUpAxis} onChange={handleOptionChange}/>
-                            <ToggleSetting text="자동 높이 축 할당" id="autoUpAxis" checked={options.autoUpAxis} onChange={handleOptionChange}/>
-                            <ToggleSetting text="x,y 좌표 뒤집기" id="flipCoordinate" checked={options.flipCoordinate} onChange={handleOptionChange}/>
-                            <ToggleSetting text="구체화(Refine) 추가 모드" id="refineAdd" checked={options.refineAdd} onChange={handleOptionChange}/>
-                            <ToggleSetting text="png 텍스쳐 모드" id="pngTexture" checked={options.pngTexture} onChange={handleOptionChange}/>
-                            <ToggleSetting text="텍스쳐를 반대로" id="reverseTexCoord" checked={options.reverseTexCoord} onChange={handleOptionChange}/>
-                            <ToggleSetting text="Debug Mode" id="debugMode" checked={options.debugMode} onChange={handleOptionChange}/>
-                            <InputWithLabel
-                                type="number"
-                                id="maxCount"
-                                value={options.maxCount}
-                                onChange={handleOptionChange}
-                                label="노드 최대값"
-                                isDetail={true}
-                            />
-                            <InputWithLabel
-                                type="number"
-                                id="maxLod"
-                                value={options.maxLod}
-                                onChange={handleOptionChange}
-                                label="최대 LOD"
-                                isDetail={true}
-                            />
-                            <InputWithLabel
-                                type="number"
-                                id="minLod"
-                                value={options.minLod}
-                                onChange={handleOptionChange}
-                                label="최소 LOD"
-                                isDetail={true}
-                            />
-                            <InputWithLabel
-                                type="number"
-                                id="maxPoints"
-                                value={options.maxPoints}
-                                onChange={handleOptionChange}
-                                label="포인트 클라우드 데이터의 최대 포인트 수"
-                                isDetail={true}
-                            />
+                            <ToggleSetting text="y축을 높이 축으로 설정" id="yUpAxis" checked={options.yUpAxis}
+                                           onChange={handleOptionChange}/>
+                            <ToggleSetting text="자동 높이 축 할당" id="autoUpAxis" checked={options.autoUpAxis}
+                                           onChange={handleOptionChange}/>
+                            <ToggleSetting text="x,y 좌표 뒤집기" id="flipCoordinate" checked={options.flipCoordinate}
+                                           onChange={handleOptionChange}/>
+                            <ToggleSetting text="구체화(Refine) 추가 모드" id="refineAdd" checked={options.refineAdd}
+                                           onChange={handleOptionChange}/>
+                            <ToggleSetting text="png 텍스쳐 모드" id="pngTexture" checked={options.pngTexture}
+                                           onChange={handleOptionChange}/>
+                            <ToggleSetting text="텍스쳐를 반대로" id="reverseTexCoord" checked={options.reverseTexCoord}
+                                           onChange={handleOptionChange}/>
+                            <ToggleSetting text="Debug Mode" id="debugMode" checked={options.debugMode}
+                                           onChange={handleOptionChange}/>
+                            <InputWithLabel label="노드 최대값" type="number" id="maxCount" value={options.maxCount}
+                                            onChange={handleOptionChange} isDetail={true}/>
+                            <InputWithLabel label="최대 LOD" type="number" id="maxLod" value={options.maxLod}
+                                            onChange={handleOptionChange} isDetail={true}/>
+                            <InputWithLabel label="최소 LOD" type="number" id="minLod" value={options.minLod}
+                                            onChange={handleOptionChange} isDetail={true}/>
+                            <InputWithLabel label="포인트 클라우드 데이터의 최대 포인트 수" type="number" id="maxPoints"
+                                            value={options.maxPoints} onChange={handleOptionChange} isDetail={true}/>
                         </>
                     ) : (
                         <div className="detail-dot-value" onClick={detailToggle}>...</div>
@@ -251,7 +238,7 @@ const Tile3DContent = () => {
             <div className="modal-bottom">
                 <button onClick={fileUpload} type="button" className="button-full">Convert</button>
             </div>
-        </>
+        </div>
     );
 };
 

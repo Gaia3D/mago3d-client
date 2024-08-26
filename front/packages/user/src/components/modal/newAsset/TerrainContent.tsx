@@ -8,7 +8,11 @@ import {
 import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
 import RadioGroup from "@/components/modal/RadioGroup.tsx";
 
-const TerrainContent = () => {
+interface TerrainContentProps {
+    display: boolean;
+}
+
+const TerrainContent:React.FC<TerrainContentProps> = ({display}) => {
 
     const [options, setOptions] = useState({
         projectName: '',
@@ -33,7 +37,7 @@ const TerrainContent = () => {
     }
 
     return (
-        <>
+        <div className={`modal-popup-body ${display?"on":"off"}`}>
             <div className="title">Project name</div>
             <div className="value">
                 <input
@@ -98,7 +102,7 @@ const TerrainContent = () => {
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>
             </div>
-        </>
+        </div>
     );
 };
 

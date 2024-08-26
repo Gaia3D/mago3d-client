@@ -1,8 +1,12 @@
 import React from 'react';
 
-const WeatherContent = () => {
+interface WeatherContentProps {
+    display: boolean;
+}
+
+const WeatherContent:React.FC<WeatherContentProps> = ({display}) => {
     return (
-        <div>
+        <div className={`modal-popup-body ${display ? "on" : "off"}`}>
             WeatherContent
         </div>
     );

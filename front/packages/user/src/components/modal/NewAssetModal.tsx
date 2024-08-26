@@ -16,27 +16,8 @@ const NewAssetModal: React.FC = () => {
     const handleCloseModal = () => setIsNewAssetModal(false);
     const handleModalClick = (e: MouseEvent<HTMLDivElement>) => e.stopPropagation();
 
-    if (!isNewAssetModal) return null;
-
-    const renderContent = () => {
-        switch (assetType) {
-            case '3dtile':
-                return <Tile3DContent />;
-            case 'terrain':
-                return <TerrainContent />;
-            case 'vector':
-                return <VectorContent />;
-            case 'raster':
-                return <RasterContent />;
-            // case 'weather':
-            //     return <WeatherContent />;
-            default:
-                return null;
-        }
-    };
-
     return (
-        <div id="myModal" className="modal" onClick={handleCloseModal}>
+        <div id="myModal" className={`modal ${isNewAssetModal? 'on':'off'}`} onClick={handleCloseModal}>
             <div className="modal-content new-asset" onClick={handleModalClick}>
                 <div className="modal-popup-header">
                     <h2>New Assets</h2>
@@ -56,9 +37,11 @@ const NewAssetModal: React.FC = () => {
                         </label>
                     ))}
                 </div>
-                <div className="modal-popup-body">
-                    {renderContent()}
-                </div>
+                <Tile3DContent display={assetType === "3dtile"} />
+                <TerrainContent display={assetType === "terrain"} />
+                <VectorContent display={assetType === "vector"} />
+                <RasterContent display={assetType === "raster"} />
+                <WeatherContent display={assetType === "weather"} />
             </div>
         </div>
     );

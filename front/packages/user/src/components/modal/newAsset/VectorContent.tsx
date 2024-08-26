@@ -3,7 +3,11 @@ import FormatList from "@/components/modal/FormatList.tsx";
 import {inputFormatOptions, outputFormatOptions} from "@/components/utils/optionsData.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
 
-const VectorContent = () => {
+interface VectorContentProps {
+    display: boolean;
+}
+
+const VectorContent:React.FC<VectorContentProps> = ({display}) => {
 
     const [options, setOptions] = useState({
         projectName: '',
@@ -28,7 +32,7 @@ const VectorContent = () => {
     }
 
     return (
-        <>
+        <div className={`modal-popup-body ${display ? "on" : "off"}`}>
             <div className="title">Project name</div>
             <div className="value">
                 <input
@@ -98,7 +102,7 @@ const VectorContent = () => {
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>
             </div>
-        </>
+        </div>
     );
 };
 

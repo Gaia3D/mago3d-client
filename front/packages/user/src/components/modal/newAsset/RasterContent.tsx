@@ -3,7 +3,11 @@ import FormatList from "@/components/modal/FormatList.tsx";
 import {inputFormatOptions, outputFormatOptions} from "@/components/utils/optionsData.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
 
-const RasterContent = () => {
+interface RasterContentProps {
+    display: boolean;
+}
+
+const RasterContent:React.FC<RasterContentProps> = ({display}) => {
 
     const [options, setOptions] = useState({
         projectName: '',
@@ -26,7 +30,7 @@ const RasterContent = () => {
     }
 
     return (
-        <>
+        <div className={`modal-popup-body ${display ? "on" : "off"}`}>
             <div className="title">Project name</div>
             <div className="value">
                 <input
@@ -78,7 +82,7 @@ const RasterContent = () => {
             <div className="modal-bottom">
                 <button onClick={fileConvert} type="button" className="button-full">Convert</button>
             </div>
-        </>
+        </div>
     );
 };
 
