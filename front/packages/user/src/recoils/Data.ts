@@ -11,11 +11,6 @@ import {
 import {IUserInfo} from "@mnd/shared";
 import {currentUserProfileSelector} from "@/recoils/Auth.ts";
 
-export const assetsRefetchTriggerState = atom({
-    key: 'assetsRefetchTriggerState',
-    default: 0,
-});
-
 export const dataCurrentPageState = atom<number>({
   key: 'dataCurrentPageState',
   default: 0,

@@ -1,9 +1,8 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 
 import {useQuery} from "@apollo/client";
-import {useRecoilValue, useSetRecoilState} from "recoil";
+import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {
-    assetsRefetchTriggerState,
     dataCurrentPageState,
     dataProcessStatusState,
     dataSearchSelector,
@@ -23,6 +22,7 @@ import {
 import SearchInput from "@/components/SearchInput.tsx";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
 import {IsNewAssetModalState} from "@/recoils/Modal.ts";
+import {assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 
 
 
@@ -50,7 +50,7 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     const setSearch = useSetRecoilState<string|undefined>(dataSearchTextState);
     const setStatus = useSetRecoilState<ProcessTaskStatus|undefined>(dataProcessStatusState);
     const statusTh = useRef<HTMLTableCellElement>(null);
-    const assetsRefetchTrigger = useRecoilValue(assetsRefetchTriggerState);
+    const [assetsRefetchTrigger, setAssetsRefetchTrigger] = useRecoilState(assetsRefetchTriggerState);
 
     const setIsNewAssetModal = useSetRecoilState<boolean>(IsNewAssetModalState);
     const toggleStatusPop = () => {
@@ -63,14 +63,23 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isFetching, setIsFetching] = useState(false);
 
-    const {  data, loading } = useQuery(DatasetAssetListDocument, {
+    const {  data, loading, startPolling, stopPolling } = useQuery(DatasetAssetListDocument, {
         variables: searchProps,
         fetchPolicy: 'network-only',
     });
 
     useEffect(() => {
-        dataReset();
-    }, [assetsRefetchTrigger]);
+        if (!loading && data) {
+            const hasRunningItems = data.assets.items.some(item => item?.status === ProcessTaskStatus.Running);
+            if (hasRunningItems || assetsRefetchTrigger > 0) {
+                dataReset();
+                startPolling(5000);
+            } else {
+                stopPolling();
+                setAssetsRefetchTrigger(0);
+            }
+        }
+    }, [data, loading, startPolling, stopPolling, assetsRefetchTrigger]);
 
     const dataReset = useCallback(() => {
         setDataArr([]);

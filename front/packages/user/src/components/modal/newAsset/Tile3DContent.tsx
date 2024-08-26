@@ -18,9 +18,9 @@ import {
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import { UploadedFile } from "@/types/Common.ts";
 import { useSetRecoilState } from "recoil";
-import { assetsRefetchTriggerState } from "@/recoils/Data.ts";
 import { InputMaybe, Scalars } from "@/types/layerset/gql/graphql.ts";
 import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
+import {assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 
 const ASSET_TYPE = "3dtile";
 
@@ -70,7 +70,7 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
     const [createProcessMutation] = useMutation(DatasetCreateProcessDocument, {
         refetchQueries: [DatasetProcessLogDocument, DatasetAssetForDetailDocument],
         onCompleted(data) {
-            alert('성공적으로 변환요청되었습니다.');
+            console.log('성공적으로 변환요청되었습니다.');
             console.log(data);
         }
     });
