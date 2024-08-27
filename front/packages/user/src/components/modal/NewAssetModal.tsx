@@ -9,6 +9,7 @@ import TerrainContent from "@/components/modal/newAsset/TerrainContent.tsx";
 import VectorContent from "@/components/modal/newAsset/VectorContent.tsx";
 import RasterContent from "@/components/modal/newAsset/RasterContent.tsx";
 import WeatherContent from "@/components/modal/newAsset/WeatherContent.tsx";
+import ConversionGuard from "@/components/modal/newAsset/ConversionGuard.tsx";
 
 const NewAssetModal: React.FC = () => {
     const [isNewAssetModal, setIsNewAssetModal] = useRecoilState(IsNewAssetModalState);
@@ -42,6 +43,8 @@ const NewAssetModal: React.FC = () => {
                 <VectorContent display={assetType === "vector"} />
                 <RasterContent display={assetType === "raster"} />
                 <WeatherContent display={assetType === "weather"} />
+
+                <ConversionGuard assetType={assetType} />
             </div>
         </div>
     );

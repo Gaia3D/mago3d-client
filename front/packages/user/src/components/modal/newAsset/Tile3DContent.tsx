@@ -18,8 +18,9 @@ import {
 import { UploadedFile } from "@/types/Common.ts";
 import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
 import { formatTypeT3D } from "@/recoils/Data.ts";
-import { assetsRefetchTriggerState } from "@/recoils/Assets.ts";
+import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 import { useSetRecoilState } from "recoil";
+import ConversionGuard from "@/components/modal/newAsset/ConversionGuard.tsx";
 
 const ASSET_TYPE = "3dtile";
 
@@ -52,6 +53,7 @@ const initialOptions = {
 const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
     const [componentKey, setComponentKey] = useState(0);
     const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
+    const setAssetsConvertingListState = useSetRecoilState(assetsConvertingListState);
     const [options, setOptions] = useState(initialOptions);
 
     const handleOptionChange = useCallback((key: string, value: string | boolean | number) => {
@@ -111,6 +113,13 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
 
 
     const fileUpload = async () => {
+        setAssetsConvertingListState((prev) => {
+            if (!prev.includes(ASSET_TYPE)) {
+                return [...prev, ASSET_TYPE];
+            }
+            return prev;
+        });
+
         const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
         if (!uploadedFilesResult || uploadedFilesResult.length === 0) {
             alert('파일 업로드에 실패했습니다. 관리자에게 문의 바랍니다.');
@@ -158,6 +167,12 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
     const resetOptions = useCallback(() => {
         setOptions(initialOptions); // options 상태를 초기화
         setComponentKey(prevKey => prevKey + 1); // 컴포넌트 재렌더링
+        setAssetsConvertingListState((prev) => {
+            if (prev.includes(ASSET_TYPE)) {
+                return prev.filter(type => type !== ASSET_TYPE);
+            }
+            return prev;
+        });
     }, []);
 
 
