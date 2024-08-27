@@ -6,7 +6,7 @@ import {LayerAssetType, UserLayerAsset} from "@mnd/shared/src/types/layerset/gql
 import TIFFImageryProvider, {TIFFImageryProviderOptions} from 'tiff-imagery-provider';
 import * as Cesium from "cesium";
 import keycloak from "@/api/keycloak";
-import {loadGeojson} from "@/components/utils/loadGeojson.ts";
+import {loadGeojson, loadGridGeojson} from "@/components/utils/loadGeojson.ts";
 
 class CustomTIFFImageryProvider extends TIFFImageryProvider {
     tileDiscardPolicy: Cesium.TileDiscardPolicy = new Cesium.NeverTileDiscardPolicy();
@@ -43,10 +43,14 @@ const MapFunction = () => {
     }, [visibleToggledLayerId]);
 
     useEffect(() => {
-        if (!initialized) return;
-        const viewer = globeController?.viewer;
-        const tempUrl = "/geomatic-user/geojson/extrusion.geojson";
-        loadGeojson(viewer, tempUrl);
+      if (!initialized) return;
+      const viewer = globeController?.viewer;
+      const tempUrl = "/geomatic-user/geojson/extrusion.geojson";
+      loadGeojson(viewer, tempUrl);
+
+      const gridUrl = "/geomatic-user/geojson/grid_4326.geojson";
+      loadGridGeojson(viewer, gridUrl).then(r => {console.log(r);});
+
     }, [initialized]);
 
     useEffect(() => {
