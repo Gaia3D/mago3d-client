@@ -11,7 +11,6 @@ import {
 import {Asset} from "@/types/assets/Data.ts";
 import {useDebounce} from "@/hooks/useDebounce.ts";
 import {useInfiniteScroll} from "@/hooks/useInfiniteScroll.ts";
-import {mainMenuState} from "@/recoils/MainMenuState.tsx";
 import {AsideDisplayProps} from "@/components/AsidePanel.tsx";
 import AssetRow from "@/components/AssetRow.tsx";
 import {
@@ -23,8 +22,6 @@ import SearchInput from "@/components/SearchInput.tsx";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
 import {IsNewAssetModalState} from "@/recoils/Modal.ts";
 import {assetsRefetchTriggerState} from "@/recoils/Assets.ts";
-
-
 
 export const statusMap: Partial<Record<ProcessTaskStatus, string>> = {
     "Done": "success",
@@ -50,7 +47,7 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     const setSearch = useSetRecoilState<string|undefined>(dataSearchTextState);
     const setStatus = useSetRecoilState<ProcessTaskStatus|undefined>(dataProcessStatusState);
     const statusTh = useRef<HTMLTableCellElement>(null);
-    const [assetsRefetchTrigger, setAssetsRefetchTrigger] = useRecoilState(assetsRefetchTriggerState);
+    const assetsRefetchTrigger = useRecoilValue(assetsRefetchTriggerState);
 
     const setIsNewAssetModal = useSetRecoilState<boolean>(IsNewAssetModalState);
     const toggleStatusPop = () => {
@@ -61,54 +58,39 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
 
     const [dataArr, setDataArr] = useState<Asset[]>([]);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [isFetching, setIsFetching] = useState(false);
 
-    const {  data, loading, startPolling, stopPolling } = useQuery(DatasetAssetListDocument, {
+    const { data, loading } = useQuery(DatasetAssetListDocument, {
         variables: searchProps,
         fetchPolicy: 'network-only',
     });
 
-    useEffect(() => {
-        if (!loading && data) {
-            const hasRunningItems = data.assets.items.some(item => item?.status === ProcessTaskStatus.Running);
-            if (hasRunningItems || assetsRefetchTrigger > 0) {
-                dataReset();
-                startPolling(5000);
-            } else {
-                stopPolling();
-                setAssetsRefetchTrigger(0);
-            }
-        }
-    }, [data, loading, startPolling, stopPolling, assetsRefetchTrigger]);
-
     const dataReset = useCallback(() => {
         setDataArr([]);
         setPage(0);
-        setIsFetching(true);
     }, []);
+
+    useEffect(() => {
+        dataReset();
+    }, [assetsRefetchTrigger]);
 
     const getMore = useCallback(() => {
         if (loading || !data) return;
         const { pageInfo } = data.assets;
         const nowPage = pageInfo.page + 1;
-        if (nowPage >= pageInfo.totalPages) return;
+        if (nowPage > pageInfo.totalPages) return;
         setPage(nowPage);
-        setIsFetching(true);
+
+        const { items } = data.assets;
+        setDataArr(prevDataArr => [...prevDataArr, ...items]);
     }, [data, setPage, loading]);
+
 
     const loadMoreRef = useInfiniteScroll({
         root: containerRef.current,
         fetchMore: getMore,
-        isLoading: isFetching || loading,
+        isLoading: loading,
+        rootMargin: '20px'
     });
-
-    useEffect(() => {
-        if (data) {
-            const { items } = data.assets;
-            setDataArr(prevDataArr => [...prevDataArr, ...items]);
-            setIsFetching(false);
-        }
-    }, [data]);
 
     const debouncedSearch = useDebounce(searchTerm, 300);
     useEffect(() => {
@@ -167,7 +149,7 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
                             ))}
                             <tr ref={loadMoreRef}>
                                 <td colSpan={4}>
-                                    {(isFetching || loading) ?
+                                    {(loading) ?
                                         <span className="spin-loader"></span>
                                         :
                                         (dataArr.length === 0 ? "No data" : "data end")}

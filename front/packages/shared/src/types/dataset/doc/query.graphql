@@ -5,6 +5,13 @@ fragment DatasetAssetFile on AssetFile {
     contentType
 }
 
+query AssetStatus($id: ID!) {
+    asset(id: $id) {
+        id
+        status
+    }
+}
+
 query DatasetAssetList($filter:AssetFilterInput, $pageable: AssetPageableInput) @api(name: dataset) {
     assets(
         filter: $filter

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useState } from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
 import FormatList from "@/components/modal/FormatList.tsx";
 import RadioGroup from "@/components/modal/RadioGroup.tsx";
 import {
@@ -9,18 +9,17 @@ import {
 } from "@/components/utils/optionsData.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
 import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
-import { useMutation } from "@apollo/client";
+import {useMutation, useQuery} from "@apollo/client";
 import {
-    AssetType,
-    CreateAssetInput, DatasetAssetForDetailDocument,
-    DatasetCreateAssetDocument, DatasetCreateProcessDocument, DatasetProcessLogDocument, ProcessContextInput,
-    ProcessSourceInput, T3DConvertInput, T3DFormatType
+    AssetStatusDocument,
+    AssetType, CreateAssetInput, DatasetCreateAssetDocument,
+    DatasetCreateProcessDocument, ProcessContextInput, ProcessTaskStatus, T3DConvertInput
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import { UploadedFile } from "@/types/Common.ts";
-import { useSetRecoilState } from "recoil";
-import { InputMaybe, Scalars } from "@/types/layerset/gql/graphql.ts";
 import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
+import {formatTypeT3D} from "@/recoils/Data.ts";
 import {assetsRefetchTriggerState} from "@/recoils/Assets.ts";
+import {useSetRecoilState} from "recoil";
 
 const ASSET_TYPE = "3dtile";
 
@@ -67,11 +66,38 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
         setShowDetail(detailTitleRef.current.classList.contains("on"));
     };
 
+    const [statusQuerySkip, setStatusQuerySkip] = useState(true);
+    const [statusId, setStatusId] = useState('');
+
+    const { data: statusData } = useQuery(AssetStatusDocument, {
+        variables: { id: statusId },
+        pollInterval: 5000,
+        fetchPolicy: 'cache-and-network',
+    });
+
+    useEffect(() => {
+        if(!statusQuerySkip) {
+            setAssetsRefetchTrigger(prev => prev + 1);
+        }
+    }, [statusData]);
+
+    const [createAssetMutation] = useMutation(DatasetCreateAssetDocument, {
+        onCompleted: async (data) => {
+            console.log('complete data:', data.createAsset.id);
+            setStatusId(data.createAsset.id);
+            try {
+                await fileConvert(data.createAsset.id);
+                setStatusQuerySkip(false);
+            } catch (error) {
+                console.error(error);
+                alert('파일 변환 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+            }
+        }
+    });
+
     const [createProcessMutation] = useMutation(DatasetCreateProcessDocument, {
-        refetchQueries: [DatasetProcessLogDocument, DatasetAssetForDetailDocument],
         onCompleted(data) {
-            console.log('성공적으로 변환요청되었습니다.');
-            console.log(data);
+            console.log('process data: ', data);
         }
     });
 
@@ -101,32 +127,6 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
         uploadId
     });
 
-    const [createAssetMutation] = useMutation(DatasetCreateAssetDocument, {
-        update: (cache, { data }) => {
-            cache.evict({ fieldName: 'assets' });
-        },
-        onCompleted(data) {
-            console.log('complete data:', data.createAsset.id);
-            setAssetsRefetchTrigger(prev => prev + 1);
-            fileConvert(data.createAsset.id);
-        }
-    });
-
-    const formatType = (type: string): T3DFormatType => {
-        const formatMap: Record<string, T3DFormatType> = {
-            kml: T3DFormatType.Kml,
-            obj: T3DFormatType.Obj,
-            fbx: T3DFormatType.Fbx,
-            gltf: T3DFormatType.Gltf,
-            glb: T3DFormatType.Glb,
-            las: T3DFormatType.Las,
-            laz: T3DFormatType.Laz,
-            ifc: T3DFormatType.Ifc,
-            geojson: T3DFormatType.Geojson,
-        };
-        return formatMap[type] || T3DFormatType.Kml;
-    };
-
     const fileConvert = async (id: string) => {
         setOptions(prev => ({
             ...prev,
@@ -138,7 +138,7 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
             autoUpAxis: options.autoUpAxis,
             crs: options.crs,
             flipCoordinate: options.flipCoordinate,
-            inputType: formatType(options.inputFormat),
+            inputType: formatTypeT3D(options.inputFormat),
             maxCount: options.maxCount,
             maxLod: options.maxLod,
             maxPoints: options.maxPoints,
