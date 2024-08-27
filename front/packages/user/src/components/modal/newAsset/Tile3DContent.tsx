@@ -27,29 +27,32 @@ interface Tile3DContentProps {
     display: boolean;
 }
 
+const initialOptions = {
+    projectName: '',
+    debugMode: false,
+    inputFormat: 'auto',
+    outputFormat: 'auto',
+    projectionType: 'epsg',
+    crs: '',
+    proj: '',
+    projectionValue: '',
+    yUpAxis: false,
+    autoUpAxis: false,
+    refineAdd: false,
+    flipCoordinate: false,
+    pngTexture: false,
+    reverseTexCoord: false,
+    inputType: '',
+    maxCount: 1024,
+    maxLod: 3,
+    minLod: 0,
+    maxPoints: 20000
+};
+
 const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
+    const [componentKey, setComponentKey] = useState(0);
     const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
-    const [options, setOptions] = useState({
-        projectName: '',
-        debugMode: false,
-        inputFormat: 'auto',
-        outputFormat: 'auto',
-        projectionType: 'epsg',
-        crs: '',
-        proj: '',
-        projectionValue: '',
-        yUpAxis: false,
-        autoUpAxis: false,
-        refineAdd: false,
-        flipCoordinate: false,
-        pngTexture: false,
-        reverseTexCoord: false,
-        inputType: '',
-        maxCount: 1024,
-        maxLod: 3,
-        minLod: 0,
-        maxPoints: 20000
-    });
+    const [options, setOptions] = useState(initialOptions);
 
     const handleOptionChange = useCallback((key: string, value: string | boolean | number) => {
         setOptions(prevOptions => ({ ...prevOptions, [key]: value }));
@@ -76,8 +79,6 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
         skip: statusQuerySkip,
     });
 
-    console.log(statusData);
-
     useEffect(() => {
         if (!statusQuerySkip) {
             setAssetsRefetchTrigger(prev => prev + 1);
@@ -88,34 +89,36 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
         onCompleted: async (data) => {
             const newStatusId = data.createAsset.id;
             setStatusId(newStatusId);
-            try {
-                await fileConvert(newStatusId);
-                setStatusQuerySkip(false);
-            } catch (error) {
-                console.error(error);
-                alert('파일 변환 중 오류가 발생했습니다. 관리자에게 문의하세요.');
-            }
-        }
+            await fileConvert(newStatusId);  // 성공 시 fileConvert를 호출합니다.
+            setStatusQuerySkip(false);
+        },
+        onError: (error) => {
+            console.error('Mutation error:', error);
+            alert('데이터 추가 중 오류가 발생했습니다.');
+        },
     });
 
-    const [createProcessMutation] = useMutation(DatasetCreateProcessDocument);
+    const [createProcessMutation] = useMutation(DatasetCreateProcessDocument, {
+        onCompleted: () => {
+            resetOptions();
+        },
+        onError: (error) => {
+            console.error('Process creation error:', error);
+            alert('파일 변환 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+            resetOptions();
+        },
+    });
+
 
     const fileUpload = async () => {
-        try {
-            const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
-            if (!uploadedFilesResult || uploadedFilesResult.length === 0) {
-                alert('파일 업로드에 실패했습니다. 관리자에게 문의 바랍니다.');
-                return;
-            }
-
-            const uploadId = uploadedFilesResult.map(uploadedFile => uploadedFile.dbId);
-            await createAssetMutation({
-                variables: { input: createAssetInput(uploadId) }
-            });
-        } catch (error) {
-            console.error('ApolloError:', error);
-            alert('데이터 처리 중 오류가 발생했습니다.');
+        const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
+        if (!uploadedFilesResult || uploadedFilesResult.length === 0) {
+            alert('파일 업로드에 실패했습니다. 관리자에게 문의 바랍니다.');
+            return;
         }
+
+        const uploadId = uploadedFilesResult.map(uploadedFile => uploadedFile.dbId);
+        await createAssetMutation({variables: { input: createAssetInput(uploadId) }});
     };
 
     const createAssetInput = useCallback((uploadId: string[]): CreateAssetInput => ({
@@ -152,8 +155,14 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
         await createProcessMutation({ variables: { input } });
     }, [options, createProcessMutation]);
 
+    const resetOptions = useCallback(() => {
+        setOptions(initialOptions); // options 상태를 초기화
+        setComponentKey(prevKey => prevKey + 1); // 컴포넌트 재렌더링
+    }, []);
+
+
     return (
-        <div className={`modal-popup-body ${display ? "on" : "off"}`}>
+        <div key={componentKey} className={`modal-popup-body ${display ? "on" : "off"}`}>
             <InputWithLabel
                 type="text"
                 id="projectName"
