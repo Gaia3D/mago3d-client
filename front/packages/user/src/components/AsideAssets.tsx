@@ -1,17 +1,16 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
-
-import {useQuery} from "@apollo/client";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useQuery } from "@apollo/client";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
     dataCurrentPageState,
     dataProcessStatusState,
     dataSearchSelector,
     dataSearchTextState
 } from "@/recoils/Data.ts";
-import {Asset} from "@/types/assets/Data.ts";
-import {useDebounce} from "@/hooks/useDebounce.ts";
-import {useInfiniteScroll} from "@/hooks/useInfiniteScroll.ts";
-import {AsideDisplayProps} from "@/components/AsidePanel.tsx";
+import { Asset } from "@/types/assets/Data.ts";
+import { useDebounce } from "@/hooks/useDebounce.ts";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll.ts";
+import { AsideDisplayProps } from "@/components/AsidePanel.tsx";
 import AssetRow from "@/components/AssetRow.tsx";
 import {
     DatasetAssetListDocument,
@@ -20,8 +19,8 @@ import {
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import SearchInput from "@/components/SearchInput.tsx";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
-import {IsNewAssetModalState} from "@/recoils/Modal.ts";
-import {assetsRefetchTriggerState} from "@/recoils/Assets.ts";
+import { IsNewAssetModalState } from "@/recoils/Modal.ts";
+import { assetsRefetchTriggerState } from "@/recoils/Assets.ts";
 
 export const statusMap: Partial<Record<ProcessTaskStatus, string>> = {
     "Done": "success",
@@ -35,26 +34,18 @@ const reverseStatusMap = Object.entries(statusMap).reduce<Record<string, Process
     return acc;
 }, {});
 
-const reverseFormatStatus = (status: string): ProcessTaskStatus | undefined => {
-    return reverseStatusMap[status];
-};
+const reverseFormatStatus = (status: string): ProcessTaskStatus | undefined => reverseStatusMap[status];
 
-const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
+const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
     const searchProps = useRecoilValue<DatasetAssetListQueryVariables>(dataSearchSelector);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
-    const setPage = useSetRecoilState<number>(dataCurrentPageState);
-    const setSearch = useSetRecoilState<string|undefined>(dataSearchTextState);
-    const setStatus = useSetRecoilState<ProcessTaskStatus|undefined>(dataProcessStatusState);
+    const setPage = useSetRecoilState(dataCurrentPageState);
+    const setSearch = useSetRecoilState(dataSearchTextState);
+    const setStatus = useSetRecoilState(dataProcessStatusState);
     const statusTh = useRef<HTMLTableCellElement>(null);
     const assetsRefetchTrigger = useRecoilValue(assetsRefetchTriggerState);
-
-    const setIsNewAssetModal = useSetRecoilState<boolean>(IsNewAssetModalState);
-    const toggleStatusPop = () => {
-        if (statusTh.current) {
-            statusTh.current.classList.toggle('on');
-        }
-    };
+    const setIsNewAssetModal = useSetRecoilState(IsNewAssetModalState);
 
     const [dataArr, setDataArr] = useState<Asset[]>([]);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -64,26 +55,29 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
         fetchPolicy: 'network-only',
     });
 
+    const toggleStatusPop = useCallback(() => {
+        if (statusTh.current) {
+            statusTh.current.classList.toggle('on');
+        }
+    }, []);
+
     const dataReset = useCallback(() => {
         setDataArr([]);
         setPage(0);
-    }, []);
+    }, [setPage]);
 
     useEffect(() => {
         dataReset();
-    }, [assetsRefetchTrigger]);
+    }, [assetsRefetchTrigger, dataReset]);
 
     const getMore = useCallback(() => {
         if (loading || !data) return;
         const { pageInfo } = data.assets;
-        const nowPage = pageInfo.page + 1;
-        if (nowPage > pageInfo.totalPages) return;
-        setPage(nowPage);
+        if (pageInfo.page + 1 > pageInfo.totalPages) return;
 
-        const { items } = data.assets;
-        setDataArr(prevDataArr => [...prevDataArr, ...items]);
-    }, [data, setPage, loading]);
-
+        setPage(prevPage => prevPage + 1);
+        setDataArr(prevDataArr => [...prevDataArr, ...data.assets.items]);
+    }, [data, loading, setPage]);
 
     const loadMoreRef = useInfiniteScroll({
         root: containerRef.current,
@@ -93,22 +87,19 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
     });
 
     const debouncedSearch = useDebounce(searchTerm, 300);
+
     useEffect(() => {
-        if (loading || !data) return;
         setSearch(searchTerm.toLowerCase());
         dataReset();
-    }, [debouncedSearch]);
+    }, [debouncedSearch, setSearch, dataReset]);
 
     useEffect(() => {
-        if (loading || !data) return;
         setStatus(reverseFormatStatus(filterStatus));
         dataReset();
-    }, [filterStatus]);
-
-
+    }, [filterStatus, setStatus, dataReset]);
 
     return (
-        <div className={`side-bar-wrapper ${display?"on":"off"}`}>
+        <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
             <div className="side-bar">
                 <div className="side-bar-header">
                     <SideCloseButton />
@@ -144,15 +135,16 @@ const AsideAssets: React.FC<AsideDisplayProps>  = ({display}) => {
                     <div className="y-scroll" ref={containerRef}>
                         <table className="assets-list">
                             <tbody>
-                            {dataArr.map((asset) => (
-                                asset && <AssetRow key={asset.id} item={asset}/>
+                            {dataArr.map(asset => (
+                                asset && <AssetRow key={asset.id} item={asset} />
                             ))}
                             <tr ref={loadMoreRef}>
                                 <td colSpan={4}>
-                                    {(loading) ?
+                                    {loading ? (
                                         <span className="spin-loader"></span>
-                                        :
-                                        (dataArr.length === 0 ? "No data" : "data end")}
+                                    ) : (
+                                        dataArr.length === 0 ? "No data" : "data end"
+                                    )}
                                 </td>
                             </tr>
                             </tbody>

@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import FormatList from "@/components/modal/FormatList.tsx";
 import RadioGroup from "@/components/modal/RadioGroup.tsx";
 import {
@@ -9,17 +9,17 @@ import {
 } from "@/components/utils/optionsData.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
 import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
-import {useMutation, useQuery} from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
     AssetStatusDocument,
     AssetType, CreateAssetInput, DatasetCreateAssetDocument,
-    DatasetCreateProcessDocument, ProcessContextInput, ProcessTaskStatus, T3DConvertInput
+    DatasetCreateProcessDocument, ProcessContextInput, T3DConvertInput
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import { UploadedFile } from "@/types/Common.ts";
 import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
-import {formatTypeT3D} from "@/recoils/Data.ts";
-import {assetsRefetchTriggerState} from "@/recoils/Assets.ts";
-import {useSetRecoilState} from "recoil";
+import { formatTypeT3D } from "@/recoils/Data.ts";
+import { assetsRefetchTriggerState } from "@/recoils/Assets.ts";
+import { useSetRecoilState } from "recoil";
 
 const ASSET_TYPE = "3dtile";
 
@@ -27,8 +27,8 @@ interface Tile3DContentProps {
     display: boolean;
 }
 
-const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
-    const setAssetsRefetchTrigger = useSetRecoilState<number>(assetsRefetchTriggerState);
+const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
+    const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
     const [options, setOptions] = useState({
         projectName: '',
         debugMode: false,
@@ -51,20 +51,20 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
         maxPoints: 20000
     });
 
-    const handleOptionChange = (key: string, value: string | boolean | number) => {
+    const handleOptionChange = useCallback((key: string, value: string | boolean | number) => {
         setOptions(prevOptions => ({ ...prevOptions, [key]: value }));
-    };
+    }, []);
 
     const [showDetail, setShowDetail] = useState(false);
     const detailTitleRef = useRef<HTMLDivElement>(null);
     const fileUploadRef = useRef<{ readyUpload: () => Promise<UploadedFile[] | undefined> }>(null);
-    const acceptFile = classifyAssetTypeAcceptFile(ASSET_TYPE);
+    const acceptFile = useMemo(() => classifyAssetTypeAcceptFile(ASSET_TYPE), []);
 
-    const detailToggle = () => {
+    const detailToggle = useCallback(() => {
         if (!detailTitleRef.current) return;
         detailTitleRef.current.classList.toggle("on");
         setShowDetail(detailTitleRef.current.classList.contains("on"));
-    };
+    }, []);
 
     const [statusQuerySkip, setStatusQuerySkip] = useState(true);
     const [statusId, setStatusId] = useState('');
@@ -73,20 +73,23 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
         variables: { id: statusId },
         pollInterval: 5000,
         fetchPolicy: 'cache-and-network',
+        skip: statusQuerySkip,
     });
 
+    console.log(statusData);
+
     useEffect(() => {
-        if(!statusQuerySkip) {
+        if (!statusQuerySkip) {
             setAssetsRefetchTrigger(prev => prev + 1);
         }
-    }, [statusData]);
+    }, [statusData, statusQuerySkip, setAssetsRefetchTrigger]);
 
     const [createAssetMutation] = useMutation(DatasetCreateAssetDocument, {
         onCompleted: async (data) => {
-            console.log('complete data:', data.createAsset.id);
-            setStatusId(data.createAsset.id);
+            const newStatusId = data.createAsset.id;
+            setStatusId(newStatusId);
             try {
-                await fileConvert(data.createAsset.id);
+                await fileConvert(newStatusId);
                 setStatusQuerySkip(false);
             } catch (error) {
                 console.error(error);
@@ -95,11 +98,7 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
         }
     });
 
-    const [createProcessMutation] = useMutation(DatasetCreateProcessDocument, {
-        onCompleted(data) {
-            console.log('process data: ', data);
-        }
-    });
+    const [createProcessMutation] = useMutation(DatasetCreateProcessDocument);
 
     const fileUpload = async () => {
         try {
@@ -119,24 +118,18 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
         }
     };
 
-    const createAssetInput = (uploadId: string[]): CreateAssetInput => ({
+    const createAssetInput = useCallback((uploadId: string[]): CreateAssetInput => ({
         name: options.projectName,
         groupId: ["91"],
         description: '사용자 추가 데이터입니다.',
         assetType: AssetType.Tiles3D,
         uploadId
-    });
+    }), [options.projectName]);
 
-    const fileConvert = async (id: string) => {
-        setOptions(prev => ({
-            ...prev,
-            crs: options.projectionType === 'epsg' ? options.projectionValue : '',
-            proj: options.projectionType !== 'epsg' ? options.projectionValue : ''
-        }));
-
+    const fileConvert = useCallback(async (id: string) => {
         const t3dValue: T3DConvertInput = {
             autoUpAxis: options.autoUpAxis,
-            crs: options.crs,
+            crs: options.projectionType === 'epsg' ? options.projectionValue : '',
             flipCoordinate: options.flipCoordinate,
             inputType: formatTypeT3D(options.inputFormat),
             maxCount: options.maxCount,
@@ -144,7 +137,7 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
             maxPoints: options.maxPoints,
             minLod: options.minLod,
             pngTexture: options.pngTexture,
-            proj: options.proj,
+            proj: options.projectionType !== 'epsg' ? options.projectionValue : '',
             refineAdd: options.refineAdd,
             reverseTexCoord: options.reverseTexCoord,
             yUpAxis: options.yUpAxis,
@@ -157,7 +150,7 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
         };
 
         await createProcessMutation({ variables: { input } });
-    };
+    }, [options, createProcessMutation]);
 
     return (
         <div className={`modal-popup-body ${display ? "on" : "off"}`}>
@@ -204,27 +197,27 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
                     showDetail ? (
                         <>
                             <ToggleSetting text="y축을 높이 축으로 설정" id="yUpAxis" checked={options.yUpAxis}
-                                           onChange={handleOptionChange}/>
+                                           onChange={handleOptionChange} />
                             <ToggleSetting text="자동 높이 축 할당" id="autoUpAxis" checked={options.autoUpAxis}
-                                           onChange={handleOptionChange}/>
+                                           onChange={handleOptionChange} />
                             <ToggleSetting text="x,y 좌표 뒤집기" id="flipCoordinate" checked={options.flipCoordinate}
-                                           onChange={handleOptionChange}/>
+                                           onChange={handleOptionChange} />
                             <ToggleSetting text="구체화(Refine) 추가 모드" id="refineAdd" checked={options.refineAdd}
-                                           onChange={handleOptionChange}/>
+                                           onChange={handleOptionChange} />
                             <ToggleSetting text="png 텍스쳐 모드" id="pngTexture" checked={options.pngTexture}
-                                           onChange={handleOptionChange}/>
+                                           onChange={handleOptionChange} />
                             <ToggleSetting text="텍스쳐를 반대로" id="reverseTexCoord" checked={options.reverseTexCoord}
-                                           onChange={handleOptionChange}/>
+                                           onChange={handleOptionChange} />
                             <ToggleSetting text="Debug Mode" id="debugMode" checked={options.debugMode}
-                                           onChange={handleOptionChange}/>
+                                           onChange={handleOptionChange} />
                             <InputWithLabel label="노드 최대값" type="number" id="maxCount" value={options.maxCount}
-                                            onChange={handleOptionChange} isDetail={true}/>
+                                            onChange={handleOptionChange} isDetail={true} />
                             <InputWithLabel label="최대 LOD" type="number" id="maxLod" value={options.maxLod}
-                                            onChange={handleOptionChange} isDetail={true}/>
+                                            onChange={handleOptionChange} isDetail={true} />
                             <InputWithLabel label="최소 LOD" type="number" id="minLod" value={options.minLod}
-                                            onChange={handleOptionChange} isDetail={true}/>
+                                            onChange={handleOptionChange} isDetail={true} />
                             <InputWithLabel label="포인트 클라우드 데이터의 최대 포인트 수" type="number" id="maxPoints"
-                                            value={options.maxPoints} onChange={handleOptionChange} isDetail={true}/>
+                                            value={options.maxPoints} onChange={handleOptionChange} isDetail={true} />
                         </>
                     ) : (
                         <div className="detail-dot-value" onClick={detailToggle}>...</div>
@@ -233,7 +226,7 @@ const Tile3DContent:React.FC<Tile3DContentProps> = ({display}) => {
             </div>
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload ref={fileUploadRef} acceptFile={acceptFile}/>
+                <FileUpload ref={fileUploadRef} acceptFile={acceptFile} />
             </div>
             <div className="modal-bottom">
                 <button onClick={fileUpload} type="button" className="button-full">Convert</button>
