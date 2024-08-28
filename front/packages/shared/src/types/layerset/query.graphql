@@ -1,3 +1,12 @@
+query LayersetGroupList @api(name: layerset) {
+    groups {
+        id
+        name
+        enabled
+        access
+    }
+}
+
 fragment LayersetGroupBasic on LayerGroup {
     id
     name
@@ -22,44 +31,6 @@ fragment LayersetAssetBasic on LayerAsset {
     createdAt
     updatedAt
 }
-query Groups($filter: GroupFilterInput) {
-  groups(filter: $filter) {
-    ...LayerGroupFields
-  }
-}
-
-# 3단계 자식까지 읽어온다.
-query GroupTree($filter: GroupFilterInput) {
-  groups(filter: $filter) {
-    ...LayerGroupFields
-    assets {
-      ...LayerAssetFields
-    }
-    children {
-      ...LayerGroupFields
-      assets {
-        ...LayerAssetFields
-      }
-      children {
-        ...LayerGroupFields
-        assets {
-          ...LayerAssetFields
-        }
-      }
-    }
-  }
-}
-
-query LayersetGroupList @api(name: layerset) {
-    groups {
-        id
-        name
-        enabled
-        access
-    }
-}
-
-
 
 query LayersetGroupListWithAsset @api(name: layerset) {
     groups {
@@ -96,6 +67,30 @@ query LayersetAsset($id: ID!) @api(name: layerset) {
             context
         }
     }
+}
+
+fragment layerGroupBasic on LayerGroup {
+    id
+    name
+    description
+    enabled
+    published
+    collapsed
+    access
+    order
+}
+
+fragment layerAssetBasic on LayerAsset {
+    id
+    name
+    description
+    type
+    enabled
+    visible
+    order
+    access
+    createdAt
+    updatedAt
 }
 
 query layerGroups($filter: GroupFilterInput){

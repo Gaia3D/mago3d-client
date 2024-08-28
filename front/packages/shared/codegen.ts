@@ -20,7 +20,7 @@ const config: CodegenConfig = {
     },
     "src/types/layerset/gql/": {
       schema: "https://mdtp.gaia3d.com/app/api/layerset/graphql",
-      documents: "src/types/layerset/*.graphql",
+      documents: "src/types/layerset/*.{ts,tsx,graphql}",
       plugins: [],
       preset: "client",
     },

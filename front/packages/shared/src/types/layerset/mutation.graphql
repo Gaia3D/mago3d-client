@@ -1,68 +1,152 @@
-mutation LayersetCreateGroup($input: CreateGroupInput!) @api(name: layerset) {
-  createGroup(input: $input) {
-    id
-  }
+mutation createLayerGroup($input:CreateGroupInput!) @api(name: layerset) {
+    createGroup (
+        input: $input
+    )
+    {
+        id
+        name
+        description
+        enabled
+        published
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+    }
 }
-mutation LayersetUpdateGroup($id: ID!, $input: UpdateGroupInput!) @api(name: layerset) {
-  updateGroup(id: $id, input: $input) {
-    id
-    name
-    description
-    enabled
-    access
-    published
-    createdAt
-    createdBy
-    updatedAt
-    updatedBy
-  }
+
+mutation updateLayerGroup($id:ID!, $input: UpdateGroupInput!) @api(name: layerset) {
+    updateGroup (
+        id: $id
+        input: $input
+    )
+    {
+        id
+        name
+        description
+        enabled
+        published
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+    }
 }
-mutation LayersetDeleteGroup($id: ID!) @api(name: layerset) {
-  deleteGroup(ids: [$id])
+
+mutation deleteLayerGroup($id:ID!) @api(name: layerset) {
+    deleteGroup (
+        ids: [$id]
+    )
 }
-mutation LayersetLocateGroup($id: ID!, $input: LocateGroupInput!) @api(name: layerset) {
-  locateGroup(id: $id, input: $input) {
-    id
-  }
+
+mutation createLayerAsset($input:CreateAssetInput!) @api(name: layerset) {
+    createAsset (
+        input: $input
+    )
+    {
+        id
+        name
+    }
 }
-mutation LayersetCreateAsset($input: CreateAssetInput!) @api(name: layerset) {
-  createAsset(input: $input) {
-    id
-    name
-    description
-    enabled
-    access
-    status
-    createdAt
-    createdBy
-    updatedAt
-    updatedBy
-  }
+
+mutation updateLayerAsset($id:ID!, $input: UpdateAssetInput!) @api(name: layerset) {
+    updateAsset (
+        id: $id
+        input: $input
+    )
+    {
+        id
+        name
+        description
+        order
+        type
+        enabled
+        visible
+        access
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+    }
 }
-mutation LayersetUpdateAsset($id: ID!, $input: UpdateAssetInput!) @api(name: layerset) {
-  updateAsset(id: $id, input: $input) {
-    id
-    name
-    description
-    order
-    type
-    enabled
-    visible
-    access
-    createdAt
-    createdBy
-    updatedAt
-    updatedBy
-  }
+
+mutation locateLayerGroup($id:ID!, $input: LocateGroupInput!) @api(name: layerset) {
+    locateGroup (
+        id: $id
+        input: $input
+    )
+    {
+        id
+    }
 }
-mutation LayersetDeleteAsset($ids: ID!) @api(name: layerset) {
-  deleteAsset(ids: [$ids])
+mutation locateLayerAsset($input: LocateAssetInput!) @api(name: layerset) {
+    locateAsset (
+        input: $input
+    )
+    {
+        id
+    }
 }
-mutation LayersetLocateAsset($input: LocateAssetInput!) @api(name: layerset) {
-  locateAsset(input: $input) {
-    id
-  }
+
+mutation deleteLayerAsset($ids:ID!) @api(name: layerset) {
+    deleteAsset (
+        ids: [$ids]
+    )
 }
-mutation LayersetReloadRemoteAsset($layerKey: String!) @api(name: layerset) {
-  reloadRemoteAsset(layerKey: $layerKey)
+
+mutation reloadRemoteLayerAsset($layerKey:String!) @api(name: layerset) {
+    reloadRemoteAsset (
+        layerKey: $layerKey
+    )
+}
+
+mutation createLayerStyle($input:CreateStyleInput!) @api(name: layerset) {
+    createStyle (
+        input: $input
+    )
+    {
+        id
+        name
+    }
+}
+
+mutation updateLayerStyle($id:ID!, $input: UpdateStyleInput!) @api(name: layerset) {
+    updateStyle (
+        id: $id
+        input: $input
+    )
+    {
+        id
+        name
+        format
+        description
+        enabled
+        defaultStatus
+        access
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+    }
+}
+
+mutation deleteLayerStyle($id:ID!) @api(name: layerset) {
+    deleteStyle (
+        ids: [$id]
+    )
+}
+
+mutation applyLayerStyle($id:ID!, $styleId: ID!) @api(name: layerset) {
+    applyAssetStyle (
+        id: $id
+        styleId: $styleId
+    )
+    {
+        id
+        name
+        styles {
+            id
+            name
+        }
+    }
 }
