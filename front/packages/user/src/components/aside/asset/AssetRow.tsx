@@ -1,11 +1,17 @@
-import React, {memo} from 'react';
-import {dataFormatter} from "@mnd/shared";
-import {Asset} from "@/types/assets/Data.ts";
-import {ProcessTaskStatus} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
-import {statusMap} from "@/components/aside/asset/AsideAssets.tsx";
+import React, { memo, useState, useEffect } from 'react';
+import { dataFormatter } from "@mnd/shared";
+import { Asset } from "@/types/assets/Data.ts";
+import {
+    AssetForDownloadConvertFileDocument, AssetForDownloadOriginFileDocument, DatasetDeleteAssetDocument,
+    DatasetProcessLogDocument,
+    ProcessTaskStatus
+} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+import { statusMap } from "@/components/aside/asset/AsideAssets.tsx";
+import { useLazyQuery, useMutation } from "@apollo/client";
 
 type AssetRowProps = {
     item: Asset;
+    onDelete: (id: string) => void;
 };
 
 const formatStatus = (status: ProcessTaskStatus | null | undefined): string => {
@@ -15,23 +21,89 @@ const formatStatus = (status: ProcessTaskStatus | null | undefined): string => {
     return statusMap[status] || status;
 };
 
-const showAssetLog = (id: string) => {
-    console.log("log ",id);
-}
+type ConvertedFile = {
+    __typename?: "ConvertedFile" | undefined;
+    id: string;
+    taskId: string;
+    filename: string;
+    contentType: string;
+    contentSize: number;
+    download?: string | null | undefined;
+    filepath?: string | null | undefined;
+};
 
-const downAsset = (id: string) => {
-    console.log("down ",id);
-}
+const downloadByUrlArr = (urlArr: ConvertedFile[]) => {
+    if (urlArr.length > 0) {
+        urlArr.forEach((fileData) => {
+            if (!fileData.download) return;
+            const link = document.createElement('a');
+            link.href = fileData.download;
+            link.download = fileData.filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    }
+};
 
-const deleteAsset = (id: string) => {
-    console.log("delete ",id);
-}
+const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
+    const [getLogData, { data: logData }] = useLazyQuery(DatasetProcessLogDocument);
+    const [showLog, setShowLog] = useState(false);
 
-const convertAsset = (id: string) => {
-    console.log("convert ",id)
-}
+    const [getOriginFileData, { data: originFileData }] = useLazyQuery(AssetForDownloadOriginFileDocument);
+    const [downOriginFile, setDownOriginFile] = useState(false);
 
-const AssetRow: React.FC<AssetRowProps> = memo(({ item }) => {
+    const [getConvertFileData, { data: convertFileData }] = useLazyQuery(AssetForDownloadConvertFileDocument);
+    const [downConvertFile, setDownConvertFile] = useState(false);
+
+    const [deleteMutation] = useMutation(DatasetDeleteAssetDocument);
+
+    const showAssetLog = (id: string) => {
+        getLogData({
+            variables: { assetId: id }
+        });
+        setShowLog(true);
+    };
+
+    useEffect(() => {
+        if (showLog && logData) {
+            console.log(logData);
+        }
+    }, [showLog, logData]);
+
+    const downAsset = (id: string) => {
+        getConvertFileData({
+            variables: { id: id }
+        });
+        setDownConvertFile(true);
+    };
+
+    useEffect(() => {
+        if (downConvertFile && convertFileData) {
+            const fileUrlArr = convertFileData?.asset?.convertedFiles;
+            if (fileUrlArr) {
+                const validFiles = fileUrlArr.filter((file): file is ConvertedFile => file !== null && file !== undefined);
+                downloadByUrlArr(validFiles);
+            }
+            setDownConvertFile(false);
+        }
+    }, [downConvertFile, convertFileData]);
+
+    const deleteAsset = (id: string, name: string) => {
+        console.log("delete ", id);
+        if (window.confirm(`데이터 ${name}을 삭제하시겠습니까?`)) {
+            deleteMutation({ variables: { id } })
+                .then(() => {
+                    alert('삭제되었습니다.');
+                    onDelete(id);
+                });
+        }
+    };
+
+    const convertAsset = (id: string) => {
+        console.log("convert ", id);
+    };
+
     if (!item || !item.id || !item.name) {
         console.error("Error. Check Asset ID");
         return (
@@ -65,16 +137,16 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item }) => {
             </td>
             <td>
                 {status === "success" || status === "none" ? (
-                    <button type="button" onClick={() => convertAsset(item.id)}
-                            className="function-button convert"></button>
+                    <button type="button" onClick={() => convertAsset(item.id)} className="function-button convert"></button>
                 ) : (
                     <button type="button" onClick={() => showAssetLog(item.id)} className="function-button log"></button>
                 )}
                 <button type="button" onClick={() => downAsset(item.id)} className="function-button down"></button>
-                <button type="button" onClick={() => deleteAsset(item.id)} className="function-button delete"></button>
+                <button type="button" onClick={() => deleteAsset(item.id, item.name)} className="function-button delete"></button>
             </td>
         </tr>
     );
 });
+
 AssetRow.displayName = 'AssetRow';
 export default AssetRow;

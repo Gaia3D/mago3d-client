@@ -98,6 +98,10 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
         dataReset();
     }, [filterStatus, setStatus, dataReset]);
 
+    const handleDelete = (id: string) => {
+        setDataArr((prevData) => prevData.filter(asset => asset?.id !== id));
+    };
+
     return (
         <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
             <div className="side-bar">
@@ -136,7 +140,7 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
                         <table className="assets-list">
                             <tbody>
                             {dataArr.map(asset => (
-                                asset && <AssetRow key={asset.id} item={asset} />
+                                asset && <AssetRow key={asset.id} item={asset} onDelete={handleDelete} />
                             ))}
                             <tr ref={loadMoreRef}>
                                 <td colSpan={4}>
