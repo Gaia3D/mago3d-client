@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {AsideDisplayProps} from "@/components/AsidePanel.tsx";
+import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
 import {DatasetAssetListDocument} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import {useMutation, useSuspenseQuery} from "@apollo/client";
 import {

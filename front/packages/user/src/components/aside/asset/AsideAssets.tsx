@@ -10,8 +10,8 @@ import {
 import { Asset } from "@/types/assets/Data.ts";
 import { useDebounce } from "@/hooks/useDebounce.ts";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll.ts";
-import { AsideDisplayProps } from "@/components/AsidePanel.tsx";
-import AssetRow from "@/components/AssetRow.tsx";
+import { AsideDisplayProps } from "@/components/aside/AsidePanel.tsx";
+import AssetRow from "@/components/aside/asset/AssetRow.tsx";
 import {
     DatasetAssetListDocument,
     DatasetAssetListQueryVariables,

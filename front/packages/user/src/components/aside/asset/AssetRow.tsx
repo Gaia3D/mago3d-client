@@ -2,7 +2,7 @@ import React, {memo} from 'react';
 import {dataFormatter} from "@mnd/shared";
 import {Asset} from "@/types/assets/Data.ts";
 import {ProcessTaskStatus} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
-import {statusMap} from "@/components/AsideAssets.tsx";
+import {statusMap} from "@/components/aside/asset/AsideAssets.tsx";
 
 type AssetRowProps = {
     item: Asset;

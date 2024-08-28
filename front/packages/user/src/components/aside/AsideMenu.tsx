@@ -1,4 +1,4 @@
-import {mainMenuState} from "@/recoils/MainMenuState";
+import {mainMenuState} from "@/recoils/MainMenuState.tsx";
 import React, {useMemo} from "react";
 import {useRecoilState} from "recoil";
 import {useUserInfoLoadable} from "@/components/providers/UserInfoLoadableProvider.tsx";

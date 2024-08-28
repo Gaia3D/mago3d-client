@@ -1,5 +1,5 @@
-import {AsideMenu} from "@/components/AsideMenu";
-import {AsidePanel} from "@/components/AsidePanel";
+import {AsideMenu} from "@/components/aside/AsideMenu.tsx";
+import {AsidePanel} from "@/components/aside/AsidePanel.tsx";
 import {MapTool, MapToolbox} from "@/components/MapToolbox";
 import {MapPopup, popupState} from "@/components/MapPopup";
 import "cesium/Build/Cesium/Widgets/widgets.css";
