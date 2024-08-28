@@ -18,11 +18,38 @@
   }
 }
 
+#container {
+  nav{
+
+    .menu {
+      .layer-number {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+}
+
 #map {
+
+  .layer {
+    .text {
+      display: block;
+      padding: 5px 15px;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
 
   .layer-list li {
     flex-direction: column;
     background: unset;
+
+    &.terrain-li {
+      flex-direction: row;
+    }
 
     .layer-list {
       padding: 0;

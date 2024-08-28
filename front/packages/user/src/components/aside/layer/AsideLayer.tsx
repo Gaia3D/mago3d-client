@@ -111,18 +111,18 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
               </div>
               <div className="content--wrapper">
                   <ul className="layer">
-                      <li className="selected"><a href="#">Terrain</a></li>
+                      <li className="selected"><span className="text">Terrain</span></li>
                   </ul>
                   <ul className="layer-list">
-                      <li>
+                      <li className="terrain-li">
                           <span className="type type-terrain"></span>
                           <span className="name">Ellipsoid Terrain (Default)</span>
                       </li>
                   </ul>
                   <ul className="layer">
-                      <li className="selected"><a href="#">Tileset</a></li>
-                      <li><a href="#">Primitives</a></li>
-                      <li><a href="#">Entities</a></li>
+                      <li className="selected"><span className="text">Tileset</span></li>
+                      <li><span className="text">Primitives</span></li>
+                      <li><span className="text">Entities</span></li>
                       <li className="button-area">
                           <div className="layer-button">
                               <button type="button" className="layer-funtion-button not-visible"></button>
