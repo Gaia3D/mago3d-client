@@ -14,7 +14,7 @@ export const AsidePanel = () => {
   return (
       <>
         <AsideAssets display={menu.SelectedId === "assets"} />
-        {/*<AsideLayers display={menu.SelectedId === "layers"} />*/}
+        <AsideLayers display={menu.SelectedId === "layers"} />
         {/*<AsideProps display={menu.SelectedId === "props"} />*/}
       </>
   );
