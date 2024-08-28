@@ -16,6 +16,9 @@ export const AsideMenu = () => {
       ...prev,
       SelectedId: prev.SelectedId === menuName ? '' : menuName
     }));
+    if (menuName === 'layers') {
+      setNewLayerCount(0);
+    }
   };
 
   const items = useMemo(() => {

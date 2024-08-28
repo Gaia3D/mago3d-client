@@ -2,12 +2,16 @@ import React, { memo, useState, useEffect } from 'react';
 import { dataFormatter } from "@mnd/shared";
 import { Asset } from "@/types/assets/Data.ts";
 import {
-    AssetForDownloadConvertFileDocument, AssetForDownloadOriginFileDocument, DatasetDeleteAssetDocument,
+    AssetForDownloadConvertFileDocument, AssetForDownloadOriginFileDocument, AssetType, DatasetDeleteAssetDocument,
     DatasetProcessLogDocument,
     ProcessTaskStatus
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import { statusMap } from "@/components/aside/asset/AsideAssets.tsx";
 import { useLazyQuery, useMutation } from "@apollo/client";
+import {LayerAccess, LayerAssetType} from "@/types/layerset/gql/graphql.ts";
+import {LayersetCreateAssetDocument} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 
 type AssetRowProps = {
     item: Asset;
@@ -46,6 +50,22 @@ const downloadByUrlArr = (urlArr: ConvertedFile[]) => {
     }
 };
 
+interface PublishContextValue {
+    [key: string]: {
+        dataAssetId: string;
+    };
+}
+
+type CreateAssetInput  = {
+    name: string;
+    groupIds: string[];
+    access: LayerAccess;
+    type: LayerAssetType;
+    context: PublishContextValue;
+    enabled: boolean;
+    visible: boolean;
+}
+
 const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     const [getLogData, { data: logData }] = useLazyQuery(DatasetProcessLogDocument);
     const [showLog, setShowLog] = useState(false);
@@ -57,6 +77,8 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     const [downConvertFile, setDownConvertFile] = useState(false);
 
     const [deleteMutation] = useMutation(DatasetDeleteAssetDocument);
+    const [createLayerMutation] = useMutation(LayersetCreateAssetDocument);
+    const setNewLayerCount = useSetRecoilState(newLayerCountState);
 
     const showAssetLog = (id: string) => {
         getLogData({
@@ -100,11 +122,48 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
         }
     };
 
-    const convertAsset = (id: string) => {
-        console.log("convert ", id);
+    const publishAsset = (id: string, type: string, name: string) => {
+        confirm (`${name} 데이터를 레이어로 발행하시겠습니까?`)
+
+        const data: CreateAssetInput = {
+            name,
+            groupIds: ['76'],
+            access: LayerAccess.Private,
+            enabled: true,
+            visible: true,
+            type: LayerAssetType.Vector,
+            context: {},
+        };
+
+        const typeMapping: Record<string, { assetType: LayerAssetType; contextKey: string }> = {
+            [AssetType.Shp]: { assetType: LayerAssetType.Vector, contextKey: "feature" },
+            [AssetType.Tiles3D]: { assetType: LayerAssetType.Tiles3D, contextKey: "t3d" },
+            [AssetType.Cog]: { assetType: LayerAssetType.Cog, contextKey: "cog" },
+            [AssetType.Imagery]: { assetType: LayerAssetType.Raster, contextKey: "coverage" },
+        };
+
+        const selectedType = typeMapping[type];
+
+        if (!selectedType) {
+            alert("지원 되지 않는 확장자입니다.");
+            return;
+        }
+
+        data.type = selectedType.assetType;
+        data.context[selectedType.contextKey] = { dataAssetId: id };  // context 속성에 올바른 값 할당
+
+        createLayerMutation({ variables: { input: data } })
+            .then(() => {
+                alert('성공적으로 발행되었습니다.');
+                setNewLayerCount((prev) => prev + 1);
+            })
+            .catch(e => {
+                console.error(e);
+                alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+            });
     };
 
-    if (!item || !item.id || !item.name) {
+    if (! item || !item.id || !item.name) {
         console.error("Error. Check Asset ID");
         return (
             <tr>
@@ -137,7 +196,7 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
             </td>
             <td>
                 {status === "success" || status === "none" ? (
-                    <button type="button" onClick={() => convertAsset(item.id)} className="function-button convert"></button>
+                    <button type="button" onClick={() => publishAsset(item.id, item.assetType, item.name)} className="function-button publish"></button>
                 ) : (
                     <button type="button" onClick={() => showAssetLog(item.id)} className="function-button log"></button>
                 )}
