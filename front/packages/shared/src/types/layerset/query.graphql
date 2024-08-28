@@ -47,3 +47,167 @@ query GroupTree($filter: GroupFilterInput) {
     }
   }
 }
+
+query LayersetGroupList @api(name: layerset) {
+    groups {
+        id
+        name
+        enabled
+        access
+    }
+}
+
+fragment LayersetGroupBasic on LayerGroup {
+    id
+    name
+    description
+    enabled
+    access
+    order
+    collapsed
+    createdAt
+    updatedAt
+}
+
+fragment LayersetAssetBasic on LayerAsset {
+    id
+    name
+    description
+    type
+    enabled
+    visible
+    access
+    status
+    createdAt
+    updatedAt
+}
+
+query LayersetGroupListWithAsset @api(name: layerset) {
+    groups {
+        ...LayersetGroupBasic
+        assets {
+            ...LayersetAssetBasic
+        }
+    }
+}
+
+query LayersetAsset($id: ID!) @api(name: layerset) {
+    asset(
+        id : $id
+    )
+    {
+        ...LayersetAssetBasic
+        properties
+        groups {
+            id
+            name
+        }
+        logs {
+            id
+            assetId
+            type
+            content
+            createdAt
+            updatedAt
+        }
+        styles {
+            id
+            name
+            defaultStatus
+            context
+        }
+    }
+}
+
+fragment layerGroupBasic on LayerGroup {
+    id
+    name
+    description
+    enabled
+    published
+    collapsed
+    access
+    order
+}
+
+fragment layerAssetBasic on LayerAsset {
+    id
+    name
+    description
+    type
+    enabled
+    visible
+    order
+    access
+    createdAt
+    updatedAt
+}
+
+query layerGroups($filter: GroupFilterInput){
+    groups(filter: $filter) {
+        ...layerGroupBasic
+        assets {
+            ...layerAssetBasic
+            logs {
+                id
+                assetId
+                type
+                content
+            }
+        }
+    }
+}
+
+query layerAsset($id: ID!){
+    asset(
+        id : $id
+    )
+    {
+        id
+        name
+        description
+        type
+        enabled
+        visible
+        access
+        createdBy
+        createdAt
+        updatedBy
+        updatedAt
+        properties
+    }
+}
+
+query layerGroup($id: ID!) @api(name: layerset){
+    group(
+        id : $id
+    )
+    {
+        ...layerGroupBasic
+        assets {
+            ...layerAssetBasic
+            logs {
+                id
+                assetId
+                type
+                content
+            }
+        }
+    }
+}
+
+query remote($href: String!) @api(name: layerset) {
+    remote (href: $href)
+}
+
+query classifyAttribute($nativeName: String!, $attribute: String!) @api(name: layerset) {
+    classifyAttribute(nativeName: $nativeName, attribute: $attribute) {
+        type
+        rules {
+            min
+            max
+            eq
+            color
+        }
+    }
+}
