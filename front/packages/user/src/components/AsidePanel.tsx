@@ -1,6 +1,6 @@
 import { mainMenuState } from "@/recoils/MainMenuState";
 import { useRecoilValue } from "recoil";
-import {AsideLayers} from "@/components/AsideLayer";
+import {AsideLayers} from "@/components/aside/layer/AsideLayer.tsx";
 import AsideAssets from "@/components/AsideAssets.tsx";
 import {AsideProps} from "@/components/AsideProps.tsx";
 

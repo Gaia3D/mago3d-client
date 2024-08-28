@@ -20,6 +20,64 @@
 
 #map {
 
+  .layer-list li {
+    flex-direction: column;
+    background: unset;
+
+    .layer-list {
+      padding: 0;
+      li {
+        margin: 0;
+        padding: 0;
+      }
+    }
+
+    .group-node-container {
+      .group-node {
+        display: flex;
+        width: 100%;
+        height: 40px;
+        background-color: gray;
+
+        &:hover {
+          background-color: white;
+          color: black;
+        }
+
+        .group-icon {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: #474747;
+        }
+        .group-name {
+          width: calc(100% - 40px);
+          padding: 0 12px;
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+    .layer-node-container {
+      display: flex;
+      justify-content: space-between;
+      width: calc(100% - 40px);
+      margin: 4px 40px 0px;
+      background-color: gray;
+
+        .layer-name {
+          width: calc(100% - 114px);
+          padding: 0 12px;
+          display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+    }
+  }
+
   header {
     display: flex;
     .pop-layer {
