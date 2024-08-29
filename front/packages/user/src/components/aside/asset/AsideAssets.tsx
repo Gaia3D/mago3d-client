@@ -34,7 +34,7 @@ const reverseStatusMap = Object.entries(statusMap).reduce<Record<string, Process
     return acc;
 }, {});
 
-const reverseFormatStatus = (status: string): ProcessTaskStatus | undefined => reverseStatusMap[status];
+const getStatusByLabel = (status: string): ProcessTaskStatus | undefined => reverseStatusMap[status];
 
 const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
     const searchProps = useRecoilValue<DatasetAssetListQueryVariables>(dataSearchSelector);
@@ -94,7 +94,7 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
     }, [debouncedSearch, setSearch, dataReset]);
 
     useEffect(() => {
-        setStatus(reverseFormatStatus(filterStatus));
+        setStatus(getStatusByLabel(filterStatus));
         dataReset();
     }, [filterStatus, setStatus, dataReset]);
 

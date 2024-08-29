@@ -2,14 +2,23 @@ import React, { memo, useState, useEffect } from 'react';
 import { dataFormatter } from "@mnd/shared";
 import { Asset } from "@/types/assets/Data.ts";
 import {
-    AssetForDownloadConvertFileDocument, AssetForDownloadOriginFileDocument, AssetType, DatasetDeleteAssetDocument,
+    AssetForDownloadConvertFileDocument,
+    AssetForDownloadOriginFileDocument,
+    AssetType,
+    ConvertedFile,
+    DatasetDeleteAssetDocument,
     DatasetProcessLogDocument,
     ProcessTaskStatus
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import { statusMap } from "@/components/aside/asset/AsideAssets.tsx";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import {LayerAccess, LayerAssetType} from "@/types/layerset/gql/graphql.ts";
-import {LayersetCreateAssetDocument} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import {CreateAssetInput, LayerAccess, LayerAssetType, PublishContextValue} from "@/types/layerset/gql/graphql.ts";
+import {
+    CogInput,
+    CoverageInput, F4DInput, FeatureInput,
+    InputMaybe,
+    LayersetCreateAssetDocument, RemoteInput, RemoteT3DInput, Scalars, SmartTileInput, T3DInput
+} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 
@@ -25,17 +34,7 @@ const formatStatus = (status: ProcessTaskStatus | null | undefined): string => {
     return statusMap[status] || status;
 };
 
-type ConvertedFile = {
-    __typename?: "ConvertedFile" | undefined;
-    id: string;
-    taskId: string;
-    filename: string;
-    contentType: string;
-    contentSize: number;
-    download?: string | null | undefined;
-    filepath?: string | null | undefined;
-};
-
+// 백엔드 개발 후 한번에 다운 받을 수 있도록 수정
 const downloadByUrlArr = (urlArr: ConvertedFile[]) => {
     if (urlArr.length > 0) {
         urlArr.forEach((fileData) => {
@@ -49,22 +48,6 @@ const downloadByUrlArr = (urlArr: ConvertedFile[]) => {
         });
     }
 };
-
-interface PublishContextValue {
-    [key: string]: {
-        dataAssetId: string;
-    };
-}
-
-type CreateAssetInput  = {
-    name: string;
-    groupIds: string[];
-    access: LayerAccess;
-    type: LayerAssetType;
-    context: PublishContextValue;
-    enabled: boolean;
-    visible: boolean;
-}
 
 const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     const [getLogData, { data: logData }] = useLazyQuery(DatasetProcessLogDocument);
@@ -123,19 +106,9 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     };
 
     const publishAsset = (id: string, type: string, name: string) => {
-        confirm (`${name} 데이터를 레이어로 발행하시겠습니까?`)
+        confirm(`${name} 데이터를 레이어로 발행하시겠습니까?`);
 
-        const data: CreateAssetInput = {
-            name,
-            groupIds: ['76'],
-            access: LayerAccess.Private,
-            enabled: true,
-            visible: true,
-            type: LayerAssetType.Vector,
-            context: {},
-        };
-
-        const typeMapping: Record<string, { assetType: LayerAssetType; contextKey: string }> = {
+        const typeMapping: Record<string, { assetType: LayerAssetType; contextKey: keyof PublishContextValue }> = {
             [AssetType.Shp]: { assetType: LayerAssetType.Vector, contextKey: "feature" },
             [AssetType.Tiles3D]: { assetType: LayerAssetType.Tiles3D, contextKey: "t3d" },
             [AssetType.Cog]: { assetType: LayerAssetType.Cog, contextKey: "cog" },
@@ -145,12 +118,21 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
         const selectedType = typeMapping[type];
 
         if (!selectedType) {
-            alert("지원 되지 않는 확장자입니다.");
+            alert("파일 형식을 변경해주세요.");
             return;
         }
 
-        data.type = selectedType.assetType;
-        data.context[selectedType.contextKey] = { dataAssetId: id };  // context 속성에 올바른 값 할당
+        const data: CreateAssetInput = {
+            name,
+            groupIds: ['76'],
+            access: LayerAccess.Private,
+            enabled: true,
+            visible: true,
+            type: selectedType.assetType,
+            context: {
+                [selectedType.contextKey]: { dataAssetId: id }
+            },
+        };
 
         createLayerMutation({ variables: { input: data } })
             .then(() => {
@@ -162,7 +144,6 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
                 alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
             });
     };
-
     if (! item || !item.id || !item.name) {
         console.error("Error. Check Asset ID");
         return (
