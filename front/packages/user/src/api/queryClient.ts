@@ -18,7 +18,7 @@ export const getClient = (() => {
     }
 })();
 
-const layersetGraphqlClient = new GraphQLClient(import.meta.env.VITE_GRAPHQL_LAYERSET_URL, {
+const layersetGraphqlClient = new GraphQLClient(import.meta.env.VITE_GRAPHQL_LAYERSET_URL+'/graphql', {
     requestMiddleware,
     responseMiddleware,
     errorPolicy: 'all'
