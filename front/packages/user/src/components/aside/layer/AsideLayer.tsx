@@ -1,5 +1,4 @@
 import { FC, RefObject, createRef, useEffect, useRef, useState } from "react";
-import {useMutation, useQuery, useSuspenseQuery} from "@tanstack/react-query";
 import { layersetGraphqlFetcher } from "@/api/queryClient";
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query";
 import {
@@ -9,7 +8,7 @@ import {
     UserLayerGroup,
     Mutation,
     CreateUserGroupInput,
-    LayerAssetType, RemoteQueryVariables, RemoteDocument
+    LayerAssetType, RemoteQueryVariables, RemoteDocument, LayersetDeleteAssetDocument
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import { DndProvider } from "react-dnd";
 import {
@@ -27,8 +26,9 @@ import { AppLoader } from "@mnd/shared";
 import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
 import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
 import * as Cesium from "cesium";
-import {useLazyQuery} from "@apollo/client";
+import {useLazyQuery, useMutation as apolloUseMutation} from "@apollo/client";
 import {DatasetProcessLogDocument} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+import {useMutation} from "@tanstack/react-query";
 
 type CustomCreateUserGroupInput = CreateUserGroupInput & {
     linkId? : number;
@@ -135,6 +135,8 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const {mutateAsync: restoreUserLayerMutateAsync} = useMutation({
         mutationFn:() => layersetGraphqlFetcher<Mutation>(RESTORE_USERLAYER)
     });
+    const [deleteAssetMutation] = apolloUseMutation(LayersetDeleteAssetDocument);
+
     const [treeData, setTreeData] = useRecoilState<NodeModel[]>(NodeModelsState);
     const a = useRef<RefObject<HTMLDivElement>[]>([]);
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
@@ -147,6 +149,7 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const treeRef = useRef<TreeMethods>(null);
     const [getRemoteData, { data: remoteData }] = useLazyQuery(RemoteDocument);
     const [remoteType, setRemoteType] = useState('');
+
 
 
     const setNodeModels = (groups:Maybe<UserLayerGroup>[]): NodeModel[] => {
@@ -350,6 +353,29 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
 
     }
 
+
+
+    const deleteLayer = (node: NodeModel) => {
+        if (!confirm('레이어를 삭제하시겠습니까?')) return;
+
+        try {
+            return deleteAssetMutation({
+                variables: { ids: node.data.assetId }
+            })
+            .then(() => {
+                alert('레이어가 성공적으로 삭제되었습니다.');
+                setTreeData((prevTreeData) => {
+                    const newTreeData = prevTreeData.filter((treeNode) => treeNode.id !== node.id);
+                    return newTreeData;
+                });
+                setLayersFromNodeModels((prevTreeData) => prevTreeData.filter((treeNode) => treeNode.id !== node.id));
+            });
+        } catch (error) {
+            console.error(error);
+            alert('레이어 삭제 중 오류가 발생했습니다. 다시 시도해주세요.');
+        }
+    };
+
     return (
         <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
             <input type="checkbox" id="toggleButton"/>
@@ -442,10 +468,13 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                                                             {/*</label>*/}
                                                             <button type="button"
                                                                     onClick={() => {
-                                                                        flyToLayer (node)
+                                                                        flyToLayer(node)
                                                                     }}
                                                                     className="layer-funtion-button map-view"></button>
                                                             <button type="button"
+                                                                    onClick={() => {
+                                                                        deleteLayer(node)
+                                                                    }}
                                                                     className="layer-funtion-button delete"></button>
                                                         </div>
                                                     </div>
