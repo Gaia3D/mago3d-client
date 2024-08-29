@@ -5,6 +5,13 @@ fragment DatasetAssetFile on AssetFile {
     contentType
 }
 
+query AssetStatus($id: ID!) {
+    asset(id: $id) {
+        id
+        status
+    }
+}
+
 query DatasetAssetList($filter:AssetFilterInput, $pageable: AssetPageableInput) @api(name: dataset) {
     assets(
         filter: $filter
@@ -83,6 +90,37 @@ query DatasetAssetForDetail($id:ID!) @api(name: dataset) {
         process {
             id
             status
+        }
+    }
+}
+
+query AssetForDownloadOriginFile($id:ID!) @api(name: dataset) {
+    asset(id: $id){
+        id
+        name
+        files {
+             id
+            filename
+            contentType
+            contentSize
+            download
+            filepath
+        }
+    }
+}
+
+query AssetForDownloadConvertFile($id:ID!) @api(name: dataset) {
+    asset(id: $id){
+        id
+        name
+        convertedFiles {
+              id
+               taskId
+               filename
+               contentType
+               contentSize
+               download
+               filepath
         }
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {AsideDisplayProps} from "@/components/AsidePanel.tsx";
+import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
 
 export  const AsideProps: React.FC<AsideDisplayProps>  = ({display}) => {
     return (

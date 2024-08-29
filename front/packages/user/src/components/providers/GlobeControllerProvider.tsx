@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { GlobeController } from "@/api/GlobeController";
 
 interface IGlobeControllerContextProps {
@@ -19,9 +19,18 @@ const GlobeControllerProvider = ({
   children: React.ReactNode;
 }) => {
   const [initialized, init] = useState<boolean>(false);
-  globeController.viewerCreated.on(() => {
-    init(globeController.ready);
-  });
+
+  useEffect(() => {
+    const handleViewerCreated = () => {
+      init(globeController.ready);
+    };
+
+    globeController.viewerCreated.on(handleViewerCreated);
+
+    return () => {
+      globeController.viewerCreated.off(handleViewerCreated);
+    };
+  }, [globeController]);
 
   const props = {
     globeController,

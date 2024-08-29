@@ -1,5 +1,5 @@
-import {AsideMenu} from "@/components/AsideMenu";
-import {AsidePanel} from "@/components/AsidePanel";
+import {AsideMenu} from "@/components/aside/AsideMenu.tsx";
+import {AsidePanel} from "@/components/aside/AsidePanel.tsx";
 import {MapTool, MapToolbox} from "@/components/MapToolbox";
 import {MapPopup, popupState} from "@/components/MapPopup";
 import "cesium/Build/Cesium/Widgets/widgets.css";
@@ -10,6 +10,7 @@ import Globe from "@/components/Map";
 import {BoundarySearchWrapper} from "@/components/BoundarySearch";
 import {useSetRecoilState} from "recoil";
 import Footer from "@/components/Footer";
+import NewAssetModal from "@/components/modal/NewAssetModal.tsx";
 
 const globeController = getInstance();
 
@@ -31,6 +32,7 @@ const MainPage = () => {
               <AsidePanel/>
               <BoundarySearchWrapper/>
               <MapToolbox onToolClick={handleToolClick}/>
+              <NewAssetModal />
               <Footer/>
             </div>
           </TimeSeriesProvider>

@@ -1,8 +1,8 @@
-import { mainMenuState } from "@/recoils/MainMenuState";
+import { mainMenuState } from "@/recoils/MainMenuState.tsx";
 import { useRecoilValue } from "recoil";
-import {AsideLayers} from "@/components/AsideLayer";
-import AsideAssets from "@/components/AsideAssets.tsx";
-import {AsideProps} from "@/components/AsideProps.tsx";
+import {AsideLayers} from "@/components/aside/layer/AsideLayer.tsx";
+import AsideAssets from "@/components/aside/asset/AsideAssets.tsx";
+import {AsideProps} from "@/components/aside/prop/AsideProps.tsx";
 
 export interface AsideDisplayProps {
     display: boolean;
@@ -15,7 +15,7 @@ export const AsidePanel = () => {
       <>
         <AsideAssets display={menu.SelectedId === "assets"} />
         <AsideLayers display={menu.SelectedId === "layers"} />
-        <AsideProps display={menu.SelectedId === "props"} />
+        {/*<AsideProps display={menu.SelectedId === "props"} />*/}
       </>
   );
 };

@@ -26,7 +26,6 @@ import {defaults} from 'ol/control'
 import {NodeModel} from "@minoru/react-dnd-treeview";
 import {NodeModelsState,} from "@/recoils/Layer";
 import {LayerAssetType, UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql";
-import {getLayersFromNodeModels} from "../AsideLayer";
 import {Geometry} from "ol/geom";
 import dayjs from "dayjs";
 import axios from "axios";
@@ -41,6 +40,21 @@ proj4.defs("EPSG:5179","+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=100000
 proj4.defs("EPSG:32651","+proj=utm +zone=51 +datum=WGS84 +units=m +no_defs +type=crs");
 proj4.defs("EPSG:32652","+proj=utm +zone=52 +datum=WGS84 +units=m +no_defs +type=crs");
 register(proj4);
+
+const getLayersFromNodeModels = (nodeModels:NodeModel[]) => {
+  const sortList = nodeModels
+      .filter((nodeModel:NodeModel) => nodeModel.parent === 0)
+      .map((nodeModel:NodeModel) => nodeModel.id);
+
+  const assets = nodeModels.filter((nodeModel:NodeModel) => nodeModel.parent !== 0)
+      .sort((a,b) => sortList.indexOf(a.parent) - sortList.indexOf(b.parent))
+      .map((nodeModel:NodeModel) => {
+        const asset = nodeModel.data as UserLayerAsset;
+        return asset;
+      }).reverse();
+
+  return assets;
+}
 
 type MapFishSpecTypeAttributesMap = {
   bbox: number[];

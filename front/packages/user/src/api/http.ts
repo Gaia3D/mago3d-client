@@ -34,3 +34,6 @@ export const mapnoteFileUpload = ({data, config}: { data: FormData, config?: Axi
 
 export const mapnoteExcelFileUpload = ({data, config}: { data: FormData, config?: AxiosRequestConfig }) =>
   bbsAxiosInstance.postForm('/bbs/mapnote/upload/excel', data, {...config});
+
+export const datasetFileUpload = ({data, config}: { data: FormData, config?: AxiosRequestConfig }) =>
+    bbsAxiosInstance.postForm('/dataset/upload', data, {...config});

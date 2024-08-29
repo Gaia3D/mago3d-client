@@ -10,3 +10,8 @@ export const mainMenuState = atom<MainMenuState>({
     SelectedId: "assets",
   },
 });
+
+export const newLayerCountState = atom<number>({
+  key: "newLayerCountState",
+  default: 0
+})

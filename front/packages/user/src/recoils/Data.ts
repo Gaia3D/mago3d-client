@@ -6,11 +6,10 @@ import {
     ProcessTaskStatus,
     AssetFilterInput,
     AssetPageableInput,
-    AssetSort
+    AssetSort, T3DFormatType
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import {IUserInfo} from "@mnd/shared";
 import {currentUserProfileSelector} from "@/recoils/Auth.ts";
-
 
 export const dataCurrentPageState = atom<number>({
   key: 'dataCurrentPageState',
@@ -41,6 +40,21 @@ export const dataAssetTypeState = atom<AssetType | undefined>({
   key: 'dataAssetTypeState',
   default: undefined
 });
+
+export const formatTypeT3D = (type: string): T3DFormatType => {
+    const formatMap: Record<string, T3DFormatType> = {
+        kml: T3DFormatType.Kml,
+        obj: T3DFormatType.Obj,
+        fbx: T3DFormatType.Fbx,
+        gltf: T3DFormatType.Gltf,
+        glb: T3DFormatType.Glb,
+        las: T3DFormatType.Las,
+        laz: T3DFormatType.Laz,
+        ifc: T3DFormatType.Ifc,
+        geojson: T3DFormatType.Geojson,
+    };
+    return formatMap[type] || T3DFormatType.Kml;
+};
 
 export const dataSearchSelector = selector<DatasetAssetListQueryVariables>({
   key: 'dataSearchSelector',
