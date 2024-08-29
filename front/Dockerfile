@@ -22,9 +22,7 @@ RUN pnpm install
 
 # Build the app
 RUN pnpm --prefix packages/admin run codegen
-RUN pnpm --prefix packages/admin run stage
-# RUN pnpm --prefix packages/portal run codegen
-# RUN pnpm --prefix packages/portal run stage
+RUN pnpm --prefix packages/admin run build
 RUN pnpm --prefix packages/user run build
 
 # docker build 명령어로 이미지를 생성하려면 다음 명령어를 실행합니다.

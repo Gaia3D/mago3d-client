@@ -7,7 +7,7 @@ const manHeight = 1.5;
 let tempColor : any = undefined;
 let tempMaterial : any = undefined;
 
-let pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined = undefined;
+let pickedObject: any | undefined = undefined;
 
 const calculateCartesian = (cartographic: Cesium.Cartographic, centerHeightOffset: number, heightOffset: number): Cesium.Cartesian3 => {
   return Cesium.Cartesian3.fromRadians(
@@ -47,10 +47,12 @@ export const onViewCenter = (viewer: Cesium.Viewer) => {
     if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
       /* @ts-expect-error : null */
       startCartesian = pickedObject.content.tile.boundingSphere.center;
+      if (!startCartesian) { return; }
       startCartographic = Cesium.Cartographic.fromCartesian(startCartesian);
       centerHeight = startCartographic.height;
     } else if (pickedObject?.primitive instanceof Cesium.Primitive && pickedObject.id?.polygon) {
       startCartesian = pickedObject.primitive._boundingSphereWC[0].center;
+      if (!startCartesian) { return; }
       startCartographic = Cesium.Cartographic.fromCartesian(startCartesian);
       centerHeight = pickedObject.id.polygon.height.getValue();
     } else {
