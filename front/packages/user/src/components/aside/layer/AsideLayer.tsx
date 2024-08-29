@@ -1,8 +1,16 @@
 import { FC, RefObject, createRef, useEffect, useRef, useState } from "react";
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useSuspenseQuery} from "@tanstack/react-query";
 import { layersetGraphqlFetcher } from "@/api/queryClient";
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query";
-import { Maybe, Query, UserLayerAsset, UserLayerGroup, Mutation, CreateUserGroupInput } from "@mnd/shared/src/types/layerset/gql/graphql";
+import {
+    Maybe,
+    Query,
+    UserLayerAsset,
+    UserLayerGroup,
+    Mutation,
+    CreateUserGroupInput,
+    LayerAssetType, RemoteQueryVariables, RemoteDocument
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import { DndProvider } from "react-dnd";
 import {
     Tree,
@@ -17,6 +25,10 @@ import { UserLayerGroupState, NodeModelsState, layersState, visibleToggledLayerI
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { AppLoader } from "@mnd/shared";
 import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
+import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
+import * as Cesium from "cesium";
+import {useLazyQuery} from "@apollo/client";
+import {DatasetProcessLogDocument} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 
 type CustomCreateUserGroupInput = CreateUserGroupInput & {
     linkId? : number;
@@ -116,6 +128,7 @@ const nodeModlesToCreateUserGroupInput = (nodeModels:NodeModel[]):CreateUserGrou
 }
 
 export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
+    const {initialized, globeController} = useGlobeController();
     const {mutateAsync: saveUserLayerMutateAsync} = useMutation({
         mutationFn:({input}:{input:CreateUserGroupInput[]}) => layersetGraphqlFetcher<Mutation>(SAVE_USERLAYER, {input})
     });
@@ -132,6 +145,9 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const [visibleAll, setVisibleAll] = useState<boolean>(false);
     const [initialOpen, setinitialOpen] = useRecoilState<number[]>(InitialOpenState);
     const treeRef = useRef<TreeMethods>(null);
+    const [getRemoteData, { data: remoteData }] = useLazyQuery(RemoteDocument);
+    const [remoteType, setRemoteType] = useState('');
+
 
     const setNodeModels = (groups:Maybe<UserLayerGroup>[]): NodeModel[] => {
         const initOpen: number[] = [];
@@ -151,12 +167,36 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
 
     const setLayersFromNodeModels = (nodeModels:NodeModel[]) => {
         const assets = getLayersFromNodeModels(nodeModels);
+        console.log(assets);
+
+
         setLayers(produce((draft) => {
             draft.length = 0;
             draft.push(...assets);
         }));
     }
 
+    useEffect(() => {
+        if (remoteData) {
+            if (!initialized) return;
+            const viewer = globeController?.viewer;
+            if (!viewer) return;
+
+            if (remoteType === LayerAssetType.Raster) {
+                const { latLonBoundingBox } = remoteData.remote.coverage;
+                viewer.camera.flyTo({
+                    destination: Cesium.Rectangle.fromDegrees(latLonBoundingBox.minx, latLonBoundingBox.miny, latLonBoundingBox.maxx, latLonBoundingBox.maxy),
+                    duration: 2,
+                });
+            } else if (remoteType === LayerAssetType.Vector) {
+                const { latLonBoundingBox } = remoteData.remote.featureType;
+                viewer.camera.flyTo({
+                    destination: Cesium.Rectangle.fromDegrees(latLonBoundingBox.minx, latLonBoundingBox.miny, latLonBoundingBox.maxx, latLonBoundingBox.maxy),
+                    duration: 2,
+                });
+            }
+        }
+    }, [remoteData, initialized, remoteType]);
 
     useEffect(() => {
         if (userLayerGroups.length === 0) {
@@ -246,6 +286,70 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
         await saveUserLayerMutateAsync({input});
     };
 
+    function extractPath(url: string): string {
+        const parsedUrl = new URL(url);
+        return parsedUrl.pathname + parsedUrl.search + parsedUrl.hash;
+    }
+
+    const flyToLayer = (node:NodeModel) => {
+        const asset = node.data;
+        const layerType = asset?.type;
+        const viewer = globeController?.viewer;
+        if (!viewer) return;
+        setRemoteType(layerType);
+
+        switch (layerType) {
+            case LayerAssetType.Tiles3D: {
+                const model = Cesium.Cesium3DTileset.fromUrl(asset?.properties.resource);
+                viewer.flyTo(model, {duration: 2});
+                return;
+            }
+            case LayerAssetType.Raster:
+            case LayerAssetType.Vector: {
+                const { properties } = asset;
+                const { layer } = properties;
+                const { resource } = layer;
+
+                let variables: RemoteQueryVariables = { href : resource.href };
+
+                if (import.meta.env.MODE === 'production') {
+                    const path = extractPath(resource.href);
+
+                    const { protocol, hostname, port } = window.location;
+
+                    // 포트가 있는 경우 콜론과 함께 포트 번호를 추가
+                    const portPart = port ? `:${port}` : '';
+
+                    // 전체 URL 구성
+                    const href = `${protocol}//${hostname}${portPart}${path}`;
+                    variables =  { href };
+                }
+                getRemoteData({
+                    variables: variables
+                });
+                return
+            }
+            case LayerAssetType.Layergroup: {
+                const {properties} = asset;
+                const {layerGroup} = properties;
+                const {minx, maxx, miny, maxy} = layerGroup.bounds;
+                const extent = Cesium.Rectangle.fromDegrees(minx, miny, maxx, maxy);
+                viewer.camera.flyTo({
+                    destination: extent,
+                    duration: 2,
+                });
+                return;
+            }
+            case LayerAssetType.Cog:
+            default: {
+                alert("허용되지 않는 형태입니다.");
+                return;
+            }
+
+        }
+
+    }
+
     return (
         <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
             <input type="checkbox" id="toggleButton"/>
@@ -277,8 +381,8 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                         <li className="button-area">
                             <div className="layer-button">
                                 <button type="button" onClick={toggleLayer} className={`layer-funtion-button ${!visibleAll ? 'visible' :'not-visible'}`}></button>
-                                <button type="button" onClick={restoreToDefault} className="layer-funtion-button map-view"></button>
-                                <button type="button" onClick={saveState} className="layer-funtion-button delete"></button>
+                                <button type="button" onClick={restoreToDefault} className="layer-funtion-button">R</button>
+                                <button type="button" onClick={saveState} className="layer-funtion-button">S</button>
                             </div>
                         </li>
                     </ul>
@@ -337,6 +441,9 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                                                             {/*    <span className="slider"></span>*/}
                                                             {/*</label>*/}
                                                             <button type="button"
+                                                                    onClick={() => {
+                                                                        flyToLayer (node)
+                                                                    }}
                                                                     className="layer-funtion-button map-view"></button>
                                                             <button type="button"
                                                                     className="layer-funtion-button delete"></button>
