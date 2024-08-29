@@ -1,4 +1,4 @@
-import { FC, RefObject, createRef, useEffect, useRef, useState } from "react";
+import React, { FC, RefObject, createRef, useEffect, useRef, useState } from "react";
 import { layersetGraphqlFetcher } from "@/api/queryClient";
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query";
 import {
@@ -29,6 +29,8 @@ import * as Cesium from "cesium";
 import {useLazyQuery, useMutation as apolloUseMutation} from "@apollo/client";
 import {DatasetProcessLogDocument} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import {useMutation} from "@tanstack/react-query";
+import SideCloseButton from "@/components/SideCloseButton.tsx";
+import SearchInput from "@/components/SearchInput.tsx";
 
 type CustomCreateUserGroupInput = CreateUserGroupInput & {
     linkId? : number;
@@ -143,13 +145,13 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
     const setVisibleToggledLayerId = useSetRecoilState<string | null>(visibleToggledLayerIdState);
     const setVisibleToggledLayerIds = useSetRecoilState<{ids:string[], visible:boolean} | null>(visibleToggledLayerIdsState);
-    //const [initialOpen, setinitialOpen] = useState<string[] | number[]>([]);
     const [visibleAll, setVisibleAll] = useState<boolean>(false);
     const [initialOpen, setinitialOpen] = useRecoilState<number[]>(InitialOpenState);
     const treeRef = useRef<TreeMethods>(null);
     const [getRemoteData, { data: remoteData }] = useLazyQuery(RemoteDocument);
     const [remoteType, setRemoteType] = useState('');
-
+    const [searchTerm, setSearchTerm] = useState('');
+    const [originalTreeData, setOriginalTreeData] = useState<NodeModel[]>(treeData);
 
 
     const setNodeModels = (groups:Maybe<UserLayerGroup>[]): NodeModel[] => {
@@ -157,6 +159,7 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
 
         const nodeModels = layerGroupsToNodemodels(groups);
         setTreeData(nodeModels);
+        setOriginalTreeData(nodeModels);
 
         nodeModels.filter((nodeModel:NodeModel) => nodeModel.parent === 0).forEach((nodeModel:NodeModel) => {
             if (!(nodeModel.data as UserLayerGroup).collapsed) {
@@ -170,14 +173,51 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
 
     const setLayersFromNodeModels = (nodeModels:NodeModel[]) => {
         const assets = getLayersFromNodeModels(nodeModels);
-        console.log(assets);
-
-
         setLayers(produce((draft) => {
             draft.length = 0;
             draft.push(...assets);
         }));
     }
+
+// 검색 필터링 함수 수정
+    const searchFilterNodeModels = (nodeModels: NodeModel[], searchTerm: string): NodeModel[] => {
+        if (!searchTerm) return nodeModels;
+
+        const lowerCaseSearchTerm = searchTerm.toLowerCase().replace(/\s+/g, '');
+        console.log(lowerCaseSearchTerm);
+
+        const layerGroups = nodeModels.filter(node => node.parent === 0);
+        const layers = nodeModels.filter(node => node.parent !== 0);
+
+        const filteredLayers = layers.filter(nodeModel => {
+            const nodeName = nodeModel.text.toLowerCase().replace(/\s+/g, '');
+            console.log(nodeName);
+            return nodeName.includes(lowerCaseSearchTerm);
+        });
+
+        console.log(filteredLayers);
+
+        const parentGroupIds = new Set(filteredLayers.map(layer => layer.parent));
+
+        const filteredNodeModels = layerGroups
+            .filter(group => parentGroupIds.has(group.id))
+            .concat(filteredLayers);
+
+        return filteredNodeModels;
+    };
+
+            console.log(originalTreeData)
+// useEffect 수정
+    useEffect(() => {
+        if (searchTerm) {
+            // 검색 시 원본 데이터를 기준으로 필터링
+            const filteredNodeModels = searchFilterNodeModels(originalTreeData, searchTerm);
+            setTreeData(filteredNodeModels);
+            setinitialOpen(filteredNodeModels.map(node => nodeModelIdToNumber(node.id)));
+        } else {
+            setTreeData(originalTreeData);
+        }
+    }, [searchTerm, originalTreeData]);
 
     useEffect(() => {
         if (remoteData) {
@@ -217,6 +257,7 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
 
     const handleDrop = (newTree: NodeModel[]) => {
         setTreeData(newTree);
+        setOriginalTreeData(newTree);
         setLayersFromNodeModels(newTree);
     };
 
@@ -227,17 +268,16 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
         if (!tree) return;
         let collapse = false;
         if (isOpen) {
-            //tree.close(id);
             collapse = true;
-        } else {
-            //tree.open(id);
         }
 
         const assetIdx = treeData.findIndex((node:NodeModel) => node.id === id);
         setTreeData(produce((draft) => {
             (draft[assetIdx].data as UserLayerGroup).collapsed = collapse;
         }));
-
+        setOriginalTreeData(produce((draft) => {
+            (draft[assetIdx].data as UserLayerGroup).collapsed = collapse;
+        }));
         setinitialOpen(produce((draft) => {
             const a = nodeModelIdToNumber(id);
             if (collapse) {
@@ -253,6 +293,10 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
             const visible = (draft[assetIdx].data as UserLayerAsset).visible;
             (draft[assetIdx].data as UserLayerAsset).visible = !visible;
         }));
+        setOriginalTreeData(produce((draft) => {
+            const visible = (draft[assetIdx].data as UserLayerAsset).visible;
+            (draft[assetIdx].data as UserLayerAsset).visible = !visible;
+        }));
 
         setVisibleToggledLayerId((asset.data as UserLayerAsset).assetId.toString());
     }
@@ -260,6 +304,15 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const toggleLayer = () => {
         const layerIds:string[] = [];
         setTreeData(produce((draft) => {
+            draft.forEach((nodeModel:NodeModel) => {
+                if (nodeModel.parent !== 0) {
+                    const asset = nodeModel.data as UserLayerAsset;
+                    layerIds.push(asset.assetId.toString());
+                    asset.visible = visibleAll;
+                }
+            });
+        }));
+        setOriginalTreeData(produce((draft) => {
             draft.forEach((nodeModel:NodeModel) => {
                 if (nodeModel.parent !== 0) {
                     const asset = nodeModel.data as UserLayerAsset;
@@ -320,10 +373,8 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
 
                     const { protocol, hostname, port } = window.location;
 
-                    // 포트가 있는 경우 콜론과 함께 포트 번호를 추가
                     const portPart = port ? `:${port}` : '';
 
-                    // 전체 URL 구성
                     const href = `${protocol}//${hostname}${portPart}${path}`;
                     variables =  { href };
                 }
@@ -353,8 +404,6 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
 
     }
 
-
-
     const deleteLayer = (node: NodeModel) => {
         if (!confirm('레이어를 삭제하시겠습니까?')) return;
 
@@ -365,6 +414,10 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
             .then(() => {
                 alert('레이어가 성공적으로 삭제되었습니다.');
                 setTreeData((prevTreeData) => {
+                    const newTreeData = prevTreeData.filter((treeNode) => treeNode.id !== node.id);
+                    return newTreeData;
+                });
+                setOriginalTreeData((prevTreeData) => {
                     const newTreeData = prevTreeData.filter((treeNode) => treeNode.id !== node.id);
                     return newTreeData;
                 });
@@ -381,14 +434,8 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
             <input type="checkbox" id="toggleButton"/>
             <div className="side-bar">
                 <div className="side-bar-header">
-                    <label htmlFor="toggleButton">
-                        <button type="button" className="button side">
-                            <div className="description--content">
-                                <div className="title">Close sidebar</div>
-                            </div>
-                        </button>
-                    </label>
-                    <button type="button" className="button search"></button>
+                    <SideCloseButton />
+                    <SearchInput value={searchTerm} change={setSearchTerm} />
                 </div>
                 <div className="content--wrapper">
                     <ul className="layer">
