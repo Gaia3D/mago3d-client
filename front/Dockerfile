@@ -22,9 +22,7 @@ RUN pnpm install
 
 # Build the app
 RUN pnpm --prefix packages/admin run codegen
-RUN pnpm --prefix packages/admin run stage
-# RUN pnpm --prefix packages/portal run codegen
-# RUN pnpm --prefix packages/portal run stage
+RUN pnpm --prefix packages/admin run build
 RUN pnpm --prefix packages/user run build
 
 # docker build 명령어로 이미지를 생성하려면 다음 명령어를 실행합니다.
@@ -37,8 +35,8 @@ RUN pnpm --prefix packages/user run build
 FROM nginx as front
 COPY --from=builder /app/nginx.conf /etc/nginx/nginx.conf
 # COPY --from=builder /app/packages/portal/dist /usr/share/nginx/html/portal
-COPY --from=builder /app/packages/admin/dist /usr/share/nginx/html/geomatic-admin
-COPY --from=builder /app/packages/user/dist /usr/share/nginx/html/geomatic-user
+COPY --from=builder /app/packages/admin/dist /usr/share/nginx/html/admin
+COPY --from=builder /app/packages/user/dist /usr/share/nginx/html/user
 
 # 최종 단계: admin 애플리케이션 빌드 결과물을 Nginx 이미지에 복사합니다.
 # FROM nginx as admin

@@ -17,7 +17,7 @@ import apolloClient from "./api/ApolloClients";
 
 function App() {
   const router = createBrowserRouter(routes, {
-    basename: '/geomatic-admin',
+    basename: '/admin',
   })
   const setAuth = useSetRecoilState(authenticateState);
   const queryClient = getQueryClient();

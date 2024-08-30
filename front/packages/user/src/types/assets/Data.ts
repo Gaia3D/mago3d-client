@@ -1,10 +1,6 @@
 import {
-  Access,
-  AssetFilterInput,
-  AssetPageableInput,
-  AssetType,
-  ProcessTaskStatus
-} from "@/generated/gql/dataset/graphql.ts";
+  Access, AssetPageableInput, AssetType, ProcessTaskStatus, AssetFilterInput
+} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 
 export type Asset = {
       __typename?: "Asset" | undefined;

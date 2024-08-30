@@ -10,11 +10,11 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
     Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL).then(terrainProvider => {
       if (!containerRef.current) return;
       const viewer = globeController.createViewer(containerRef.current, {
-        // baseLayer: new Cesium.ImageryLayer(new Cesium.OpenStreetMapImageryProvider({
-        //     url: 'https://a.tile.openstreetmap.org/'
-        // }), {show:true}),
+        baseLayer: new Cesium.ImageryLayer(new Cesium.OpenStreetMapImageryProvider({
+            url: 'https://a.tile.openstreetmap.org/'
+        }), {show:true}),
         terrainProvider,
-        baseLayer: getWmsLayer(import.meta.env.VITE_BASE_LAYER_NAME),
+        // baseLayer: getWmsLayer(import.meta.env.VITE_BASE_LAYER_NAME),
         geocoder: false,
         homeButton: false,
         baseLayerPicker: false,

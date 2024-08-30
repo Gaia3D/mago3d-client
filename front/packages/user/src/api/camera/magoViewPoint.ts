@@ -2,10 +2,10 @@ import * as Cesium from 'cesium';
 
 let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | undefined = undefined;
 
-let pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined = undefined;
+let pickedObject: any | undefined = undefined;
 const MAN_HEIGHT = 1.5;
 
-const getCenterHeight = (pickedObject: Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature | undefined, startCartesian: Cesium.Cartesian3, scene: Cesium.Scene): number => {
+const getCenterHeight = (pickedObject: any | undefined, startCartesian: Cesium.Cartesian3, scene: Cesium.Scene): number => {
   if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
     return Cesium.Cartographic.fromCartesian(startCartesian).height;
   } else if (pickedObject?.primitive instanceof Cesium.Primitive) {
@@ -24,7 +24,7 @@ export const onViewPoint = (viewer: Cesium.Viewer) => {
   }
 
   const mouseLeftClickHandler = (event: { position: Cesium.Cartesian2 }) => {
-    pickedObject = scene.pick(event.position) as Cesium.Entity | Cesium.Primitive | Cesium.Cesium3DTileFeature;
+    pickedObject = scene.pick(event.position) as any;
 
     const pickedEllipsoidPosition = scene.pickPositionSupported
         ? scene.pickPosition(event.position)

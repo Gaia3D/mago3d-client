@@ -213,7 +213,8 @@
     "data": "Data Management Application",
     "layer": "Layer Management Application",
     "search": "Search Application",
-    "timeseries": "Time Series Management Application"
+    "timeseries": "Time Series Management Application",
+    "user": "User Management Application"
   },
   "question": {
     "create": "Do you want to register?",
