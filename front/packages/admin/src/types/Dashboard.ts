@@ -19,4 +19,5 @@ export type DashboardType =
   | "dataset"
   | "layerset"
   | "search"
-  | "timeseries";
+  | "timeseries"
+  | "userset";

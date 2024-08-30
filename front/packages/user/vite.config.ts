@@ -6,7 +6,7 @@ import cesium from 'vite-plugin-cesium';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/geomatic-user/",
+  base: "/user/",
   plugins: [
     react(),
     basicSsl(),

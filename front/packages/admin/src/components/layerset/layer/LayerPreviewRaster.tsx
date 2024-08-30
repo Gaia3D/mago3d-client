@@ -113,7 +113,7 @@ const LayerPreviewRaster = ({asset}:{asset:LayerAsset}) => {
 
         viewer.imageryLayers.removeAll();
         // 운영환경에서는 배경지도를 WMS로 설정
-        if (import.meta.env.MODE === 'production'|| import.meta.env.VITE_BASE_LAYER_NAME) {
+        if (import.meta.env.MODE === 'production' && import.meta.env.VITE_BASE_LAYER_NAME) {
             const baseImageryProvider = getWmsLayerImageProvider(import.meta.env.VITE_BASE_LAYER_NAME);
             viewer.imageryLayers.addImageryProvider(baseImageryProvider);
         } else {

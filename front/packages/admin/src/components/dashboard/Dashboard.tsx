@@ -20,22 +20,15 @@ function Dashboard() {
     };
   };
 
-  const bbsUrl: UrlListType = urlListGenerator("bbs");
   const dataSetUrl: UrlListType = urlListGenerator("dataset");
   const layerSetUrl: UrlListType = urlListGenerator("layerset");
-  const searchUrl: UrlListType = urlListGenerator("search");
-  const timeSeriesUrl: UrlListType = urlListGenerator("timeseries");
+  const userSetUrl: UrlListType = urlListGenerator("userset");
 
   const [selectedSrcList, setSelectedSrcList] = useState<UrlListType>(
     {} as UrlListType
   );
 
   const options: OptionsType[] = [
-    {
-      key: "BBS",
-      name: t("application.bbs"),
-      url: bbsUrl,
-    },
     {
       key: "DataSet",
       name: t("application.data"),
@@ -47,14 +40,9 @@ function Dashboard() {
       url: layerSetUrl,
     },
     {
-      key: "Search",
-      name: t("application.search"),
-      url: searchUrl,
-    },
-    {
-      key: "TimeSeries",
-      name: t("application.timeseries"),
-      url: timeSeriesUrl,
+      key: "UserSet",
+      name: t("application.user"),
+      url: userSetUrl,
     },
   ];
   useEffect(() => {
