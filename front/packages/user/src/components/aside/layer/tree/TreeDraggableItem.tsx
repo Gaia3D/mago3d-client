@@ -1,9 +1,9 @@
 import {FC, useEffect, useRef, useState} from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import {Maybe, UserLayerAsset, UserLayerGroup} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import {UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useFlyToLayer} from "@/hooks/useFlyToLayer.ts";
-import {useRecoilState, useSetRecoilState} from "recoil";
-import {UserLayerGroupState, visibleToggledLayerIdState} from "@/recoils/Layer.ts";
+import useLayerVisibilityToggle from "@/hooks/useLayerVisibilityToggle.ts";
+import {useDeleteLayer} from "@/hooks/useDeleteLayer.ts";
 
 interface DraggableItemProps {
     id: string;
@@ -24,8 +24,8 @@ interface DragItem {
 export const TreeDraggableItem: FC<DraggableItemProps> = ({ id, text, index, groupIndex, moveItem, item }) => {
     const ref = useRef<HTMLDivElement>(null);
     const { flyToLayer } = useFlyToLayer();
-    const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
-    const setVisibleToggledLayerId = useSetRecoilState<string | null>(visibleToggledLayerIdState);
+    const { layerVisibilityToggle } = useLayerVisibilityToggle();
+    const { deleteLayer } = useDeleteLayer();
 
     const [, drop] = useDrop<DragItem>({
         accept: 'ITEM',
@@ -64,14 +64,6 @@ export const TreeDraggableItem: FC<DraggableItemProps> = ({ id, text, index, gro
 
     drag(drop(ref));
 
-    const toggleVisibleEventHandle = (asset: UserLayerAsset) => {
-        console.log(asset);
-    };
-
-    const deleteLayer = (asset: UserLayerAsset) => {
-        console.log(asset);
-    }
-
     return (
         <div
             ref={ref}
@@ -86,7 +78,7 @@ export const TreeDraggableItem: FC<DraggableItemProps> = ({ id, text, index, gro
             }}
         >
             {text}
-            <button onClick={() => {toggleVisibleEventHandle(item)}} type="button">a</button>
+            <button onClick={() => {layerVisibilityToggle(item)}} type="button">a</button>
             <button onClick={() => {flyToLayer(item)}} type="button">s</button>
             <button onClick={() => {deleteLayer(item)}} type="button">d</button>
         </div>
