@@ -6,7 +6,6 @@ import { useRecoilState } from "recoil";
 import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
 import SearchInput from "@/components/SearchInput.tsx";
-import LayerTilesetContent from "@/components/aside/layer/LayerTilesetContent.tsx";
 import {DndProvider} from "react-dnd";
 import {getBackendOptions, MultiBackend} from "@minoru/react-dnd-treeview";
 import {TreeContainer} from "@/components/aside/layer/tree/TreeContainer.tsx";
@@ -45,7 +44,6 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                         (() => {
                             switch (layerMenu) {
                                 case "tileset":
-                                    // return <LayerTilesetContent />;
                                     return (
                                         <div className="layer-scroll">
                                             <DndProvider backend={MultiBackend} options={getBackendOptions()}>
@@ -62,9 +60,6 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                             }
                         })()
                     }
-
-
-
                 </div>
             </div>
         </div>
