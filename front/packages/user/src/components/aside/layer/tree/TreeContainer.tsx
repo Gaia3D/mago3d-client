@@ -1,4 +1,4 @@
-import { useState, FC, useCallback, useEffect } from 'react';
+import { useState, FC, useCallback, useEffect, useRef } from 'react';
 import { TreeGroup } from "./TreeGroup.tsx";
 import { layersetGraphqlFetcher } from "@/api/queryClient.ts";
 import {
@@ -8,6 +8,7 @@ import {
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query.ts";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { layersState, UserLayerGroupState } from "@/recoils/Layer.ts";
+import {debounce} from "@mui/material";
 
 interface TreeContainerProps {
     searchTerm: string;
@@ -18,6 +19,15 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
     const [filteredGroups, setFilteredGroups] = useState<Maybe<UserLayerGroup>[]>([]);
 
+    const prevUserLayerGroupsRef = useRef<Maybe<UserLayerGroup>[]>([]);
+
+    const debouncedSetLayers = useCallback(
+        debounce((layers: UserLayerAsset[]) => {
+            setLayers(layers);
+        }, 300),
+        [setLayers]
+    );
+
     // Fetch user layer groups if not already fetched
     useEffect(() => {
         if (userLayerGroups.length === 0) {
@@ -27,14 +37,17 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
                     setUserLayerGroups(userGroups);
                 });
         }
-    }, []);
+    }, [setUserLayerGroups, userLayerGroups.length]);
 
     useEffect(() => {
         if (userLayerGroups.length <= 0) return;
 
-        const tempLayers = userLayerGroups.flatMap(group => group?.assets ?? []);
-        setLayers(tempLayers);
-    }, [userLayerGroups]);
+        if (JSON.stringify(userLayerGroups) !== JSON.stringify(prevUserLayerGroupsRef.current)) {
+            const tempLayers = userLayerGroups.flatMap(group => group?.assets ?? []);
+            debouncedSetLayers(tempLayers);
+            prevUserLayerGroupsRef.current = userLayerGroups;
+        }
+    }, [userLayerGroups, debouncedSetLayers]);
 
     useEffect(() => {
         if (userLayerGroups.length === 0) return;
@@ -42,7 +55,6 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
         if (!searchTerm) {
             setFilteredGroups(userLayerGroups);
         } else {
-            // 공백 제거 및 소문자 변환
             const normalizedSearchTerm = searchTerm.replace(/\s+/g, '').toLowerCase();
 
             const filtered = userLayerGroups.map(group => {
@@ -72,7 +84,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
 
             return updatedGroups;
         });
-    }, []);
+    }, [setUserLayerGroups]);
 
     const moveLayerGroup = useCallback((dragIndex: number, hoverIndex: number) => {
         setUserLayerGroups((prevGroups) => {
@@ -81,7 +93,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
             updatedGroups.splice(hoverIndex, 0, removed);
             return updatedGroups;
         });
-    }, []);
+    }, [setUserLayerGroups]);
 
     return (
         <div>
