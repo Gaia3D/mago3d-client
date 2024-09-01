@@ -47,6 +47,18 @@
     flex-direction: column;
     background: unset;
 
+    &.open-group {
+
+    }
+    &.close-group {
+      .group-name {
+        background-color: #474747;
+      }
+      .layer-list {
+        display: none;
+      }
+    }
+
     &.terrain-li {
       flex-direction: row;
     }

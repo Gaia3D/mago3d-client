@@ -54,25 +54,25 @@ export const TreeGroup: FC<GroupProps> = ({ group, groupIndex, moveItem, moveGro
     drag(drop(ref));
 
     return (
-        <div ref={ref} style={{
-            margin: '20px',
-            padding: '10px',
-            border: '1px solid black',
-            backgroundColor: isDragging ? 'lightblue' : 'white',
-            color: 'black',
-        }}>
-            <h4>{group.name}</h4>
+        <div ref={ref}  className="group-node-container">
+            <div className="group-node">
+                <div className="group-icon">G</div>
+                <div className="group-name">{group.name}</div>
+            </div>
+            <ul className="layer-list">
             {group.assets.map((item, index) => (
-                <TreeDraggableItem
-                    key={item.assetId}
-                    id={(item.assetId)}
-                    text={item.name ?? ''}
-                    index={index}
-                    groupIndex={groupIndex}
-                    moveItem={moveItem}
-                    item={item}
-                />
+                <li key={item.assetId} className="listitem">
+                    <TreeDraggableItem
+                        id={(item.assetId)}
+                        text={item.name ?? ''}
+                        index={index}
+                        groupIndex={groupIndex}
+                        moveItem={moveItem}
+                        item={item}
+                    />
+                </li>
             ))}
+            </ul>
         </div>
     );
 };

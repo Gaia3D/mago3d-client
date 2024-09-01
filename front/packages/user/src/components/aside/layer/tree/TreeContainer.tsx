@@ -1,4 +1,4 @@
-import { useState, FC, useCallback, useEffect, useRef } from 'react';
+import React, { useState, FC, useCallback, useEffect, useRef } from 'react';
 import { TreeGroup } from "./TreeGroup.tsx";
 import { layersetGraphqlFetcher } from "@/api/queryClient.ts";
 import {
@@ -95,20 +95,39 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
         });
     }, [setUserLayerGroups]);
 
+    const toggleGroupCollapsed = (groupId: string) => {
+        setUserLayerGroups((prevGroups) => {
+            return prevGroups.map(group => {
+                if (!group) return group;
+                if (group.groupId === groupId) {
+                    return { ...group, collapsed: !group.collapsed };
+                }
+                return group;
+            });
+        });
+    };
+
     return (
-        <div>
-            {filteredGroups.map((group, index) => {
-                if (!group) return null;
-                return (
-                    <TreeGroup
-                        key={group.groupId}
-                        group={group}
-                        groupIndex={index}
-                        moveItem={moveLayer}
-                        moveGroup={moveLayerGroup}
-                    />
-                );
-            })}
-        </div>
+        <>
+            <ul className="layer-list">
+                {filteredGroups.map((group, index) => {
+                    if (!group) return null;
+                    return (
+                        <li
+                            key={group.groupId}
+                            onClick={() => toggleGroupCollapsed(group.groupId)}
+                            className={`${group.collapsed? 'open-group' : 'close-group'}`}
+                        >
+                            <TreeGroup
+                                group={group}
+                                groupIndex={index}
+                                moveItem={moveLayer}
+                                moveGroup={moveLayerGroup}
+                            />
+                        </li>
+                    );
+                })}
+            </ul>
+        </>
     );
 };

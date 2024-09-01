@@ -47,11 +47,11 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                                 case "tileset":
                                     // return <LayerTilesetContent />;
                                     return (
-                                        <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-                                            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
+                                        <div className="layer-scroll">
+                                            <DndProvider backend={MultiBackend} options={getBackendOptions()}>
                                                 <TreeContainer searchTerm={debouncedSearch} />
-                                            </div>
-                                        </DndProvider>
+                                            </DndProvider>
+                                        </div>
                                     );
                                 case "primitives":
                                     return <div>Primitives Content</div>;

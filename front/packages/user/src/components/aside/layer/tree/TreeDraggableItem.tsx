@@ -61,26 +61,29 @@ export const TreeDraggableItem: FC<DraggableItemProps> = ({ id, text, index, gro
             isDragging: monitor.isDragging(),
         }),
     });
-
     drag(drop(ref));
 
     return (
-        <div
-            ref={ref}
-            style={{
-                padding: '8px',
-                margin: '4px',
-                backgroundColor: isDragging ? 'lightgreen' : 'white',
-                border: '1px solid gray',
-                cursor: 'move',
-                opacity: isDragging ? 0.5 : 1,
-                color: 'black',
-            }}
-        >
-            {text}
-            <button onClick={() => {layerVisibilityToggle(item)}} type="button">a</button>
-            <button onClick={() => {flyToLayer(item)}} type="button">s</button>
-            <button onClick={() => {deleteLayer(item)}} type="button">d</button>
+        <div ref={ref} className="layer-node-container" >
+            <span className="type type-3d"></span>
+            <span className="layer-name">{text}</span>
+            <div className="layer-button">
+                <button
+                    type="button"
+                    onClick={() => {layerVisibilityToggle(item)}}
+                    className={`layer-funtion-button ${item.visible ? 'visible' : 'not-visible'}`}
+                ></button>
+                <button
+                    type="button"
+                    onClick={() => {flyToLayer(item)}}
+                    className="layer-funtion-button map-view"
+                ></button>
+                <button
+                    type="button"
+                    onClick={() => {deleteLayer(item)}}
+                    className="layer-funtion-button delete"
+                ></button>
+            </div>
         </div>
     );
 };
