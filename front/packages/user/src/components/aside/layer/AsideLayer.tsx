@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     layerMenuState
 } from "@/recoils/Layer";
@@ -10,13 +10,13 @@ import LayerTilesetContent from "@/components/aside/layer/LayerTilesetContent.ts
 import {DndProvider} from "react-dnd";
 import {getBackendOptions, MultiBackend} from "@minoru/react-dnd-treeview";
 import {TreeContainer} from "@/components/aside/layer/tree/TreeContainer.tsx";
+import {useDebounce} from "@/hooks/useDebounce.ts";
 
 export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const [layerMenu, setLayerMenu] = useRecoilState(layerMenuState);
     const [searchTerm, setSearchTerm] = useState('');
 
-
-
+    const debouncedSearch = useDebounce(searchTerm, 300);
 
     return (
         <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
@@ -49,7 +49,7 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                                     return (
                                         <DndProvider backend={MultiBackend} options={getBackendOptions()}>
                                             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-                                                <TreeContainer />
+                                                <TreeContainer searchTerm={debouncedSearch} />
                                             </div>
                                         </DndProvider>
                                     );
