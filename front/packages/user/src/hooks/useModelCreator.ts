@@ -60,16 +60,25 @@ export const useModelCreator = (viewer: Cesium.Viewer | undefined) => {
         createModel(glbUrl, pickedPosition);
     }
 
-    const createModel = (glbUrl: string, position: Cesium.Cartesian3, scale = 10) => {
+    const createModel = async(glbUrl: string, position: Cesium.Cartesian3, scale = 10) => {
         if (!viewer || !Cesium.defined(position)) return;
-
-        viewer.entities.add({
+        const name = glbUrl.split("/").pop();
+        const hpr = new Cesium.HeadingPitchRoll(0.0, 0.0, 0.0);
+        const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(
             position,
-            model: {
-                uri: glbUrl,
-                scale: scale
-            }
-        });
+            hpr
+        );
+
+        const model = await Cesium.Model.fromGltfAsync({
+            url: glbUrl,
+            modelMatrix: modelMatrix,
+            scale: scale,
+            id: name,
+            colorBlendMode: Cesium.ColorBlendMode.REPLACE,
+        })
+
+
+        viewer.scene.primitives.add(model);
     };
 
     const offCreateProp = () => {
@@ -87,9 +96,5 @@ export const useModelCreator = (viewer: Cesium.Viewer | undefined) => {
         };
     }, []);
 
-    const togglePropClickEvent = () => {
-        console.log("hello");
-    }
-
-    return { onCreateProp, offCreateProp, togglePropClickEvent };
+    return { onCreateProp, offCreateProp };
 };
