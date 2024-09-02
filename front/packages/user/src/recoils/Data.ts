@@ -123,15 +123,9 @@ export const propSearchSelector = selector<PropsPagedQueryVariables>({
         const itemsSize = get(propItemSizeState);
         const searchQueryOption = get(propSearchQueryOptionState);
         const searchText = get(propSearchTextState);
-        const profile = get(currentUserProfileSelector);
 
         filter.name = {};
         filter.name[searchQueryOption] = searchText;
-
-        filter.createdBy = {};
-        if (profile) {
-            filter.createdBy.eq = profile.id;
-        }
 
         pageable.page = page;
         pageable.size = itemsSize;

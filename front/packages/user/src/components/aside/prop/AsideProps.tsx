@@ -25,8 +25,6 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
     const [dataArr, setDataArr] = useState<Prop[]>([]);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const [selectedPropId, setSelectedPropId] = useState<string | null>(null);
-
     const { data, loading } = useQuery(PropsPagedDocument, {
         variables: searchProps,
         fetchPolicy: 'network-only',
@@ -57,7 +55,6 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
     const togglePropClick = (prop: Prop) => {
         if (currentCreatePropId === prop.id) {
             setCurrentCreatePropId('');
-            setSelectedPropId(null);
             offCreateProp();
             return;
         }
@@ -67,18 +64,15 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
 
         if (!url) return;
         setCurrentCreatePropId(prop.id);
-        setSelectedPropId(prop.id);
         onCreateProp(url);
     };
 
     useEffect(() => {
-        if ( (!currentCreatePropId || currentCreatePropId === '' ) && selectedPropId) {
-            console.log("동작했으")
+        if ( !currentCreatePropId || currentCreatePropId === '' ) {
             setCurrentCreatePropId('');
-            setSelectedPropId(null);
             offCreateProp();
         }
-    }, [selectedPropId, currentCreatePropId, offCreateProp, setCurrentCreatePropId]);
+    }, [currentCreatePropId, offCreateProp, setCurrentCreatePropId]);
 
     return (
         <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
@@ -96,7 +90,7 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
                                         <li
                                             key={prop.id}
                                             onClick={() => togglePropClick(prop)}
-                                            className={selectedPropId === prop.id ? 'selected' : ''}
+                                            className={currentCreatePropId === prop.id ? 'selected' : ''}
                                         >
                                             <img
                                                 src={prop.files[0].thumbnail.download ?? ''}
