@@ -1,17 +1,22 @@
-import { RefObject, useEffect } from "react";
+import {RefObject, useEffect, useRef} from "react";
 import * as Cesium from "cesium";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import {getWmsLayer} from "@/components/utils/utils.ts";
+import {TerrainUrlState} from "@/recoils/Terrain.ts";
+import {useRecoilState} from "recoil";
 
 export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
   const { globeController } = useGlobeController();
-  
+  const [terrainUrl] = useRecoilState<string>(TerrainUrlState);
+  const viewerRef = useRef<Cesium.Viewer | null>(null);
+
   useEffect(() => {
-    Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL).then(terrainProvider => {
-      if (!containerRef.current) return;
-      const viewer = globeController.createViewer(containerRef.current, {
+    if (!containerRef.current) return;
+    const initializeViewer = async () => {
+      const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
+      viewerRef.current = globeController.createViewer(containerRef.current as HTMLDivElement, {
         baseLayer: new Cesium.ImageryLayer(new Cesium.OpenStreetMapImageryProvider({
-            url: 'https://a.tile.openstreetmap.org/'
+          url: 'https://a.tile.openstreetmap.org/'
         }), {show:true}),
         terrainProvider,
         // baseLayer: getWmsLayer(import.meta.env.VITE_BASE_LAYER_NAME),
@@ -27,10 +32,12 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
         infoBox: false,
         selectionIndicator: false,
       } as Cesium.Viewer.ConstructorOptions);
+
+      const viewer = viewerRef.current;
       const scene = viewer.scene;
       const globe = scene.globe;
       globe.depthTestAgainstTerrain = true;
-      
+
       viewer.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(Number(import.meta.env.VITE_START_LONGITUDE), Number(import.meta.env.VITE_START_LATITUDE), Number(import.meta.env.VITE_START_HEIGHT)),
         orientation: {
@@ -41,8 +48,29 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
       });
       viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
       viewer.scene.camera.percentageChanged = 0.01;
-    });
+    };
 
+    initializeViewer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [containerRef]);
+
+  useEffect(() => {
+    if (terrainUrl && viewerRef.current) {
+      changeTerrainByUrl(terrainUrl);
+    }
+  }, [terrainUrl]);
+
+  const changeTerrainByUrl = (newTerrainUrl: string) => {
+    if (viewerRef.current) {
+      Cesium.CesiumTerrainProvider.fromUrl(newTerrainUrl).then(terrainProvider => {
+        viewerRef.current!.terrainProvider = terrainProvider;
+        viewerRef.current!.scene.globe.terrainProvider = terrainProvider;
+        viewerRef.current!.scene.requestRender();
+      }).catch(error => {
+        console.error("지형 로드 실패:", error);
+      });
+    }
+  };
 };
+
+

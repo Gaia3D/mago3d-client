@@ -10,6 +10,7 @@ import {DndProvider} from "react-dnd";
 import {getBackendOptions, MultiBackend} from "@minoru/react-dnd-treeview";
 import {TreeContainer} from "@/components/aside/layer/tree/TreeContainer.tsx";
 import {useDebounce} from "@/hooks/useDebounce.ts";
+import TerrainChanger from "@/components/aside/layer/TerrainChanger.tsx";
 
 export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const [layerMenu, setLayerMenu] = useRecoilState(layerMenuState);
@@ -26,15 +27,7 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                     <SearchInput value={searchTerm} change={setSearchTerm} />
                 </div>
                 <div className="content--wrapper">
-                    <ul className="layer">
-                        <li className="selected"><span className="text">Terrain</span></li>
-                    </ul>
-                    <ul className="layer-list">
-                        <li className="terrain-li">
-                            <span className="type type-terrain"></span>
-                            <span className="name">Ellipsoid Terrain (Default)</span>
-                        </li>
-                    </ul>
+                    <TerrainChanger />
                     <ul className="layer">
                         <li className={`${layerMenu === 'tileset' ? 'selected': ''}`} onClick={() => setLayerMenu('tileset')}><span className="text">Tileset</span></li>
                         <li className={`${layerMenu === 'primitives' ? 'selected': ''}`} onClick={() => setLayerMenu('primitives')}><span className="text">Primitives</span></li>
