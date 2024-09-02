@@ -6,7 +6,7 @@ import {
     ProcessTaskStatus,
     AssetFilterInput,
     AssetPageableInput,
-    AssetSort, T3DFormatType
+    AssetSort, T3DFormatType, PropFilterInput, PropPageableInput, PropsPagedQueryVariables, PropsSort
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import {IUserInfo} from "@mnd/shared";
 import {currentUserProfileSelector} from "@/recoils/Auth.ts";
@@ -90,6 +90,58 @@ export const dataSearchSelector = selector<DatasetAssetListQueryVariables>({
         pageable
       }
   }
+})
+
+export const propCurrentPageState = atom<number>({
+    key: 'propCurrentPageState',
+    default: 0,
+});
+
+export const propItemSizeState = atom<DataItemSize>({
+    key: 'propItemSizeState',
+    default: 20
+});
+
+export const propSearchQueryOptionState = atom<DataSearchQueryOption>({
+    key: 'propSearchQueryOptionState',
+    default: 'containsIgnoreCase'
+});
+
+export const propSearchTextState = atom<string | undefined>({
+    key: 'propSearchTextState',
+    default: undefined
+});
+
+export const propSearchSelector = selector<PropsPagedQueryVariables>({
+    key: "propSearchSelector",
+    get: ({get}) => {
+
+        const filter = {} as PropFilterInput
+        const pageable = {} as PropPageableInput
+
+        const page = get(propCurrentPageState);
+        const itemsSize = get(propItemSizeState);
+        const searchQueryOption = get(propSearchQueryOptionState);
+        const searchText = get(propSearchTextState);
+        const profile = get(currentUserProfileSelector);
+
+        filter.name = {};
+        filter.name[searchQueryOption] = searchText;
+
+        filter.createdBy = {};
+        if (profile) {
+            filter.createdBy.eq = profile.id;
+        }
+
+        pageable.page = page;
+        pageable.size = itemsSize;
+        pageable.sort = [PropsSort.CreatedAtDesc];
+
+        return {
+            filter,
+            pageable
+        }
+    }
 })
 
 

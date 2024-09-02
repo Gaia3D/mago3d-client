@@ -26,7 +26,6 @@ const TerrainChanger = () => {
                     })
                     const {terrains} = result;
                     setUserTerrains(terrains);
-                    console.log(terrains)
                 });
         }
     }, [userTerrainGroups]);

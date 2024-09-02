@@ -12,6 +12,50 @@ query AssetStatus($id: ID!) {
     }
 }
 
+query PropsPaged ($filter: PropFilterInput, $pageable: PropPageableInput) {
+    propsPaged(
+        filter: $filter,
+        pageable: $pageable
+    )
+    {
+        items {
+            id
+            name
+            createdBy
+            createdAt
+            updatedBy
+            updatedAt
+            files {
+                id
+                filename
+                contentType
+                contentSize
+                download
+                width
+                height
+                createdBy
+                createdAt
+                updatedBy
+                updatedAt
+                thumbnail {
+                    filename
+                    contentType
+                    contentSize
+                    download
+                }
+            }
+        }
+        pageInfo {
+            totalPages
+            totalItems
+            page
+            size
+            hasNextPage
+            hasPreviousPage
+        }
+    }
+}
+
 query DatasetAssetList($filter:AssetFilterInput, $pageable: AssetPageableInput) @api(name: dataset) {
     assets(
         filter: $filter

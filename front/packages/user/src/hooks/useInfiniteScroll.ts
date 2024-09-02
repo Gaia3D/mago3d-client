@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-type UseInfiniteScrollOptions = {
+type UseInfiniteScrollOptions<T extends HTMLElement> = {
     root?: HTMLElement | null;
     rootMargin?: string;
     threshold?: number;
@@ -8,15 +8,15 @@ type UseInfiniteScrollOptions = {
     isLoading: boolean;
 };
 
-export const useInfiniteScroll = ({
-                                      root = null,
-                                      rootMargin = '0px',
-                                      threshold = 1.0,
-                                      fetchMore,
-                                      isLoading,
-                                  }: UseInfiniteScrollOptions) => {
+export const useInfiniteScroll = <T extends HTMLElement>({
+                                                             root = null,
+                                                             rootMargin = '0px',
+                                                             threshold = 1.0,
+                                                             fetchMore,
+                                                             isLoading,
+                                                         }: UseInfiniteScrollOptions<T>) => {
     const observerRef = useRef<IntersectionObserver | null>(null);
-    const loadMoreRef = useRef<HTMLTableRowElement | null>(null);
+    const loadMoreRef = useRef<T | null>(null);
 
     useEffect(() => {
         if (observerRef.current) observerRef.current.disconnect();

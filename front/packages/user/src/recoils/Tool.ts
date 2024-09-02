@@ -165,3 +165,8 @@ export const ToolStatusState = atom<ToolStatus>({
   key: 'ToolStatusState',
   default: null
 });
+
+export const CurrentCreatePropIdState = atom<string>({
+  key: 'CurrentCreatePropIdState',
+  default: ''
+})

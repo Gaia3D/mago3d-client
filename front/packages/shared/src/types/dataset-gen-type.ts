@@ -676,6 +676,7 @@ export type Mutation = {
   appendAssetFile: Scalars['Boolean'];
   /**  Asset */
   createAsset: CreateAssetResponse;
+  /**  Group */
   createGroup: CreateGroupResponse;
   /**  Label */
   createLabel: CreateLabelResponse;
@@ -687,11 +688,7 @@ export type Mutation = {
   deleteGroup: Scalars['Boolean'];
   deleteLabel: Scalars['Boolean'];
   deleteProp?: Maybe<Scalars['Boolean']>;
-  /**
-   *  Upload
-   *  Use RestAPI instead of Graphql
-   *  createUploadFile()
-   */
+  /**  Upload */
   deleteUploadFile: Scalars['Boolean'];
   locateAsset: Asset;
   locateGroup: Group;
@@ -1025,11 +1022,33 @@ export type PropFilterInput = {
   or?: InputMaybe<Array<InputMaybe<PropFilterInput>>>;
 };
 
+export type PropPageableInput = {
+  page?: Scalars['Int'];
+  size?: Scalars['Int'];
+  sort?: InputMaybe<Array<InputMaybe<PropsSort>>>;
+};
+
+export type PropPaged = {
+  __typename?: 'PropPaged';
+  items: Array<Maybe<Prop>>;
+  pageInfo: PaginationInfo;
+};
+
+export enum PropsSort {
+  CreatedAtAsc = 'CREATED_AT_ASC',
+  CreatedAtDesc = 'CREATED_AT_DESC',
+  NameAsc = 'NAME_ASC',
+  NameDesc = 'NAME_DESC',
+  UpdatedAtAsc = 'UPDATED_AT_ASC',
+  UpdatedAtDesc = 'UPDATED_AT_DESC'
+}
+
 export type Query = {
   __typename?: 'Query';
   /**  Asset */
   asset?: Maybe<Asset>;
   assets: AssetPaged;
+  /**  Group */
   group?: Maybe<Group>;
   groups: GroupPaged;
   /**  Label */
@@ -1040,6 +1059,7 @@ export type Query = {
   processes: ProcessPaged;
   prop?: Maybe<Prop>;
   props: PropCursored;
+  propsPaged: PropPaged;
   /**  Upload */
   uploadFile?: Maybe<UploadFile>;
   uploadFiles: UploadFilePaged;
@@ -1099,6 +1119,12 @@ export type QueryPropsArgs = {
   cursor?: InputMaybe<Scalars['Long']>;
   filter?: InputMaybe<PropFilterInput>;
   size?: Scalars['Int'];
+};
+
+
+export type QueryPropsPagedArgs = {
+  filter?: InputMaybe<PropFilterInput>;
+  pageable?: InputMaybe<PropPageableInput>;
 };
 
 
