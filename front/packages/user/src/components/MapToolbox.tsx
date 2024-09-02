@@ -137,7 +137,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
                 })
             );
         }
-    }, [currentCreatePropId, initialTools]);
+    }, [currentCreatePropId]);
 
     const deactivatePreviousActiveTool = useCallback((clickedTool: MapTool) => {
         setTools(prevState =>
