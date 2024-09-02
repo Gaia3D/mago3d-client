@@ -81,7 +81,7 @@ const MapFunction = () => {
             });
         }
 
-        layers.forEach(layer => {
+        [...layers].reverse().forEach(layer => {
             const {type, assetId, properties, visible} = layer;
 
             if (!properties || Object.keys(properties).length === 0) return;

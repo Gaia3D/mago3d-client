@@ -2,6 +2,11 @@ import { NodeModel } from "@minoru/react-dnd-treeview";
 import { Maybe, UserLayerAsset, UserLayerGroup } from "@mnd/shared/src/types/layerset/gql/graphql";
 import { atom } from "recoil";
 
+export const layerMenuState = atom<string>({
+  key: 'layerMenuState',
+  default: 'tileset'
+})
+
 export const layersState = atom<UserLayerAsset[]>({
   key:'layers',
   default: []

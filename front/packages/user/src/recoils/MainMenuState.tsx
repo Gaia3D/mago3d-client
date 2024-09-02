@@ -7,7 +7,7 @@ type MainMenuState = {
 export const mainMenuState = atom<MainMenuState>({
   key: "MainMenuState",
   default: {
-    SelectedId: "assets",
+    SelectedId: "layers",
   },
 });
 
