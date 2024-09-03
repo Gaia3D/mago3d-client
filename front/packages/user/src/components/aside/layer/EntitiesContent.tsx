@@ -44,8 +44,6 @@ const EntitiesContent = () => {
                 customDataSources.push(ds);
             }
         }
-
-        console.log(customDataSources);
         setDsCol(customDataSources);
     }, [viewer, eventDataSource, analysisDataSource, mapnoteDataSource, timeseriesDataSource, toolDataSource]);
 
