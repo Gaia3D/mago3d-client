@@ -66,7 +66,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
             debouncedSetLayers(tempLayers);
             prevUserLayerGroupsRef.current = userLayerGroups;
         }
-    }, [userLayerGroups, debouncedSetLayers]);
+    }, [userLayerGroups.length, debouncedSetLayers]);
 
     useEffect(() => {
         if (userLayerGroups.length === 0) return;
