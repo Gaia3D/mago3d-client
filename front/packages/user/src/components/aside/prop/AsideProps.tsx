@@ -68,7 +68,7 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
     };
 
     useEffect(() => {
-        if ( !currentCreatePropId || currentCreatePropId === '' ) {
+        if (!currentCreatePropId) {
             setCurrentCreatePropId('');
             offCreateProp();
         }
