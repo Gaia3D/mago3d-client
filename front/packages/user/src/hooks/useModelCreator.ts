@@ -60,23 +60,35 @@ export const useModelCreator = (viewer: Cesium.Viewer | undefined) => {
         createModel(glbUrl, pickedPosition);
     }
 
-    const createModel = async(glbUrl: string, position: Cesium.Cartesian3, scale = 10) => {
+    const createModel = async (glbUrl: string, position: Cesium.Cartesian3, scale = 10) => {
         if (!viewer || !Cesium.defined(position)) return;
         const name = glbUrl.split("/").pop();
         const hpr = new Cesium.HeadingPitchRoll(0.0, 0.0, 0.0);
-        const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(
-            position,
-            hpr
-        );
 
         const model = await Cesium.Model.fromGltfAsync({
             url: glbUrl,
-            modelMatrix: modelMatrix,
+            modelMatrix: Cesium.Matrix4.IDENTITY,
             scale: scale,
             id: name,
             colorBlendMode: Cesium.ColorBlendMode.REPLACE,
-        })
+        });
 
+        // 모델이 준비되었을 때 이벤트를 처리하는 리스너 추가
+        model.readyEvent.addEventListener(() => {
+            // 모델의 바운딩 박스 계산
+            const boundingSphere = model.boundingSphere;
+            const modelHeight = boundingSphere.center.y - boundingSphere.radius;
+
+            // 바닥 좌표를 맞추기 위한 모델 매트릭스 변환
+            const translation = new Cesium.Cartesian3(0.0, 0.0, -modelHeight / 2);
+            const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(
+                position,
+                hpr
+            );
+            Cesium.Matrix4.multiplyByTranslation(modelMatrix, translation, modelMatrix);
+
+            model.modelMatrix = modelMatrix;
+        });
 
         viewer.scene.primitives.add(model);
     };
