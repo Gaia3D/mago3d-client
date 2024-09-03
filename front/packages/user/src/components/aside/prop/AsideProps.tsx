@@ -41,7 +41,7 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
             ...prevDataArr,
             ...data.propsPaged.items.filter((item): item is Prop => item !== null)
         ]);
-    }, [data, loading, setPage]);
+    }, [data?.propsPaged.pageInfo, loading, setPage]);
 
     const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
         root: containerRef.current,
@@ -85,20 +85,20 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
                     <div className="prop-scroll" ref={containerRef}>
                         <ul className="prop">
                             {
-                                dataArr.map((prop) => (
-                                    prop && prop.files.length > 0 && prop.files[0].thumbnail ? (
+                                dataArr
+                                    .filter((prop) => prop && prop.files.length > 0 && prop.files[0].thumbnail)
+                                    .map((prop) => (
                                         <li
                                             key={prop.id}
                                             onClick={() => togglePropClick(prop)}
                                             className={currentCreatePropId === prop.id ? 'selected' : ''}
                                         >
                                             <img
-                                                src={prop.files[0].thumbnail.download ?? ''}
+                                                src={prop.files[0].thumbnail?.download ?? ''}
                                                 alt={prop.files[0].filename ?? ''}
                                             />
                                         </li>
-                                    ) : null
-                                ))
+                                    ))
                             }
                             <div ref={loadMoreRef} className="data-end-ref">
                                 {loading ? (
