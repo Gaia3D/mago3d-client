@@ -66,7 +66,7 @@ export const useModelCreator = (viewer: Cesium.Viewer | undefined, primitiveColl
         [handleMouseLeftClick, viewer] // 종속성 배열에 handleMouseLeftClick과 viewer 추가
     );
 
-    const createModel = async (glbUrl: string, position: Cesium.Cartesian3, name: string, scale = 1000) => {
+    const createModel = async (glbUrl: string, position: Cesium.Cartesian3, name: string, scale = 10) => {
         if (!viewer || !Cesium.defined(position)) return;
         const hpr = new Cesium.HeadingPitchRoll(0.0, 0.0, 0.0);
 

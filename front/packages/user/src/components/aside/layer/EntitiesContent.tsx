@@ -53,6 +53,7 @@ const EntitiesContent = () => {
 
     const toggleVisibility = (ds: CustomDataSourceExtended) => {
         ds.show = !ds.show;
+        setDsCol(prevArr => [...prevArr]);
     };
 
     const flyTo = async (ds: CustomDataSourceExtended) => {
@@ -79,7 +80,7 @@ const EntitiesContent = () => {
             {dsCol.map((ds, index) => (
                 <div key={`${ds.name}-${index}`}>
                     <span>{ds.name}</span>
-                    <button onClick={() => toggleVisibility(ds)}>view</button>
+                    <button onClick={() => toggleVisibility(ds)}>view {`${ds.show? 'on' : 'off'}`}</button>
                     <button onClick={() => flyTo(ds)}>fly</button>
                     <button onClick={() => removePrimitive(ds)}>del</button>
                 </div>

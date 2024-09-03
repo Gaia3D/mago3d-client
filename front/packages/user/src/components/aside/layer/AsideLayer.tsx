@@ -13,6 +13,7 @@ import {useDebounce} from "@/hooks/useDebounce.ts";
 import TerrainChanger from "@/components/aside/layer/TerrainChanger.tsx";
 import PrimitivesContent from "@/components/aside/layer/PrimitivesContent.tsx";
 import EntitiesContent from "@/components/aside/layer/EntitiesContent.tsx";
+import TilesetContent from "@/components/aside/layer/TilesetContent.tsx";
 
 export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const [layerMenu, setLayerMenu] = useRecoilState(layerMenuState);
@@ -36,24 +37,20 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                         <li className={`${layerMenu === 'entities' ? 'selected': ''}`} onClick={() => setLayerMenu('entities')}><span className="text">Entities</span></li>
                     </ul>
                     <div className="layer-scroll">
-                    {
-                        (() => {
-                            switch (layerMenu) {
-                                case "tileset":
-                                    return (
-                                        <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-                                            <TreeContainer searchTerm={debouncedSearch} />
-                                        </DndProvider>
-                                    );
-                                case "primitives":
-                                    return <PrimitivesContent />;
-                                case "entities":
-                                    return <EntitiesContent />;
-                                default:
-                                    return null;
-                            }
-                        })()
-                    }
+                        {
+                            (() => {
+                                switch (layerMenu) {
+                                    case "tileset":
+                                        return <TilesetContent searchTerm={debouncedSearch} />;
+                                    case "primitives":
+                                        return <PrimitivesContent />;
+                                    case "entities":
+                                        return <EntitiesContent />;
+                                    default:
+                                        return null;
+                                }
+                            })()
+                        }
                     </div>
                 </div>
             </div>

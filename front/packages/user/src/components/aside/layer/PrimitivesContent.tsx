@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
+import React, { useEffect, useState, useCallback } from 'react';
+import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 import * as Cesium from 'cesium';
-import {PrimitiveCollection, Model} from "cesium";
-
+import { PrimitiveCollection, Model } from "cesium";
 
 interface PrimitiveCollectionExtended extends PrimitiveCollection {
     boundingSphere?: Cesium.BoundingSphere;
@@ -15,21 +14,21 @@ const PrimitivesContent = () => {
 
     const [priArr, setPriArr] = useState<Model[]>([]);
 
-    const removePrimitive = (model: Model) => {
+    const removePrimitive = useCallback((model: Model) => {
         if (!propPrimitives) return;
         propPrimitives.remove(model);
-        setPriArr(prevArr => prevArr.filter(p => p !== model)); // 상태에서 제거
-    };
+        setPriArr(prevArr => prevArr.filter(p => p !== model));
+    }, [propPrimitives]);
 
     useEffect(() => {
         if (propPrimitives) {
             const primitives = (propPrimitives as PrimitiveCollectionExtended)._primitives || [];
             setPriArr(primitives);
         }
-    }, [propPrimitives.length]);
+    }, [propPrimitives]);
 
-    const flyTo = async (model : Model) => {
-        const {viewer} = globeController;
+    const flyTo = async (model: Model) => {
+        const { viewer } = globeController;
         if (!viewer) return;
 
         const boundingSphere = model.boundingSphere || Cesium.BoundingSphere.fromBoundingSpheres(model.boundingSphere);
@@ -44,22 +43,21 @@ const PrimitivesContent = () => {
         }
     }
 
-    const toggleVisibility = (model : Model) => {
+    const toggleVisibility = useCallback((model: Model) => {
         model.show = !model.show;
-    }
+        setPriArr(prevArr => [...prevArr]);
+    }, []);
 
     return (
         <div>
-            {
-                priArr.map((prop: Model, index: number) => (
-                    <div key={`${prop.id}-${index}`}>
-                        <span>{prop.id}</span>
-                        <button onClick={() => toggleVisibility(prop)}>view</button>
-                        <button onClick={() => flyTo(prop)}>fly</button>
-                        <button onClick={() => removePrimitive(prop)}>del</button>
-                    </div>
-                ))
-            }
+            {priArr.map((prop: Model, index: number) => (
+                <div key={`${prop.id}-${index}`}>
+                    <span>{prop.id}</span>
+                    <button onClick={() => toggleVisibility(prop)}>view {`${prop.show? 'on' : 'off'}`}</button>
+                    <button onClick={() => flyTo(prop)}>fly</button>
+                    <button onClick={() => removePrimitive(prop)}>del</button>
+                </div>
+            ))}
         </div>
     );
 };
