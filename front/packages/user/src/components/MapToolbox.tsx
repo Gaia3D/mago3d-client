@@ -1,10 +1,12 @@
 import { useMapTool } from "@/hooks/useMapTool";
-import { useState, useMemo, useCallback } from "react";
+import {useState, useMemo, useCallback, useEffect} from "react";
 import NavigationRoundedIcon from '@mui/icons-material/NavigationRounded';
 import { useViewTool } from "@/hooks/useViewTool.tsx";
 import {useObjectTool} from "@/hooks/useObjectTool.tsx";
 import {useTranslation} from "react-i18next";
 import {Compass} from "@/components/maptool/Compass.tsx";
+import {useRecoilState} from "recoil";
+import {CurrentCreatePropIdState} from "@/recoils/Tool.ts";
 
 interface ToolButtonProps {
     tool: MapTool;
@@ -78,6 +80,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
     const { toggleSelector } = useObjectTool();
 
     const initialTools: MapTool[] = useMemo(() => [
+        { toolBoxIndex: 0, className: "global-click-event-control", group: CLICK_EVENT_GROUP, onClick: ()=>{console.log()} },
         { toolBoxIndex: 0, className: "home", group: TOOLBOX_SEP, onClick: onClickHome },
         { toolBoxIndex: 0, className: "save", group: TOOLBOX_SEP, onClick: onClickSave },
         { toolBoxIndex: 0, className: "set-terrain-trans", group: TOOLBOX_SEP, toggle: true, onClick: toggleTerrainTranslucent },
@@ -105,6 +108,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         "visible": false,
         "ruler": false
     });
+    const [currentCreatePropId, setCurrentCreatePropId] = useRecoilState(CurrentCreatePropIdState);
 
     const isSameGroupAndNotSelfAndNotSep = (tool: MapTool, clickedTool: MapTool) =>
         tool.group === clickedTool.group && tool.className !== clickedTool.className && clickedTool.group !== TOOLBOX_SEP;
@@ -119,7 +123,21 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
                         : tool
             )
         );
-    }, []);
+        if (clickedTool.group === CLICK_EVENT_GROUP) setCurrentCreatePropId('')
+    }, [setCurrentCreatePropId]);
+
+    useEffect(() => {
+        if (currentCreatePropId !== '') {
+            setTools(prevState =>
+                prevState.map(tool => {
+                    if (isSameGroupAndNotSelfAndNotSep(tool, initialTools[0]) && tool.active) {
+                        tool.onClick?.();  // 이전 활성화된 도구의 onClick 호출
+                    }
+                    return {...tool, active: false};
+                })
+            );
+        }
+    }, [currentCreatePropId]);
 
     const deactivatePreviousActiveTool = useCallback((clickedTool: MapTool) => {
         setTools(prevState =>

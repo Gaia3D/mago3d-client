@@ -79,7 +79,7 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
         setDataArr(prevDataArr => [...prevDataArr, ...data.assets.items]);
     }, [data, loading, setPage]);
 
-    const loadMoreRef = useInfiniteScroll({
+    const loadMoreRef = useInfiniteScroll<HTMLTableRowElement>({
         root: containerRef.current,
         fetchMore: getMore,
         isLoading: loading,

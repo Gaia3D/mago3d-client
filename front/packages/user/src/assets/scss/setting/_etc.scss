@@ -33,6 +33,22 @@
 
 #map {
 
+  .prop {
+    li {
+      overflow: hidden;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    .data-end-ref {
+      display: block;
+      grid-column: 1 / -1;
+      text-align: center;
+    }
+  }
+
   .layer {
     .text {
       display: block;
