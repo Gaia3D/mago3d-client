@@ -29,6 +29,7 @@ export class GlobeController {
   public timeseriesDataSource: Cesium.CustomDataSource = new Cesium.CustomDataSource("timeseriesDataSource");
   public toolDataSource: Cesium.CustomDataSource = new Cesium.CustomDataSource("toolDataSource");
   public toolPrimitives: Cesium.PrimitiveCollection = new Cesium.PrimitiveCollection();
+  public propPrimitives: Cesium.PrimitiveCollection = new Cesium.PrimitiveCollection();
   private _tilesPrimitives: Cesium.PrimitiveCollection | undefined;
   public pointStackerLayer: Cesium.ImageryLayer | undefined = undefined;
 
@@ -58,6 +59,7 @@ export class GlobeController {
       this.handler = new Cesium.ScreenSpaceEventHandler(this.viewer?.scene.canvas);
       this.viewer?.scene.primitives.add(this._tilesPrimitives);
       this.viewer?.scene.primitives.add(this.toolPrimitives);
+      this.viewer?.scene.primitives.add(this.propPrimitives);
 
       this.viewer?.dataSources.add(this.eventDataSource);
       this.viewer?.dataSources.add(this.analysisDataSource);

@@ -50,7 +50,7 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
         rootMargin: '20px'
     });
 
-    const { onCreateProp, offCreateProp } = useModelCreator(globeController?.viewer);
+    const { onCreateProp, offCreateProp } = useModelCreator(globeController?.viewer, globeController?.propPrimitives);
 
     const togglePropClick = (prop: Prop) => {
         if (currentCreatePropId === prop.id) {
@@ -61,10 +61,11 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
 
         const propFile = prop.files[0];
         const url = propFile?.download;
+        const name = prop.name;
 
         if (!url) return;
         setCurrentCreatePropId(prop.id);
-        onCreateProp(url);
+        onCreateProp(url, name);
     };
 
     useEffect(() => {

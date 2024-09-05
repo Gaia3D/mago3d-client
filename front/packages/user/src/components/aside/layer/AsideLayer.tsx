@@ -11,6 +11,9 @@ import {getBackendOptions, MultiBackend} from "@minoru/react-dnd-treeview";
 import {TreeContainer} from "@/components/aside/layer/tree/TreeContainer.tsx";
 import {useDebounce} from "@/hooks/useDebounce.ts";
 import TerrainChanger from "@/components/aside/layer/TerrainChanger.tsx";
+import PrimitivesContent from "@/components/aside/layer/PrimitivesContent.tsx";
+import EntitiesContent from "@/components/aside/layer/EntitiesContent.tsx";
+import TilesetContent from "@/components/aside/layer/TilesetContent.tsx";
 
 export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const [layerMenu, setLayerMenu] = useRecoilState(layerMenuState);
@@ -33,26 +36,22 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                         <li className={`${layerMenu === 'primitives' ? 'selected': ''}`} onClick={() => setLayerMenu('primitives')}><span className="text">Primitives</span></li>
                         <li className={`${layerMenu === 'entities' ? 'selected': ''}`} onClick={() => setLayerMenu('entities')}><span className="text">Entities</span></li>
                     </ul>
-                    {
-                        (() => {
-                            switch (layerMenu) {
-                                case "tileset":
-                                    return (
-                                        <div className="layer-scroll">
-                                            <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-                                                <TreeContainer searchTerm={debouncedSearch} />
-                                            </DndProvider>
-                                        </div>
-                                    );
-                                case "primitives":
-                                    return <div>Primitives Content</div>;
-                                case "entities":
-                                    return <div>Entities Content</div>;
-                                default:
-                                    return null;
-                            }
-                        })()
-                    }
+                    <div className="layer-scroll">
+                        {
+                            (() => {
+                                switch (layerMenu) {
+                                    case "tileset":
+                                        return <TilesetContent searchTerm={debouncedSearch} />;
+                                    case "primitives":
+                                        return <PrimitivesContent />;
+                                    case "entities":
+                                        return <EntitiesContent />;
+                                    default:
+                                        return null;
+                                }
+                            })()
+                        }
+                    </div>
                 </div>
             </div>
         </div>

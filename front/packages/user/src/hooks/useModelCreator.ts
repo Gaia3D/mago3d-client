@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
 import * as Cesium from 'cesium';
 
-export const useModelCreator = (viewer: Cesium.Viewer | undefined) => {
+export const useModelCreator = (viewer: Cesium.Viewer | undefined, primitiveCollection: Cesium.PrimitiveCollection) => {
     const screenSpaceEventHandler = useRef<Cesium.ScreenSpaceEventHandler | undefined>(undefined);
     const pickedObject = useRef<any | undefined>(undefined);
 
     const handleMouseLeftClick = useCallback(
-        (event: Cesium.ScreenSpaceEventHandler.PositionedEvent, glbUrl: string) => {
+        (event: Cesium.ScreenSpaceEventHandler.PositionedEvent, glbUrl: string, name: string) => {
             if (!viewer) return;
             const scene = viewer.scene;
             pickedObject.current = scene.pick(event.position);
@@ -39,13 +39,13 @@ export const useModelCreator = (viewer: Cesium.Viewer | undefined) => {
             if (!pickedPosition || !cartographic) {
                 return;
             }
-            createModel(glbUrl, pickedPosition);
+            createModel(glbUrl, pickedPosition, name);
         },
         [viewer] // 종속성 배열에 viewer 추가
     );
 
     const onCreateProp = useCallback(
-        (glbUrl: string) => {
+        (glbUrl: string, name: string) => {
             if (!viewer) return;
             const scene = viewer.scene;
 
@@ -54,7 +54,7 @@ export const useModelCreator = (viewer: Cesium.Viewer | undefined) => {
             }
 
             screenSpaceEventHandler.current.setInputAction(
-                (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => handleMouseLeftClick(event, glbUrl),
+                (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => handleMouseLeftClick(event, glbUrl, name),
                 Cesium.ScreenSpaceEventType.LEFT_CLICK
             );
 
@@ -66,9 +66,8 @@ export const useModelCreator = (viewer: Cesium.Viewer | undefined) => {
         [handleMouseLeftClick, viewer] // 종속성 배열에 handleMouseLeftClick과 viewer 추가
     );
 
-    const createModel = async (glbUrl: string, position: Cesium.Cartesian3, scale = 10) => {
+    const createModel = async (glbUrl: string, position: Cesium.Cartesian3, name: string, scale = 10) => {
         if (!viewer || !Cesium.defined(position)) return;
-        const name = glbUrl.split("/").pop();
         const hpr = new Cesium.HeadingPitchRoll(0.0, 0.0, 0.0);
 
         const model = await Cesium.Model.fromGltfAsync({
@@ -96,7 +95,7 @@ export const useModelCreator = (viewer: Cesium.Viewer | undefined) => {
             model.modelMatrix = modelMatrix;
         });
 
-        viewer.scene.primitives.add(model);
+        primitiveCollection.add(model);
     };
 
     const offCreateProp = useCallback(() => {
