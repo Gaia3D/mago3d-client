@@ -1,7 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import { dataFormatter } from "@mnd/shared";
 import {
-    Asset,
     AssetForDownloadConvertFileDocument,
     AssetForDownloadOriginFileDocument,
     AssetType,
@@ -18,6 +17,7 @@ import {
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { useSetRecoilState} from "recoil";
 import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
+import {Asset} from "@/types/assets/Data.ts";
 
 type AssetRowProps = {
     item: Asset;

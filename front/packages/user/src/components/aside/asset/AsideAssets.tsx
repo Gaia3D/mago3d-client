@@ -7,7 +7,6 @@ import {
     dataSearchSelector,
     dataSearchTextState
 } from "@/recoils/Data.ts";
-import { Asset } from "@/types/assets/Data.ts";
 import { useDebounce } from "@/hooks/useDebounce.ts";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll.ts";
 import { AsideDisplayProps } from "@/components/aside/AsidePanel.tsx";
@@ -21,6 +20,7 @@ import SearchInput from "@/components/SearchInput.tsx";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
 import { IsNewAssetModalState } from "@/recoils/Modal.ts";
 import { assetsRefetchTriggerState } from "@/recoils/Assets.ts";
+import {Asset} from "@/types/assets/Data.ts";
 
 export const statusMap: Partial<Record<ProcessTaskStatus, string>> = {
     "Done": "success",
