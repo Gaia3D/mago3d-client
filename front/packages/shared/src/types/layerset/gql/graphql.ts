@@ -52,6 +52,8 @@ export type AccessCriteria = {
 export type AssetFilterInput = {
   access?: InputMaybe<CommonCriteria>;
   and?: InputMaybe<Array<AssetFilterInput>>;
+  createdAt?: InputMaybe<DateTimeCriteria>;
+  createdBy?: InputMaybe<SimpleCriteria>;
   enabled?: InputMaybe<BooleanCriteria>;
   id?: InputMaybe<SimpleCriteria>;
   name?: InputMaybe<StringCriteria>;
@@ -164,7 +166,7 @@ export type CreateAssetInput = {
   context: PublishContextValue;
   description?: InputMaybe<Scalars['String']['input']>;
   enabled?: Scalars['Boolean']['input'];
-  groupIds: Array<Scalars['ID']['input']>;
+  groupIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   name: Scalars['String']['input'];
   order?: InputMaybe<Scalars['Int']['input']>;
   properties?: InputMaybe<Scalars['JSON']['input']>;
@@ -181,6 +183,7 @@ export type CreateAssetResponse = WithAuditable & WithJsonProperty & {
   enabled: Scalars['Boolean']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  order?: Maybe<Scalars['Int']['output']>;
   properties?: Maybe<Scalars['JSON']['output']>;
   status?: Maybe<LayerAssetStatus>;
   type?: Maybe<LayerAssetType>;
@@ -472,8 +475,8 @@ export enum LayerAssetCreateStatus {
  * ##################################################################################
  */
 export type LayerAssetInfo = {
-  groupId: Scalars['ID']['input'];
-  id: Scalars['ID']['input'];
+  groupId?: InputMaybe<Scalars['ID']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type LayerAssetLog = WithAuditable & {

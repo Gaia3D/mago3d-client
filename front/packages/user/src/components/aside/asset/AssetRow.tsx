@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { dataFormatter } from "@mnd/shared";
-import { Asset } from "@/types/assets/Data.ts";
 import {
+    Asset,
     AssetForDownloadConvertFileDocument,
     AssetForDownloadOriginFileDocument,
     AssetType,
@@ -12,14 +12,11 @@ import {
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import { statusMap } from "@/components/aside/asset/AsideAssets.tsx";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import {CreateAssetInput, LayerAccess, LayerAssetType, PublishContextValue} from "@/types/layerset/gql/graphql.ts";
 import {
-    CogInput,
-    CoverageInput, F4DInput, FeatureInput,
-    InputMaybe,
-    LayersetCreateAssetDocument, RemoteInput, RemoteT3DInput, Scalars, SmartTileInput, T3DInput
+    CreateAssetInput, LayerAccess, LayerAssetType,
+    LayersetCreateAssetDocument, PublishContextValue
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
-import {useRecoilState, useSetRecoilState} from "recoil";
+import { useSetRecoilState} from "recoil";
 import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 
 type AssetRowProps = {
@@ -106,13 +103,14 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     };
 
     const publishAsset = (id: string, type: string, name: string) => {
-        confirm(`${name} 데이터를 레이어로 발행하시겠습니까?`);
+        if (!confirm(`${name} 데이터를 레이어로 발행하시겠습니까?`)) return;
+
 
         const typeMapping: Record<string, { assetType: LayerAssetType; contextKey: keyof PublishContextValue }> = {
-            [AssetType.Shp]: { assetType: LayerAssetType.Vector, contextKey: "feature" },
             [AssetType.Tiles3D]: { assetType: LayerAssetType.Tiles3D, contextKey: "t3d" },
-            [AssetType.Cog]: { assetType: LayerAssetType.Cog, contextKey: "cog" },
+            [AssetType.Shp]: { assetType: LayerAssetType.Vector, contextKey: "feature" },
             [AssetType.Imagery]: { assetType: LayerAssetType.Raster, contextKey: "coverage" },
+            [AssetType.Cog]: { assetType: LayerAssetType.Cog, contextKey: "cog" },
         };
 
         const selectedType = typeMapping[type];
@@ -124,7 +122,6 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
 
         const data: CreateAssetInput = {
             name,
-            groupIds: ['76'],
             access: LayerAccess.Private,
             enabled: true,
             visible: true,

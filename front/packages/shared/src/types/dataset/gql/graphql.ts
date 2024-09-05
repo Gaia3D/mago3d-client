@@ -66,6 +66,7 @@ export type Asset = {
   createdBy: Scalars['ID']['output'];
   createdByUser: User;
   description?: Maybe<Scalars['String']['output']>;
+  download?: Maybe<Scalars['String']['output']>;
   enabled: Scalars['Boolean']['output'];
   files: Array<Maybe<AssetFile>>;
   flags?: Maybe<Array<Maybe<DataAssetFlag>>>;
@@ -688,7 +689,6 @@ export type Mutation = {
   appendAssetFile: Scalars['Boolean']['output'];
   /**  Asset */
   createAsset: CreateAssetResponse;
-  /**  Group */
   createGroup: CreateGroupResponse;
   /**  Label */
   createLabel: CreateLabelResponse;
@@ -700,7 +700,11 @@ export type Mutation = {
   deleteGroup: Scalars['Boolean']['output'];
   deleteLabel: Scalars['Boolean']['output'];
   deleteProp?: Maybe<Scalars['Boolean']['output']>;
-  /**  Upload */
+  /**
+   *  Upload
+   *  Use RestAPI instead of Graphql
+   *  createUploadFile()
+   */
   deleteUploadFile: Scalars['Boolean']['output'];
   locateAsset: Asset;
   locateGroup: Group;
@@ -1060,7 +1064,6 @@ export type Query = {
   /**  Asset */
   asset?: Maybe<Asset>;
   assets: AssetPaged;
-  /**  Group */
   group?: Maybe<Group>;
   groups: GroupPaged;
   /**  Label */
