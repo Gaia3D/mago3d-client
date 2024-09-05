@@ -1,3 +1,5 @@
+import {T3DFormatType} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+
 type Option = { text: string; value: string };
 type OptionArr = Option[];
 type ReferenceOptionArr = Record<string, OptionArr>;
@@ -21,20 +23,26 @@ export const InterpolationTypeOptions: OptionArr = [
 
 export const inputFormatOptions: ReferenceOptionArr = {
     "3dtile": [
-        { text: "AUTO", value: "auto" },
-        { text: "KML", value: "kml" },
-        // { text: "3DS", value: "3ds" },
-        // { text: "DAE", value: "dae" },
-        { text: "OBJ", value: "obj" },
-        { text: "FBX", value: "fbx" },
-        { text: "GLTF", value: "gltf" },
-        { text: "GLB", value: "glb" },
-        { text: "LAS", value: "las" },
-        { text: "LAZ", value: "laz" },
-        { text: "IFC", value: "ifc" },
-        { text: "GeoJSON", value: "geojson" },
-        { text: "CityGML", value: "citygml" },
-        { text: "IndoorGML", value: "indoorgml" }
+        // { text: "AUTO", value: "auto" },
+        { text: "FBX (*.fbx)", value: T3DFormatType.Fbx },
+        { text: "GLTF (*.gltf)", value: T3DFormatType.Gltf },
+        { text: "GLB (*.glb)", value: T3DFormatType.Glb },
+        { text: "KML (*.kml)", value: T3DFormatType.Kml },
+        { text: "COLLADA (*.dae)", value: T3DFormatType.Collada },
+        { text: "MAX_3DS (*.3ds)", value: T3DFormatType.Max_3Ds },
+        { text: "MAX_ASE (*.ase)", value: T3DFormatType.MaxAse },
+        { text: "OBJ (*.obj)", value: T3DFormatType.Obj },
+        { text: "IFC (*.ifc)", value: T3DFormatType.Ifc },
+        { text: "CITY_GML (*.gml)", value: T3DFormatType.CityGml },
+        { text: "INDOOR_GML (*.gml)", value: T3DFormatType.IndoorGml },
+        { text: "LAS (*.las) (*.laz)", value: T3DFormatType.Las },
+        { text: "LAZ (*.laz)", value: T3DFormatType.Laz },
+        { text: "MODO (*.lxo)", value: T3DFormatType.Modo },
+        { text: "LWO (*.lwo)", value: T3DFormatType.Lwo },
+        { text: "LWS (*.lws)", value: T3DFormatType.Lws },
+        { text: "DirectX (*.x)", value: T3DFormatType.DirectX },
+        { text: "GeoJSON (*.geojson)", value: T3DFormatType.Geojson },
+        { text: "Shp (*.shp)", value: T3DFormatType.Shp },
     ],
     "terrain": [{ text: "AUTO", value: "auto" }],
     "vector": [
@@ -53,9 +61,9 @@ export const inputFormatOptions: ReferenceOptionArr = {
 export const outputFormatOptions: ReferenceOptionArr = {
     "3dtile": [
         { text: "AUTO", value: "auto" },
-        { text: "Batched 3d Model (.b3dm)", value: "b3dm" },
-        { text: "Instanced 3D Model (.i3dm)", value: "i3dm" },
-        { text: "PointsColud (.pnts)", value: "pnts" },
+        // { text: "Batched 3d Model (.b3dm)", value: "b3dm" },
+        // { text: "Instanced 3D Model (.i3dm)", value: "i3dm" },
+        // { text: "PointsColud (.pnts)", value: "pnts" },
     ],
     "terrain": [{ text: "AUTO", value: "auto" }],
     "vector": [{ text: "AUTO", value: "auto" }],
@@ -92,11 +100,13 @@ export const classifyAssetTypeAcceptFile = (assetType: string): { [key: string]:
         case 'terrain':
             return {
                 "image/tiff": [".tif",".tiff"],
-                "application/octet-stream": [".vrt"]
+                "application/octet-stream": [".vrt"],
+                "application/zip":[".zip"]
             };
         case 'raster':
             return {
-                "image/tiff":[".tif",".tiff"]
+                "image/tiff":[".tif",".tiff"],
+                "application/zip":[".zip"]
             };
         case 'vector':
             return {

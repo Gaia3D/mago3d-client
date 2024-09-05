@@ -20,8 +20,8 @@
 
 #container {
   nav{
-
     .menu {
+      user-select: none;
       .layer-number {
         display: flex;
         justify-content: center;
@@ -372,6 +372,7 @@
   }
 
   .side-bar-wrapper {
+    z-index: 0;
     &.on {
       .side-bar {
         transform: translateX(0);

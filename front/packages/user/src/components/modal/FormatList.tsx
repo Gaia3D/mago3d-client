@@ -3,7 +3,7 @@ import React from 'react';
 interface FormatListProps {
     name: string;
     selected: string;
-    onSelect: (key: string, format: string) => void;
+    onSelect: (key: string, value: string | number | boolean) => void;
     formats: {text: string, value: string}[];
 }
 

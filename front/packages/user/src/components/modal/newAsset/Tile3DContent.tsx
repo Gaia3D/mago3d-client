@@ -11,16 +11,15 @@ import FileUpload from "@/components/modal/FileUpload.tsx";
 import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
 import { useMutation, useQuery } from "@apollo/client";
 import {
+    Access,
     AssetStatusDocument,
     AssetType, CreateAssetInput, DatasetCreateAssetDocument,
-    DatasetCreateProcessDocument, ProcessContextInput, T3DConvertInput
+    DatasetCreateProcessDocument, ProcessContextInput, T3DConvertInput, T3DFormatType
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import { UploadedFile } from "@/types/Common.ts";
 import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
-import { formatTypeT3D } from "@/recoils/Data.ts";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 import { useSetRecoilState } from "recoil";
-import ConversionGuard from "@/components/modal/newAsset/ConversionGuard.tsx";
 
 const ASSET_TYPE = "3dtile";
 
@@ -28,10 +27,15 @@ interface Tile3DContentProps {
     display: boolean;
 }
 
+interface ValidationType {
+    isValid: boolean,
+    message: string,
+}
+
 const initialOptions = {
     projectName: '',
     debugMode: false,
-    inputFormat: 'auto',
+    inputFormat: T3DFormatType.Temp,
     outputFormat: 'auto',
     projectionType: 'epsg',
     crs: '',
@@ -111,8 +115,38 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
         },
     });
 
+    const validation = (): ValidationType => {
+        const checks = [
+            { condition: !options.projectName, message: 'Project name' },
+            { condition: options.inputFormat === T3DFormatType.Temp, message: 'Input format' },
+            { condition: !options.projectionValue, message: 'origin projection' },
+        ];
+
+        for (const check of checks) {
+            if (check.condition) {
+                return {
+                    isValid: false,
+                    message: check.message,
+                };
+            }
+        }
+
+        return {
+            isValid: true,
+            message: '',
+        };
+    }
 
     const fileUpload = async () => {
+
+        if (!validation().isValid) {
+            alert(`${validation().message} 값을 확인해주세요.`);
+            return;
+        }
+
+        const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
+        if (!uploadedFilesResult) return;
+
         setAssetsConvertingListState((prev) => {
             if (!prev.includes(ASSET_TYPE)) {
                 return [...prev, ASSET_TYPE];
@@ -120,39 +154,37 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
             return prev;
         });
 
-        const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
-        if (!uploadedFilesResult || uploadedFilesResult.length === 0) {
-            alert('파일 업로드에 실패했습니다. 관리자에게 문의 바랍니다.');
-            return;
-        }
-
         const uploadId = uploadedFilesResult.map(uploadedFile => uploadedFile.dbId);
         await createAssetMutation({variables: { input: createAssetInput(uploadId) }});
     };
 
     const createAssetInput = useCallback((uploadId: string[]): CreateAssetInput => ({
         name: options.projectName,
-        groupId: ["91"],
         description: '사용자 추가 데이터입니다.',
+        properties: undefined,
         assetType: AssetType.Tiles3D,
+        enabled: true,
+        access: Access.Private,
         uploadId
     }), [options.projectName]);
 
+
+
     const fileConvert = useCallback(async (id: string) => {
         const t3dValue: T3DConvertInput = {
-            autoUpAxis: options.autoUpAxis,
+            inputType: options.inputFormat,
             crs: options.projectionType === 'epsg' ? options.projectionValue : '',
-            flipCoordinate: options.flipCoordinate,
-            inputType: formatTypeT3D(options.inputFormat),
+            proj: options.projectionType !== 'epsg' ? options.projectionValue : '',
+            reverseTexCoord: options.reverseTexCoord,
+            pngTexture: options.pngTexture,
+            yUpAxis: options.yUpAxis,
+            refineAdd: options.refineAdd,
             maxCount: options.maxCount,
             maxLod: options.maxLod,
-            maxPoints: options.maxPoints,
             minLod: options.minLod,
-            pngTexture: options.pngTexture,
-            proj: options.projectionType !== 'epsg' ? options.projectionValue : '',
-            refineAdd: options.refineAdd,
-            reverseTexCoord: options.reverseTexCoord,
-            yUpAxis: options.yUpAxis,
+            maxPoints: options.maxPoints,
+            flipCoordinate: options.flipCoordinate,
+            autoUpAxis: options.autoUpAxis,
         };
 
         const input = {
@@ -160,7 +192,7 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
             name: options.projectName,
             source: { assetId: [id] }
         };
-
+        console.log(input);
         await createProcessMutation({ variables: { input } });
     }, [options, createProcessMutation]);
 
@@ -174,7 +206,6 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
             return prev;
         });
     }, []);
-
 
     return (
         <div key={componentKey} className={`modal-popup-body ${display ? "on" : "off"}`}>
@@ -221,27 +252,27 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
                     showDetail ? (
                         <>
                             <ToggleSetting text="y축을 높이 축으로 설정" id="yUpAxis" checked={options.yUpAxis}
-                                           onChange={handleOptionChange} />
+                                           onChange={handleOptionChange}/>
                             <ToggleSetting text="자동 높이 축 할당" id="autoUpAxis" checked={options.autoUpAxis}
-                                           onChange={handleOptionChange} />
+                                           onChange={handleOptionChange}/>
                             <ToggleSetting text="x,y 좌표 뒤집기" id="flipCoordinate" checked={options.flipCoordinate}
-                                           onChange={handleOptionChange} />
+                                           onChange={handleOptionChange}/>
                             <ToggleSetting text="구체화(Refine) 추가 모드" id="refineAdd" checked={options.refineAdd}
-                                           onChange={handleOptionChange} />
+                                           onChange={handleOptionChange}/>
                             <ToggleSetting text="png 텍스쳐 모드" id="pngTexture" checked={options.pngTexture}
-                                           onChange={handleOptionChange} />
+                                           onChange={handleOptionChange}/>
                             <ToggleSetting text="텍스쳐를 반대로" id="reverseTexCoord" checked={options.reverseTexCoord}
-                                           onChange={handleOptionChange} />
+                                           onChange={handleOptionChange}/>
                             <ToggleSetting text="Debug Mode" id="debugMode" checked={options.debugMode}
-                                           onChange={handleOptionChange} />
+                                           onChange={handleOptionChange}/>
                             <InputWithLabel label="노드 최대값" type="number" id="maxCount" value={options.maxCount}
-                                            onChange={handleOptionChange} isDetail={true} />
+                                            onChange={handleOptionChange} isDetail={true}/>
                             <InputWithLabel label="최대 LOD" type="number" id="maxLod" value={options.maxLod}
-                                            onChange={handleOptionChange} isDetail={true} />
+                                            onChange={handleOptionChange} isDetail={true}/>
                             <InputWithLabel label="최소 LOD" type="number" id="minLod" value={options.minLod}
-                                            onChange={handleOptionChange} isDetail={true} />
+                                            onChange={handleOptionChange} isDetail={true}/>
                             <InputWithLabel label="포인트 클라우드 데이터의 최대 포인트 수" type="number" id="maxPoints"
-                                            value={options.maxPoints} onChange={handleOptionChange} isDetail={true} />
+                                            value={options.maxPoints} onChange={handleOptionChange} isDetail={true}/>
                         </>
                     ) : (
                         <div className="detail-dot-value" onClick={detailToggle}>...</div>
@@ -250,7 +281,7 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
             </div>
             <div className="title">File upload</div>
             <div className="value">
-                <FileUpload ref={fileUploadRef} acceptFile={acceptFile} />
+                <FileUpload ref={fileUploadRef} acceptFile={acceptFile}/>
             </div>
             <div className="modal-bottom">
                 <button onClick={fileUpload} type="button" className="button-full">Convert</button>

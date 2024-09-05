@@ -96,6 +96,11 @@ const FileUpload = forwardRef(({ acceptFile = {} }: FileUploadProps, ref) => {
         uploadingFilesRef.current.clear();
         setAssetLoadState(prev => ({ ...prev, loading: false }));
 
+        if (!uploadedFilesResult || uploadedFilesResult.length === 0) {
+            alert('파일 업로드에 실패했습니다. 관리자에게 문의 바랍니다.');
+            return;
+        }
+
         return uploadedFilesResult; // 업로드된 파일 리스트 반환
     };
 
