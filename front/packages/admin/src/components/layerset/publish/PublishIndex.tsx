@@ -22,7 +22,7 @@ const PublishIndex = ({id}: { id: string }) => {
 
   const {asset} = dataAsset;
 
-  if (asset.assetType === AssetType.Shp) {
+  if (asset.assetType === AssetType.Shp || asset.assetType === AssetType.GeoJson) {
     publishComponent = <LayerPublishShp dataAsset={dataAsset} groupsQuery={groups}/>
   } else if (asset.assetType === AssetType.Tiles3D) {
     publishComponent = <LayerPublish3dTile dataAsset={dataAsset} groupsQuery={groups}/>

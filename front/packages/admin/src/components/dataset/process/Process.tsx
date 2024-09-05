@@ -12,7 +12,7 @@ const ProcessComponent = (props: {
 }) => {
   const {asset} = props.data;
 
-  if (asset.assetType === AssetType.Shp) {
+  if (asset.assetType === AssetType.Shp || asset.assetType === AssetType.GeoJson) {
     return <ProcessShp data={props.data} process={props.process} resetProcess={props.resetProcess}/>
   } else if (asset.assetType === AssetType.Tiles3D) {
     return <Process3dTile data={props.data} process={props.process} resetProcess={props.resetProcess}/>
