@@ -168,7 +168,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
                     return (
                         <li
                             key={group.groupId}
-                            className={`${group.collapsed? 'open-group' : 'close-group'}`}
+                            className={`${group.collapsed? 'close-group' : 'open-group'}`}
                         >
                             <TreeGroup
                                 group={group}

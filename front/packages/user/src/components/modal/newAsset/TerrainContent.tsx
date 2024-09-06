@@ -29,8 +29,6 @@ import {useSetRecoilState} from "recoil";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
 
-const ASSET_TYPE = 'terrain';
-
 interface TerrainContentProps {
     assetType: string;
     contentType: string;
@@ -62,7 +60,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
     }, []);
 
     const fileUploadRef = useRef<{ readyUpload: () => Promise<UploadedFile[] | undefined> }>(null);
-    const acceptFile = useMemo(() => classifyAssetTypeAcceptFile(ASSET_TYPE), []);
+    const acceptFile = useMemo(() => classifyAssetTypeAcceptFile(contentType), []);
     const [statusQuerySkip, setStatusQuerySkip] = useState(true);
     const [statusId, setStatusId] = useState('');
 

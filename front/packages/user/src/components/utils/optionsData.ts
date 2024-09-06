@@ -1,4 +1,4 @@
-import {InterpolationType, T3DFormatType} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+import {AssetType, InterpolationType, T3DFormatType} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 
 type Option = { text: string; value: string };
 type OptionArr = Option[];
@@ -46,14 +46,14 @@ export const inputFormatOptions: ReferenceOptionArr = {
     ],
     "terrain": [{ text: "AUTO", value: "auto" }],
     "vector": [
-        { text: "AUTO", value: "auto" },
-        { text: "GeoJSON", value: "geojson" },
-        { text: "SHP", value: "shp" },
+        // { text: "AUTO", value: "auto" },
+        { text: "GeoJSON (*.geojson)", value: AssetType.GeoJson },
+        { text: "Shp (*.shp)", value: AssetType.Shp },
     ],
     "raster": [
-        { text: "AUTO", value: "auto" },
-        { text: "Imagery", value: "imagery" },
-        { text: "COG", value: "cog" },
+        // { text: "AUTO", value: "auto" },
+        { text: "Imagery", value: AssetType.Imagery },
+        { text: "COG", value: AssetType.Cog },
     ],
     "weather": [{ text: "AUTO", value: "auto" }]
 };
