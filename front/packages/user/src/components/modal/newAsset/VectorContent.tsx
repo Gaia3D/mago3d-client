@@ -26,7 +26,7 @@ interface ValidationType {
 
 const initialOptions = {
     projectName: '',
-    inputFormat: AssetType.Terrain,
+    inputFormat: AssetType.GeoJson,
     outputFormat: 'auto',
     originEncoding: 'UTF-8',
     convertedEncoding: 'UTF-8',
@@ -94,7 +94,6 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
     const validation = (): ValidationType => {
         const checks = [
             { condition: !options.projectName, message: 'Project name' },
-            { condition: options.inputFormat === AssetType.Terrain, message: 'Input Format' },
             // { condition: !options.originEncoding, message: 'Origin Encoding' },
             // { condition: !options.convertedEncoding, message: 'Converted Encoding' },
             // { condition: !options.originProjection, message: 'Origin Projection' },
@@ -153,7 +152,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
         enabled: true,
         access: Access.Private,
         uploadId
-    }), [options.projectName]);
+    }), [options.projectName, options.inputFormat]);
 
     const fileConvert = useCallback(async (id: string) => {
         const shpValue: ShpConvertInput = {

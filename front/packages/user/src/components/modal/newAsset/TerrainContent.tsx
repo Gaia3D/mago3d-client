@@ -184,7 +184,6 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
             name: options.projectName,
             source: { assetId: [id] }
         };
-        console.log(input);
         await createProcessMutation({ variables: { input } });
     }, [options, createProcessMutation]);
 

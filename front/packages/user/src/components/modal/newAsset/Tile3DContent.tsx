@@ -33,7 +33,7 @@ interface ValidationType {
 
 const initialOptions = {
     projectName: '',
-    inputFormat: T3DFormatType.Temp,
+    inputFormat: T3DFormatType.Fbx,
     outputFormat: 'auto',
     projectionType: 'epsg',
     crs: '',
@@ -116,7 +116,6 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType })
     const validation = (): ValidationType => {
         const checks = [
             { condition: !options.projectName, message: 'Project name' },
-            { condition: options.inputFormat === T3DFormatType.Temp, message: 'Input format' },
             { condition: !options.projectionValue, message: 'origin projection' },
         ];
 

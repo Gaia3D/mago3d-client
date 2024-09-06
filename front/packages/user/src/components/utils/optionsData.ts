@@ -1,4 +1,4 @@
-import {AssetType, InterpolationType, T3DFormatType} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+import {AssetType, InterpolationType, T3DFormatType, Type} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 
 type Option = { text: string; value: string };
 type OptionArr = Option[];
@@ -68,21 +68,21 @@ export const outputFormatOptions: ReferenceOptionArr = {
     "terrain": [{ text: "AUTO", value: "auto" }],
     "vector": [{ text: "AUTO", value: "auto" }],
     "raster": [
-        { text: "AUTO", value: "auto" },
-        { text: "Byte", value: "byte" },
-        { text: "Int8", value: "int8" },
-        { text: "UInt16", value: "uint16" },
-        { text: "Int16", value: "int16" },
-        { text: "UInt32", value: "uint32" },
-        { text: "Int32", value: "int32" },
-        { text: "UInt64", value: "uint64" },
-        { text: "Int64", value: "int64" },
-        { text: "Float32", value: "float32" },
-        { text: "Float64", value: "float64" },
-        { text: "CInt16", value: "cint16" },
-        { text: "CInt32", value: "cint32" },
-        { text: "CFloat32", value: "cfloat32" },
-        { text: "CFloat64", value: "cfloat64" }
+        { text: "AUTO", value: ''},
+        { text: "Byte", value: Type.Byte },
+        { text: "Int8", value: Type.Int8 },
+        { text: "UInt16", value: Type.UInt16 },
+        { text: "Int16", value: Type.Int16 },
+        { text: "UInt32", value: Type.UInt32 },
+        { text: "Int32", value: Type.Int32 },
+        { text: "UInt64", value: Type.UInt64 },
+        { text: "Int64", value: Type.Int64 },
+        { text: "Float32", value: Type.Float32 },
+        { text: "Float64", value: Type.Float64 },
+        { text: "CInt16", value: Type.CInt16 },
+        { text: "CInt32", value: Type.CInt32 },
+        { text: "CFloat32", value: Type.CFloat32 },
+        { text: "CFloat64", value: Type.CFloat64 }
     ],
     "weather": [{ text: "AUTO", value: "auto" }],
 };
