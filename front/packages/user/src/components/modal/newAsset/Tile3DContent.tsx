@@ -144,15 +144,23 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
             return;
         }
 
-        const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
-        if (!uploadedFilesResult) return;
-
         setAssetsConvertingListState((prev) => {
             if (!prev.includes(ASSET_TYPE)) {
                 return [...prev, ASSET_TYPE];
             }
             return prev;
         });
+
+        const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
+        if (!uploadedFilesResult) {
+            setAssetsConvertingListState((prev) => {
+                if (prev.includes(ASSET_TYPE)) {
+                    return prev.filter(type => type !== ASSET_TYPE);
+                }
+                return prev;
+            });
+            return;
+        }
 
         const uploadId = uploadedFilesResult.map(uploadedFile => uploadedFile.dbId);
         await createAssetMutation({variables: { input: createAssetInput(uploadId) }});

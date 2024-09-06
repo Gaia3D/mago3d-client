@@ -7,12 +7,13 @@ import {
     Query, UserLayerAsset, UserLayerGroup,
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query.ts";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import {layersState, UserLayerGroupState, visibleToggledLayerIdsState} from "@/recoils/Layer.ts";
+import {useRecoilState, useRecoilValueLoadable, useSetRecoilState} from "recoil";
+import {layersState, UserLayerGroupState} from "@/recoils/Layer.ts";
 import {debounce} from "@mui/material";
 import {useMutation} from "@tanstack/react-query";
 import {RESTORE_USERLAYER, SAVE_USERLAYER} from "@/graphql/layerset/Mutation.ts";
 import {layerGroupsToNodemodels, nodeModlesToCreateUserGroupInput} from "@/components/aside/layer/LayerNodeModel.ts";
+import {currentUserProfileSelector} from "@/recoils/Auth.ts";
 
 interface TreeContainerProps {
     searchTerm: string;
@@ -24,6 +25,8 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     const [filteredGroups, setFilteredGroups] = useState<Maybe<UserLayerGroup>[]>([]);
     const [visibleAll, setVisibleAll] = useState<boolean>(false);
     const prevUserLayerGroupsRef = useRef<Maybe<UserLayerGroup>[]>([]);
+    const {contents} = useRecoilValueLoadable(currentUserProfileSelector);
+    const userId = contents.id;
 
     const { mutateAsync: restoreUserLayerMutateAsync } = useMutation({
         mutationFn: () => layersetGraphqlFetcher<Mutation>(RESTORE_USERLAYER),
@@ -173,6 +176,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
                                 moveItem={moveLayer}
                                 moveGroup={moveLayerGroup}
                                 toggleGroup={toggleGroupCollapsed}
+                                userId={userId}
                             />
                         </li>
                     );

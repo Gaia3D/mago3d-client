@@ -44,6 +44,7 @@ export const GET_USERLAYERGROUPS = gql `
             order
             visible
             properties
+            createdBy
         }
     }
 }

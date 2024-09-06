@@ -56,6 +56,7 @@ export type AssetFilterInput = {
   createdBy?: InputMaybe<SimpleCriteria>;
   enabled?: InputMaybe<BooleanCriteria>;
   id?: InputMaybe<SimpleCriteria>;
+  isRoot?: InputMaybe<BooleanCriteria>;
   name?: InputMaybe<StringCriteria>;
   not?: InputMaybe<AssetFilterInput>;
   or?: InputMaybe<Array<AssetFilterInput>>;
@@ -298,7 +299,7 @@ export type CreateUserGroupInput = {
   assets?: InputMaybe<Array<CreateUserAssetInput>>;
   children?: InputMaybe<Array<CreateUserGroupInput>>;
   collapsed?: InputMaybe<Scalars['Boolean']['input']>;
-  groupId: Scalars['ID']['input'];
+  groupId?: InputMaybe<Scalars['ID']['input']>;
   order?: InputMaybe<Scalars['Int']['input']>;
   parent?: InputMaybe<CreateUserGroupInput>;
 };

@@ -122,6 +122,7 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
 
         const data: CreateAssetInput = {
             name,
+            groupIds: ['0'],
             access: LayerAccess.Private,
             enabled: true,
             visible: true,
