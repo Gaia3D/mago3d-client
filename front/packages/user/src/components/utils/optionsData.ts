@@ -1,4 +1,4 @@
-import {T3DFormatType} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+import {InterpolationType, T3DFormatType} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 
 type Option = { text: string; value: string };
 type OptionArr = Option[];
@@ -17,8 +17,8 @@ export const projectionTypeOptions: OptionArr = [
     { text: "Projection Code (proj4)", value: "proj4" },
 ];
 export const InterpolationTypeOptions: OptionArr = [
-    { text: "Bilinear (Linear)", value: "linear" },
-    { text: "Nearest", value: "nearest" },
+    { text: "Bilinear (Linear)", value: InterpolationType.Bilinear },
+    { text: "Nearest", value: InterpolationType.Nearest },
 ];
 
 export const inputFormatOptions: ReferenceOptionArr = {

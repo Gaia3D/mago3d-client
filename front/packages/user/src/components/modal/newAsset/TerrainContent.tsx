@@ -1,43 +1,197 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import FormatList from "@/components/modal/FormatList.tsx";
 import {
+    classifyAssetTypeAcceptFile,
     inputFormatOptions,
     InterpolationTypeOptions,
     outputFormatOptions,
 } from "@/components/utils/optionsData.ts";
 import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
 import RadioGroup from "@/components/modal/RadioGroup.tsx";
+import {UploadedFile} from "@/types/Common.ts";
+import {useMutation, useQuery} from "@apollo/client";
+import {
+    Access,
+    AssetStatusDocument,
+    AssetType,
+    CreateAssetInput,
+    DatasetCreateAssetDocument,
+    DatasetCreateProcessDocument,
+    InputMaybe,
+    InterpolationType,
+    ProcessContextInput,
+    Scalars,
+    T3DConvertInput,
+    T3DFormatType,
+    TerrainConvertInput
+} from "@mnd/shared/src/types/dataset/gql/graphql.ts";
+import {useSetRecoilState} from "recoil";
+import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
+import FileUpload from "@/components/modal/FileUpload.tsx";
+
+const ASSET_TYPE = 'terrain';
 
 interface TerrainContentProps {
-    display: boolean;
+    assetType: string;
+    contentType: string;
 }
 
-const TerrainContent:React.FC<TerrainContentProps> = ({display}) => {
+interface ValidationType {
+    isValid: boolean,
+    message: string,
+}
 
-    const [options, setOptions] = useState({
-        projectName: '',
-        inputFormat: 'auto',
-        outputFormat: 'auto',
-        interpolationType: 'linear',
-        debugMode: false,
-        tileDepthMin: 0,
-        tileDepthMax: 12,
+const initialOptions = {
+    projectName: '',
+    inputFormat: 'auto',
+    outputFormat: 'auto',
+    interpolationType: InterpolationType.Bilinear,
+    calculateNormals: false,
+    minDepth: 0,
+    maxDepth: 12,
+}
+
+const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) => {
+    const [componentKey, setComponentKey] = useState(0);
+    const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
+    const setAssetsConvertingListState = useSetRecoilState(assetsConvertingListState);
+    const [options, setOptions] = useState(initialOptions);
+
+    const handleOptionChange = useCallback((key: string, value: string | boolean | number) => {
+        setOptions(prevOptions => ({ ...prevOptions, [key]: value }));
+    }, []);
+
+    const fileUploadRef = useRef<{ readyUpload: () => Promise<UploadedFile[] | undefined> }>(null);
+    const acceptFile = useMemo(() => classifyAssetTypeAcceptFile(ASSET_TYPE), []);
+    const [statusQuerySkip, setStatusQuerySkip] = useState(true);
+    const [statusId, setStatusId] = useState('');
+
+    const { data: statusData } = useQuery(AssetStatusDocument, {
+        variables: { id: statusId },
+        pollInterval: 5000,
+        fetchPolicy: 'cache-and-network',
+        skip: statusQuerySkip,
     });
 
-    const handleOptionChange = (key: string, value: string | boolean | number) => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            [key]: value,
-        }));
-    };
+    useEffect(() => {
+        if (!statusQuerySkip) {
+            setAssetsRefetchTrigger(prev => prev + 1);
+        }
+    }, [statusData, statusQuerySkip, setAssetsRefetchTrigger]);
 
-    const [fileArr, setFileArr] = useState<File[] | null>(null);
-    const fileConvert = () => {
-        console.log("assetType: terrain");
+    const validation = (): ValidationType => {
+        const checks = [
+            { condition: !options.projectName, message: 'Project name' },
+        ];
+
+        for (const check of checks) {
+            if (check.condition) {
+                return {
+                    isValid: false,
+                    message: check.message,
+                };
+            }
+        }
+
+        return {
+            isValid: true,
+            message: '',
+        };
     }
 
+    const fileUpload = async () => {
+
+        if (!validation().isValid) {
+            alert(`${validation().message} 값을 확인해주세요.`);
+            return;
+        }
+
+        setAssetsConvertingListState((prev) => {
+            if (!prev.includes(contentType)) {
+                return [...prev, contentType];
+            }
+            return prev;
+        });
+
+        const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
+        if (!uploadedFilesResult) {
+            setAssetsConvertingListState((prev) => {
+                if (prev.includes(contentType)) {
+                    return prev.filter(type => type !== contentType);
+                }
+                return prev;
+            });
+            return;
+        }
+
+        const uploadId = uploadedFilesResult.map(uploadedFile => uploadedFile.dbId);
+        await createAssetMutation({variables: { input: createAssetInput(uploadId) }});
+    };
+
+    const [createAssetMutation] = useMutation(DatasetCreateAssetDocument, {
+        onCompleted: async (data) => {
+            const newStatusId = data.createAsset.id;
+            setStatusId(newStatusId);
+            await fileConvert(newStatusId);
+            setStatusQuerySkip(false);
+        },
+        onError: (error) => {
+            console.error('Mutation error:', error);
+            alert('데이터 추가 중 오류가 발생했습니다.');
+        },
+    });
+
+    const [createProcessMutation] = useMutation(DatasetCreateProcessDocument, {
+        onCompleted: () => {
+            resetOptions();
+        },
+        onError: (error) => {
+            console.error('Process creation error:', error);
+            alert('파일 변환 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+            resetOptions();
+        },
+    });
+
+    const resetOptions = useCallback(() => {
+        setOptions(initialOptions); // options 상태를 초기화
+        setComponentKey(prevKey => prevKey + 1); // 컴포넌트 재렌더링
+        setAssetsConvertingListState((prev) => {
+            if (prev.includes(contentType)) {
+                return prev.filter(type => type !== contentType);
+            }
+            return prev;
+        });
+    }, []);
+
+    const createAssetInput = useCallback((uploadId: string[]): CreateAssetInput => ({
+        name: options.projectName,
+        description: '사용자 추가 데이터입니다.',
+        properties: undefined,
+        assetType: AssetType.Terrain,
+        enabled: true,
+        access: Access.Private,
+        uploadId
+    }), [options.projectName]);
+
+    const fileConvert = useCallback(async (id: string) => {
+        const terrainValue: TerrainConvertInput = {
+            calculateNormals: options.calculateNormals,
+            interpolationType: options.interpolationType,
+            maxDepth: options.maxDepth,
+            minDepth: options.minDepth,
+        };
+
+        const input = {
+            context: { terrain: terrainValue } as ProcessContextInput,
+            name: options.projectName,
+            source: { assetId: [id] }
+        };
+        console.log(input);
+        await createProcessMutation({ variables: { input } });
+    }, [options, createProcessMutation]);
+
     return (
-        <div className={`modal-popup-body ${display?"on":"off"}`}>
+        <div key={componentKey} className={`modal-popup-body ${assetType === contentType ? "on" : "off"}`}>
             <div className="title">Project name</div>
             <div className="value">
                 <input
@@ -66,8 +220,8 @@ const TerrainContent:React.FC<TerrainContentProps> = ({display}) => {
                 <input
                     type="number"
                     className="width-140"
-                    value={options.tileDepthMin}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('tileDepthMin', Number(e.target.value))}
+                    value={options.minDepth}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('minDepth', Number(e.target.value))}
                 />
             </div>
             <div className="title">Max Tile Depth</div>
@@ -75,11 +229,11 @@ const TerrainContent:React.FC<TerrainContentProps> = ({display}) => {
                 <input
                     type="number"
                     className="width-140"
-                    value={options.tileDepthMax}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('tileDepthMax', Number(e.target.value))}
+                    value={options.maxDepth}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('maxDepth', Number(e.target.value))}
                 />
             </div>
-            <div className="title">Interpolation Type</div>
+            <div className="title f-size-12">Interpolation Type</div>
             <div className="value">
                 <RadioGroup
                     name="interpolationType"
@@ -88,19 +242,19 @@ const TerrainContent:React.FC<TerrainContentProps> = ({display}) => {
                     options={InterpolationTypeOptions}
                 />
             </div>
-            <div className="title">Debug Mode</div>
+            <div className="title f-size-12">Normal calculation</div>
             <ToggleSetting
-                id="debugMode"
-                checked={options.debugMode}
+                id="calculateNormals"
+                checked={options.calculateNormals}
                 onChange={handleOptionChange}
             />
 
             <div className="title">File upload</div>
             <div className="value">
-                {/*<FileUpload onFileAdd={setFileArr} fileItem={fileArr}/>*/}
+                <FileUpload ref={fileUploadRef} acceptFile={acceptFile}/>
             </div>
             <div className="modal-bottom">
-                <button onClick={fileConvert} type="button" className="button-full">Convert</button>
+                <button onClick={fileUpload} type="button" className="button-full">Convert</button>
             </div>
         </div>
     );

@@ -4,10 +4,11 @@ import {inputFormatOptions, outputFormatOptions} from "@/components/utils/option
 import FileUpload from "@/components/modal/FileUpload.tsx";
 
 interface VectorContentProps {
-    display: boolean;
+    assetType: string;
+    contentType: string;
 }
 
-const VectorContent:React.FC<VectorContentProps> = ({display}) => {
+const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) => {
 
     const [options, setOptions] = useState({
         projectName: '',
@@ -32,7 +33,7 @@ const VectorContent:React.FC<VectorContentProps> = ({display}) => {
     }
 
     return (
-        <div className={`modal-popup-body ${display ? "on" : "off"}`}>
+        <div className={`modal-popup-body ${assetType === contentType ? "on" : "off"}`}>
             <div className="title">Project name</div>
             <div className="value">
                 <input

@@ -38,11 +38,11 @@ const NewAssetModal: React.FC = () => {
                         </label>
                     ))}
                 </div>
-                <Tile3DContent display={assetType === "3dtile"} />
-                <TerrainContent display={assetType === "terrain"} />
-                <VectorContent display={assetType === "vector"} />
-                <RasterContent display={assetType === "raster"} />
-                <WeatherContent display={assetType === "weather"} />
+                <Tile3DContent assetType={assetType} contentType={"3dtile"} />
+                <TerrainContent assetType={assetType} contentType={"terrain"} />
+                <VectorContent assetType={assetType} contentType={"vector"} />
+                <RasterContent assetType={assetType} contentType={"raster"} />
+                {/*<WeatherContent assetType={assetType} contentType={"weather"} />*/}
 
                 <ConversionGuard assetType={assetType} />
             </div>

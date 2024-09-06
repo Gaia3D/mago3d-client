@@ -21,10 +21,9 @@ import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 import { useSetRecoilState } from "recoil";
 
-const ASSET_TYPE = "3dtile";
-
 interface Tile3DContentProps {
-    display: boolean;
+    assetType: string;
+    contentType: string;
 }
 
 interface ValidationType {
@@ -34,7 +33,6 @@ interface ValidationType {
 
 const initialOptions = {
     projectName: '',
-    debugMode: false,
     inputFormat: T3DFormatType.Temp,
     outputFormat: 'auto',
     projectionType: 'epsg',
@@ -54,7 +52,7 @@ const initialOptions = {
     maxPoints: 20000
 };
 
-const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
+const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType }) => {
     const [componentKey, setComponentKey] = useState(0);
     const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
     const setAssetsConvertingListState = useSetRecoilState(assetsConvertingListState);
@@ -67,7 +65,7 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
     const [showDetail, setShowDetail] = useState(false);
     const detailTitleRef = useRef<HTMLDivElement>(null);
     const fileUploadRef = useRef<{ readyUpload: () => Promise<UploadedFile[] | undefined> }>(null);
-    const acceptFile = useMemo(() => classifyAssetTypeAcceptFile(ASSET_TYPE), []);
+    const acceptFile = useMemo(() => classifyAssetTypeAcceptFile(contentType), []);
 
     const detailToggle = useCallback(() => {
         if (!detailTitleRef.current) return;
@@ -145,8 +143,8 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
         }
 
         setAssetsConvertingListState((prev) => {
-            if (!prev.includes(ASSET_TYPE)) {
-                return [...prev, ASSET_TYPE];
+            if (!prev.includes(contentType)) {
+                return [...prev, contentType];
             }
             return prev;
         });
@@ -154,8 +152,8 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
         const uploadedFilesResult = await fileUploadRef.current?.readyUpload();
         if (!uploadedFilesResult) {
             setAssetsConvertingListState((prev) => {
-                if (prev.includes(ASSET_TYPE)) {
-                    return prev.filter(type => type !== ASSET_TYPE);
+                if (prev.includes(contentType)) {
+                    return prev.filter(type => type !== contentType);
                 }
                 return prev;
             });
@@ -200,7 +198,6 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
             name: options.projectName,
             source: { assetId: [id] }
         };
-        console.log(input);
         await createProcessMutation({ variables: { input } });
     }, [options, createProcessMutation]);
 
@@ -208,15 +205,15 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
         setOptions(initialOptions); // options 상태를 초기화
         setComponentKey(prevKey => prevKey + 1); // 컴포넌트 재렌더링
         setAssetsConvertingListState((prev) => {
-            if (prev.includes(ASSET_TYPE)) {
-                return prev.filter(type => type !== ASSET_TYPE);
+            if (prev.includes(contentType)) {
+                return prev.filter(type => type !== contentType);
             }
             return prev;
         });
     }, []);
 
     return (
-        <div key={componentKey} className={`modal-popup-body ${display ? "on" : "off"}`}>
+        <div key={componentKey} className={`modal-popup-body ${assetType === contentType ? "on" : "off"}`}>
             <InputWithLabel
                 type="text"
                 id="projectName"
@@ -229,14 +226,14 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
                 name="inputFormat"
                 selected={options.inputFormat}
                 onSelect={handleOptionChange}
-                formats={inputFormatOptions[ASSET_TYPE]}
+                formats={inputFormatOptions[contentType]}
             />
             <div className="title">Output format</div>
             <FormatList
                 name="outputFormat"
                 selected={options.outputFormat}
                 onSelect={handleOptionChange}
-                formats={outputFormatOptions[ASSET_TYPE]}
+                formats={outputFormatOptions[contentType]}
             />
             <div className="title">Origin projection</div>
             <div className="value">
@@ -270,8 +267,6 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ display }) => {
                             <ToggleSetting text="png 텍스쳐 모드" id="pngTexture" checked={options.pngTexture}
                                            onChange={handleOptionChange}/>
                             <ToggleSetting text="텍스쳐를 반대로" id="reverseTexCoord" checked={options.reverseTexCoord}
-                                           onChange={handleOptionChange}/>
-                            <ToggleSetting text="Debug Mode" id="debugMode" checked={options.debugMode}
                                            onChange={handleOptionChange}/>
                             <InputWithLabel label="노드 최대값" type="number" id="maxCount" value={options.maxCount}
                                             onChange={handleOptionChange} isDetail={true}/>
