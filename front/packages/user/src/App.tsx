@@ -13,6 +13,7 @@ import {Suspense} from "react";
 import UserInfoLoadableProvider from "@/components/providers/UserInfoLoadableProvider.tsx";
 import {ApolloProvider} from "@apollo/client";
 import apolloClients from "@/api/ApolloClients.ts";
+import StackAlert from "@/components/StackAlert.tsx";
 
 function App() {
   const router = createBrowserRouter(routes, {
@@ -48,6 +49,7 @@ function App() {
                     <ApolloProvider client={apolloClients}>
                       <UserInfoLoadableProvider>
                         <RouterProvider router={router} />
+                        <StackAlert/>
                         <LoadingSpinner />
                       </UserInfoLoadableProvider>
                     </ApolloProvider>

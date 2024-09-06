@@ -20,6 +20,7 @@
 
 #container {
   nav{
+    z-index: 3;
     .menu {
       user-select: none;
       .layer-number {
@@ -29,6 +30,21 @@
       }
     }
   }
+
+  .stack-alert-container {
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    left: 80px;
+    display: flex;
+    flex-direction: column;
+
+    .toast-bar {
+      position: unset;
+      margin-bottom: 12px;
+    }
+  }
+
 }
 
 #map {
@@ -372,7 +388,7 @@
   }
 
   .side-bar-wrapper {
-    z-index: 0;
+    z-index: 2;
     &.on {
       .side-bar {
         transform: translateX(0);

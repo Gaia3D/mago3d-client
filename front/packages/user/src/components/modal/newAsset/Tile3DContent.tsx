@@ -19,7 +19,8 @@ import {
 import { UploadedFile } from "@/types/Common.ts";
 import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
-import { useSetRecoilState } from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {stackAlertArrState} from "@/recoils/Spinner.ts";
 
 interface Tile3DContentProps {
     assetType: string;
@@ -99,6 +100,7 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType })
         onError: (error) => {
             console.error('Mutation error:', error);
             alert('데이터 추가 중 오류가 발생했습니다.');
+            resetOptions();
         },
     });
 

@@ -20,7 +20,7 @@ const ConversionGuard: React.FC<ConversionGuardProps> = ({assetType}) => {
 
     return (
         <div className={`conversion-guard ${isShow ? "on" : "off"}`}>
-            <b>{assetType} converting</b>
+            <b>{assetType} file uploading</b>
             <span className="spin-loader"></span>
         </div>
     );
