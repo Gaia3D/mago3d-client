@@ -240,7 +240,13 @@ export const useMapTool = () => {
     if (!viewer) return;
 
     if (viewer?.terrainProvider === undefined || isEllipsoidTerrainProvider(viewer.terrainProvider)) {
-      viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
+      const terrainUrl = import.meta.env.VITE_TERRAIN_SERVER_URL;
+      if (!terrainUrl) {
+        viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+      } else {
+        viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(terrainUrl);
+      }
+      //viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
     } else {
       viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
     }

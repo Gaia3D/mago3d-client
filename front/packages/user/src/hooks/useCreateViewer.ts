@@ -1,7 +1,6 @@
 import {RefObject, useEffect, useRef} from "react";
 import * as Cesium from "cesium";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
-import {getWmsLayer} from "@/components/utils/utils.ts";
 import {TerrainUrlState} from "@/recoils/Terrain.ts";
 import {useRecoilState} from "recoil";
 
@@ -13,7 +12,12 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
   useEffect(() => {
     if (!containerRef.current) return;
     const initializeViewer = async () => {
-      const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
+      let terrainProvider = new Cesium.EllipsoidTerrainProvider();
+      const terrainUrl = import.meta.env.VITE_TERRAIN_SERVER_URL;
+      if (terrainUrl) {
+        terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(terrainUrl);
+      }
+      //const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
       viewerRef.current = globeController.createViewer(containerRef.current as HTMLDivElement, {
         baseLayer: new Cesium.ImageryLayer(new Cesium.OpenStreetMapImageryProvider({
           url: 'https://a.tile.openstreetmap.org/'

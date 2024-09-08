@@ -2,18 +2,22 @@ import React, {useEffect} from 'react';
 import {
     Maybe,
     Query,
-    TerrainAsset, UserLayerAsset,
+    TerrainAsset,
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {TerrainIdState, TerrainUrlState, UserTerrainGroupsState, UserTerrainState} from "@/recoils/Terrain.ts";
 import {GET_TERRAINS} from "@mnd/shared/src/types/layerset/Query.ts";
 import {layersetGraphqlFetcher} from "@/api/queryClient.ts";
+import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
+import * as Cesium from "cesium";
 
 const TerrainChanger = () => {
     const userTerrainGroups = useRecoilValue<Maybe<TerrainAsset>[]>(UserTerrainGroupsState);
     const setTerrainUrl = useSetRecoilState<string>(TerrainUrlState);
     const [userTerrains, setUserTerrains] = useRecoilState<Maybe<TerrainAsset>[]>(UserTerrainState);
     const [terrainId, setTerrainId] = useRecoilState<string>(TerrainIdState);
+    const { globeController } = useGlobeController();
+    const { viewer } = globeController;
 
     useEffect(() => {
         if (userTerrains.length === 0) {
@@ -36,7 +40,14 @@ const TerrainChanger = () => {
     }
 
     const changeDefaultTerrain = () => {
-        setTerrainUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
+        if (!viewer) return;
+        const terrainUrl = import.meta.env.VITE_TERRAIN_SERVER_URL;
+        if (!terrainUrl) {
+          viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+        } else {
+          setTerrainUrl(terrainUrl);
+        }
+        //setTerrainUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
         setTerrainId('');
     }
 
