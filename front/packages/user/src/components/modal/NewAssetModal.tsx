@@ -10,8 +10,10 @@ import VectorContent from "@/components/modal/newAsset/VectorContent.tsx";
 import RasterContent from "@/components/modal/newAsset/RasterContent.tsx";
 import WeatherContent from "@/components/modal/newAsset/WeatherContent.tsx";
 import ConversionGuard from "@/components/modal/newAsset/ConversionGuard.tsx";
+import {useTranslation} from "react-i18next";
 
 const NewAssetModal: React.FC = () => {
+    const {t} = useTranslation();
     const [isNewAssetModal, setIsNewAssetModal] = useRecoilState(IsNewAssetModalState);
     const [assetType, setAssetType] = useState<string>('3dtile');
     const handleCloseModal = () => setIsNewAssetModal(false);
@@ -21,7 +23,7 @@ const NewAssetModal: React.FC = () => {
         <div id="myModal" className={`modal ${isNewAssetModal? 'on':'off'}`} onClick={handleCloseModal}>
             <div className="modal-content new-asset" onClick={handleModalClick}>
                 <div className="modal-popup-header">
-                    <h2>New Assets</h2>
+                    <h2>{t("aside.asset.new-asset")}</h2>
                     <button onClick={handleCloseModal} type="button" className="button-close"></button>
                 </div>
                 <div className="modal-popup-type">

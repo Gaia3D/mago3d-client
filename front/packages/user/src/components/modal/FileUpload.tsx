@@ -6,6 +6,7 @@ import {useSetRecoilState} from "recoil";
 import {assetLoadingState, AssetLoadingStateType} from "@/recoils/Spinner.ts";
 import { datasetFileUpload } from "@/api/http.ts";
 import FileItem from "@/components/modal/FileItem.tsx";
+import {useTranslation} from "react-i18next";
 
 interface FileUploadProps {
     update?: boolean,
@@ -13,6 +14,7 @@ interface FileUploadProps {
 }
 
 const FileUpload = forwardRef(({ acceptFile = {} }: FileUploadProps, ref) => {
+    const {t} = useTranslation();
     const setAssetLoadState = useSetRecoilState<AssetLoadingStateType>(assetLoadingState);
     const [files, setFiles] = useState<UploadFile[]>([]);
     const [fileItems, setFileItems] = useState<UploadItem[]>([]);
@@ -66,12 +68,12 @@ const FileUpload = forwardRef(({ acceptFile = {} }: FileUploadProps, ref) => {
 
     const readyUpload = async () => {
         if (files.length === 0) {
-            alert('파일을 업로드해주세요.');
+            alert(t("alert.file-upload"));
             return;
         }
-        if (!confirm('등록하시겠습니까?')) return;
+        if (!confirm(t("confirm.register"))) return;
 
-        setAssetLoadState(prev => ({ ...prev, loading: true, msg: "파일을 업로드 중입니다." }));
+        setAssetLoadState(prev => ({ ...prev, loading: true, msg: t("msg.file-upload") }));
 
         const uploadPromises = files.map(file => {
             uploadingFilesRef.current.add(file.uuid);
@@ -97,7 +99,7 @@ const FileUpload = forwardRef(({ acceptFile = {} }: FileUploadProps, ref) => {
         setAssetLoadState(prev => ({ ...prev, loading: false }));
 
         if (!uploadedFilesResult || uploadedFilesResult.length === 0) {
-            alert('파일 업로드에 실패했습니다. 관리자에게 문의 바랍니다.');
+            alert(t("error.file.upload"));
             return;
         }
 
@@ -109,7 +111,7 @@ const FileUpload = forwardRef(({ acceptFile = {} }: FileUploadProps, ref) => {
     }));
 
     const deleteFile = async (uuid: string) => {
-        if (!confirm('삭제하시겠습니까?')) return;
+        if (!confirm(t("confirm.delete"))) return;
 
         setFiles(prev => prev.filter(file => file.uuid !== uuid));
         setFileItems(prev => prev.filter(item => item.uuid !== uuid));
@@ -120,7 +122,7 @@ const FileUpload = forwardRef(({ acceptFile = {} }: FileUploadProps, ref) => {
         accept: {...acceptFile},
         onDrop: (acceptedFiles) => {
             if (acceptedFiles.length === 0) {
-                alert('허용되지 않는 파일 유형입니다. 다시 시도해주세요.\n허용되는 파일 유형: ' + Object.values(acceptFile).join(', '));
+                alert(t("error.file.validate") + Object.values(acceptFile).join(', '));
                 return;
             }
             const newFiles = acceptedFiles.map(file => {
@@ -154,7 +156,7 @@ const FileUpload = forwardRef(({ acceptFile = {} }: FileUploadProps, ref) => {
                 ) : (
                     <>
                         <div className="file-upload-icon"></div>
-                        <div className="file-upload-text">Drop files here</div>
+                        <div className="file-upload-text">{t("aside.common.drop-file-here")}</div>
                     </>
                 )}
             </div>

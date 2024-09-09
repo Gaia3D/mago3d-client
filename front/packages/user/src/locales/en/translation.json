@@ -7,40 +7,97 @@
   "graphic": "Graphic",
   "time": "Date/Time",
   "logout": "Logout",
+  "aside": {
+    "close-sidebar": "Close Window",
+    "common": {
+      "no-data": "No Data",
+      "data-end": "End of Data",
+      "project-name": "Asset Name",
+      "input-format": "Input Format",
+      "output-format": "Output Format",
+      "origin-projection": "Original Projection",
+      "detail-setting": "Detailed Settings",
+      "file-upload": "File Upload",
+      "drop-file-here": "Drop file here."
+    },
+    "asset": {
+      "new-asset": "New Asset",
+      "type": "Type",
+      "name-upload-date": "Name/Upload Date",
+      "status": "Status",
+      "function": "Function",
+      "convert": "Convert",
+      "y-up-axis": "Set Y-Axis as Up Axis",
+      "auto-up-axis": "Auto-Assign Up Axis",
+      "flip-coordinate": "Flip X, Y Coordinates",
+      "refine-add": "Add Refine Mode",
+      "png-texture": "PNG Texture Mode",
+      "reverse-tex-coord": "Reverse Texture Coordinates",
+      "max-count": "Max Node Count",
+      "max-lod": "Max LOD",
+      "min-lod": "Min LOD",
+      "max-points": "Max Points in Point Cloud Data",
+      "description": "User-added data.",
+      "crs-epsg": "Coordinate Reference System (EPSG)",
+      "projection-code": "Projection Code (proj4)"
+    },
+    "layer": {}
+  },
+  "msg": {
+    "file-upload": "Uploading file."
+  },
+  "confirm": {
+    "register": "Do you want to register?",
+    "delete": "Do you want to delete?"
+  },
+  "alert": {
+    "file-upload": "Please upload a file.",
+    "confirm-value": "Please confirm the value."
+  },
+  "error": {
+    "data": {
+      "add": "An error occurred while adding data."
+    },
+    "file": {
+      "convert": "An error occurred while converting the file.",
+      "upload": "Failed to upload the file.",
+      "validate": "Invalid file type. Please try again.\nAllowed file types: "
+    }
+  },
   "tool": {
     "home": "Home",
     "save": "Save",
     "reset-direction": "Reset Direction",
-    "set-terrain-trans": "Set Terrain Transparency",
-    "open-clock-tool": "Open Clock Tool",
-    "open-setting-tool": "Open Settings Tool",
+    "set-terrain-trans": "Set Terrain Opacity",
+    "open-clock-tool": "Time Tool",
+    "open-setting-tool": "Settings Tool",
     "visible": "Visibility Tool",
-    "ruler": "Ruler Tool",
-    "first-person-view": "First Person View",
+    "ruler": "Measurement Tool",
+    "first-person-view": "First-Person View",
     "indoor": "Indoor View",
-    "go-to-point": "Move Position",
-    "view-axis": "Direction",
-    "camera-info": "Camera Information",
-    "bounding-volume": "Show Bounding Volume",
+    "go-to-point": "Move to Point",
+    "view-axis": "View Axis",
+    "camera-info": "Camera Info",
+    "bounding-volume": "Show Boundary",
     "point": "Measure Position",
     "length": "Measure Length",
     "area": "Measure Area",
     "angle": "Angle",
-    "composite": "Multiple Areas",
+    "composite": "Composite Distance",
     "radius": "Measure Radius",
     "object": "Select Object",
     "full-screen": "Full Screen",
     "terrain": "Terrain Settings",
     "zoom-in": "Zoom In",
     "zoom-out": "Zoom Out",
-    "translation": "Translation",
-    "rotation": "Rotation",
-    "scaling": "Scaling",
+    "translation": "Move",
+    "rotation": "Rotate",
+    "scaling": "Scale",
     "copy": "Copy",
-    "remove": "Remove",
+    "remove": "Delete",
     "add-floor": "Add Floor",
     "remove-floor": "Remove Floor",
-    "coloring": "Coloring",
+    "coloring": "Color",
     "theme": "Light Theme"
   }
 }

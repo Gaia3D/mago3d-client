@@ -48,6 +48,13 @@
 }
 
 #map {
+  .description--content {
+      margin-left: unset;
+    .title:before {
+      right: unset;
+      left: 0;
+    }
+  }
 
   .prop {
     li {

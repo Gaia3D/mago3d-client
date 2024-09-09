@@ -13,8 +13,8 @@ export const assetTypeOptions: OptionArr = [
 ];
 
 export const projectionTypeOptions: OptionArr = [
-    { text: "Coordinate Reference System (EPSG)", value: "epsg" },
-    { text: "Projection Code (proj4)", value: "proj4" },
+    { text: "aside.asset.crs-epsg", value: "epsg" },
+    { text: "aside.asset.projection-code", value: "proj4" },
 ];
 export const InterpolationTypeOptions: OptionArr = [
     { text: "Bilinear (Linear)", value: InterpolationType.Bilinear },
@@ -52,8 +52,8 @@ export const inputFormatOptions: ReferenceOptionArr = {
     ],
     "raster": [
         // { text: "AUTO", value: "auto" },
-        { text: "Imagery", value: AssetType.Imagery },
-        { text: "COG", value: AssetType.Cog },
+        { text: "Imagery (*.tif, *.tiff)", value: AssetType.Imagery },
+        { text: "COG (*.tif, *.tiff)", value: AssetType.Cog },
     ],
     "weather": [{ text: "AUTO", value: "auto" }]
 };

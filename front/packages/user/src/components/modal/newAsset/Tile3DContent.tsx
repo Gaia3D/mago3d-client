@@ -21,6 +21,7 @@ import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {stackAlertArrState} from "@/recoils/Spinner.ts";
+import {useTranslation} from "react-i18next";
 
 interface Tile3DContentProps {
     assetType: string;
@@ -54,6 +55,7 @@ const initialOptions = {
 };
 
 const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType }) => {
+    const {t} = useTranslation();
     const [componentKey, setComponentKey] = useState(0);
     const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
     const setAssetsConvertingListState = useSetRecoilState(assetsConvertingListState);
@@ -99,7 +101,7 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType })
         },
         onError: (error) => {
             console.error('Mutation error:', error);
-            alert('데이터 추가 중 오류가 발생했습니다.');
+            alert(t("error.data.add"));
             resetOptions();
         },
     });
@@ -110,15 +112,15 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType })
         },
         onError: (error) => {
             console.error('Process creation error:', error);
-            alert('파일 변환 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+            alert(t("error.file.convert"));
             resetOptions();
         },
     });
 
     const validation = (): ValidationType => {
         const checks = [
-            { condition: !options.projectName, message: 'Project name' },
-            { condition: !options.projectionValue, message: 'origin projection' },
+            { condition: !options.projectName, message: t("aside.common.project-name") },
+            { condition: !options.projectionValue, message: t("aside.common.origin-projection") },
         ];
 
         for (const check of checks) {
@@ -139,7 +141,7 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType })
     const fileUpload = async () => {
 
         if (!validation().isValid) {
-            alert(`${validation().message} 값을 확인해주세요.`);
+            alert(`${validation().message} ${t("alert.confirm-value")}`);
             return;
         }
 
@@ -167,7 +169,7 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType })
 
     const createAssetInput = useCallback((uploadId: string[]): CreateAssetInput => ({
         name: options.projectName,
-        description: '사용자 추가 데이터입니다.',
+        description: t("aside.asset.description"),
         properties: undefined,
         assetType: AssetType.Tiles3D,
         enabled: true,
@@ -220,29 +222,30 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType })
                 id="projectName"
                 value={options.projectName}
                 onChange={handleOptionChange}
-                label="Project name"
+                label={t("aside.common.project-name")}
             />
-            <div className="title">Input format</div>
+            <div className="title">{t("aside.common.input-format")}</div>
             <FormatList
                 name="inputFormat"
                 selected={options.inputFormat}
                 onSelect={handleOptionChange}
                 formats={inputFormatOptions[contentType]}
             />
-            <div className="title">Output format</div>
+            <div className="title">{t("aside.common.output-format")}</div>
             <FormatList
                 name="outputFormat"
                 selected={options.outputFormat}
                 onSelect={handleOptionChange}
                 formats={outputFormatOptions[contentType]}
             />
-            <div className="title">Origin projection</div>
+            <div className="title">{t("aside.common.origin-projection")}</div>
             <div className="value">
                 <RadioGroup
                     name="projectionType"
                     value={options.projectionType}
                     onChange={handleOptionChange}
                     options={projectionTypeOptions}
+                    translate={true}
                 />
                 <input
                     type="text"
@@ -252,30 +255,30 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType })
                     placeholder={options.projectionType === 'epsg' ? "ex) 4326, 5186" : "ex) +proj=utm +zone=52 +datum=WGS84 +units=m +no_defs"}
                 />
             </div>
-            <div className="title detail-title" ref={detailTitleRef} onClick={detailToggle}>detail settings</div>
+            <div className="title detail-title" ref={detailTitleRef} onClick={detailToggle}>{t("aside.common.detail-setting")}</div>
             <div className="value detail-show-value">
                 {
                     showDetail ? (
                         <>
-                            <ToggleSetting text="y축을 높이 축으로 설정" id="yUpAxis" checked={options.yUpAxis}
+                            <ToggleSetting text={t("aside.asset.y-up-axis")} id="yUpAxis" checked={options.yUpAxis}
                                            onChange={handleOptionChange}/>
-                            <ToggleSetting text="자동 높이 축 할당" id="autoUpAxis" checked={options.autoUpAxis}
+                            <ToggleSetting text={t("aside.asset.auto-up-axis")} id="autoUpAxis" checked={options.autoUpAxis}
                                            onChange={handleOptionChange}/>
-                            <ToggleSetting text="x,y 좌표 뒤집기" id="flipCoordinate" checked={options.flipCoordinate}
+                            <ToggleSetting text={t("aside.asset.flip-coordinate")} id="flipCoordinate" checked={options.flipCoordinate}
                                            onChange={handleOptionChange}/>
-                            <ToggleSetting text="구체화(Refine) 추가 모드" id="refineAdd" checked={options.refineAdd}
+                            <ToggleSetting text={t("aside.asset.refine-add")} id="refineAdd" checked={options.refineAdd}
                                            onChange={handleOptionChange}/>
-                            <ToggleSetting text="png 텍스쳐 모드" id="pngTexture" checked={options.pngTexture}
+                            <ToggleSetting text={t("aside.asset.png-texture")} id="pngTexture" checked={options.pngTexture}
                                            onChange={handleOptionChange}/>
-                            <ToggleSetting text="텍스쳐를 반대로" id="reverseTexCoord" checked={options.reverseTexCoord}
+                            <ToggleSetting text={t("aside.asset.reverse-tex-coord")} id="reverseTexCoord" checked={options.reverseTexCoord}
                                            onChange={handleOptionChange}/>
-                            <InputWithLabel label="노드 최대값" type="number" id="maxCount" value={options.maxCount}
+                            <InputWithLabel label={t("aside.asset.max-count")} type="number" id="maxCount" value={options.maxCount}
                                             onChange={handleOptionChange} isDetail={true}/>
-                            <InputWithLabel label="최대 LOD" type="number" id="maxLod" value={options.maxLod}
+                            <InputWithLabel label={t("aside.asset.max-lod")} type="number" id="maxLod" value={options.maxLod}
                                             onChange={handleOptionChange} isDetail={true}/>
-                            <InputWithLabel label="최소 LOD" type="number" id="minLod" value={options.minLod}
+                            <InputWithLabel label={t("aside.asset.min-lod")} type="number" id="minLod" value={options.minLod}
                                             onChange={handleOptionChange} isDetail={true}/>
-                            <InputWithLabel label="포인트 클라우드 데이터의 최대 포인트 수" type="number" id="maxPoints"
+                            <InputWithLabel label={t("aside.asset.max-points")} type="number" id="maxPoints"
                                             value={options.maxPoints} onChange={handleOptionChange} isDetail={true}/>
                         </>
                     ) : (
@@ -283,12 +286,12 @@ const Tile3DContent: React.FC<Tile3DContentProps> = ({ assetType, contentType })
                     )
                 }
             </div>
-            <div className="title">File upload</div>
+            <div className="title">{t("aside.common.file-upload")}</div>
             <div className="value">
                 <FileUpload ref={fileUploadRef} acceptFile={acceptFile}/>
             </div>
             <div className="modal-bottom">
-                <button onClick={fileUpload} type="button" className="button-full">Convert</button>
+                <button onClick={fileUpload} type="button" className="button-full">{t("aside.asset.convert")}</button>
             </div>
         </div>
     );

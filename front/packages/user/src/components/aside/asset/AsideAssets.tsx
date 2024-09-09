@@ -21,6 +21,7 @@ import SideCloseButton from "@/components/SideCloseButton.tsx";
 import { IsNewAssetModalState } from "@/recoils/Modal.ts";
 import { assetsRefetchTriggerState } from "@/recoils/Assets.ts";
 import {Asset} from "@/types/assets/Data.ts";
+import {useTranslation} from "react-i18next";
 
 export const statusMap: Partial<Record<ProcessTaskStatus, string>> = {
     "Done": "success",
@@ -37,6 +38,7 @@ const reverseStatusMap = Object.entries(statusMap).reduce<Record<string, Process
 const getStatusByLabel = (status: string): ProcessTaskStatus | undefined => reverseStatusMap[status];
 
 const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
+    const { t } = useTranslation();
     const searchProps = useRecoilValue<DatasetAssetListQueryVariables>(dataSearchSelector);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
@@ -112,15 +114,15 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
                 <div className="content--wrapper">
                     <button type="button" className="table-button float-right" onClick={() => setIsNewAssetModal(true)}>
                         <span className="new-item"></span>
-                        New Assets
+                        {t("aside.asset.new-asset")}
                     </button>
                     <table className="assets-list">
                         <caption>assets 목록</caption>
                         <thead>
                         <tr>
-                            <th>Type</th>
-                            <th>Name/Upload Data</th>
-                            <th className="status-th" ref={statusTh} onClick={toggleStatusPop}>Status
+                            <th>{t("aside.asset.type")}</th>
+                            <th>{t("aside.asset.name-upload-date")}</th>
+                            <th className="status-th" ref={statusTh} onClick={toggleStatusPop}>{t("aside.asset.status")}
                                 <div className="status-view"></div>
                                 <div className="pop-layer status">
                                     <ul>
@@ -132,7 +134,7 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
                                     </ul>
                                 </div>
                             </th>
-                            <th>Function</th>
+                            <th>{t("aside.asset.function")}</th>
                         </tr>
                         </thead>
                     </table>
@@ -147,7 +149,7 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
                                     {loading ? (
                                         <span className="spin-loader"></span>
                                     ) : (
-                                        dataArr.length === 0 ? "No data" : "data end"
+                                        dataArr.length === 0 ? t("aside.asset.no-data") : t("aside.asset.data-end")
                                     )}
                                 </td>
                             </tr>
