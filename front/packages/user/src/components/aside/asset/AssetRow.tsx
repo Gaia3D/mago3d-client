@@ -18,6 +18,7 @@ import {
 import { useSetRecoilState} from "recoil";
 import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 import {Asset} from "@/types/assets/Data.ts";
+import {useTranslation} from "react-i18next";
 
 type AssetRowProps = {
     item: Asset;
@@ -47,6 +48,7 @@ const downloadByUrlArr = (urlArr: ConvertedFile[]) => {
 };
 
 const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
+    const {t} = useTranslation();
     const [getLogData, { data: logData }] = useLazyQuery(DatasetProcessLogDocument);
     const [showLog, setShowLog] = useState(false);
 
@@ -92,18 +94,17 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     }, [downConvertFile, convertFileData]);
 
     const deleteAsset = (id: string, name: string) => {
-        console.log("delete ", id);
-        if (window.confirm(`데이터 ${name}을 삭제하시겠습니까?`)) {
+        if (confirm(t("confirm.asset.delete"))) {
             deleteMutation({ variables: { id } })
                 .then(() => {
-                    alert('삭제되었습니다.');
+                    alert(t("success.asset.delete"));
                     onDelete(id);
                 });
         }
     };
 
     const publishAsset = (id: string, type: string, name: string) => {
-        if (!confirm(`${name} 데이터를 레이어로 발행하시겠습니까?`)) return;
+        if (!confirm(t("confirm.asset.layer"))) return;
 
 
         const typeMapping: Record<string, { assetType: LayerAssetType; contextKey: keyof PublishContextValue }> = {
@@ -116,7 +117,7 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
         const selectedType = typeMapping[type];
 
         if (!selectedType) {
-            alert("파일 형식을 변경해주세요.");
+            alert(t("error.asset.file"));
             return;
         }
 
@@ -134,19 +135,19 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
 
         createLayerMutation({ variables: { input: data } })
             .then(() => {
-                alert('성공적으로 발행되었습니다.');
+                alert(t("success.asset.publish"));
                 setNewLayerCount((prev) => prev + 1);
             })
             .catch(e => {
                 console.error(e);
-                alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+                alert(t("error.admin"));
             });
     };
     if (! item || !item.id || !item.name) {
         console.error("Error. Check Asset ID");
         return (
             <tr>
-                <td colSpan={4}>잘못된 데이터</td>
+                <td colSpan={4}>{t("aside.common.wrong-data")}</td>
             </tr>
         );
     }

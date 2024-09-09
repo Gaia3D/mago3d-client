@@ -7,11 +7,13 @@
   "graphic": "그래픽",
   "time": "날짜/시간",
   "logout": "로그아웃",
+  "remove": "삭제",
   "aside": {
     "close-sidebar": "창 닫기",
     "common": {
       "no-data": "자료 없음",
       "data-end": "마지막 자료",
+      "wrong-data": "잘못된 자료",
       "project-name": "자료명",
       "input-format": "입력 포맷",
       "output-format": "출력 포맷",
@@ -48,23 +50,32 @@
       "normal-calculation": "법선 계산",
       "tile-status": "타일 여부",
       "overview-status": "오버뷰 여부",
+      "file-uploading": "파일 업로드 중",
       "convert": "변환"
-    },
-    "layer": {
     }
   },
   "msg": {
     "file-upload": "파일을 업로드 중입니다."
   },
-  "confirm": {
-    "register": "등록하시겠습니까?",
-    "delete": "삭제하시겠습니까?"
-  },
   "alert": {
     "file-upload": "파일을 업로드해 주세요.",
     "confirm-value": "값을 확인해 주세요."
   },
+  "confirm": {
+    "register": "등록하시겠습니까?",
+    "delete": "삭제하시겠습니까?",
+    "asset": {
+      "delete": "해당 자료를 삭제하시겠습니까?",
+      "layer": "해당 자료를 레이어로 발행하시겠습니까?"
+    },
+    "layer": {
+      "delete": "해당 레이어를 삭제하시겠습니까?",
+      "restore": "시스템 설정으로 복원하시겠습니까?",
+      "save": "현재 설정을 저장하시겠습니끼?"
+    }
+  },
   "error": {
+    "admin": "에러가 발생했습니다. 관리자에게 문의 바랍니다.",
     "data": {
       "add": "데이터 추가 중 오류가 발생했습니다."
     },
@@ -72,6 +83,23 @@
       "convert": "파일 변환 중 오류가 발생했습니다.",
       "upload": "파일 업로드에 실패했습니다.",
       "validate": "허용되지 않는 파일 유형입니다. 다시 시도해주세요.\n허용되는 파일 유형: "
+    },
+    "asset": {
+      "file": "발행할 수 없는 자료 종류입니다."
+    },
+    "layer": {
+      "delete": "레이어 삭제 중 오류가 발생했습니다.",
+      "restore": "레이어 복원 중 오류가 발생했습니다.",
+      "save": "레이어 저장 중 오류가 발생했습니다."
+    }
+  },
+  "success": {
+    "asset": {
+      "delete": "자료가 성공적으로 삭제되었습니다.",
+      "publish": "성공적으로 발행되었습니다."
+    },
+    "layer": {
+      "delete": "레이어가 성공적으로 삭제되었습니다."
     }
   },
   "tool": {

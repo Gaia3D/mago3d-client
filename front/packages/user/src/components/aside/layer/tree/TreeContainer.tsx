@@ -14,12 +14,14 @@ import {useMutation} from "@tanstack/react-query";
 import {RESTORE_USERLAYER, SAVE_USERLAYER} from "@/graphql/layerset/Mutation.ts";
 import {layerGroupsToNodemodels, nodeModlesToCreateUserGroupInput} from "@/components/aside/layer/LayerNodeModel.ts";
 import {currentUserProfileSelector} from "@/recoils/Auth.ts";
+import {useTranslation} from "react-i18next";
 
 interface TreeContainerProps {
     searchTerm: string;
 }
 
 export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
+    const {t} = useTranslation();
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
     const [filteredGroups, setFilteredGroups] = useState<Maybe<UserLayerGroup>[]>([]);
@@ -32,7 +34,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
         mutationFn: () => layersetGraphqlFetcher<Mutation>(RESTORE_USERLAYER),
         onError: (error) => {
             console.error("Error restoring user layer:", error);
-            alert("복원 중 오류가 발생했습니다. 관리자에게 문의해주세요.");
+            alert(t("error.layer.restore"));
         },
     });
 
@@ -40,7 +42,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
         mutationFn: ({ input }: { input: CreateUserGroupInput[] }) => layersetGraphqlFetcher<Mutation>(SAVE_USERLAYER, { input }),
         onError: (error) => {
             console.error("Error saving user layer:", error);
-            alert("저장 중 오류가 발생했습니다. 관리자에게 문의해주세요.");
+            alert(t("error.layer.save"));
         },
     });
 
@@ -130,13 +132,13 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     };
 
     const restoreToDefault = async () => {
-        if (!confirm('시스템 설정으로 복원하시겠습니까?')) return;
+        if (!confirm(t("confirm.layer.restore"))) return;
         const result = await restoreUserLayerMutateAsync();
         setUserLayerGroups(result.saveUserLayer);
     };
 
     const saveState = async () => {
-        if (!confirm('현 설정을 저장하시겠습니까?')) return;
+        if (!confirm(t("confirm.layer.save"))) return;
         const input = nodeModlesToCreateUserGroupInput(layerGroupsToNodemodels(userLayerGroups));
         await saveUserLayerMutateAsync({ input });
     };

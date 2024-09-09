@@ -13,8 +13,10 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll.ts";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 import { useModelCreator } from "@/hooks/useModelCreator.ts";
 import { CurrentCreatePropIdState } from "@/recoils/Tool.ts";
+import {useTranslation} from "react-i18next";
 
 export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
+    const {t} = useTranslation();
     const searchProps = useRecoilValue<PropsPagedQueryVariables>(propSearchSelector);
     const setPage = useSetRecoilState(propCurrentPageState);
     const setSearch = useSetRecoilState(propSearchTextState);
@@ -105,7 +107,7 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
                                 {loading ? (
                                     <span className="spin-loader"></span>
                                 ) : (
-                                    dataArr.length === 0 ? "No data" : "data end"
+                                    dataArr.length === 0 ? t("aside.common.no-data") : t("aside.common.data-end")
                                 )}
                             </div>
                         </ul>

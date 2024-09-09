@@ -7,11 +7,13 @@
   "graphic": "Graphic",
   "time": "Date/Time",
   "logout": "Logout",
+  "remove": "Delete",
   "aside": {
     "close-sidebar": "Close Window",
     "common": {
       "no-data": "No Data",
       "data-end": "End of Data",
+      "wrong-data": "Incorrect Data",
       "project-name": "Project Name",
       "input-format": "Input Format",
       "output-format": "Output Format",
@@ -48,22 +50,32 @@
       "normal-calculation": "Normal Calculation",
       "tile-status": "Tile Status",
       "overview-status": "Overview Status",
+      "file-uploading": "Uploading file",
       "convert": "Convert"
-    },
-    "layer": {}
+    }
   },
   "msg": {
     "file-upload": "Uploading file."
-  },
-  "confirm": {
-    "register": "Do you want to register?",
-    "delete": "Do you want to delete?"
   },
   "alert": {
     "file-upload": "Please upload a file.",
     "confirm-value": "Please confirm the value."
   },
+  "confirm": {
+    "register": "Do you want to register?",
+    "delete": "Do you want to delete?",
+    "asset": {
+      "delete": "Do you want to delete this asset?",
+      "layer": "Do you want to publish this asset as a layer?"
+    },
+    "layer": {
+      "delete": "Do you want to delete this layer?",
+      "restore": "Do you want to restore system settings?",
+      "save": "Do you want to save the current settings?"
+    }
+  },
   "error": {
+    "admin": "An error occurred. Please contact the administrator.",
     "data": {
       "add": "An error occurred while adding data."
     },
@@ -71,6 +83,23 @@
       "convert": "An error occurred while converting the file.",
       "upload": "Failed to upload the file.",
       "validate": "Invalid file type. Please try again.\nAllowed file types: "
+    },
+    "asset": {
+      "file": "This asset type cannot be published."
+    },
+    "layer": {
+      "delete": "An error occurred while deleting the layer.",
+      "restore": "An error occurred while restoring the layer.",
+      "save": "An error occurred while saving the layer."
+    }
+  },
+  "success": {
+    "asset": {
+      "delete": "The asset has been successfully deleted.",
+      "publish": "Successfully published."
+    },
+    "layer": {
+      "delete": "The layer has been successfully deleted."
     }
   },
   "tool": {

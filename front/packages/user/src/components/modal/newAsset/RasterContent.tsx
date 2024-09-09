@@ -31,8 +31,8 @@ const initialOptions = {
     outputFormat: '' as Type,
     originProjection: '',
     convertedProjection: '',
-    tiled: false,               // 타일 여부
-    overviews: false,           // 오버뷰
+    tiled: false,
+    overviews: false,
 }
 
 const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) => {
