@@ -1,24 +1,24 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Maybe,
     Query,
-    TerrainAsset, UserLayerAsset,
+    TerrainAsset,
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
-import {TerrainIdState, TerrainUrlState, UserTerrainGroupsState, UserTerrainState} from "@/recoils/Terrain.ts";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {TerrainIdState, TerrainUrlState} from "@/recoils/Terrain.ts";
 import {GET_TERRAINS} from "@mnd/shared/src/types/layerset/Query.ts";
 import {layersetGraphqlFetcher} from "@/api/queryClient.ts";
 
 const TerrainChanger = () => {
-    const userTerrainGroups = useRecoilValue<Maybe<TerrainAsset>[]>(UserTerrainGroupsState);
     const setTerrainUrl = useSetRecoilState<string>(TerrainUrlState);
-    const [userTerrains, setUserTerrains] = useRecoilState<Maybe<TerrainAsset>[]>(UserTerrainState);
+    const [userTerrains, setUserTerrains] = useState<Maybe<TerrainAsset>[]>([]);
     const [terrainId, setTerrainId] = useRecoilState<string>(TerrainIdState);
 
     useEffect(() => {
         if (userTerrains.length === 0) {
             layersetGraphqlFetcher<Query>(GET_TERRAINS)
                 .then((result) => {
+                    if (result.terrains.length === 0) return;
                     result.terrains.forEach((item) => {
                         if(item?.id === terrainId) {
                             item.selected = true;
@@ -28,7 +28,7 @@ const TerrainChanger = () => {
                     setUserTerrains(terrains);
                 });
         }
-    }, [userTerrainGroups]);
+    }, [userTerrains, setUserTerrains, terrainId]);
 
     const changeTerrainByUrl = (url: string, id: string) => {
         setTerrainUrl(import.meta.env.VITE_API_URL+url);
