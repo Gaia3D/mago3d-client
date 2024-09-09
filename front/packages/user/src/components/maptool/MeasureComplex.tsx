@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import  * as Cesium from "cesium";
+import {useTranslation} from "react-i18next";
 
 const labelDefualt = {
   text: '',
@@ -37,6 +38,7 @@ const defaultResult: MeasureComplexResult = {
 }
 
 export const MeasureComplex = () => {
+  const {t} = useTranslation();
   const el = document.querySelector("#map");
   const [open, setOpen] = useRecoilState(MeasureComplexOpenState);
   const [result, setResult] = useState<MeasureComplexResult>(defaultResult);
@@ -246,22 +248,35 @@ export const MeasureComplex = () => {
     }
   }, [open]);
   const node = (
-    <div className="dialog-distance darkMode">
-      <div className="dialog-title">
-        <h3>복합거리 측정</h3>
-        {/*<button className="close floatRight" onClick={()=>{setOpen(false);setSelectedTool(null)}}></button>						*/}
+      <div className="pop-layer-sub measure">
+        <div className="pop-layer-header">
+          <h3 className="title">{t("measure.composite")}</h3>
+          {/*<div className="close-button"></div>*/}
+        </div>
+        <div className="pop-layer-content">
+          <div className="value-container">
+            <label>{t("measure.zenith")}</label>
+            <input type="text" value={result.zenith}/>
+          </div>
+          <div className="value-container">
+            <label>{t("measure.elevation")}</label>
+            <input type="text" value={result.elevation}/>
+          </div>
+          <div className="value-container">
+            <label>{t("measure.straight")}</label>
+            <input type="text" value={result.straight}/>
+          </div>
+          <div className="value-container">
+            <label>{t("measure.horizon")}</label>
+            <input type="text" value={result.horizon}/>
+          </div>
+          <div className="value-container">
+            <label>{t("measure.height")}</label>
+            <input type="text" value={result.height}/>
+          </div>
+          {/*<button type="button" className="cancel" onClick={init}><a>초기화</a></button>*/}
+        </div>
       </div>
-      <div className="dialog-result-02">
-        <span className="dialog-result-text">천정각</span> <span className="dialog-result-value">{result.zenith}</span>
-        <span className="dialog-result-text">고도각</span> <span className="dialog-result-value">{result.elevation}</span>
-        <span className="dialog-result-text">직선거리</span> <span className="dialog-result-value">{result.straight}</span>
-        <span className="dialog-result-text">수평거리</span> <span className="dialog-result-value">{result.horizon}</span>
-        <span className="dialog-result-text">수직거리</span> <span className="dialog-result-value">{result.height}</span>
-      </div>
-      <div className="darkMode-btn">
-        <button type="button" className="cancel" onClick={init}><a>초기화</a></button>
-      </div>
-    </div>
   )
   return el && open ? ReactDOM.createPortal(node, el) : null;
 }

@@ -52,6 +52,9 @@
   position: absolute;
   top: 480px;
   right: 52px;
+  &.measure {
+    top: 256px;
+  }
   label {
     font-size: 14px;
   }

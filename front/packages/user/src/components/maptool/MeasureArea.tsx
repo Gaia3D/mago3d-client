@@ -5,6 +5,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import  * as Cesium from "cesium";
 import { polygon as turfPolygon, area as turfArea, centerOfMass} from "@turf/turf"
+import {useTranslation} from "react-i18next";
 
 const getUnitFactor = (unit: string) => {
   switch(unit) {
@@ -28,6 +29,7 @@ const getPolygon = (cartesians: Cesium.Cartesian3[]) => {
 }
 
 export const MeasureArea = () => {
+  const {t} = useTranslation();
   const el = document.querySelector("#map");
   const [open, setOpen] = useRecoilState(MeasureAreaOpenState);
   const [unit, setUnit] = useState("m²");
@@ -190,30 +192,30 @@ export const MeasureArea = () => {
     }
   }, [open, unit]);
   const node = (
-    <div className="dialog-distance darkMode">
-      <div className="dialog-title">
-        <h3>면적측정</h3>
-        {/*<button className="close floatRight" onClick={()=>{setOpen(false);setSelectedTool(null)}}></button>						*/}
+      <div className="pop-layer-sub measure">
+        <div className="pop-layer-header">
+          <h3 className="title">{t("measure.area")}</h3>
+          {/*<div className="close-button"></div>*/}
+        </div>
+        <div className="pop-layer-content">
+          <div className="value-container">
+            <label>{t("measure.area-unit")}</label>
+            <select value={unit} onChange={(e) => setUnit(e.target.value)}>
+              <option value="m²">{t("measure.m2")}</option>
+              <option value="km²">{t("measure.km2")}</option>
+              <option value="yd²">{t("measure.yd2")}</option>
+              <option value="mi²">{t("measure.mi2")}</option>
+              <option value="acre">{t("measure.acre")}</option>
+              <option value="ha">{t("measure.ha")}</option>
+            </select>
+          </div>
+          <div className="value-container">
+            <label>{t("measure.measure-area")}</label>
+            <input type="text" value={result}/>
+          </div>
+          {/*<button type="button" className="cancel" onClick={init}><a>초기화</a></button>*/}
+        </div>
       </div>
-      <div className="dialog-content">
-        <label> 면적단위</label>
-        <select value={unit} onChange={(e)=>setUnit(e.target.value)}>
-          <option value="m²">m² (제곱미터)</option>
-          <option value="km²">km² (제곱킬로미터)</option>
-          <option value="yd²">yd² (제곱야드)</option>
-          <option value="mi²">mi² (제곱마일)</option>
-          <option value="acre">acre (에이커)</option>
-          <option value="ha">ha (헥타르)</option>
-        </select>
-      </div>
-      <div className="dialog-result">
-        <span className="dialog-result-text">측정면적 </span>
-        <span className="dialog-result-value">{result}</span>
-      </div>
-      <div className="darkMode-btn">
-        <button type="button" className="cancel" onClick={init}><a>초기화</a></button>
-      </div>
-    </div>
   )
   return el && open ? ReactDOM.createPortal(node, el) : null;
 }
