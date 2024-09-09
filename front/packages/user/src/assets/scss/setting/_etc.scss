@@ -48,7 +48,14 @@
 }
 
 #map {
-
+.pop-layer-sub{
+  position: absolute;
+  top: 480px;
+  right: 52px;
+  label {
+    font-size: 14px;
+  }
+}
   .pop-layer-graphic-setting {
     label {
       display: inline-block;
@@ -740,9 +747,9 @@
 
 
 /*camera info modal*/
-.default-layer.camera-tool {
+.pop-layer-pointer-location {
   position: absolute;
-  top: 120px;
+  top: 50px;
   right: 10px;
   z-index: 1;
   padding: 5px;

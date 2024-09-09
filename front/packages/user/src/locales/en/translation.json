@@ -136,7 +136,13 @@
     "add-floor": "Add Floor",
     "remove-floor": "Remove Floor",
     "coloring": "Color",
-    "theme": "Light Theme"
+    "theme": "Light Theme",
+    "shadow": "Time Simulator"
+  },
+  "clock-tool": "Time Simulator",
+  "clock": {
+    "multiplier": "Multiplier",
+    "function": "Function"
   },
   "graphic-setting": "Graphic Settings",
   "setting": {
@@ -163,5 +169,9 @@
   "high": "High",
   "mid": "Medium",
   "low": "Low",
-  "very-low": "Very Low"
+  "very-low": "Very Low",
+  "latitude": "Latitude",
+  "longitude": "Longitude",
+  "altitude": "Altitude",
+  "heading": "Heading"
 }

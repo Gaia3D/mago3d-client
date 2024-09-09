@@ -15,6 +15,7 @@ const LanguageSelector = () => {
 	const changeLanguage = useCallback((lang: string) => {
 		i18n.changeLanguage(lang).then(() => console.log(`Language changed to ${lang}`));
 		setNowLang(lang);
+		togglePopLayer();
 	}, [i18n]);
 
 	const languageItems = [

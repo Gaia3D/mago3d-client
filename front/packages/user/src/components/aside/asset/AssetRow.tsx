@@ -110,6 +110,7 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
         const typeMapping: Record<string, { assetType: LayerAssetType; contextKey: keyof PublishContextValue }> = {
             [AssetType.Tiles3D]: { assetType: LayerAssetType.Tiles3D, contextKey: "t3d" },
             [AssetType.Shp]: { assetType: LayerAssetType.Vector, contextKey: "feature" },
+            [AssetType.GeoJson]: { assetType: LayerAssetType.Vector, contextKey: "feature" },
             [AssetType.Imagery]: { assetType: LayerAssetType.Raster, contextKey: "coverage" },
             [AssetType.Cog]: { assetType: LayerAssetType.Cog, contextKey: "cog" },
         };

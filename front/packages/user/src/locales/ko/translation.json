@@ -136,7 +136,13 @@
     "add-floor": "층 더하기",
     "remove-floor": "층 빼기",
     "coloring": "색상",
-    "theme": "밝은 테마"
+    "theme": "밝은 테마",
+    "shadow": "시간 도구"
+  },
+  "clock-tool": "시간 도구",
+  "clock": {
+    "multiplier": "배율",
+    "function": "기능"
   },
   "graphic-setting": "그래픽 설정",
   "setting": {
@@ -163,6 +169,10 @@
   "high": "높음",
   "mid": "중간",
   "low": "낮음",
-  "very-low": "매우 낮음"
+  "very-low": "매우 낮음",
+  "latitude": "위도",
+  "longitude": "경도",
+  "altitude": "고도",
+  "heading": "방위"
 
 }

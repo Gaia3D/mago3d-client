@@ -66,14 +66,10 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
 
     const [createAssetMutation] = useMutation(DatasetCreateAssetDocument, {
         onCompleted: async (data) => {
-
-            if (options.inputFormat === AssetType.Shp) {
-                const newStatusId = data.createAsset.id;
-                setStatusId(newStatusId);
-                await fileConvert(newStatusId);
-            } else if (options.inputFormat === AssetType.GeoJson) {
-                resetOptions();
-            }
+            const newStatusId = data.createAsset.id;
+            setStatusId(newStatusId);
+            await fileConvert(newStatusId);
+            resetOptions();
             setStatusQuerySkip(false);
         },
         onError: (error) => {
@@ -158,7 +154,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
 
     const fileConvert = useCallback(async (id: string) => {
         const shpValue: ShpConvertInput = {
-            layerType: options.inputFormat,
+            // layerType: options.inputFormat,
             sourceCharset: options.originEncoding,
             sourceSrs: options.originProjection,
             targetCharset: options.convertedEncoding,
@@ -209,52 +205,44 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
                 onSelect={handleOptionChange}
                 formats={outputFormatOptions['vector']}
             />
-
-            {
-                options.inputFormat === AssetType.Shp && (
-                    <>
-                        <div className="title">{t("aside.common.origin-encoding")}</div>
-                        <div className="value">
-                            <input
-                                type="text"
-                                className="width-140"
-                                value={options.originEncoding}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('originEncoding', e.target.value)}
-                            />
-                        </div>
-                        <div className="title">{t("aside.common.converted-encoding")}</div>
-                        <div className="value">
-                            <input
-                                type="text"
-                                className="width-140"
-                                value={options.convertedEncoding}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('convertedEncoding', e.target.value)}
-                            />
-                        </div>
-                        <div className="title">{t("aside.common.origin-projection")}</div>
-                        <div className="value">
-                            <input
-                                type="text"
-                                className="width-140"
-                                value={options.originProjection}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('originProjection', e.target.value)}
-                                placeholder="ex) 4326, 5186"
-                            />
-                        </div>
-                        <div className="title">{t("aside.common.converted-projection")}</div>
-                        <div className="value">
-                            <input
-                                type="text"
-                                className="width-140"
-                                value={options.convertedProjection}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('convertedProjection', e.target.value)}
-                                placeholder="ex) 4326, 5186"
-                            />
-                        </div>
-                    </>
-                )
-
-            }
+            <div className="title">{t("aside.common.origin-encoding")}</div>
+            <div className="value">
+                <input
+                    type="text"
+                    className="width-140"
+                    value={options.originEncoding}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('originEncoding', e.target.value)}
+                />
+            </div>
+            <div className="title">{t("aside.common.converted-encoding")}</div>
+            <div className="value">
+                <input
+                    type="text"
+                    className="width-140"
+                    value={options.convertedEncoding}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('convertedEncoding', e.target.value)}
+                />
+            </div>
+            <div className="title">{t("aside.common.origin-projection")}</div>
+            <div className="value">
+                <input
+                    type="text"
+                    className="width-140"
+                    value={options.originProjection}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('originProjection', e.target.value)}
+                    placeholder="ex) 4326, 5186"
+                />
+            </div>
+            <div className="title">{t("aside.common.converted-projection")}</div>
+            <div className="value">
+                <input
+                    type="text"
+                    className="width-140"
+                    value={options.convertedProjection}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('convertedProjection', e.target.value)}
+                    placeholder="ex) 4326, 5186"
+                />
+            </div>
             <div className="title">{t("aside.common.file-upload")}</div>
             <div className="value">
                 <FileUpload ref={fileUploadRef} acceptFile={acceptFile}/>
