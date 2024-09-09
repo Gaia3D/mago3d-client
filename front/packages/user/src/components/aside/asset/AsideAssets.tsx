@@ -149,7 +149,7 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
                                     {loading ? (
                                         <span className="spin-loader"></span>
                                     ) : (
-                                        dataArr.length === 0 ? t("aside.asset.no-data") : t("aside.asset.data-end")
+                                        dataArr.length === 0 ? t("aside.common.no-data") : t("aside.common.data-end")
                                     )}
                                 </td>
                             </tr>

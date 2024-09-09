@@ -13,6 +13,7 @@ import {
     DatasetCreateProcessDocument, ProcessContextInput, TiffConvertInput,
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import ToggleSetting from "@/components/modal/ToggleSetting.tsx";
+import {useTranslation} from "react-i18next";
 
 interface RasterContentProps {
     assetType: string;
@@ -35,6 +36,7 @@ const initialOptions = {
 }
 
 const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) => {
+    const {t} = useTranslation();
     const [componentKey, setComponentKey] = useState(0);
     const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
     const setAssetsConvertingListState = useSetRecoilState(assetsConvertingListState);
@@ -64,7 +66,7 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
 
     const validation = (): ValidationType => {
         const checks = [
-            { condition: !options.projectName, message: 'Project name' },
+            { condition: !options.projectName, message: t("aside.common.project-name") },
         ];
 
         for (const check of checks) {
@@ -85,7 +87,7 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
     const fileUpload = async () => {
 
         if (!validation().isValid) {
-            alert(`${validation().message} 값을 확인해주세요.`);
+            alert(`${validation().message} ${t("alert.confirm-value")}`);
             return;
         }
 
@@ -120,7 +122,7 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
         },
         onError: (error) => {
             console.error('Mutation error:', error);
-            alert('데이터 추가 중 오류가 발생했습니다.');
+            alert(t("error.data.add"));
         },
     });
 
@@ -130,7 +132,7 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
         },
         onError: (error) => {
             console.error('Process creation error:', error);
-            alert('파일 변환 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+            alert(t("error.file.convert"));
             resetOptions();
         },
     });
@@ -148,7 +150,7 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
 
     const createAssetInput = useCallback((uploadId: string[]): CreateAssetInput => ({
         name: options.projectName,
-        description: '사용자 추가 데이터입니다.',
+        description: t("aside.asset.description"),
         properties: undefined,
         assetType: options.inputFormat,
         enabled: true,
@@ -190,7 +192,7 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
 
     return (
         <div key={componentKey} className={`modal-popup-body ${assetType === contentType ? "on" : "off"}`}>
-            <div className="title">Project name</div>
+            <div className="title">{t("aside.common.project-name")}</div>
             <div className="value">
                 <input
                     type="text"
@@ -199,7 +201,7 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('projectName', e.target.value)}
                 />
             </div>
-            <div className="title">Input format</div>
+            <div className="title">{t("aside.common.input-format")}</div>
             <FormatList
                 name="inputFormat"
                 selected={options.inputFormat}
@@ -210,14 +212,14 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
             {
                 options.inputFormat === AssetType.Imagery ? (
                     <>
-                        <div className="title">Output format</div>
+                        <div className="title">{t("aside.common.output-format")}</div>
                         <FormatList
                             name="outputFormat"
                             selected={options.outputFormat}
                             onSelect={handleOptionChange}
                             formats={outputFormatOptions['raster']}
                         />
-                        <div className="title">Origin Projection</div>
+                        <div className="title">{t("aside.common.origin-projection")}</div>
                         <div className="value">
                             <input
                                 type="text"
@@ -227,7 +229,7 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
                                 placeholder="ex) 4326, 5186"
                             />
                         </div>
-                        <div className="title f-size-12">Converted Projection</div>
+                        <div className="title">{t("aside.common.converted-projection")}</div>
                         <div className="value">
                             <input
                                 type="text"
@@ -241,17 +243,17 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
 
                 ) : (
                     <>
-                        <div className="title">Output format</div>
+                        <div className="title">{t("aside.common.output-format")}</div>
                         <ul className="format-list">
                             <li className="selected">AUTO</li>
                         </ul>
-                        <div className="title">Tile Status</div>
+                        <div className="title">{t("aside.asset.tile-status")}</div>
                         <ToggleSetting
                             id="tiled"
                             checked={options.tiled}
                             onChange={handleOptionChange}
                         />
-                        <div className="title">Overview Status</div>
+                        <div className="title">{t("aside.asset.overview-status")}</div>
                         <ToggleSetting
                             id="overviews"
                             checked={options.overviews}
@@ -261,12 +263,12 @@ const RasterContent:React.FC<RasterContentProps> = ({assetType, contentType}) =>
                 )
             }
 
-            <div className="title">File upload</div>
+            <div className="title">{t("aside.common.file-upload")}</div>
             <div className="value">
                 <FileUpload ref={fileUploadRef} acceptFile={acceptFile}/>
             </div>
             <div className="modal-bottom">
-                <button onClick={fileUpload} type="button" className="button-full">Convert</button>
+                <button onClick={fileUpload} type="button" className="button-full">{t("aside.asset.convert")}</button>
             </div>
         </div>
     );

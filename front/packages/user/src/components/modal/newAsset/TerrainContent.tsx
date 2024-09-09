@@ -28,6 +28,7 @@ import {
 import {useSetRecoilState} from "recoil";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
+import {useTranslation} from "react-i18next";
 
 interface TerrainContentProps {
     assetType: string;
@@ -50,6 +51,7 @@ const initialOptions = {
 }
 
 const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) => {
+    const {t} = useTranslation();
     const [componentKey, setComponentKey] = useState(0);
     const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
     const setAssetsConvertingListState = useSetRecoilState(assetsConvertingListState);
@@ -79,7 +81,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
 
     const validation = (): ValidationType => {
         const checks = [
-            { condition: !options.projectName, message: 'Project name' },
+            { condition: !options.projectName, message: t("aside.common.project-name") },
         ];
 
         for (const check of checks) {
@@ -100,7 +102,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
     const fileUpload = async () => {
 
         if (!validation().isValid) {
-            alert(`${validation().message} 값을 확인해주세요.`);
+            alert(`${validation().message} ${t("alert.confirm-value")}`);
             return;
         }
 
@@ -135,7 +137,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
         },
         onError: (error) => {
             console.error('Mutation error:', error);
-            alert('데이터 추가 중 오류가 발생했습니다.');
+            alert(t("error.data.add"));
         },
     });
 
@@ -145,7 +147,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
         },
         onError: (error) => {
             console.error('Process creation error:', error);
-            alert('파일 변환 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+            alert(t("error.file.convert"));
             resetOptions();
         },
     });
@@ -163,7 +165,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
 
     const createAssetInput = useCallback((uploadId: string[]): CreateAssetInput => ({
         name: options.projectName,
-        description: '사용자 추가 데이터입니다.',
+        description: t("aside.asset.description"),
         properties: undefined,
         assetType: AssetType.Terrain,
         enabled: true,
@@ -189,7 +191,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
 
     return (
         <div key={componentKey} className={`modal-popup-body ${assetType === contentType ? "on" : "off"}`}>
-            <div className="title">Project name</div>
+            <div className="title">{t("aside.common.project-name")}</div>
             <div className="value">
                 <input
                     type="text"
@@ -198,21 +200,21 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('projectName', e.target.value)}
                 />
             </div>
-            <div className="title">Input format</div>
+            <div className="title">{t("aside.common.input-format")}</div>
             <FormatList
                 name="inputFormat"
                 selected={options.inputFormat}
                 onSelect={handleOptionChange}
                 formats={inputFormatOptions['terrain']}
             />
-            <div className="title">Output format</div>
+            <div className="title">{t("aside.common.output-format")}</div>
             <FormatList
                 name="outputFormat"
                 selected={options.outputFormat}
                 onSelect={handleOptionChange}
                 formats={outputFormatOptions['terrain']}
             />
-            <div className="title">Min Tile Depth</div>
+            <div className="title">{t("aside.asset.min-tile-depth")}</div>
             <div className="value">
                 <input
                     type="number"
@@ -221,7 +223,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('minDepth', Number(e.target.value))}
                 />
             </div>
-            <div className="title">Max Tile Depth</div>
+            <div className="title">{t("aside.asset.max-tile-depth")}</div>
             <div className="value">
                 <input
                     type="number"
@@ -230,7 +232,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('maxDepth', Number(e.target.value))}
                 />
             </div>
-            <div className="title f-size-12">Interpolation Type</div>
+            <div className="title">{t("aside.asset.interpolation-type")}</div>
             <div className="value">
                 <RadioGroup
                     name="interpolationType"
@@ -239,19 +241,19 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
                     options={InterpolationTypeOptions}
                 />
             </div>
-            <div className="title f-size-12">Normal calculation</div>
+            <div className="title">{t("aside.asset.normal-calculation")}</div>
             <ToggleSetting
                 id="calculateNormals"
                 checked={options.calculateNormals}
                 onChange={handleOptionChange}
             />
 
-            <div className="title">File upload</div>
+            <div className="title">{t("aside.common.file-upload")}</div>
             <div className="value">
                 <FileUpload ref={fileUploadRef} acceptFile={acceptFile}/>
             </div>
             <div className="modal-bottom">
-                <button onClick={fileUpload} type="button" className="button-full">Convert</button>
+                <button onClick={fileUpload} type="button" className="button-full">{t("aside.asset.convert")}</button>
             </div>
         </div>
     );

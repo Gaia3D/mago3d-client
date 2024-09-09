@@ -12,10 +12,13 @@
     "common": {
       "no-data": "No Data",
       "data-end": "End of Data",
-      "project-name": "Asset Name",
+      "project-name": "Project Name",
       "input-format": "Input Format",
       "output-format": "Output Format",
       "origin-projection": "Original Projection",
+      "origin-encoding": "Original Encoding",
+      "converted-projection": "Converted Projection",
+      "converted-encoding": "Converted Encoding",
       "detail-setting": "Detailed Settings",
       "file-upload": "File Upload",
       "drop-file-here": "Drop file here."
@@ -26,7 +29,6 @@
       "name-upload-date": "Name/Upload Date",
       "status": "Status",
       "function": "Function",
-      "convert": "Convert",
       "y-up-axis": "Set Y-Axis as Up Axis",
       "auto-up-axis": "Auto-Assign Up Axis",
       "flip-coordinate": "Flip X, Y Coordinates",
@@ -39,7 +41,14 @@
       "max-points": "Max Points in Point Cloud Data",
       "description": "User-added data.",
       "crs-epsg": "Coordinate Reference System (EPSG)",
-      "projection-code": "Projection Code (proj4)"
+      "projection-code": "Projection Code (proj4)",
+      "min-tile-depth": "Min Tile Depth",
+      "max-tile-depth": "Max Tile Depth",
+      "interpolation-type": "Interpolation Type",
+      "normal-calculation": "Normal Calculation",
+      "tile-status": "Tile Status",
+      "overview-status": "Overview Status",
+      "convert": "Convert"
     },
     "layer": {}
   },

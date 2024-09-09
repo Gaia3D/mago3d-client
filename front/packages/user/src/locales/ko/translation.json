@@ -16,6 +16,9 @@
       "input-format": "입력 포맷",
       "output-format": "출력 포맷",
       "origin-projection": "원본 투영법",
+      "origin-encoding": "원본 인코딩",
+      "converted-projection": "변환 투영법",
+      "converted-encoding": "변환 인코딩",
       "detail-setting": "상세 설정",
       "file-upload": "파일 업로드",
       "drop-file-here": "파일을 놓아 주세요."
@@ -26,7 +29,6 @@
       "name-upload-date": "자료명/업로드 날짜",
       "status": "상태",
       "function": "기능",
-      "convert": "변환",
       "y-up-axis": "Y축을 높이 축으로 설정",
       "auto-up-axis": "자동 높이 축 할당",
       "flip-coordinate": "X, Y 좌표 뒤집기",
@@ -39,9 +41,17 @@
       "max-points": "포인트 클라우드 데이터 최대 포인트 수",
       "description": "사용자 추가 데이터입니다.",
       "crs-epsg": "좌표 기준 체계 (EPSG)",
-      "projection-code": "투명 코드 (proj4)"
+      "projection-code": "투명 코드 (proj4)",
+      "min-tile-depth": "타일 최소 깊이",
+      "max-tile-depth": "타일 최대 깊이",
+      "interpolation-type": "보간 유형",
+      "normal-calculation": "법선 계산",
+      "tile-status": "타일 여부",
+      "overview-status": "오버뷰 여부",
+      "convert": "변환"
     },
-    "layer": {}
+    "layer": {
+    }
   },
   "msg": {
     "file-upload": "파일을 업로드 중입니다."

@@ -6,7 +6,7 @@ interface RadioGroupProps {
     value: string;
     onChange: (key:string, value: string) => void;
     options: {text: string, value: string}[];
-    translate: boolean
+    translate?: boolean
 }
 
 const RadioGroup: React.FC<RadioGroupProps> = ({ name, value, onChange, options, translate = false }) => {

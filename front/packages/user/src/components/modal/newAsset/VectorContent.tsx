@@ -13,6 +13,7 @@ import {
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import {useSetRecoilState} from "recoil";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
+import {useTranslation} from "react-i18next";
 
 interface VectorContentProps {
     assetType: string;
@@ -35,6 +36,7 @@ const initialOptions = {
 }
 
 const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) => {
+    const {t} = useTranslation();
     const [componentKey, setComponentKey] = useState(0);
     const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
     const setAssetsConvertingListState = useSetRecoilState(assetsConvertingListState);
@@ -76,7 +78,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
         },
         onError: (error) => {
             console.error('Mutation error:', error);
-            alert('데이터 추가 중 오류가 발생했습니다.');
+            alert(t("error.data.add"));
         },
     });
 
@@ -86,14 +88,14 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
         },
         onError: (error) => {
             console.error('Process creation error:', error);
-            alert('파일 변환 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+            alert(t("error.file.convert"));
             resetOptions();
         },
     });
 
     const validation = (): ValidationType => {
         const checks = [
-            { condition: !options.projectName, message: 'Project name' },
+            { condition: !options.projectName, message: t("aside.common.project-name") },
             // { condition: !options.originEncoding, message: 'Origin Encoding' },
             // { condition: !options.convertedEncoding, message: 'Converted Encoding' },
             // { condition: !options.originProjection, message: 'Origin Projection' },
@@ -118,7 +120,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
     const fileUpload = async () => {
 
         if (!validation().isValid) {
-            alert(`${validation().message} 값을 확인해주세요.`);
+            alert(`${validation().message} ${t("alert.confirm-value")}`);
             return;
         }
 
@@ -146,7 +148,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
 
     const createAssetInput = useCallback((uploadId: string[]): CreateAssetInput => ({
         name: options.projectName,
-        description: '사용자 추가 데이터입니다.',
+        description: t("aside.asset.description"),
         properties: undefined,
         assetType: options.inputFormat,
         enabled: true,
@@ -184,7 +186,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
 
     return (
         <div key={componentKey} className={`modal-popup-body ${assetType === contentType ? "on" : "off"}`}>
-            <div className="title">Project name</div>
+            <div className="title">{t("aside.common.project-name")}</div>
             <div className="value">
                 <input
                     type="text"
@@ -193,14 +195,14 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('projectName', e.target.value)}
                 />
             </div>
-            <div className="title">Input format</div>
+            <div className="title">{t("aside.common.input-format")}</div>
             <FormatList
                 name="inputFormat"
                 selected={options.inputFormat}
                 onSelect={handleOptionChange}
                 formats={inputFormatOptions['vector']}
             />
-            <div className="title">Output format</div>
+            <div className="title">{t("aside.common.output-format")}</div>
             <FormatList
                 name="outputFormat"
                 selected={options.outputFormat}
@@ -211,7 +213,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
             {
                 options.inputFormat === AssetType.Shp && (
                     <>
-                        <div className="title">Origin Encoding</div>
+                        <div className="title">{t("aside.common.origin-encoding")}</div>
                         <div className="value">
                             <input
                                 type="text"
@@ -220,7 +222,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('originEncoding', e.target.value)}
                             />
                         </div>
-                        <div className="title f-size-12">Converted Encoding</div>
+                        <div className="title">{t("aside.common.converted-encoding")}</div>
                         <div className="value">
                             <input
                                 type="text"
@@ -229,7 +231,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => handleOptionChange('convertedEncoding', e.target.value)}
                             />
                         </div>
-                        <div className="title">Origin Projection</div>
+                        <div className="title">{t("aside.common.origin-projection")}</div>
                         <div className="value">
                             <input
                                 type="text"
@@ -239,7 +241,7 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
                                 placeholder="ex) 4326, 5186"
                             />
                         </div>
-                        <div className="title f-size-12">Converted Projection</div>
+                        <div className="title">{t("aside.common.converted-projection")}</div>
                         <div className="value">
                             <input
                                 type="text"
@@ -253,12 +255,12 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
                 )
 
             }
-            <div className="title">File upload</div>
+            <div className="title">{t("aside.common.file-upload")}</div>
             <div className="value">
                 <FileUpload ref={fileUploadRef} acceptFile={acceptFile}/>
             </div>
             <div className="modal-bottom">
-                <button onClick={fileUpload} type="button" className="button-full">Convert</button>
+                <button onClick={fileUpload} type="button" className="button-full">{t("aside.asset.convert")}</button>
             </div>
         </div>
     );
