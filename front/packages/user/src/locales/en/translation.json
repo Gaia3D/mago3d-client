@@ -137,5 +137,31 @@
     "remove-floor": "Remove Floor",
     "coloring": "Color",
     "theme": "Light Theme"
-  }
+  },
+  "graphic-setting": "Graphic Settings",
+  "setting": {
+    "resolution": "Rendering Resolution",
+    "shadow": "Shadow",
+    "shadow-quality": "Shadow Quality",
+    "global-lighting": "Global Lighting",
+    "fxaa": "Anti-Aliasing (FXAA)",
+    "edge": "Edge",
+    "ambient": "Screen Space Ambient Occlusion",
+    "description": {
+      "resolution": "Set the rendering resolution. A higher value has a greater impact on performance.",
+      "shadow": "Enable/Disable Shadows",
+      "shadow-quality": "Set the shadow quality.",
+      "global-lighting": "Visualize global lighting. Affected by time of day.",
+      "fxaa": "Apply anti-aliasing to reduce jagged edges at lower resolutions.",
+      "edge": "Visualize the edges of objects.",
+      "ambient": "Visualize ambient shading between objects."
+    }
+  },
+  "on": "On",
+  "off": "Off",
+  "very-high": "Very High",
+  "high": "High",
+  "mid": "Medium",
+  "low": "Low",
+  "very-low": "Very Low"
 }

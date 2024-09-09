@@ -137,5 +137,32 @@
     "remove-floor": "층 빼기",
     "coloring": "색상",
     "theme": "밝은 테마"
-  }
+  },
+  "graphic-setting": "그래픽 설정",
+  "setting": {
+    "resolution": "렌더링 해상도",
+    "shadow": "그림자",
+    "shadow-quality": "그림자 품질",
+    "global-lighting": "전역 조명",
+    "fxaa": "계단 현상 최소화 (FXAA)",
+    "edge": "경계선",
+    "ambient": "화면 공간 주변 차폐",
+    "description": {
+      "resolution": "렌더링 해상도를 설정합니다. 값이 높을수록 성능에 더 큰 영향을 줍니다.",
+      "shadow": "그림자 활성화 / 비활성화",
+      "shadow-quality": "그림자 품질을 설정합니다.",
+      "global-lighting": "전역 조명을 시각화합니다. 시간에 따라 영향을 받습니다.",
+      "fxaa": "낮은 해상도에서 나타나는 계단 현상 최소화를 적용합니다.",
+      "edge": "객체의 경계선을 시각화합니다.",
+      "ambient": "객체 간의 세부 음영을 시각화합니다."
+    }
+  },
+  "on": "켜기",
+  "off": "끄기",
+  "very-high": "매우 높음",
+  "high": "높음",
+  "mid": "중간",
+  "low": "낮음",
+  "very-low": "매우 낮음"
+
 }
