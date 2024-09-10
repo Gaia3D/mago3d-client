@@ -69,7 +69,6 @@ const VectorContent:React.FC<VectorContentProps> = ({assetType, contentType}) =>
             const newStatusId = data.createAsset.id;
             setStatusId(newStatusId);
             await fileConvert(newStatusId);
-            resetOptions();
             setStatusQuerySkip(false);
         },
         onError: (error) => {
