@@ -43,7 +43,7 @@
       "max-points": "포인트 클라우드 데이터 최대 포인트 수",
       "description": "사용자 추가 데이터입니다.",
       "crs-epsg": "좌표 기준 체계 (EPSG)",
-      "projection-code": "투명 코드 (proj4)",
+      "projection-code": "투영 코드 (proj4)",
       "min-tile-depth": "타일 최소 깊이",
       "max-tile-depth": "타일 최대 깊이",
       "interpolation-type": "보간 유형",
