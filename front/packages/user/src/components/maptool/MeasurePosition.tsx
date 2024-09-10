@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import  * as Cesium from "cesium";
+import {useTranslation} from "react-i18next";
 
 const color = Cesium.Color.RED;
 const getUnitFactor = (unit: string) => {
@@ -20,6 +21,7 @@ const getUnitFactor = (unit: string) => {
 }
 
 export const MeasurePosition = () => {
+    const {t} = useTranslation();
     const el = document.querySelector("#map");
     const [open, setOpen] = useRecoilState(MeasurePositionOpenState);
     const [unit, setUnit] = useState("m");
@@ -81,39 +83,37 @@ export const MeasurePosition = () => {
 
 
     const node = (
-        <div className="dialog-distance darkMode">
-            <div className="dialog-title">
-                <h3>위치측정</h3>
-                {/*<button className="close floatRight" onClick={()=>{setOpen(false); setSelectedTool(null);}}></button>*/}
+        <div className="pop-layer-sub measure">
+            <div className="pop-layer-header">
+                <h3 className="title">{t("measure.position")}</h3>
+                {/*<div className="close-button"></div>*/}
             </div>
-            <div className="dialog-content">
-                <div>
-                    <span className="dialog-result-text">거리단위 </span>
+            <div className="pop-layer-content">
+                <div className="value-container">
+                    <label>{t("measure.distance-unit")}</label>
                     <select value={unit} onChange={(e) => setUnit(e.target.value)}>
-                        <option value="m">m (미터)</option>
-                        <option value="km">km (킬로미터)</option>
-                        <option value="nmi">nmi (해리)</option>
-                        <option value="in">in (인치)</option>
-                        <option value="ft">ft (피트)</option>
-                        <option value="yd">yd (야드)</option>
-                        <option value="mi">mi (마일)</option>
+                        <option value="m">{t("measure.m")}</option>
+                        <option value="km">{t("measure.km")}</option>
+                        <option value="nmi">{t("measure.nmi")}</option>
+                        <option value="in">{t("measure.in")}</option>
+                        <option value="ft">{t("measure.ft")}</option>
+                        <option value="yd">{t("measure.yd")}</option>
+                        <option value="mi">{t("measure.mi")}</option>
                     </select>
                 </div>
-                <div>
-                    <span className="dialog-result-text">위도: </span>
-                    <span className="dialog-result-value">{result.lat}</span>
+                <div className="value-container">
+                    <label>{t("measure.lat")}</label>
+                    <input type="text" value={result.lat}/>
                 </div>
-                <div>
-                    <span className="dialog-result-text">경도: </span>
-                    <span className="dialog-result-value">{result.lon}</span>
+                <div className="value-container">
+                    <label>{t("measure.lon")}</label>
+                    <input type="text" value={result.lon}/>
                 </div>
-                <div>
-                <span className="dialog-result-text">고도: </span>
-                    <span className="dialog-result-value">{result.height} {unit}</span>
+                <div className="value-container">
+                <label>{t("measure.alt")}</label>
+                    <input type="text" value={`${result.height} ${unit}`}/>
                 </div>
-            </div>
-            <div className="darkMode-btn">
-                <button type="button" className="cancel" onClick={init}><a>초기화</a></button>
+                {/*<button type="button" className="cancel" onClick={init}><a>초기화</a></button>*/}
             </div>
         </div>
     );

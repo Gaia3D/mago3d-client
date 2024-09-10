@@ -142,6 +142,7 @@ export const RESTORE_USERLAYER = gql`
                     order
                     visible
                     # properties
+                    createdBy
                 }
             }
             assets {
@@ -151,6 +152,7 @@ export const RESTORE_USERLAYER = gql`
                 order
                 visible
                 properties
+                createdBy
             }
         }
     }

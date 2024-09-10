@@ -4,6 +4,8 @@ import {UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useFlyToLayer} from "@/hooks/useFlyToLayer.ts";
 import useLayerVisibilityToggle from "@/hooks/useLayerVisibilityToggle.ts";
 import {useDeleteLayer} from "@/hooks/useDeleteLayer.ts";
+import {useRecoilValueLoadable} from "recoil";
+import {currentUserProfileSelector} from "@/recoils/Auth.ts";
 
 interface DraggableItemProps {
     id: string;
@@ -12,6 +14,7 @@ interface DraggableItemProps {
     groupIndex: number;
     moveItem: (dragGroupIndex: number, dragItemIndex: number, hoverGroupIndex: number, hoverItemIndex: number) => void;
     item: UserLayerAsset;
+    userId: string;
 }
 
 interface DragItem {
@@ -21,7 +24,7 @@ interface DragItem {
     groupIndex: number;
 }
 
-export const TreeDraggableItem: FC<DraggableItemProps> = ({ id, text, index, groupIndex, moveItem, item }) => {
+export const TreeDraggableItem: FC<DraggableItemProps> = ({ id, text, index, groupIndex, moveItem, item, userId }) => {
     const ref = useRef<HTMLDivElement>(null);
     const { flyToLayer } = useFlyToLayer();
     const { layerVisibilityToggle } = useLayerVisibilityToggle();
@@ -78,11 +81,13 @@ export const TreeDraggableItem: FC<DraggableItemProps> = ({ id, text, index, gro
                     onClick={() => {flyToLayer(item)}}
                     className="layer-funtion-button map-view"
                 ></button>
-                <button
-                    type="button"
-                    onClick={() => {deleteLayer(item)}}
-                    className="layer-funtion-button delete"
-                ></button>
+                { item.createdBy === userId && (
+                    <button
+                        type="button"
+                        onClick={() => {deleteLayer(item)}}
+                        className="layer-funtion-button delete"
+                    ></button>
+                )}
             </div>
         </div>
     );

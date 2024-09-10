@@ -70,7 +70,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         onClickHome, onClickExpand, onClickReduce, onClickArea,
         onClickLength, onClickAngle, onClickSave, onClickComplex, toggleCoordinate, toggleMeasureRadius,
         toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent,
-        toggleTheme
+        toggleTheme, onClockTool
     } = useMapTool();
     const {
         toggleFirstPersonView, toggleViewCenter, toggleViewPoint,
@@ -99,6 +99,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         { toolBoxIndex: 4, className: "full-screen", group: TOOLBOX_SEP, toggle: true, onClick: toggleFullscreen },
         { toolBoxIndex: 4, className: "terrain", group: TOOLBOX_SEP, toggle: true, onClick: toggleDefaultTerrain },
         { toolBoxIndex: 4, className: "theme", group: TOOLBOX_SEP, toggle: true, onClick: toggleTheme },
+        { toolBoxIndex: 4, className: "shadow", group: TOOLBOX_SEP, toggle: true, onClick: onClockTool },
         { toolBoxIndex: 5, className: "zoom-in", group: TOOLBOX_SEP, onClick: onClickExpand },
         { toolBoxIndex: 5, className: "zoom-out", group: TOOLBOX_SEP, onClick: onClickReduce },
     ], [onClickHome, onClickLength, onClickArea, onClickAngle, onClickComplex, onClickSave, onClickExpand, onClickReduce, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool, toggleBoundingVolume]);

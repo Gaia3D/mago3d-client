@@ -9,13 +9,13 @@ export interface AsideDisplayProps {
 }
 
 export const AsidePanel = () => {
-  const menu = useRecoilValue(mainMenuState);
+    const menu = useRecoilValue(mainMenuState);
 
-  return (
-      <>
-        <AsideAssets display={menu.SelectedId === "assets"} />
-        <AsideLayers display={menu.SelectedId === "layers"} />
-        <AsideProps display={menu.SelectedId === "props"} />
-      </>
-  );
+    return (
+        <>
+            <AsideAssets display={menu.SelectedId === "assets"} />
+            <AsideLayers display={menu.SelectedId === "layers"} />
+            <AsideProps display={menu.SelectedId === "props"} />
+        </>
+    );
 };

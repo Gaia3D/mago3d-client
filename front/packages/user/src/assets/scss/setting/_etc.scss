@@ -20,8 +20,9 @@
 
 #container {
   nav{
-
+    z-index: 3;
     .menu {
+      user-select: none;
       .layer-number {
         display: flex;
         justify-content: center;
@@ -29,9 +30,65 @@
       }
     }
   }
+
+  .stack-alert-container {
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    left: 80px;
+    display: flex;
+    flex-direction: column;
+
+    .toast-bar {
+      position: unset;
+      margin-bottom: 12px;
+    }
+  }
+
 }
 
 #map {
+.pop-layer-sub{
+  position: absolute;
+  top: 480px;
+  right: 52px;
+  &.measure {
+    top: 256px;
+  }
+  label {
+    font-size: 14px;
+  }
+}
+  .pop-layer-graphic-setting {
+    label {
+      display: inline-block;
+      font-size: var(--font-size-small);
+      padding: 2px 10px;
+      border-radius: 30px;
+      line-height: 18px;
+      font-family: var(--font-family-light);
+      border: 1px solid var(--border-light-color);
+      cursor: pointer;
+      &:has(input:checked) {
+        font-family: var(--font-family-medium);
+        color: var(--secondary-color);
+        border: 1px solid var(--secondary-color);
+      }
+    }
+    .stxt {
+      display: block;
+      margin-bottom: 8px;
+      clear: both;
+    }
+  }
+
+  .description--content {
+      margin-left: unset;
+    .title:before {
+      right: unset;
+      left: 0;
+    }
+  }
 
   .prop {
     li {
@@ -372,6 +429,7 @@
   }
 
   .side-bar-wrapper {
+    z-index: 2;
     &.on {
       .side-bar {
         transform: translateX(0);
@@ -580,421 +638,5 @@
         }
       }
     }
-  }
-}
-
-
-/*graphic setting modal*/
-.default-layer.option-tool {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 450px;
-  font-size: 11px;
-  color: black;
-
-  header {
-    position: unset;
-  }
-
-  h2 {
-    font-size: 12px;
-    font-weight: 600;
-    margin: -1px;
-    padding: 12px 15px;
-    border-radius: 8px 8px 0 0;
-    background-color: #6564d5;
-    color: #fff;
-    width: unset;
-    float: unset;
-    height: unset;
-    border-bottom: unset;
-  }
-
-  button.close {
-    float: right;
-    display: block;
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 7px 15px;
-    font-size: 15px;
-    font-weight: bolder;
-    background: none;
-    color: #fff;
-    cursor: pointer;
-    margin: unset;
-    width: unset;
-    height: unset;
-  }
-
-  span.minimize {
-    width: 13px;
-    height: 2px;
-    position: relative;
-    display: inline-block;
-    background-color: #fff;
-    vertical-align: middle;
-    transform: translateY(-50%);
-  }
-
-  * {
-    text-align: left;
-  }
-
-  .group {
-    padding: 15px 10px 30px;
-    display: block;
-
-    > div {
-      text-align: left;
-      padding: 0 15px;
-      display: inline-block;
-    }
-  }
-
-  h3 {
-    font-size: 12px;
-    font-weight: 500;
-    margin: 10px 0;
-  }
-
-  p {
-    font-size: 11px;
-    margin: 5px 0;
-  }
-
-  .group > div {
-    label {
-      padding: 5px 10px;
-      background-color: #f8f8f8;
-      border-radius: 30px;
-      border: 1px solid rgba(60, 60, 60, 0.12);
-      cursor: pointer;
-      display: inline-block;
-      margin: 5px 5px 5px 0;
-    }
-
-    input[type=radio] {
-      margin: 5px;
-      display: none;
-    }
-
-    label:has(input[type=radio]:checked) {
-      background-color: #f8f8f8;
-      border: 1px solid #6564d5;
-      color: #6564d5;
-      font-weight: 700;
-    }
-  }
-}
-
-
-/*camera info modal*/
-.default-layer.camera-tool {
-  position: absolute;
-  top: 120px;
-  right: 10px;
-  z-index: 1;
-  padding: 5px;
-  font-size: 11px;
-
-  h3 {
-    font-size: 12px;
-    padding: 5px 6px;
-    font-weight: bold;
-  }
-
-  label {
-    height: 15px;
-    display: block;
-    position: relative;
-    margin: 2px 5px;
-
-    > span {
-      font-weight: bold;
-    }
-  }
-}
-
-/*clock*/
-.default-layer {
-  display: inline-block;
-  border-radius: 8px;
-  box-shadow: 0 0 3px 2px #00000012;
-  border: 1px solid rgba(60, 60, 60, 0.12);
-  background-color: #f8f8f8;
-  min-width: 10px;
-  min-height: 10px;
-  z-index: 10;
-  opacity: .9;
-  line-height: 1;
-  color: black;
-
-  &.clock {
-    position: absolute;
-    top: 56px;
-    right: 160px;
-    padding: 5px;
-
-    > input {
-      &[type=date], &[type=time] {
-        padding: 5px;
-        margin: 3px;
-        height: 20px;
-        font-size: 11px;
-        text-align: center;
-      }
-    }
-
-    .close {
-      text-align: right;
-      &:hover {
-        cursor: pointer;
-      }
-    }
-
-    input[type=number] {
-      padding: 5px;
-      margin: 3px;
-      height: 20px;
-      font-size: 11px;
-      text-align: center;
-    }
-
-    label {
-      font-size: 11px;
-      padding: 5px;
-    }
-  }
-
-  input[type=range] {
-    vertical-align: middle;
-    display: inline-block;
-    margin: 5px;
-    width: 100px;
-  }
-
-  &.clock {
-    > div {
-      text-align: center;
-    }
-
-    button {
-      display: inline-block;
-      font-size: 12px;
-      vertical-align: middle;
-      padding: 5px 8px;
-      margin: 0 2px;
-
-      > img {
-        padding: 1px !important;
-        margin: 0 !important;
-      }
-    }
-  }
-
-  img {
-    min-height: 8px;
-    min-width: 8px;
-    vertical-align: middle;
-    filter: invert(26%) sepia(46%) saturate(401%) hue-rotate(170deg) brightness(93%) contrast(95%);
-  }
-}
-
-img.icon-24 {
-  width: 24px;
-  height: 24px;
-}
-
-
-// measure tool
-.dialog-distance {
-  background-color: black;
-  padding: 12px;
-  border-radius: 12px;
-
-  position: absolute;
-  top: 312px;
-  right: 62px;
-  width: 290px;
-  height: auto;
-
-  .dialog-result {
-    float: left;
-    height: auto;
-    display: block;
-    clear: both;
-    line-height: 30px;
-    width: 88%;
-    padding: 0;
-    margin-left: 7.5%;
-  }
-
-  .dialog-result-02 {
-    float: left;
-    height: auto;
-    display: block;
-    clear: both;
-    line-height: 30px;
-    width: 88%;
-    margin: 20px 0 0 7.5% !important;
-  }
-
-  .dialog-result-text {
-    clear: both;
-    float: left;
-    width: 70px;
-    font-size: 12px;
-    color: white;
-    line-height: 30px;
-    background: transparent;
-  }
-
-  .dialog-result-value {
-    width: 150px;
-    float: left;
-    color: #03d6d6;
-    font-size: 12px;
-  }
-}
-
-.dialog-content > label {
-  font-size: 12px;
-  float: left;
-  width: 70px;
-  color: white;
-  line-height: 34px;
-  background: transparent;
-
-  &.short {
-    font-size: 12px;
-    float: left;
-    width: 40px !important;
-  }
-}
-
-select {
-  font-size: 12px;
-  background: transparent;
-  border-radius: 3px;
-  border: 1px solid #585858;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-textarea {
-  width: 98%;
-  margin: 0 auto;
-  border: 1px solid #5a5a5a;
-  background: transparent;
-  font-size: 12px;
-}
-
-.darkMode {
-  select {
-    width: auto;
-    padding-right: 30px;
-    margin-bottom: 5px;
-    font-size: 12px;
-    background: black;
-    color: white;
-    padding-left: 3px;
-    height: 28px;
-    border-radius: 3px;
-    border: 1px solid #585858;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-
-    &:focus {
-      outline: 0;
-    }
-
-    option {
-      color: white;
-      background: black;
-      padding-left: 3px;
-    }
-  }
-
-  input[type="text"] {
-    color: white;
-    font-size: 11px;
-    background: transparent;
-    text-indent: 3px;
-    border: 1px solid #c2c2c2;
-    line-height: 38px !important;
-    height: 32px;
-    border-radius: 4px;
-  }
-}
-
-.dialog-registerPoint {
-  position: absolute;
-  top: 100px;
-  right: 70px;
-  width: 320px;
-  height: auto;
-}
-
-.dialog-content > {
-  ul.pointer {
-    margin: 0;
-    padding: 0;
-  }
-
-  .pointer-list {
-    border: 1px solid #5a5a5a;
-    width: 100%;
-    text-indent: 3px;
-    font-size: 12px;
-    color: white;
-    height: 100px;
-    overflow-y: auto;
-
-    ul li {
-      color: rgb(230, 230, 230);
-      font-size: 12px;
-      text-indent: 5px;
-      line-height: 24px;
-    }
-  }
-}
-
-.button-delete {
-  float: right;
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-.dialog-content > ul.pointer li {
-  float: left;
-  width: 33.1%;
-  border-radius: 3px;
-  line-height: 34px;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-  text-indent: 22px;
-  border: 1px solid #5a5a5a;
-  font-size: 13px;
-
-  a {
-    color: white;
-    display: block;
-  }
-
-  &.on a {
-    color: #03d6cb;
-    font-weight: 600;
-  }
-
-  &:hover {
-    border: 1px solid #03d6cb;
   }
 }

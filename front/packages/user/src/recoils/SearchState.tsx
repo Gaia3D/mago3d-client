@@ -1,5 +1,4 @@
 import { DefaultValue, atom, selector } from "recoil";
-import {SearchSource} from "@/types/search/gql/graphql.ts";
 
 export enum SearchCategoryType {
     Place = "poi",

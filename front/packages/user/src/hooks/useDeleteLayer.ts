@@ -4,14 +4,16 @@ import { Maybe, UserLayerAsset, UserLayerGroup } from "@mnd/shared/src/types/lay
 import { UserLayerGroupState } from "@/recoils/Layer.ts";
 import { useMutation as apolloUseMutation } from "@apollo/client/react/hooks/useMutation";
 import { LayersetDeleteAssetDocument } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import {useTranslation} from "react-i18next";
 
 // 커스텀 훅 정의
 export const useDeleteLayer = () => {
+    const {t} = useTranslation();
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const [deleteAssetMutation] = apolloUseMutation(LayersetDeleteAssetDocument);
 
     const deleteLayer = async (item: UserLayerAsset) => {
-        if (!confirm('레이어를 삭제하시겠습니까?')) return;
+        if (!confirm(t("confirm.layer.delete"))) return;
         try {
             await deleteAssetMutation({
                 variables: { ids: item.assetId }
@@ -25,10 +27,10 @@ export const useDeleteLayer = () => {
                 } as UserLayerGroup
             ));
             setUserLayerGroups(updatedGroups);
-            alert('레이어가 성공적으로 삭제되었습니다.');
+            alert(t("success.layer.delete"));
         } catch (error) {
             console.error(error);
-            alert('레이어 삭제 중 오류가 발생했습니다. 다시 시도해주세요.');
+            alert(t("error.layer.delete"));
         }
     };
 
