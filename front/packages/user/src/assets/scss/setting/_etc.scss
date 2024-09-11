@@ -49,8 +49,8 @@
 
 #map {
   .cesium-viewer-bottom {
-    left: 12px !important;
-    bottom: 88px !important;
+    left: 8px !important;
+    bottom: 8px !important;
   }
 
     .background-map {
@@ -77,10 +77,6 @@
             &:hover, &.selected {
               border:1px solid var(--primary-color);
               outline:1px solid var(--primary-color);
-
-              &+span {
-                color: var(--primary-color);
-              }
             }
           }
           .map-text {
@@ -100,7 +96,7 @@
 
 .pop-layer-sub{
   position: absolute;
-  top: 480px;
+  top: 440px;
   right: 52px;
   &.measure {
     top: 256px;
@@ -247,7 +243,7 @@
       right: 0;
       top: 0;
       &.lang {
-        margin-right: 52px;
+        margin-right: 30px;
       }
     }
   }
