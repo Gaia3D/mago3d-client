@@ -177,9 +177,12 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
             </td>
             <td>
                 {status === "success" || status === "none" ? (
-                    <button type="button" onClick={() => publishAsset(item.id, item.assetType, item.name)} className="function-button publish"></button>
+                    item.assetType !== AssetType.Terrain &&
+                    <button type="button" onClick={() => publishAsset(item.id, item.assetType, item.name)}
+                            className="function-button publish"></button>
                 ) : (
-                    <button type="button" onClick={() => showAssetLog(item.id)} className="function-button log"></button>
+                    <button type="button" onClick={() => showAssetLog(item.id)}
+                            className="function-button log"></button>
                 )}
                 <button type="button" onClick={() => downAsset(item.id)} className="function-button down"></button>
                 <button type="button" onClick={() => deleteAsset(item.id, item.name)} className="function-button delete"></button>

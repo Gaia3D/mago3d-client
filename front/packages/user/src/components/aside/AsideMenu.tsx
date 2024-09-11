@@ -1,4 +1,4 @@
-import {mainMenuState, newLayerCountState} from "@/recoils/MainMenuState.tsx";
+import {mainMenuState, newLayerCountState, newTerrainCountState} from "@/recoils/MainMenuState.tsx";
 import React, {useMemo} from "react";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {useUserInfoLoadable} from "@/components/providers/UserInfoLoadableProvider.tsx";
@@ -9,6 +9,7 @@ export const AsideMenu = () => {
   const {t} = useTranslation();
   const [menu, setMenu] = useRecoilState(mainMenuState);
   const [newLayerCount, setNewLayerCount] = useRecoilState(newLayerCountState);
+  const [newTerrainCount, setNewTerrainCount] = useRecoilState(newTerrainCountState);
   const setCurrentCreatePropId = useSetRecoilState(CurrentCreatePropIdState);
 
   const {userInfo} = useUserInfoLoadable();
@@ -21,6 +22,9 @@ export const AsideMenu = () => {
     }));
     if (menuName === 'layers') {
       setNewLayerCount(0);
+    }
+    if (menuName === 'terrains') {
+      setNewTerrainCount(0);
     }
     if (menuName !== 'props') {
       setCurrentCreatePropId('');
@@ -46,7 +50,8 @@ export const AsideMenu = () => {
               <span className={"text"}>
                   {t(item.text)}
               </span>
-              {newLayerCount > 0 && <span className="layer-number">{newLayerCount}</span>}
+              {(newLayerCount > 0 && item.className === "layers") && <span className="layer-number">{newLayerCount}</span>}
+              {(newTerrainCount > 0 && item.className === "terrains") && <span className="terrain-number">{newTerrainCount}</span>}
             </li>
         ))}
       </ul>

@@ -25,10 +25,11 @@ import {
     T3DFormatType,
     TerrainConvertInput
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
-import {useSetRecoilState} from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
 import {useTranslation} from "react-i18next";
+import {newTerrainCountState} from "@/recoils/MainMenuState.tsx";
 
 interface TerrainContentProps {
     assetType: string;
@@ -53,6 +54,7 @@ const initialOptions = {
 const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) => {
     const {t} = useTranslation();
     const [componentKey, setComponentKey] = useState(0);
+    const [newTerrainCount, setNewTerrainCount] = useRecoilState(newTerrainCountState);
     const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
     const setAssetsConvertingListState = useSetRecoilState(assetsConvertingListState);
     const [options, setOptions] = useState(initialOptions);
@@ -144,6 +146,7 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
     const [createProcessMutation] = useMutation(DatasetCreateProcessDocument, {
         onCompleted: () => {
             resetOptions();
+            setNewTerrainCount((prev) => prev + 1);
         },
         onError: (error) => {
             console.error('Process creation error:', error);
