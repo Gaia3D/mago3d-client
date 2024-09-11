@@ -1,7 +1,7 @@
 // hooks/useDeleteLayer.ts
-import { useRecoilState } from 'recoil';
+import {useRecoilState, useSetRecoilState} from 'recoil';
 import { Maybe, UserLayerAsset, UserLayerGroup } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
-import { UserLayerGroupState } from "@/recoils/Layer.ts";
+import {layersState, UserLayerGroupState} from "@/recoils/Layer.ts";
 import { useMutation as apolloUseMutation } from "@apollo/client/react/hooks/useMutation";
 import { LayersetDeleteAssetDocument } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useTranslation} from "react-i18next";
@@ -11,6 +11,7 @@ export const useDeleteLayer = () => {
     const {t} = useTranslation();
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const [deleteAssetMutation] = apolloUseMutation(LayersetDeleteAssetDocument);
+    const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
 
     const deleteLayer = async (item: UserLayerAsset) => {
         if (!confirm(t("confirm.layer.delete"))) return;
@@ -27,6 +28,8 @@ export const useDeleteLayer = () => {
                 } as UserLayerGroup
             ));
             setUserLayerGroups(updatedGroups);
+            const tempLayers = updatedGroups.flatMap(group => group?.assets ?? []);
+            setLayers(tempLayers);
             alert(t("success.layer.delete"));
         } catch (error) {
             console.error(error);

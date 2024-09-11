@@ -85,10 +85,12 @@
           }
         }
       }
-
+      .background-map-select-layer {
+        display: none;
+      }
       &.expand {
         .background-map-select-layer {
-          display: none;
+          display: flex;
         }
       }
     }

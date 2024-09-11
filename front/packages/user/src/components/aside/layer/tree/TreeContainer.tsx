@@ -15,6 +15,7 @@ import {RESTORE_USERLAYER, SAVE_USERLAYER} from "@/graphql/layerset/Mutation.ts"
 import {layerGroupsToNodemodels, nodeModlesToCreateUserGroupInput} from "@/components/aside/layer/LayerNodeModel.ts";
 import {currentUserProfileSelector} from "@/recoils/Auth.ts";
 import {useTranslation} from "react-i18next";
+import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 
 interface TreeContainerProps {
     searchTerm: string;
@@ -22,6 +23,7 @@ interface TreeContainerProps {
 
 export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     const {t} = useTranslation();
+    const [newLayerCount, setNewLayerCount] = useRecoilState(newLayerCountState);
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
     const [filteredGroups, setFilteredGroups] = useState<Maybe<UserLayerGroup>[]>([]);
@@ -62,6 +64,34 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
                 });
         }
     }, [setUserLayerGroups, userLayerGroups.length]);
+
+    useEffect(() => {
+        if (newLayerCount !== 0) {
+            layersetGraphqlFetcher<Mutation>(RESTORE_USERLAYER)
+                .then((result) => {
+                    const { saveUserLayer } = result;
+                    const filteredGroup = saveUserLayer.find(group => group?.groupId === '0');
+                    if (!filteredGroup) return;
+                    const newGroup = userLayerGroups.map((prevGroup) => {
+                        if (prevGroup?.groupId === '0') {
+                            const newAssets = filteredGroup.assets.filter(filteredAsset =>
+                                !prevGroup.assets.some(prevAsset => prevAsset.assetId === filteredAsset.assetId)
+                            );
+                            return {
+                                ...prevGroup,
+                                assets: [...prevGroup.assets, ...newAssets]
+                            };
+                        }
+                        return prevGroup;
+                    });
+                    setUserLayerGroups(newGroup);
+                    const input = nodeModlesToCreateUserGroupInput(layerGroupsToNodemodels(newGroup));
+                    saveUserLayerMutateAsync({ input });
+                    const tempLayers = newGroup.flatMap(group => group?.assets ?? []);
+                    debouncedSetLayers(tempLayers);
+                });
+        }
+    }, [newLayerCount]);
 
     useEffect(() => {
         if (userLayerGroups.length <= 0) return;
@@ -133,8 +163,10 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
 
     const restoreToDefault = async () => {
         if (!confirm(t("confirm.layer.restore"))) return;
-        const result = await restoreUserLayerMutateAsync();
-        setUserLayerGroups(result.saveUserLayer);
+        const {saveUserLayer} = await restoreUserLayerMutateAsync();
+        setUserLayerGroups(saveUserLayer);
+        const tempLayers = saveUserLayer.flatMap(group => group?.assets ?? []);
+        setLayers(tempLayers);
     };
 
     const saveState = async () => {
