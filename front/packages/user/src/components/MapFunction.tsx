@@ -45,10 +45,10 @@ const MapFunction = () => {
     useEffect(() => {
       if (!initialized) return;
       const viewer = globeController?.viewer;
-      const tempUrl = "/geomatic-user/geojson/extrusion.geojson";
+      const tempUrl = "/user/geojson/extrusion.geojson";
       loadGeojson(viewer, tempUrl);
 
-      const gridUrl = "/geomatic-user/geojson/grid_4326.geojson";
+      const gridUrl = "/user/geojson/grid_4326.geojson";
       loadGridGeojson(viewer, gridUrl).then(r => {console.log(r);});
 
     }, [initialized]);

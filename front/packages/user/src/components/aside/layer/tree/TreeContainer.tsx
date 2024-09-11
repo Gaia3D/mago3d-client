@@ -160,29 +160,32 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
 
     return (
         <>
-            <ul className="layer-list">
-                <button type="button" onClick={toggleAllLayer}
-                className={`layer-funtion-button ${!visibleAll ? 'visible' : 'not-visible'}`}></button>
-                <button onClick={restoreToDefault} >R</button>
-                <button onClick={saveState} >S</button>
-                {filteredGroups.map((group, index) => {
-                    if (!group) return null;
-                    return (
-                        <li
-                            key={group.groupId}
-                            className={`${group.collapsed? 'close-group' : 'open-group'}`}
-                        >
-                            <TreeGroup
-                                group={group}
-                                groupIndex={index}
-                                moveItem={moveLayer}
-                                moveGroup={moveLayerGroup}
-                                toggleGroup={toggleGroupCollapsed}
-                                userId={userId}
-                            />
-                        </li>
-                    );
-                })}
+                <div className='tileset-button'>
+                    <button type="button" onClick={toggleAllLayer}
+                    className={`layer-funtion-button ${!visibleAll ? 'visible' : 'not-visible'}`}></button>
+                    <button onClick={restoreToDefault} className='layer-funtion-button reset'></button>
+                    <button onClick={saveState} className='layer-funtion-button save'></button>
+                    
+                </div>
+            <ul className="layer-list">                
+                    {filteredGroups.map((group, index) => {
+                        if (!group) return null;
+                        return (
+                            <li
+                                key={group.groupId}
+                                className={`${group.collapsed? 'close-group' : 'open-group'}`}
+                            >
+                                <TreeGroup
+                                    group={group}
+                                    groupIndex={index}
+                                    moveItem={moveLayer}
+                                    moveGroup={moveLayerGroup}
+                                    toggleGroup={toggleGroupCollapsed}
+                                    userId={userId}
+                                />
+                            </li>
+                        );
+                    })}
             </ul>
         </>
     );

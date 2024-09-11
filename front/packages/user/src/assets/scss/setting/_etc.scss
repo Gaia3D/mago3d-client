@@ -194,40 +194,58 @@
       .group-node {
         display: flex;
         width: 100%;
-        height: 40px;
-        background-color: gray;
-
-        &:hover {
-          background-color: white;
-          color: black;
+        height: 38px;
+        &:hover .group-icon {
+          background:var(--layer-list-hover-color); 
+        }        
+        &:hover .group-name {
+          background:var(--layer-list-hover-color);
         }
-
         .group-icon {
-          width: 40px;
-          height: 40px;
+          width: 38px;
+          height: 38px;
           display: flex;
           justify-content: center;
-          align-items: center;
-          background-color: #474747;
+          align-items: center;      
+          background:var(--nav-hover-color);    
+          border-top-left-radius:6px;  
+          border-bottom-left-radius:6px;
+          &.folder-close {
+            @include icon-button(-406px, -480px);
+          }   
+          &.folder-open {
+            @include icon-button(-406px, -480px);
+          }          
+        }        
+        &:hover {
+          background:var(--layer-list-hover-color);
+          border-radius:6px;
         }
         .group-name {
-          width: calc(100% - 40px);
-          padding: 0 12px;
+          width: calc(100% - 38px);
+          padding: 0;
           display: flex;
           align-items: center;
+          background:var(--nav-hover-color); 
+          border-top-right-radius:6px;  
+          border-bottom-right-radius:6px;
         }
       }
     }
     .layer-node-container {
       display: flex;
       justify-content: space-between;
-      width: calc(100% - 40px);
-      margin: 4px 40px 0px;
-      background-color: gray;
-
+      width:calc(100% - 30px);
+      //width: calc(100% - 40px);
+      //margin: 2px 40px 0px;
+      margin-top:2px;
+      margin-left:30px;
+      border-top-right-radius:6px;
+      border-bottom-right-radius:6px;
+      background-color: var(--nav-hover-color);
         .layer-name {
           width: calc(100% - 114px);
-          padding: 0 12px;
+          padding: 0;
           display: block;
           white-space: nowrap;
           overflow: hidden;
@@ -313,7 +331,7 @@
             display: flex;            
             justify-content: center;
             align-items: center;
-            padding: 20px 0 15px 0;
+            padding: 25px 0 10px 0;
             border-bottom:1px solid var(--border-light-color);
             margin: 0;        
             font-size:var(--font-size-xlarge);
@@ -341,9 +359,8 @@
         }
 
         .format-list {
-          margin-bottom: 8px;
           li {
-            margin: 0 4px 8px;
+            margin: 0 4px 3px 0;
           }
         }
 
@@ -538,7 +555,7 @@
       .pop-layer {
         &.status {
           left: 0;
-          top: 32px;
+          top: 27px;
           .text {
             display: block;
             color: var(--text-color);
@@ -607,8 +624,8 @@
         box-sizing: border-box;
         outline: 0;
         display: block;
-        width: 35px;
-        height: 18px;
+        width: 32px;
+        height: 19px;
         position: relative;
         cursor: pointer;
         -webkit-user-select: none;
@@ -625,16 +642,16 @@
           position: relative;
           display: block;
           content: "";
-          width: 14px;
-          height: 14px;
-          left: 0;
+          width: 15px;
+          height: 15px;
+          box-shadow: var(--xsmall-box-shadow);
         }
         &:before {
           position: relative;
           display: block;
           content: "";
-          width: 14px;
-          height: 14px;
+          width: 15px;
+          height: 15px;
           display: none;
         }
       }
@@ -660,12 +677,12 @@
       .tgl-btn {
         padding: 1px;
         transition: all 0.2s ease;
-        background: #fff;
-        border: 1px solid #d1d1d1;
+        background: #e0e0e0;
+        border: 1px solid #e0e0e0;
         border-radius: 30px;
         &:after {
           transition: all 0.2s ease;
-          background: #d1d1d1;
+          background: white;
           content: "";
           border-radius: 30px;
         }
@@ -674,10 +691,11 @@
     &:checked {
       + {
         .tgl-btn {
+          background: var(--primary-color);
           border: 1px solid var(--primary-color);
           &:after {
-            left: 54%;
-            background: var(--primary-color);
+            left: 47%;
+            background: white;
           }
         }
       }

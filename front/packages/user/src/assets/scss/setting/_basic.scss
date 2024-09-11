@@ -14,7 +14,7 @@
     --background-color-gray:rgba(0, 0, 0, 0.75);
     --background-color-silver:rgba(0, 0, 0, 0.85);
     --background-color-light:rgba(0,0,0,0.65);
-    --description-color:#818181;
+    --description-color:#686868;
     --background-color-more-light:rgba(0,0,0,0.60);
     --background-color-more-light-02:#4d4d4d;
     --background-color-more-light-03:rgba(0,0,0,0.4);
@@ -33,20 +33,21 @@
     --border-light-color:rgb(217, 217, 217);
     --border-color:rgb(87, 87, 87);
     --nav-color: rgba(16,16,16,1);
-    --nav-hover-color:rgba(255,255,255,0.14);
+    --nav-hover-color:#353535;
     --slide-bar-color:rgba(0, 0, 0, 0.85);
     --pop-layer-color:rgba(55,55,55,1);
     --icon-current: url('../images/dark-icon.svg');
     --icon-sub: url('../images/icon-sub.svg');
     --box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
     --small-box-shadow: 2px 2px 9px rgba(0, 0, 0, 0.4);
+    --xsmall-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
     --table-border-color:rgba(250, 250, 250, 0.14);
     --table-hover-color:rgba(255, 255, 255, 0.08);
     --table-header-color:rgba(255, 255, 255, 0.135);
     --prop-bgcolor:rgba(255, 255, 255, 0.17);
-    --scrollbar-color:rgba(255, 255, 255, 0.24);
+    --scrollbar-color:rgba(255, 255, 255, 0.18);
     --scrollbar-bgcolor:#f1f1f1;
-    --scrollbar-thumb:#dbdbdb;
+    --scrollbar-thumb:#b9b9b9;
     --input-bgcolor:#2e2e2e;
     --button-border:#242424;
     --toolbox-hover-color:rgba(51,107,236,0.8);
@@ -55,7 +56,7 @@
     --icon-compass:url('../images/compass.svg');
     --layer-bgcolor:rgba(255, 255, 255, 0.07);
     --layer-hover-color:#276DB4;
-    --layer-list-hover-color:#284767;
+    --layer-list-hover-color:#283D67;
     --success-color:rgba(25, 223, 91, 0.88);
     --running-color:#F3B853;
 }
@@ -71,7 +72,7 @@
     --background-color-gray:rgba(0, 0, 0, 0.75);
     --background-color-silver:rgba(0, 0, 0, 0.85);
     --background-color-light:rgba(0,0,0,0.65);
-    --description-color:#818181;
+    --description-color:#686868;
     --background-color-more-light:rgba(0,0,0,0.60);
     --background-color-more-light-02:#4d4d4d;
     --background-color-more-light-03:rgba(0,0,0,0.4);
@@ -91,13 +92,14 @@
     --border-light-color:rgb(217, 217, 217);
     --border-color:rgb(87, 87, 87);
     --nav-color: rgba(16,16,16,1);
-    --nav-hover-color:rgba(255,255,255,0.14);
+    --nav-hover-color:#353535;
     --slide-bar-color:rgba(0, 0, 0, 0.85);
     --pop-layer-color:rgba(55,55,55,1);
     --icon-current: url('../images/dark-icon.svg');
     --icon-sub: url('../images/icon-sub.svg');
     --box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
     --small-box-shadow: 2px 2px 9px rgba(0, 0, 0, 0.1);
+    --xsmall-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
     --table-border-color:rgba(250, 250, 250, 0.14);
     --table-hover-color:rgba(255, 255, 255, 0.08);
     --pop-hover-color:rgba(255, 255, 255, 0.16);
@@ -114,7 +116,7 @@
     --icon-compass:url('../images/compass.svg');
     --layer-bgcolor:rgba(255, 255, 255, 0.07);
     --layer-hover-color:#276DB4;
-    --layer-list-hover-color:#284767;
+    --layer-list-hover-color:#283D67;
     --success-color:rgba(25, 223, 91, 0.88);
     --running-color:#F3B853;
 }
@@ -234,11 +236,11 @@ header {
         background:white;
         box-shadow: var(--small-box-shadow);
         &.en {
-            border:1px solid var(--border-light-color) !important;
-            @include icon-button(-745px, -81px);
+            //border:1px solid var(--border-light-color) !important;
+            @include icon-button(-745px, -80px);
         }
         &.ko {
-            border:1px solid var(--border-light-color) !important;
+            //border:1px solid var(--border-light-color) !important;
             @include icon-button(-745px, -1px);
         }
     }
@@ -434,22 +436,23 @@ main {
     top: 14px;
     display: flex;
     flex-direction: row;
-    .map-type-current {
-        width:34px;
-        height:34px;
+    width:32px;
+    height:32px;
+    border-radius:30px !important;
+    box-shadow: var(--small-box-shadow) !important;
+    button {    
+        border:unset;        
         border-radius:30px !important;
-        box-shadow: var(--small-box-shadow) !important;
-        border:1px solid var(--border-light-color);
-        img {
-            border-radius:30px !important;
-        }
+    }
+    img {
+        border-radius:30px !important;
     }
     .background-map-select-layer {
         position: absolute;
         width: auto;
         height: auto;
         padding:10px 10px;
-        background-color: var(--nav-color);
+        background-color: var( --background-color-silver);
         border-radius: 10px;
         margin-top:48px;
         right:-60px;
@@ -538,11 +541,11 @@ main {
     display: none;
 }
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
     height:10px;
 }
 ::-webkit-scrollbar-thumb {
-    -webkit-border-radius: 2px;
+    -webkit-border-radius: 3px;
     background-color:var(--scrollbar-thumb);
 }
 
@@ -637,7 +640,7 @@ table {
     display: none;
     position: absolute;
     border-radius:10px;
-    background-color: var(--background-color-dark);
+    background-color: var( --background-color-silver);
     z-index:9;
     box-shadow: var(--box-shadow);
     animation: slideDown 0.5s forwards;
@@ -689,16 +692,14 @@ table {
             font-size: var(--font-size-regular);
             line-height:20px;
             text-align:left;
-            a {
-                padding-right:20px;
-            }
             &.selected {
                 @include icon-button(-400px, 6px);
             }
             .text {
                 display: block;
                 color:var(--text-color);
-                padding:5px 20px 5px 30px;
+                padding:5px 40px 5px 30px;
+                padding-right:40px !important;
             }
             &:hover .text {
                 background-color: var(--nav-hover-color);
@@ -721,16 +722,18 @@ ul.layer {
         font-size: var(--font-size-large);
         border-radius:8px;
         background:rgba(255,255,255,0.16);
-        font-family: var(--font-family-medium);
+        font-family: var(--font-family-regular);
         color:var(--background-color-light-03);
         a {
             display: block;
             padding:7px 0;
         }
         &.selected {
-            background:#233d57;
+            //background:#233d57;
+            background:transparent;
             border:2px solid #5299F8;
             color:white;
+            font-family: var(--font-family-medium);
         }
         &.button-area {
             float:right;
@@ -745,11 +748,20 @@ ul.layer {
     overflow-y: scroll !important;
     position: relative;
     height:calc(100% - 180px);
-    margin:5px 0 0 0;
+    margin:10px 0 0 0;
+}
+
+.tileset-button {
+    float:right;
+    padding-right:5px;
+    padding-bottom:5px;
 }
 .layer-list {
+    clear:both;
+    float:left;
     margin:0 0 0 0;
     padding:0;
+    width:100%;
     padding-right:5px;
     li {
         background:var(--layer-bgcolor);
@@ -761,21 +773,21 @@ ul.layer {
         display: flex;
         vertical-align: middle;
         line-height: 33px;
-        padding:0 0 2px 0;
+        padding:0;
         &:hover {
             background-color: var(--layer-list-hover-color);
             cursor:pointer;
         }
         .type {
             display: inline-block;
-            width:36px;
+            width:26px;
             height:30px;
             vertical-align: middle;
             &.type-terrain  {
-                @include icon-button(-398px, -337px);
+                @include icon-button(-400px, -337px);
             }
             &.type-3d {
-                @include icon-button(-400px, -419px);
+                @include icon-button(-408px, -419px);
             }
         }
         .name {
@@ -787,8 +799,9 @@ ul.layer {
             white-space: nowrap;
         }
         .layer-button {
-            width:75px;
-            margin-left:3px;
+            width:76px;
+            margin-left:0;
+            padding:0;            
         }
     }
 }
@@ -904,7 +917,7 @@ ul.prop {
         opacity: 1;
     }
     &.publish {
-        @include icon-button(-259px, -177px);
+        @include icon-button(-265px, -414px);
       }
     &.log {
         @include icon-button(-256px, -4px);
@@ -922,32 +935,28 @@ ul.prop {
     border-radius:5px;
     background:var(--circle-button-color);
     vertical-align: middle;
+    margin-right:2px;
+    margin-top:-3px;
     &:hover {
         background-color: var(--layer-hover-color);
     }
+    &.reset {
+        @include icon-button(-118px, -507px);
+    }
+    &.save {
+        @include icon-button(-260px, -463px);
+    }
     &.visible {
         @include icon-button(-113px, -7px);
-        &:hover {
-            @include icon-button(-579px, -7px);
-        }
     }
     &.not-visible {
-        @include icon-button(-113px, -54px);
-        &:hover {
-            @include icon-button(-579px, -54px);
-        }
+        @include icon-button(-113px, -55px);
     }
     &.map-view {
         @include icon-button(-114px, -181px);
-        &:hover {
-            @include icon-button(-579px, -181px);
-        }
     }
     &.delete {
-        @include icon-button(-114px, -115px);
-        &:hover {
-            @include icon-button(-579px, -115px);
-        }
+        @include icon-button(-113px, -115px);
     }
 }
 
@@ -1144,6 +1153,9 @@ ul.prop {
             width:100%;
             margin:0 0 20px 0;
             font-family: var(--font-family-regular);
+            label {
+                margin-right:3px;
+            }
             h4 {
                 font-size:var(--font-size-large);
                 line-height:18px;
@@ -1424,7 +1436,7 @@ ul.prop {
     //animation: slideLeft 0.5s forwards;
     //border-radius: 6px;
     &.object {        
-        background:var(--background-color-gray) !important;
+        background:var(--background-color-silver) !important;
         border-top-left-radius:9px;  
         border-bottom-left-radius:9px;   
         border-top-right-radius:9px;  
@@ -1445,7 +1457,7 @@ ul.prop {
         top:37px;
     }
     &.expand {
-        background:var(--background-color-gray) !important;
+        background:var(--background-color-silver) !important;
         border-top-left-radius:9px;  
         border-bottom-left-radius:9px;   
         border-top-right-radius:9px;  
@@ -1457,25 +1469,14 @@ ul.prop {
     button:not(.selected) {
         display:none;
     }
-    input {
-        display:inline-block;
-        position: relative;
-        background:var(--background-color-gray);
-        width:35px;
-        height:35px;
-        border-radius:0;
-        margin-bottom:3px;
-        border:none !important;
-        border-right:1px solid rgba(73, 73, 73, 0.6) !important;
-    }
     button {
         display:inline-block;
         position: relative;
-        background:var(--background-color-gray);
         width:33px;
         height:33px;
         border-radius:0;
         margin-bottom:3px;
+        background:var(--background-color-silver);
         box-shadow: var(--small-box-shadow);
         border:none !important;
         //border-right:1px solid rgba(255, 255, 255, 0.2) !important;
@@ -1489,8 +1490,7 @@ ul.prop {
             border-bottom-right-radius:8px;
         }
         &:hover {
-            background: var(--toolbox-hover-color);
-            //border-radius:8px;
+            background:#5b88ef;
         }
         &.selected {
             background: var(--toolbox-select-color);
@@ -1977,7 +1977,7 @@ ul.prop {
         text-align:right;
         font-size:var(--font-size-xlarge);
         margin-bottom:15px;
-        padding-right:30px;
+        padding-right:20px;
         font-family: 'Montserrat-medium', 'NanumSquareNeo-b';
     }
     .value {
@@ -2024,8 +2024,8 @@ input[type="radio"] {
 }
 .custom-radio {
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     border: 1px solid #ccc;
     border-radius: 50%;
     position: relative;
@@ -2035,12 +2035,12 @@ input[type="radio"] {
 input[type="radio"]:checked + .custom-radio {
     background-color:white;
     border: 1px solid var(--primary-color);
-    border-width: 4px;
+    border-width: 5px;
 }
 .custom-radio::after {
     content: '';
-    width: 4px;
-    height: 4px;
+    width: 5px;
+    height: 5px;
     background:white;
     border-radius: 50%;
     position: absolute;
