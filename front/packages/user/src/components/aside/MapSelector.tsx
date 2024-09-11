@@ -19,7 +19,7 @@ const MapSelector = () => {
 
     return (
         <div onClick={toggleMapSelector} ref={mapRef} className="background-map">            
-            <button type="button">
+            <button type="button" className="map-type-current">
                 <img className="selected" src={`/images/${currentLayerMap.image}`} alt={`${currentLayerMap.name} image`}/>
             </button>
             <div className="background-map-select-layer">
