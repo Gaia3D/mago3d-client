@@ -26,8 +26,8 @@
     --text-color-dark: rgba(255,255,255,0.2);
     --text-white-color: white;
     --circle-button-color: rgba(255,255,255,0.14);
-    --primary-color: rgba(51,107,236,1);
-    --secondary-color: rgb(105, 135, 255);
+    --primary-color: rgba(83,150,239,1);
+    --secondary-color: rgb(72, 141, 231);
     --major-color: #122680;
     --primary-bgcolor: rgba(76,143,232,0.25);
     --border-light-color:rgb(217, 217, 217);
@@ -84,8 +84,8 @@
     --text-color-dark: rgba(255,255,255,0.2);
     --text-white-color: white;
     --circle-button-color: rgba(255,255,255,0.14);
-    --primary-color: rgba(51,107,236,1);
-    --secondary-color: rgb(105, 135, 255);
+    --primary-color: rgba(83,150,239,1);
+    --secondary-color: rgb(72, 141, 231);
     --major-color: #122680;
     --primary-bgcolor: rgba(76,143,232,0.25);
     --border-light-color:rgb(217, 217, 217);
@@ -100,6 +100,7 @@
     --small-box-shadow: 2px 2px 9px rgba(0, 0, 0, 0.1);
     --table-border-color:rgba(250, 250, 250, 0.14);
     --table-hover-color:rgba(255, 255, 255, 0.08);
+    --pop-hover-color:rgba(255, 255, 255, 0.16);
     --table-header-color:rgba(255, 255, 255, 0.135);
     --prop-bgcolor:rgba(255, 255, 255, 0.17);
     --scrollbar-color:rgba(255, 255, 255, 0.24);
@@ -149,6 +150,7 @@
     --icon-sub: url('../images/light-sub-icon.svg');
     --table-border-color:rgb(197, 197, 197);
     --table-hover-color:rgb(245, 245, 245);
+    --pop-hover-color:rgba(255, 255, 255, 0.16);
     --table-header-color:#DEEAF9;
     --prop-bgcolor:rgb(231, 230, 230);
     --scrollbar-color:#dadada;
@@ -219,7 +221,7 @@ body {
 //header
 header {
     position: absolute;
-    right:10px;
+    right:15px;
     top:10px;
     .lang-icon {
         position: relative;
@@ -237,7 +239,7 @@ header {
         }
         &.ko {
             border:1px solid var(--border-light-color) !important;
-            @include icon-button(-745px, 0);
+            @include icon-button(-745px, -1px);
         }
     }
     .user-icon {
@@ -428,7 +430,7 @@ main {
 //background-map-select
 .background-map {
     position: absolute;
-    right: 125px;
+    right: 128px;
     top: 14px;
     display: flex;
     flex-direction: row;
@@ -479,8 +481,8 @@ main {
             margin-top:8px;
             border:1px solid rgb(250, 250, 250);
             &:hover, &.selected {
-                border:1px solid var(--primary-color);
-                outline:1px solid var(--primary-color);
+                border:1px solid var(--secondary-color);
+                outline:1px solid var(--secondary-color);
             }
             &.basic {
                 background:url(../images/background-map.png) 0 0 no-repeat;
@@ -502,7 +504,7 @@ main {
             display:inline-block;
             font-family: var(--font-family-regular);
             font-size:var(--font-size-small);
-            line-height:100px;
+            line-height:12px !important;
             color:var(--text-color);
         }
     }
@@ -675,16 +677,21 @@ table {
     &.status {
         left:285px;
         top:55px;
+        background:black;
     }
     &.lang {
         right:40px;
         top:55px;
     }
     ul {
-        padding:8px 0;
+        padding:8px 0;        
         li {
             font-size: var(--font-size-regular);
             line-height:20px;
+            text-align:left;
+            a {
+                padding-right:20px;
+            }
             &.selected {
                 @include icon-button(-400px, 6px);
             }
@@ -694,7 +701,7 @@ table {
                 padding:5px 20px 5px 30px;
             }
             &:hover .text {
-                background-color: var(--table-hover-color);
+                background-color: var(--nav-hover-color);
                 cursor: pointer;
             }
         }
@@ -857,11 +864,11 @@ ul.prop {
     font-size:var(--font-size-small);
     letter-spacing: -0.5px;
     &.none {
-        background-color: rgba(255, 255, 255, 0.12);
-        //border:1px solid rgb(107, 107, 107);
+        //background-color: rgba(255, 255, 255, 0.12);
+        border:1px solid var(--text-color-dark);
         padding:2px 8px !important;
         text-indent:0 !important;
-        color:rgb(160, 160, 160);
+        color:var(--border-light-color);
     }
     &.success {
         background-color:var(--success-color);
@@ -947,7 +954,7 @@ ul.prop {
 //toolbox
 .toolbox {
     position: absolute;
-    right:10px;
+    right:15px;
     display: flex;
     flex-direction: column;
     &.control {
@@ -1910,15 +1917,16 @@ ul.prop {
         border-radius:18px;
         color:var(--popup-text-color);
         &.new-asset {
-            width:720px;
+            width:800px;
             height:auto;
             padding-bottom:20px;
         }
     }
-    input[type=text] {
+    input[type=text], input[type=number] {
         height:30px;
         border-radius:5px;
-
+        font-family: var(--font-family-regular);
+        font-size:var(--font-family-large);
     }
 }
 .modal-popup-header {
@@ -1947,7 +1955,7 @@ ul.prop {
     .button-full {
         width:94%;
         margin:0 3%;
-        background:var(--secondary-color);
+        background:var(--primary-color);
         color:var(--text-white-color);
         font-size:var(--font-size-xlarge);
         border-radius:8px;
@@ -1963,7 +1971,7 @@ ul.prop {
     padding:30px;
     display: grid;
     justify-content: space-around;
-    grid-template-columns: 25% 75%;
+    grid-template-columns: 30% 70%;
     line-height:32px;
     .title {
         text-align:right;
@@ -2006,6 +2014,8 @@ ul.prop {
 .width-140 {
     width:140px;
     text-align:center;
+    margin-right:10px;
+    margin-bottom:3px;
 }
 
 //input-radio

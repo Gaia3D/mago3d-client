@@ -81,7 +81,7 @@
           }
           .map-text {
             line-height: unset;
-            margin-top: 4px;
+            margin-top: 5px;
           }
         }
       }
@@ -256,11 +256,8 @@
       display: none;
     }
 
-    ::-webkit-scrollbar {
-      background-color: var(--secondary-color);
-    }
     ::-webkit-scrollbar-thumb {
-      background-color: var(--secondary-color);
+      background-color: silver;
     }
 
     .conversion-guard {
@@ -306,24 +303,26 @@
       }
       .modal-popup-type {
           display: flex;
+          width: 87%;
+          margin:0 6.5% 0 6.5%;
+          //border-top:1px solid var(--border-light-color);
         .radio-label {
-          width: 100%;
-          margin-bottom: 0;
+          width:100%;
           .radio-text-span {
             width: 100%;
-            display: flex;;
+            display: flex;            
             justify-content: center;
             align-items: center;
-            padding: 8px 0 12px 0;
-            border: 1px solid white;
-            border-top: 4px solid transparent;
-            margin: 0;
-            background-color: #e6e6e6;
+            padding: 20px 0 15px 0;
+            border-bottom:1px solid var(--border-light-color);
+            margin: 0;        
+            font-size:var(--font-size-xlarge);
+            border-radius:0;
           }
-
           input[type="radio"]:checked + .radio-text-span {
             color: black;
-            border-top: 4px solid var(--secondary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            font-family:var(--font-family-semibold);
             background-color: white;
           }
         }
@@ -363,7 +362,8 @@
           &:after {
             margin-left: 8px;
             font-size: 20px;
-            content: "◀"
+            color:rgb(153, 153, 153);
+            content: "▶"
           }
           &.on:after {
             content: "▼";
@@ -373,12 +373,16 @@
         .detail-show-value {
           display: flex;
           flex-direction: column;
-          margin-top: 4px;
+          margin-top: 2px;
+          .input[type=number] {
+            width:100px;
+            margin-right:10px !important;
+          }
           .toggle-setting-container {
             display: flex;
             align-items: center;
             margin-bottom: 8px;
-          }
+          }          
 
         }
         .detail-dot-value {
@@ -492,15 +496,9 @@
     }
   }
 
-  .function-button {
-    &.publish {
-      @include icon-button(-257px, -176px);
-    }
-  }
-
   .compass {
-    bottom: 12px;
-    right: 12px;
+    bottom: 5px;
+    right: 5px;
 
     &:hover {
       cursor: pointer;
@@ -555,6 +553,7 @@
 
 /* cool check box css */
 .checkbox-wrapper-9 {
+  width:42px !important;
   .tgl {
     display: none;
     box-sizing: border-box;
@@ -608,8 +607,8 @@
         box-sizing: border-box;
         outline: 0;
         display: block;
-        width: 4em;
-        height: 2em;
+        width: 35px;
+        height: 18px;
         position: relative;
         cursor: pointer;
         -webkit-user-select: none;
@@ -626,16 +625,16 @@
           position: relative;
           display: block;
           content: "";
-          width: 50%;
-          height: 100%;
+          width: 14px;
+          height: 14px;
           left: 0;
         }
         &:before {
           position: relative;
           display: block;
           content: "";
-          width: 50%;
-          height: 100%;
+          width: 14px;
+          height: 14px;
           display: none;
         }
       }
@@ -659,26 +658,26 @@
   .tgl-flat {
     + {
       .tgl-btn {
-        padding: 2px;
+        padding: 1px;
         transition: all 0.2s ease;
         background: #fff;
-        border: 4px solid #d1d1d1;
-        border-radius: 2em;
+        border: 1px solid #d1d1d1;
+        border-radius: 30px;
         &:after {
           transition: all 0.2s ease;
           background: #d1d1d1;
           content: "";
-          border-radius: 1em;
+          border-radius: 30px;
         }
       }
     }
     &:checked {
       + {
         .tgl-btn {
-          border: 4px solid var(--secondary-color);
+          border: 1px solid var(--primary-color);
           &:after {
-            left: 50%;
-            background: var(--secondary-color);
+            left: 54%;
+            background: var(--primary-color);
           }
         }
       }
