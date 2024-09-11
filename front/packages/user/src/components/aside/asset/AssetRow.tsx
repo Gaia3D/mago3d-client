@@ -12,8 +12,12 @@ import {
 import { statusMap } from "@/components/aside/asset/AsideAssets.tsx";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
-    CreateAssetInput, LayerAccess, LayerAssetType,
-    LayersetCreateAssetDocument, Maybe, PublishContextValue, TerrainAsset
+    CreateAssetInput,
+    CreateGroupInput, CreateLayerGroupDocument, GroupByIdDocument, GroupByIdQueryVariables,
+    LayerAccess,
+    LayerAssetType,
+    LayersetCreateAssetDocument,
+    PublishContextValue,
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
@@ -60,7 +64,9 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     const [getConvertFileData, { data: convertFileData }] = useLazyQuery(AssetForDownloadConvertFileDocument);
     const [downConvertFile, setDownConvertFile] = useState(false);
 
+    const [getGroupData, { data: groupData }] = useLazyQuery(GroupByIdDocument);
     const [deleteMutation] = useMutation(DatasetDeleteAssetDocument);
+    const [createLayerGroupMutation] = useMutation(CreateLayerGroupDocument);
     const [createLayerMutation] = useMutation(LayersetCreateAssetDocument);
     const setNewLayerCount = useSetRecoilState(newLayerCountState);
 
@@ -109,9 +115,8 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
         }
     };
 
-    const publishAsset = (id: string, type: string, name: string) => {
+    const publishAsset = async (id: string, type: string, name: string) => {
         if (!confirm(t("confirm.asset.layer"))) return;
-
 
         const typeMapping: Record<string, { assetType: LayerAssetType; contextKey: keyof PublishContextValue }> = {
             [AssetType.Tiles3D]: { assetType: LayerAssetType.Tiles3D, contextKey: "t3d" },
@@ -128,6 +133,24 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
             return;
         }
 
+        const variables: GroupByIdQueryVariables = { id: '0' };
+
+        const { data: existingGroupData } = await getGroupData({ variables });
+
+        if (!existingGroupData || !existingGroupData.group) {
+            const inputGroupData: CreateGroupInput = {
+                access: LayerAccess.Public,
+                collapsed: true,
+                description: 'User Layer',
+                enabled: true,
+                name: 'User Layer',
+                order: 0,
+                published: true
+            };
+            await createLayerGroupMutation({ variables: { input: inputGroupData } });
+            console.log("create layer group");
+        }
+
         const data: CreateAssetInput = {
             name,
             groupIds: ['0'],
@@ -140,15 +163,14 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
             },
         };
 
-        createLayerMutation({ variables: { input: data } })
-            .then(() => {
-                alert(t("success.asset.publish"));
-                setNewLayerCount((prev) => prev + 1);
-            })
-            .catch(e => {
-                console.error(e);
-                alert(t("error.admin"));
-            });
+        try {
+            await createLayerMutation({ variables: { input: data } });
+            alert(t("success.asset.publish"));
+            setNewLayerCount((prev) => prev + 1);
+        } catch (e) {
+            console.error(e);
+            alert(t("error.admin"));
+        }
     };
     if (! item || !item.id || !item.name) {
         console.error("Error. Check Asset ID");
