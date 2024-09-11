@@ -48,6 +48,56 @@
 }
 
 #map {
+  .cesium-viewer-bottom {
+    left: 12px !important;
+    bottom: 88px !important;
+  }
+
+    .background-map {
+      .map-wrapper {
+        margin: 12px 0 20px;
+        height: unset;
+        .map-type {
+          border: unset;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          justify-content: center;
+          align-items: center;
+          &:hover {
+            border: unset;
+            outline: unset;
+          }
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            border:1px solid rgb(250, 250, 250);
+            &:hover, &.selected {
+              border:1px solid var(--primary-color);
+              outline:1px solid var(--primary-color);
+
+              &+span {
+                color: var(--primary-color);
+              }
+            }
+          }
+          .map-text {
+            line-height: unset;
+            margin-top: 4px;
+          }
+        }
+      }
+
+      &.expand {
+        .background-map-select-layer {
+          display: none;
+        }
+      }
+    }
+
+
 .pop-layer-sub{
   position: absolute;
   top: 480px;
@@ -385,7 +435,6 @@
           height: 36px;
         }
         .img {
-          background-image: url('/geomatic-user/src/assets/images/light-icon.svg');
           background-position: 8px -18px;
           background-size: 775px 1076px;
           background-repeat: no-repeat;

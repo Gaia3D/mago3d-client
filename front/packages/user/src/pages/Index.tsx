@@ -11,6 +11,7 @@ import {BoundarySearchWrapper} from "@/components/BoundarySearch";
 import {useSetRecoilState} from "recoil";
 import Footer from "@/components/Footer";
 import NewAssetModal from "@/components/modal/NewAssetModal.tsx";
+import MapSelector from "@/components/aside/MapSelector.tsx";
 
 const globeController = getInstance();
 
@@ -30,6 +31,7 @@ const MainPage = () => {
               <MapPopup/>
               <Globe/>
               <AsidePanel/>
+              <MapSelector />
               <BoundarySearchWrapper/>
               <MapToolbox onToolClick={handleToolClick}/>
               <NewAssetModal />
