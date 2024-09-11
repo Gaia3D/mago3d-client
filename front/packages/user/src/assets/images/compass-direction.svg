@@ -1,29 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="33.283" height="45.396" viewBox="0 0 33.283 45.396">
-  <defs>
-    <filter id="패스_82" x="0" y="0" width="33.283" height="31.9" filterUnits="userSpaceOnUse">
-      <feOffset input="SourceAlpha"/>
-      <feGaussianBlur stdDeviation="3" result="blur"/>
-      <feFlood flood-color="#fff" flood-opacity="0.2"/>
-      <feComposite operator="in" in2="blur"/>
-      <feComposite in="SourceGraphic"/>
-    </filter>
-    <filter id="패스_83" x="0.13" y="12.418" width="33.017" height="32.978" filterUnits="userSpaceOnUse">
-      <feOffset input="SourceAlpha"/>
-      <feGaussianBlur stdDeviation="3" result="blur-2"/>
-      <feFlood flood-color="#fff" flood-opacity="0.251"/>
-      <feComposite operator="in" in2="blur-2"/>
-      <feComposite in="SourceGraphic"/>
-    </filter>
-  </defs>
-  <g id="그룹_129" data-name="그룹 129" transform="translate(9 9)">
+<svg xmlns="http://www.w3.org/2000/svg" width="15.283" height="27.396" viewBox="0 0 15.283 27.396">
+  <g id="그룹_129" data-name="그룹 129" transform="translate(-1.555)">
     <circle id="타원_14" data-name="타원 14" cx="5.698" cy="5.698" r="5.698" transform="translate(3.368 14.734)" fill="#fff"/>
-    <g id="north_1_" data-name="north (1)">
-      <g transform="matrix(1, 0, 0, 1, -9, -9)" filter="url(#패스_82)">
-        <path id="패스_82-2" data-name="패스 82" d="M31.13,17.3a.737.737,0,0,1-.953-.077,8.957,8.957,0,0,0-12.8,0,.725.725,0,0,1-1.15-.857L23.145,3.911a.722.722,0,0,1,1.261,0l6.921,12.457a.725.725,0,0,1-.2.934Z" transform="translate(-7.14 5.46)" fill="#177bff"/>
-      </g>
-      <g transform="matrix(1, 0, 0, 1, -9, -9)" filter="url(#패스_83)">
-        <path id="패스_83-2" data-name="패스 83" d="M23.915,29.34a7.518,7.518,0,0,0-7.509,7.509c.414,9.961,14.6,9.958,15.017,0a7.518,7.518,0,0,0-7.509-7.509Zm2.811,10.642a.727.727,0,0,1-1.324.4L22.548,36.1v3.879a.722.722,0,1,1-1.444,0V33.716a.727.727,0,0,1,1.324-.4L25.282,37.6V33.716a.722.722,0,1,1,1.444,0Z" transform="translate(-7.28 -7.92)" fill="#177bff"/>
-      </g>
+    <g id="north_1_" data-name="north (1)" transform="translate(1.425)">
+      <path id="패스_82" data-name="패스 82" d="M31.13,17.3a.737.737,0,0,1-.953-.077,8.957,8.957,0,0,0-12.8,0,.725.725,0,0,1-1.15-.857L23.145,3.911a.722.722,0,0,1,1.261,0l6.921,12.457a.725.725,0,0,1-.2.934Z" transform="translate(-16.008 -3.54)" fill="#5273f8"/>
+      <path id="패스_83" data-name="패스 83" d="M23.915,29.34a7.518,7.518,0,0,0-7.509,7.509c.414,9.961,14.6,9.958,15.017,0a7.518,7.518,0,0,0-7.509-7.509Zm2.811,10.642a.727.727,0,0,1-1.324.4L22.548,36.1v3.879a.722.722,0,1,1-1.444,0V33.716a.727.727,0,0,1,1.324-.4L25.282,37.6V33.716a.722.722,0,1,1,1.444,0Z" transform="translate(-16.277 -16.922)" fill="#5273f8"/>
     </g>
   </g>
 </svg>
