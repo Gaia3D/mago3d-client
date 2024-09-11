@@ -145,10 +145,11 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
         newLayer = getWmsLayer(currentMap.url);
       }
 
-      viewer.scene.imageryLayers.remove(baseLayerRef.current);  // 이전 baseLayer 제거
-      viewer.scene.imageryLayers.add(newLayer);                 // 새로운 baseLayer 추가
-      baseLayerRef.current = newLayer;                          // baseLayerRef 업데이트
-      viewer.scene.requestRender();                             // 씬 다시 렌더링
+        viewer.scene.imageryLayers.remove(baseLayerRef.current);
+        viewer.scene.imageryLayers.add(newLayer);
+        viewer.scene.imageryLayers.lowerToBottom(newLayer);
+        baseLayerRef.current = newLayer;
+        viewer.scene.requestRender();
     }
   }, [currentMap]);
 };
