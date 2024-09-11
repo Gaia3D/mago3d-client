@@ -8,14 +8,17 @@ import {useRecoilState, useSetRecoilState} from "recoil";
 import {TerrainIdState, TerrainUrlState} from "@/recoils/Terrain.ts";
 import {GET_TERRAINS} from "@mnd/shared/src/types/layerset/Query.ts";
 import {layersetGraphqlFetcher} from "@/api/queryClient.ts";
+import {newTerrainCountState} from "@/recoils/MainMenuState.tsx";
+import {terrainState} from "@/recoils/Layer.ts";
 
 const TerrainChanger = () => {
     const setTerrainUrl = useSetRecoilState<string>(TerrainUrlState);
-    const [userTerrains, setUserTerrains] = useState<Maybe<TerrainAsset>[]>([]);
+    const [newTerrainCount, setNewTerrainCount] = useRecoilState(newTerrainCountState);
+    const [userTerrains, setUserTerrains] = useRecoilState(terrainState);
     const [terrainId, setTerrainId] = useRecoilState<string>(TerrainIdState);
 
     useEffect(() => {
-        if (userTerrains.length === 0) {
+        if (userTerrains.length === 0 || newTerrainCount > 0) {
             layersetGraphqlFetcher<Query>(GET_TERRAINS)
                 .then((result) => {
                     if (result.terrains.length === 0) return;
@@ -28,7 +31,7 @@ const TerrainChanger = () => {
                     setUserTerrains(terrains);
                 });
         }
-    }, [userTerrains, setUserTerrains, terrainId]);
+    }, [userTerrains, setUserTerrains, terrainId, newTerrainCount]);
 
     const changeTerrainByUrl = (url: string, id: string) => {
         setTerrainUrl(import.meta.env.VITE_API_URL+url);

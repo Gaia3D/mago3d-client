@@ -1,5 +1,5 @@
 import { NodeModel } from "@minoru/react-dnd-treeview";
-import { Maybe, UserLayerAsset, UserLayerGroup } from "@mnd/shared/src/types/layerset/gql/graphql";
+import {Maybe, TerrainAsset, UserLayerAsset, UserLayerGroup} from "@mnd/shared/src/types/layerset/gql/graphql";
 import { atom } from "recoil";
 
 export const layerMenuState = atom<string>({
@@ -11,6 +11,11 @@ export const layersState = atom<UserLayerAsset[]>({
   key:'layers',
   default: []
 });
+
+export const terrainState = atom<Maybe<TerrainAsset>[]>({
+  key:"terrainState",
+  default: []
+})
 
 export const visibleToggledLayerIdState = atom<string | null>({
   key:'visibleToggledLayerIdState',

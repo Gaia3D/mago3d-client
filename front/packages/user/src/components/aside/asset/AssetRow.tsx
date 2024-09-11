@@ -13,12 +13,13 @@ import { statusMap } from "@/components/aside/asset/AsideAssets.tsx";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
     CreateAssetInput, LayerAccess, LayerAssetType,
-    LayersetCreateAssetDocument, PublishContextValue
+    LayersetCreateAssetDocument, Maybe, PublishContextValue, TerrainAsset
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
-import { useSetRecoilState} from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 import {Asset} from "@/types/assets/Data.ts";
 import {useTranslation} from "react-i18next";
+import {terrainState} from "@/recoils/Layer.ts";
 
 type AssetRowProps = {
     item: Asset;
@@ -51,6 +52,7 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     const {t} = useTranslation();
     const [getLogData, { data: logData }] = useLazyQuery(DatasetProcessLogDocument);
     const [showLog, setShowLog] = useState(false);
+    const [userTerrains, setUserTerrains] = useRecoilState(terrainState);
 
     const [getOriginFileData, { data: originFileData }] = useLazyQuery(AssetForDownloadOriginFileDocument);
     const [downOriginFile, setDownOriginFile] = useState(false);
@@ -93,10 +95,14 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
         }
     }, [downConvertFile, convertFileData]);
 
-    const deleteAsset = (id: string, name: string) => {
+    const deleteAsset = (id: string, type: string, name: string) => {
         if (confirm(t("confirm.asset.delete"))) {
             deleteMutation({ variables: { id } })
                 .then(() => {
+                    if ( type === AssetType.Terrain) {
+                        const currentTerrain = userTerrains.filter(terrain => terrain?.id !== id );
+                        setUserTerrains(currentTerrain);
+                    }
                     alert(t("success.asset.delete"));
                     onDelete(id);
                 });
@@ -185,7 +191,7 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
                             className="function-button log"></button>
                 )}
                 <button type="button" onClick={() => downAsset(item.id)} className="function-button down"></button>
-                <button type="button" onClick={() => deleteAsset(item.id, item.name)} className="function-button delete"></button>
+                <button type="button" onClick={() => deleteAsset(item.id, item.assetType, item.name)} className="function-button delete"></button>
             </td>
         </tr>
     );

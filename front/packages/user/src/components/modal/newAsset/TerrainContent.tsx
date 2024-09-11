@@ -19,7 +19,7 @@ import {
     DatasetCreateProcessDocument,
     InputMaybe,
     InterpolationType,
-    ProcessContextInput,
+    ProcessContextInput, ProcessTaskStatus,
     Scalars,
     T3DConvertInput,
     T3DFormatType,
@@ -78,6 +78,9 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
     useEffect(() => {
         if (!statusQuerySkip) {
             setAssetsRefetchTrigger(prev => prev + 1);
+            if (statusData?.asset?.status === ProcessTaskStatus.Done) {
+                setNewTerrainCount((prev) => prev + 1);
+            }
         }
     }, [statusData, statusQuerySkip, setAssetsRefetchTrigger]);
 
@@ -146,7 +149,6 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
     const [createProcessMutation] = useMutation(DatasetCreateProcessDocument, {
         onCompleted: () => {
             resetOptions();
-            setNewTerrainCount((prev) => prev + 1);
         },
         onError: (error) => {
             console.error('Process creation error:', error);
