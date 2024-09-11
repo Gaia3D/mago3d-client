@@ -17,10 +17,10 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
 
     let nowMap = currentMap;
 
-    if (localStorage.getItem('RIPA_MAP')) {
-        const ripa_map = localStorage.getItem('RIPA_MAP')
-        if (!ripa_map) return;
-        nowMap = JSON.parse(ripa_map);
+    if (localStorage.getItem('BACKGROUND_MAP')) {
+        const bg_map = localStorage.getItem('BACKGROUND_MAP')
+        if (!bg_map) return;
+        nowMap = JSON.parse(bg_map);
         setCurrentMap(nowMap);
     }
 

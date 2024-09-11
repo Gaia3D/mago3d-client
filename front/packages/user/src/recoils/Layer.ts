@@ -69,20 +69,20 @@ export const LayerMapArrState = atom<LayerMapType[]>({
       name : "OSM Basic",
       image : "osm_basic.png",
     },
-    {
-      type: 'vworld',
-      url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Satellite/{TileMatrix}/{TileRow}/{TileCol}.jpeg`,
-      background : "#686b61",
-      name : "VW Satellite",
-      image : "vw_sate.png",
-    },
-    {
-      type: 'vworld',
-      url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Base/{TileMatrix}/{TileRow}/{TileCol}.png`,
-      background : "#f0eee9",
-      name : "VW Basic",
-      image : "vw_basic.png",
-    }
+    // {
+    //   type: 'vworld',
+    //   url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Satellite/{TileMatrix}/{TileRow}/{TileCol}.jpeg`,
+    //   background : "#686b61",
+    //   name : "VW Satellite",
+    //   image : "vw_sate.png",
+    // },
+    // {
+    //   type: 'vworld',
+    //   url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Base/{TileMatrix}/{TileRow}/{TileCol}.png`,
+    //   background : "#f0eee9",
+    //   name : "VW Basic",
+    //   image : "vw_basic.png",
+    // }
   ]
 });
 

@@ -10,7 +10,7 @@ const MapSelector = () => {
 
     const switchMap = (map: LayerMapType) => {
         setCurrentLayerMap(map);
-        localStorage.setItem('RIPA_MAP', JSON.stringify(map));
+        localStorage.setItem('BACKGROUND_MAP', JSON.stringify(map));
     }
 
     const toggleMapSelector = () => {

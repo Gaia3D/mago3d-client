@@ -48,6 +48,7 @@ export const useMapTool = () => {
       const heading = Cesium.Math.toDegrees(scene.camera.heading);
       setAngle(-heading);
     });
+    initDate();
   }, [globeController, initialized]);
 
   useEffect(() => {
@@ -282,13 +283,6 @@ export const useMapTool = () => {
       ...prevOptions,
       isOpenClock: !prevOptions.isOpenClock,
     }));
-
-    const { viewer } = globeController;
-    if (!viewer) return;
-
-    if (options.dateObject === undefined) {
-      initDate();
-    }
   };
 
   const onSettingTool = () => {
