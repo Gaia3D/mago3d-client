@@ -10,48 +10,50 @@
     }
     // 기본(공통)모드 정의
     --background-color: black;
-    --background-color-gray:#373737;
-    --background-color-silver:rgba(51, 51, 51, 0.8);
-    --background-color-light:#4d4d4d;
-    --background-color-more-light:#6d6d6d;
-    --background-color-more-light-02:#808080;
+    --background-color-dark:rgba(0, 0, 0, 0.9);
+    --background-color-gray:rgba(0, 0, 0, 0.7);
+    --background-color-silver:rgba(0, 0, 0, 0.85);
+    --background-color-light:rgba(0,0,0,0.65);
+    --background-color-more-light:rgba(0,0,0,0.60);
+    --background-color-more-light-02:#4d4d4d;
+    --background-color-more-light-03:rgba(0,0,0,0.15);
     --text-color: rgba(255,255,255,1);
     --popup-text-color: rgb(29, 29, 29);
-    --text-color-light: rgba(255,255,255,0.7);
+    --text-color-light: rgba(255,255,255,0.5);
     --text-color-dark: rgba(255,255,255,0.2);
     --text-white-color: white;
     --circle-button-color: rgba(255,255,255,0.14);
-    --primary-color: rgba(54,140,255,1);
-    --secondary-color: rgba(83,150,239,1);
+    --primary-color: rgba(51,107,236,1);
+    --secondary-color: rgb(105, 135, 255);
     --major-color: #122680;
     --primary-bgcolor: rgba(76,143,232,0.25);
     --border-light-color:rgb(217, 217, 217);
     --border-color:rgb(87, 87, 87);
     --nav-color: rgba(16,16,16,1);
-    --nav-hover-color:rgba(255,255,255,0.18);
-    --slide-bar-color:rgba(16,16,16,0.84);
+    --nav-hover-color:rgba(255,255,255,0.14);
+    --slide-bar-color:rgba(0, 0, 0, 0.85);
     --pop-layer-color:rgba(55,55,55,1);
     --icon-current: url('../images/dark-icon.svg');
     --icon-sub: url('../images/icon-sub.svg');
-    --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    --small-box-shadow: 0 2px 6px rgba(112, 35, 35, 0.3);
+    --box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    --small-box-shadow: 2px 2px 9px rgba(0, 0, 0, 0.1);
     --table-border-color:rgba(250, 250, 250, 0.14);
     --table-hover-color:rgba(255, 255, 255, 0.08);
-    --table-header-color:rgba(255, 255, 255, 0.07);
+    --table-header-color:rgba(255, 255, 255, 0.135);
     --prop-bgcolor:rgba(255, 255, 255, 0.17);
     --scrollbar-color:rgba(255, 255, 255, 0.24);
     --scrollbar-bgcolor:#f1f1f1;
     --scrollbar-thumb:#dbdbdb;
-    --input-bgcolor:#494949;
-    --button-border:#535353;
-    --toolbox-hover-color:#2165A8;
-    --toolbox-select-color:#2a77c4;
-    --toolbox-hover-border-color:#2c82f1;
+    --input-bgcolor:#2e2e2e;
+    --button-border:#242424;
+    --toolbox-hover-color:rgba(51,107,236,0.8);
+    --toolbox-select-color:rgba(51,107,236,1);
+    --toolbox-hover-border-color:rgba(51,107,236,0.8);
     --icon-compass:url('../images/compass.svg');
     --layer-bgcolor:rgba(255, 255, 255, 0.07);
     --layer-hover-color:#276DB4;
     --layer-list-hover-color:#284767;
-    --success-color:#25c25a;
+    --success-color:rgba(25, 223, 91, 0.88);
     --running-color:#F3B853;
 }
 
@@ -62,43 +64,50 @@
     }
 
     --background-color: black;
-    --background-color-gray:#373737;
-    --background-color-silver:rgba(51, 51, 51, 0.8);
-    --background-color-light:#4d4d4d;
-    --background-color-more-light:#6d6d6d;
-    --background-color-more-light-02:#808080;
+    --background-color-dark:rgba(0, 0, 0, 0.9);
+    --background-color-gray:rgba(0, 0, 0, 0.7);
+    --background-color-silver:rgba(0, 0, 0, 0.85);
+    --background-color-light:rgba(0,0,0,0.65);
+    --background-color-more-light:rgba(0,0,0,0.60);
+    --background-color-more-light-02:#4d4d4d;
+    --background-color-more-light-03:rgba(0,0,0,0.15);
     --text-color: rgba(255,255,255,1);
     --popup-text-color: rgb(29, 29, 29);
-    --text-color-light: rgba(255,255,255,0.7);
+    --text-color-light: rgba(255,255,255,0.5);
     --text-color-dark: rgba(255,255,255,0.2);
+    --text-white-color: white;
     --circle-button-color: rgba(255,255,255,0.14);
+    --primary-color: rgba(51,107,236,1);
+    --secondary-color: rgb(105, 135, 255);
     --major-color: #122680;
     --primary-bgcolor: rgba(76,143,232,0.25);
     --border-light-color:rgb(217, 217, 217);
     --border-color:rgb(87, 87, 87);
     --nav-color: rgba(16,16,16,1);
-    --nav-hover-color:rgba(255,255,255,0.18);
-    --slide-bar-color:rgba(16,16,16,0.84);
+    --nav-hover-color:rgba(255,255,255,0.14);
+    --slide-bar-color:rgba(0, 0, 0, 0.85);
     --pop-layer-color:rgba(55,55,55,1);
     --icon-current: url('../images/dark-icon.svg');
     --icon-sub: url('../images/icon-sub.svg');
+    --box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    --small-box-shadow: 2px 2px 9px rgba(0, 0, 0, 0.1);
     --table-border-color:rgba(250, 250, 250, 0.14);
     --table-hover-color:rgba(255, 255, 255, 0.08);
-    --table-header-color:rgba(255, 255, 255, 0.07);
+    --table-header-color:rgba(255, 255, 255, 0.135);
     --prop-bgcolor:rgba(255, 255, 255, 0.17);
-    --scrollbar-color:rgba(255, 255, 255, 0.34);
+    --scrollbar-color:rgba(255, 255, 255, 0.24);
     --scrollbar-bgcolor:#f1f1f1;
-    --scrollbar-thumb:#888;
-    --input-bgcolor:#494949;
-    --button-border:#535353;
-    --toolbox-hover-color:#2165A8;
-    --toolbox-select-color:#2a77c4;
-    --toolbox-hover-border-color:#2c82f1;
+    --scrollbar-thumb:#dbdbdb;
+    --input-bgcolor:#2e2e2e;
+    --button-border:#242424;
+    --toolbox-hover-color:rgba(51,107,236,0.8);
+    --toolbox-select-color:rgba(51,107,236,1);
+    --toolbox-hover-border-color:rgba(51,107,236,0.8);
     --icon-compass:url('../images/compass.svg');
     --layer-bgcolor:rgba(255, 255, 255, 0.07);
     --layer-hover-color:#276DB4;
     --layer-list-hover-color:#284767;
-    --success-color:#25c25a;
+    --success-color:rgba(25, 223, 91, 0.88);
     --running-color:#F3B853;
 }
 
@@ -153,7 +162,7 @@
 @mixin icon-button($position-x, $position-y) {
     background-image: var(--icon-current);
     background-position: $position-x $position-y;
-    background-size: 775px 1076px;
+    background-size: 777px 1076px;
     background-repeat: no-repeat;
     border: none;
     cursor: pointer;
@@ -169,7 +178,7 @@
 @mixin compass {
     background-image: var(--icon-compass);
     background-repeat: no-repeat;
-    background-size:116px 116px;
+    background-size:120px 120px;
     border: none;
     cursor: pointer;
 }
@@ -204,21 +213,22 @@ body {
 header {
     position: absolute;
     right:10px;
-    top:5px;
+    top:10px;
     .lang-icon {
         position: relative;
         z-index: 1;
-        top: 10px;
-        right:13px;
-        width:28px;
-        height:28px;
+        top: 4px;
+        right:16px;
+        width:32px;
+        height:32px;
         border-radius:30px;
+        background:white;
         box-shadow: var(--small-box-shadow);
         &.en {
-            @include icon-button(-747px, -72px);
+            @include icon-button(-745px, -80px);
         }
         &.ko {
-            @include icon-button(-747px, 0);
+            @include icon-button(-745px, -1px);
         }
     }
     .user-icon {
@@ -305,8 +315,8 @@ main {
         position: absolute;
         left: 80px;
         top: 5px;
-        width:410px;
-        height:800px;
+        width:380px;
+        height:92vh;
         z-index:99;
         background-color: var(--slide-bar-color);
         box-shadow: var(--box-shadow);
@@ -322,6 +332,10 @@ main {
                 background-color: transparent;
                 box-shadow: none;
                 left:0;
+                opacity:0.8;
+                &:hover {
+                    opacity:1;
+                }
                 &.side {
                     float:left;
                     margin-left:14px;
@@ -369,7 +383,7 @@ main {
         line-height:18px;
         font-size:var(--font-size-large);
         color:var(--text-white-color);
-        background:var(--background-color-light);
+        background:var(--border-color);
     }
     .title::before {
         content: "";
@@ -379,7 +393,7 @@ main {
         transform: translateX(50%);
         border-width: 8px;
         border-style: solid;
-        border-color: transparent transparent var(--background-color-light) transparent; /* 삼각형을 아래쪽을 가리키도록 변경 */
+        border-color: transparent transparent var(--border-color) transparent; /* 삼각형을 아래쪽을 가리키도록 변경 */
     }
 }
 
@@ -524,7 +538,7 @@ table {
 .assets-list {
     width:100%;
     position: relative;
-    tr:hover {
+    tr:hover td {
         background:var(--table-hover-color);
         cursor:pointer;
     }
@@ -532,7 +546,7 @@ table {
         position: relative;
         background-color: var(--table-header-color);
         font-family: var(--font-family-regular);
-        padding:5px 0;
+        padding:3px 0;
         &::after {
             content: '|';
             color:var(--text-color-dark);
@@ -540,14 +554,6 @@ table {
             top:50%;
             right:0;
             transform: translateY(-50%);
-        }
-        &:first-child {
-            border-top-left-radius:5px;
-            border-bottom-left-radius:5px;
-        }
-        &:last-child {
-            border-top-right-radius:5px;
-            border-bottom-right-radius:5px;
         }
     }
     td {
@@ -563,28 +569,30 @@ table {
         .date {
             color:var(--text-color-light);
             margin-bottom:5px;
-            font-size:11.5px;
+            font-size:10.5px;
         }
+    }
+    td:nth-child(2) {
+        max-width:120px !important;
+        text-overflow: ellipsis !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
     }
     th, td {
         font-weight: normal !important;
         text-align:center;
-        font-size:var(--font-size-regular);
+        font-size:11px;
         &:first-child {
-            width:12%;
+            width:15%;
         }
         &:nth-child(2) {
-            width:42%;
-            max-width:140px !important;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
+            width:39%;
         }
         &:nth-child(3) {
-            width:25%;
+            width:23%;
         }
         &:last-child {
-            width:20%;
+            width:23%;
             &::after {
                 content: '';
             }
@@ -595,7 +603,7 @@ table {
 //pop-layer
 @keyframes slideDown {
     0% {
-        transform: translateY(-20%);
+        transform: translateY(-5px);
         opacity: 0;
     }
     100% {
@@ -607,7 +615,7 @@ table {
     display: none;
     position: absolute;
     border-radius:10px;
-    background-color: var(--background-color-gray);
+    background-color: var(--background-color-dark);
     z-index:9;
     box-shadow: var(--box-shadow);
     animation: slideDown 0.5s forwards;
@@ -620,9 +628,8 @@ table {
         //right:10px;
         //top:55px;
         ul {
-            padding:12px 0;
+            padding:6px 0 6px 0;
             &.user-wrapper {
-                padding:6px 0;
                 border-top:1px solid var(--table-border-color);
             }
             li {
@@ -640,7 +647,7 @@ table {
                 .text {
                     display: block;
                     color:var(--text-color);
-                    padding:5px 20px 5px 45px;
+                    padding:5px 30px 5px 45px;
                 }
             }
         }
@@ -758,13 +765,14 @@ ul.layer {
 //prop
 ul.prop {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap:10px;
-    width:95%;
+    grid-template-columns: repeat(4, 1fr);
+    justify-content: space-between;
+    gap:15px;
+    width:90%;
     margin:2px auto;
     li {
-        width:60px;
-        height:57px;
+        width:auto;
+        height:65px;
         background-color:var(--prop-bgcolor);
         border-radius:7px;
         border:1px solid var(--prop-bgcolor);
@@ -781,6 +789,7 @@ ul.prop {
 }
 .prop-scroll {
     overflow-y: scroll;
+    overflow-x:hidden;
     height:calc(100% - 60px);
     margin-top:26px;
 }
@@ -788,18 +797,21 @@ ul.prop {
 .table-button {
     font-family: var(--font-family-regular);
     color:var(--text-color);
-    line-height:45px;
+    line-height:40px;
     vertical-align: middle;
+    &:hover .new-item {            
+        background-color: var(--circle-button-color);
+        transition: 0.3s;
+    }
     .new-item {
         display: inline-block;
-        width:15px;
-        height:15px;
+        width:17px;
+        height:17px;
         vertical-align: middle;
         border-radius:30px;
-        margin-right:3px;
+        margin-right:5px;
         margin-top:-3px;
-        background-color: var(--circle-button-color);
-        @include icon-button(-408px, -177px);
+        @include icon-button(-406px, -176px);
     }
 }
 .status-view {
@@ -820,9 +832,16 @@ ul.prop {
     text-indent:12px;
     font-size:var(--font-size-small);
     letter-spacing: -0.5px;
+    &.none {
+        background-color: rgba(255, 255, 255, 0.12);
+        //border:1px solid rgb(107, 107, 107);
+        padding:2px 8px !important;
+        text-indent:0 !important;
+        color:rgb(160, 160, 160);
+    }
     &.success {
         background-color:var(--success-color);
-        @include icon-button(-257px, -176px);
+        @include icon-button(-257px, -177px);
         color:var(--text-white-color);
     }
     &.fail {
@@ -843,24 +862,27 @@ ul.prop {
     width:19px;
     height:20px;
     margin-top:5px;
-    margin-left:-2px;
     display: inline-block;
     border-radius:3px;
-    opacity:0.6;
+    opacity:0.9;
     //border:1px solid var(--circle-button-color) !important;
+    margin-right:2px;
     &:hover {
         background-color:var(--circle-button-color);
         transition: 0.3s;
         opacity: 1;
     }
+    &.publish {
+        @include icon-button(-259px, -177px);
+      }
     &.log {
-        @include icon-button(-256px, -3px);
+        @include icon-button(-256px, -4px);
     }
     &.down {
-        @include icon-button(-256px, -51px);
+        @include icon-button(-256px, -52px);
     }
     &.delete {
-        @include icon-button(-259px, -115px);
+        @include icon-button(-259px, -116px);
     }
 }
 .layer-funtion-button {
@@ -908,60 +930,59 @@ ul.prop {
         top:180px;
     }
     &.setup {
-        top:370px;
+        top:330px;
     }
     &.zoom {
-        top:590px;
+        top:520px;
     }
     button {
         background:var(--background-color-silver);
-        width:34px;
-        height:34px;
-        border-radius:7px;
+        width:33px;
+        height:33px;
+        border-radius:8px;
         margin-bottom:3px;
         box-shadow: var(--small-box-shadow);
-        border:1px solid var(--button-border) !important;
-        border-bottom:1px solid rgba(131, 131, 131, 0.6) !important;
         &:hover {
             background:var(--toolbox-hover-color);
-            border: 1px solid var(--toolbox-hover-border-color)  !important;
+            border:1px solid var(--toolbox-hover-border-color);
         }
         &.selected {
             background: var(--toolbox-select-color);
-            border: 1px solid var(--toolbox-hover-border-color)  !important;
+            border:1px solid var(--toolbox-select-color);
+            //outline:2px solid black !important;
         }
         &.visible {
-            @include icon-button(-106px, -645px);
+            @include icon-button(-104px, -644px);
         }
         &.ruler {
-            @include icon-button(-106px, -709px);
+            @include icon-button(-104px, -708px);
         }
         &.object {
-            @include icon-button(-106px, -779px);
+            @include icon-button(-104px, -778px);
         }
         &.shadow {
-            @include icon-button(-106px, -587px);
+            @include icon-button(-105px, -586px);
         }
         &.full-screen {
-            @include icon-button(-107px, -844px);
+            @include icon-button(-106px, -843px);
         }
         &.terrain {
-            @include icon-button(-107px, -890px);
+            @include icon-button(-105px, -889px);
             &.toggle {
                 @include icon-button(-180px, -890px);
             }
         }
         &.theme {
-            @include icon-button(-106px, -940px);
+            @include icon-button(-105px, -938px);
         }
         &.theme-inverse {
             @include icon-button(-26px, -940px);
         }
         &.zoom-in {
-            @include icon-button(-105px, -994px);
+            @include icon-button(-105px, -993px);
         }
         &.zoom-out {
-            @include icon-button(-105px, -1059px);
+            @include icon-button(-105px, -1058px);
         }
     }
 }
@@ -991,20 +1012,20 @@ ul.prop {
     float:right;
     top:0;
     right:40px;
-    border-radius:5px;
+    border-radius:8px;
     transition: opacity 0.3s ease;
     box-shadow: var(--small-box-shadow);
     .title {
         margin:0;
         padding:0;
-        padding:4px 16px;
-        border-radius:5px;
+        padding:6px 18px;
+        border-radius:8px;
         height:auto;
         line-height:18px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-size:var(--font-size-small);
+        font-size:var(--font-size-regular);
         color:var(--text-white-color);
         background:var(--background-color-light);
         font-family: var(--font-family-regular);
@@ -1023,7 +1044,7 @@ ul.prop {
 }
 @keyframes slideLeft {
     0% {
-        transform: translateX(10px);
+        transform: translateX(5px);
         opacity: 0.4;
     }
     100% {
@@ -1033,7 +1054,7 @@ ul.prop {
 }
 @keyframes slideRight {
     0% {
-        transform: translateX(-10px);
+        transform: translateX(-5px);
         opacity: 0.4;
     }
     100% {
@@ -1052,7 +1073,7 @@ ul.prop {
     z-index: 1000;
     height:auto;
     border-radius:10px;
-    background-color: var(--background-color-gray);
+    background-color: var(--background-color-silver);
     z-index:9;
     float:left;
     box-shadow: var(--box-shadow);
@@ -1160,7 +1181,7 @@ ul.prop {
                 width:100px;
                 text-indent:5px;
                 border:1px solid var(--background-color-more-light-02) !important;
-                background-color: var(--background-color-more-light-02) !important;
+                background-color: var(--background-color-more-light-03) !important;
                 border-radius:3px;
             }
         }
@@ -1170,15 +1191,15 @@ ul.prop {
 //pop-layer-sub
 .pop-layer-sub {
     position: relative;
-    width: 300px;
+    width: 350px;
     right:310px;
     height:auto;
     border-radius:10px;
     background-color: var(--background-color-gray);
-    z-index:9;
     float:left;
     box-shadow: var(--box-shadow);
-    animation: slideLeft 0.5s forwards;
+    animation: slideDown 0.5s forwards;
+    z-index:99;
     .pop-layer-header {
         width:100%;
         height:44px !important;
@@ -1214,11 +1235,12 @@ ul.prop {
         padding:16px 16px 22px 16px;
         label {
             float:left;
-            width:80px;
-            margin-right:5px;
+            width:100px;
+            margin-right:20px;
             text-align:right;
-            color:var(--text-color-light);
-            font-family: var(--font-family-regular);
+            color:white;
+            font-size:var(--font-size-regular) !important;
+            font-family: var(--font-family-small) !important;
         }
         .value-container {
             float:left;
@@ -1227,28 +1249,27 @@ ul.prop {
             height:auto;
             label {
                 width:100px;
-                margin-right:10px;
+                margin-right:20px;
                 line-height:25px;
             }
             select, input[type=text] {
-                width:140px;
+                width:175px;
                 float:left;
                 box-sizing: border-box;
                 height:29px;
                 text-indent:5px;
-                border:var(--input-bgcolor) !important;
+                border:1px solid rgba(255,255,255,0.2) !important;
                 background-color: var(--input-bgcolor) !important;
                 border-radius:5px;
                 font-size:var(--font-size-regular);
                 font-family: var(--font-family-regular);
                 color: var(--text-color);
                 &:hover, &:focus {
-                    border:none;
-                    outline:1px solid rgb(133, 133, 133);
+                    border:transparent;
                 }
             }
             select {
-                @include icon-sub(-308px, -218px);
+                @include icon-sub(-270px, -218px);
             }
             option {
                 line-height:30px !important;
@@ -1257,7 +1278,7 @@ ul.prop {
         .range-container {
             float:left;
             height:auto;
-            margin:20px 0 0 0;
+            margin:10px 0 0 0;
             padding:0;
             .text {
                 width:40px;
@@ -1274,7 +1295,7 @@ ul.prop {
                 vertical-align: middle;
             }
             .ticks {
-                margin-left:94px;
+                margin-left:123px;
                 width:113px;
                 clear:both;
                 float:left;
@@ -1295,8 +1316,8 @@ ul.prop {
             }
         }
         .play-container {
-            margin:17px 0 0 0;
-            padding:0;
+            margin:8px 0 0 0;
+            padding:0 0 0 0;
             float: left;
             //border:2px solid red !important;
             .button-play {
@@ -1305,29 +1326,25 @@ ul.prop {
                 height:30px;
                 border-radius:5px;
                 padding:0;
-                border:1px solid var(--border-color) !important;
+                margin:0 !important;
+                background: var(--table-border-color);
                 vertical-align: middle;
+                margin-right:3px !important;
                 &.selected {
-                    border:1px solid var(--primary-color) !important;
+                    background:var(--primary-color);
                 }
-                &.rewind {
+                &:hover{
+                    outline:1px solid var(--border-light-color);
+                }
+                &.rewind, &.rewind.selected {
                     margin-left:7px;
-                    @include icon-sub(-414px, -91px);
-                    &:hover, &.selected {
-                        @include icon-sub(-414px, -128px);
-                    }
+                    @include icon-sub(-413px, -90px);
                 }
-                &.play {
-                    @include icon-sub(-457px, -91px);
-                    &:hover, &.selected {
-                        @include icon-sub(-457px, -128px);
-                    }
+                &.play, &.play.selected {
+                    @include icon-sub(-456px, -90px);
                 }
-                &.fast-forward {
-                    @include icon-sub(-495px, -91px);
-                    &:hover, &.selected {
-                        @include icon-sub(-495px, -128px);
-                    }
+                &.fast-forward, &.fast-forward.selected {
+                    @include icon-sub(-494px, -90px);
                 }
             }
         }
@@ -1335,13 +1352,14 @@ ul.prop {
             margin:0;
             padding:0;
             float:left;
+            margin-left:35px !important;
             input[type='date'] {
                 width:110px;
                 position: relative;
                 padding-right: 10px;
                 height:25px;
                 @include icon-sub(-320px, 0);
-                border:1px solid var(--input-bgcolor) !important;
+                border:1px solid rgba(255, 255, 255, 0.2) !important;
                 background-color: var(--input-bgcolor) !important;
                 border-radius:5px;
                 font-size:var(--font-size-regular);
@@ -1356,15 +1374,11 @@ ul.prop {
                 height:25px;
                 @include icon-sub(-320px, -47px);
                 font-size:var(--font-size-regular);
-                border:1px solid var(--input-bgcolor) !important;
+                border:1px solid rgba(255, 255, 255, 0.2) !important;
                 background-color: var(--input-bgcolor) !important;
                 border-radius:5px;
                 font-family: var(--font-family-regular) !important;
                 color: var(--text-color);
-                outline:1px solid var(--input-bgcolor)!important;
-            }
-            input[type='date'],  input[type='time']:focus {
-                border:1px solid var(--input-bgcolor) !important;
                 outline:1px solid var(--input-bgcolor)!important;
             }
         }
@@ -1378,14 +1392,14 @@ ul.prop {
     flex-direction: row;
     justify-content: center;
     //animation: slideLeft 0.5s forwards;
-    border-radius: 6px;
+    //border-radius: 6px;
     &.object {
         button {
             display:inline-block !important;
         }
     }
     &:not(.object) {
-        right: 50px;
+        right: 40px;
     }
     &.visible {
         z-index: 1;
@@ -1396,8 +1410,11 @@ ul.prop {
         top:37px;
     }
     &.expand {
-        box-shadow: var(--small-box-shadow);
-        border:1px solid #535353 !important;
+        border-top-left-radius:9px;  
+        border-bottom-left-radius:9px;   
+        border-top-right-radius:9px;  
+        border-bottom-right-radius:9px;     
+        background:var(--background-color-gray) !important;
     }
     &.expand button:not(.selected){
         display:inline-block;
@@ -1409,94 +1426,105 @@ ul.prop {
         display:inline-block;
         position: relative;
         background:var(--background-color-gray);
-        width:34px;
-        height:34px;
+        width:35px;
+        height:35px;
         border-radius:0;
         margin-bottom:3px;
         border:none !important;
         border-right:1px solid rgba(73, 73, 73, 0.6) !important;
     }
-
     button {
         display:inline-block;
         position: relative;
         background:var(--background-color-gray);
-        width:34px;
-        height:34px;
+        width:33px;
+        height:33px;
         border-radius:0;
         margin-bottom:3px;
+        box-shadow: var(--small-box-shadow);
         border:none !important;
-        border-right:1px solid rgba(73, 73, 73, 0.6) !important;
+        //border-right:1px solid rgba(255, 255, 255, 0.2) !important;
+        &:first-child {
+            border-top-left-radius:8px;
+            border-bottom-left-radius:8px;
+        }
+        &:last-child {
+            padding-right:3px !important;
+            border-top-right-radius:8px;
+            border-bottom-right-radius:8px;
+        }
         &:hover {
-            background: #2165A8;
-            border: 1px solid #2c82f1 !important;
+            background: var(--toolbox-hover-color);
+            //border-radius:8px;
         }
         &.selected {
-            background: #2a77c4;
-            border: 1px solid #2c82f1 !important;
+            background: var(--toolbox-select-color);
+            outline:1px solid white !important;
+            border-radius:8px;
+            z-index:999;
         }
         &.first-person-view {
-            @include icon-button(-176px, -644px);
+            @include icon-button(-177px, -643px);
         }
         &.indoor {
-            @include icon-button(-239px, -643px);
+            @include icon-button(-237px, -641px);
         }
         &.go-to-point {
-            @include icon-button(-302px, -643px);
+            @include icon-button(-300px, -642px);
         }
         &.view-axis {
-            @include icon-button(-357px, -642px);
+            @include icon-button(-355px, -641px);
         }
         &.camera-info {
-            @include icon-button(-411px, -643px);
+            @include icon-button(-410px, -643px);
         }
         &.point {
-            @include icon-button(-176px, -709px);
+            @include icon-button(-176px, -708px);
         }
         &.length {
-            @include icon-button(-240px, -709px);
+            @include icon-button(-238px, -708px);
         }
         &.composite {
-            @include icon-button(-305px, -709px);
+            @include icon-button(-303px, -708px);
         }
         &.area {
-            @include icon-button(-370px, -709px);
+            @include icon-button(-367px, -708px);
         }
         &.multiple-areas {
-            @include icon-button(-434px, -709px);
+            @include icon-button(-433px, -709px);
         }
         &.height {
-            @include icon-button(-497px, -710px);
+            @include icon-button(-496px, -710px);
         }
         &.angle {
-            @include icon-button(-560px, -709px);
+            @include icon-button(-559px, -708px);
         }
         &.radius {
-            @include icon-button(-626px, -709px);
+            @include icon-button(-624px, -708px);
         }
         &.translation {
-            @include icon-button(-181px, -781px);
+            @include icon-button(-180px, -780px);
         }
         &.rotation {
-            @include icon-button(-245px, -781px);
+            @include icon-button(-245px, -780px);
         }
         &.scaling {
-            @include icon-button(-314px, -780px);
+            @include icon-button(-313px, -779px);
         }
         &.copy {
             @include icon-button(-374px, -781px);
         }
         &.remove {
-            @include icon-button(-435px, -781px);
+            @include icon-button(-435px, -780px);
         }
         &.add-floor {
-            @include icon-button(-493px, -781px);
+            @include icon-button(-493px, -780px);
         }
         &.remove-floor {
-            @include icon-button(-554px, -781px);
+            @include icon-button(-554px, -780px);
         }
         &.coloring {
-            @include icon-button(-618px, -781px);
+            @include icon-button(-618px, -780px);
         }
         &.boundary {
             @include icon-button(-680px, -779px);
@@ -1538,7 +1566,7 @@ ul.prop {
     visibility: hidden;
     clear:both;
     transition: opacity 0.3s ease;
-
+    z-index:999;
     .title {
         position: absolute;
         top: 130%;
@@ -1552,7 +1580,7 @@ ul.prop {
         font-family: var(--font-family-light);
         font-size:var(--font-size-small);
         color:var(--text-color);
-        background:var(--background-color-light);
+        background:#575757;
     }
     .title::before {
         content: "";
@@ -1561,7 +1589,7 @@ ul.prop {
         right: 12px;
         border-width: 4px;
         border-style: solid;
-        border-color: transparent transparent var(--background-color-light) transparent; /* 삼각형을 아래쪽을 가리키도록 변경 */
+        border-color: transparent transparent #575757 transparent; /* 삼각형을 아래쪽을 가리키도록 변경 */
     }
 }
 
@@ -1579,19 +1607,19 @@ ul.prop {
 //compass
 .compass {
     position: absolute;
-    right:-9px;
-    bottom:-9px;
+    right:-20px;
+    bottom:-13px;
     margin:0;
     padding:0;
-    width:116px;
-    height:116px;
+    width:120px;
+    height:120px;
     @include compass;
     .compass-direction {
         width:116px;
         height:116px;
-        margin-left:-1px;
-        background:url(../images/compass-direction.svg) center -8px no-repeat;
-        background-size:35px 48px;
+        margin-right:-2px;
+        background:url(../images/compass-direction.svg) center 0 no-repeat;
+        background-size:19px 34px;
     }
 }
 
@@ -1727,12 +1755,12 @@ ul.prop {
         h1.logo {
             width:200px;
             margin:0 auto 20px;
-            height:120px;
+            height:80px;
             @include icon-sub(0, 70px);
         }
         .slogan {
             display: inline-block;
-            font-size:var(--font-size-large);
+            font-size:var(--font-size-xlarge);
             color:rgb(145, 145, 145);
             text-align:center;
         }
@@ -1777,7 +1805,7 @@ ul.prop {
             height: 60px;
             text-indent: 10px;
             padding-top: 15px;
-            border-bottom:none;
+            //border-bottom:none;
             border-top-right-radius: 6px;
             border-top-left-radius: 6px;
         }
@@ -2066,7 +2094,6 @@ input[type="date"]::before {
 input[type="text"]::placeholder {
     color: #222222;
 }
-
 //input-time
 input[type='time']::-webkit-calendar-picker-indicator {
     position: absolute;
@@ -2092,7 +2119,7 @@ input[type='time']::-webkit-calendar-picker-indicator {
 //input-range
 input[type="range"] {
     -webkit-appearance: none;
-    height: 5px;
+    height: 3px;
     background-color: #E5E5E5;
     border-radius: 3px;
     outline: none;
@@ -2101,8 +2128,8 @@ input[type="range"] {
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     pointer-events: all;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     background:var(--primary-color);
     border-radius: 50%;
     cursor: pointer;
@@ -2112,8 +2139,8 @@ input[type=range]::-webkit-slider-thumb {
 input[type=range]::-moz-range-thumb {
     -webkit-appearance: none;
     pointer-events: all;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     background:var(--primary-color);
     border-radius: 3px;
     cursor: pointer;
@@ -2122,7 +2149,7 @@ input[type=range]::-moz-range-thumb {
 }
 input[type=range]::-webkit-slider-thumb:hover {
     background:var(--primary-color);
-    -webkit-background:#1B77E5;
+    -webkit-background:var(--primary-color);
 }
 input[type=range]::-webkit-slider-thumb:active {
     background:var(--primary-color);
@@ -2131,8 +2158,8 @@ input[type=range]::-webkit-slider-thumb:active {
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    height: 5px;
-    background-color:#e4e4e4 ;
+    height: 3px;
+    background-color:#afafaf ;
     pointer-events: none;
     outline: none;
 }
@@ -2143,6 +2170,9 @@ select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    option {
+        padding-left:5px !important;
+    }
 }
 
 //search
@@ -2159,7 +2189,7 @@ select {
     margin-left: 30px;
     position: absolute;
     font-size: 16px;
-    width:312px;
+    width:285px;
     height:34px;
     border-radius:7px;
     border-color:transparent;
@@ -2168,6 +2198,7 @@ select {
     color:var(--text-color);
     font-size:var(--font-size-regular);
     font-family: var(--font-family-regular);
+    text-indent:3px;
 }
 #searchInput:hover {
     border:2px solid var(--primary-color);
