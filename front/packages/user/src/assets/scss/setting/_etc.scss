@@ -195,10 +195,10 @@
         display: flex;
         width: 100%;
         height: 38px;
-        &:hover .group-icon {
+        &:hover .group-icon, &.selected .group-icon  {
           background:var(--layer-list-hover-color); 
         }        
-        &:hover .group-name {
+        &:hover .group-name, &.selected .group-name  {
           background:var(--layer-list-hover-color);
         }
         .group-icon {
@@ -242,11 +242,14 @@
       margin-left:30px;
       border-top-right-radius:6px;
       border-bottom-right-radius:6px;
-      background-color: var(--nav-hover-color);
+      background-color: var(--nav-hover-color);   
+      &:hover {
+        background:var(--layer-sblist-hover-color);
+      }   
         .layer-name {
           width: calc(100% - 114px);
           padding: 0;
-          display: block;
+          float:left;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;

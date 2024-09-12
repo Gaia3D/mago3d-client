@@ -57,6 +57,7 @@
     --layer-bgcolor:rgba(255, 255, 255, 0.07);
     --layer-hover-color:#276DB4;
     --layer-list-hover-color:#283D67;
+    --layer-sblist-hover-color:#203153;
     --success-color:rgba(25, 223, 91, 0.88);
     --running-color:#F3B853;
 }
@@ -436,16 +437,20 @@ main {
     top: 14px;
     display: flex;
     flex-direction: row;
+    border:0; 
     width:32px;
-    height:32px;
-    border-radius:30px !important;
+    height:34px;
+    border-radius:30px !important; 
     box-shadow: var(--small-box-shadow) !important;
-    button {    
-        border:unset;        
-        border-radius:30px !important;
-    }
-    img {
-        border-radius:30px !important;
+    .map-type-current  {    
+        border:0; 
+        width:32px;
+        height:34px;
+        border-radius:30px !important;   
+        img {
+            
+            border-radius:30px !important;  
+        }
     }
     .background-map-select-layer {
         position: absolute;
@@ -783,6 +788,8 @@ ul.layer {
             width:26px;
             height:30px;
             vertical-align: middle;
+            margin:0;
+            padding:0;
             &.type-terrain  {
                 @include icon-button(-400px, -337px);
             }
@@ -1911,6 +1918,10 @@ ul.prop {
     justify-content: center;
     align-items: center;
     display: flex;
+    .modal-spinner-wrapper {
+        padding: 0;
+        position: relative;
+    }
     .modal-content {
         position: relative;
         background:var(--text-white-color);
@@ -1975,7 +1986,7 @@ ul.prop {
     line-height:32px;
     .title {
         text-align:right;
-        font-size:var(--font-size-xlarge);
+        font-size:14px;
         margin-bottom:15px;
         padding-right:20px;
         font-family: 'Montserrat-medium', 'NanumSquareNeo-b';
@@ -1990,6 +2001,7 @@ ul.prop {
     ul.format-list {
         margin:0;
         padding:0;
+        margin-bottom:15px;
         li {
             border-radius:30px;
             font-size:var(--font-size-regular);
@@ -2005,6 +2017,31 @@ ul.prop {
         }
     }
 }
+
+
+/* 스피너 스타일 */
+.spinner-full {
+    border: 3px solid rgba(201, 231, 255, 0.2);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    animation: spin-full 0.9s linear infinite;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+@keyframes spin-full {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+
 .width-270 {
     width:270px;
 }
