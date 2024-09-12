@@ -13,7 +13,7 @@ import { statusMap } from "@/components/aside/asset/AsideAssets.tsx";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
     CreateAssetInput,
-    CreateGroupInput, CreateLayerGroupDocument, GroupByIdDocument, GroupByIdQueryVariables,
+    CreateLayerGroupDocument, GroupByIdDocument,
     LayerAccess,
     LayerAssetType,
     LayersetCreateAssetDocument,
@@ -133,40 +133,28 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
             return;
         }
 
-        const variables: GroupByIdQueryVariables = { id: '0' };
+        const { data: existingGroupData } = await getGroupData({ variables: { id: '0' } });
 
-        const { data: existingGroupData } = await getGroupData({ variables });
-
-        if (!existingGroupData || !existingGroupData.group) {
-            const inputGroupData: CreateGroupInput = {
-                access: LayerAccess.Public,
-                collapsed: true,
-                description: 'User Layer',
-                enabled: true,
-                name: 'User Layer',
-                order: 0,
-                published: true
-            };
-            await createLayerGroupMutation({ variables: { input: inputGroupData } });
-            console.log("create layer group");
+        if (!existingGroupData?.group) {
+            await createLayerGroupMutation({
+                variables: { input: { access: LayerAccess.Public, name: 'User Layer', order: 0, published: true } }
+            });
         }
 
-        const data: CreateAssetInput = {
+        const input: CreateAssetInput = {
             name,
             groupIds: ['0'],
             access: LayerAccess.Private,
             enabled: true,
             visible: true,
             type: selectedType.assetType,
-            context: {
-                [selectedType.contextKey]: { dataAssetId: id }
-            },
+            context: { [selectedType.contextKey]: { dataAssetId: id } },
         };
 
         try {
-            await createLayerMutation({ variables: { input: data } });
+            await createLayerMutation({ variables: { input } });
             alert(t("success.asset.publish"));
-            setNewLayerCount((prev) => prev + 1);
+            setNewLayerCount(prev => prev + 1);
         } catch (e) {
             console.error(e);
             alert(t("error.admin"));

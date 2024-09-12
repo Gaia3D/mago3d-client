@@ -19,6 +19,7 @@ import dayjs from "dayjs";
 import { download } from "@mnd/shared";
 import {useClockTool} from "@/hooks/useMapTool/useClockTool.ts";
 import {useWebStorage} from "@/hooks/useMapTool/useWebStorage.ts";
+import {TerrainUrlState} from "@/recoils/Terrain.ts";
 
 export const useMapTool = () => {
   const { globeController, initialized } = useGlobeController();
@@ -35,6 +36,12 @@ export const useMapTool = () => {
   const [options, setOptions] = useRecoilState(OptionsState);
   const { initDate } = useClockTool();
   const { initWebStorage, saveWebStorage } = useWebStorage();
+  const [terrainUrl] = useRecoilState<string>(TerrainUrlState);
+
+  const currentTerrainUrlRef = useRef(terrainUrl);
+  useEffect(() => {
+    currentTerrainUrlRef.current = terrainUrl;
+  }, [terrainUrl]);
 
   const [angle, setAngle] = useState(0);
 
@@ -240,10 +247,11 @@ export const useMapTool = () => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    if (viewer?.terrainProvider === undefined || isEllipsoidTerrainProvider(viewer.terrainProvider)) {
-      viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
-    } else {
+    if (viewer?.terrainProvider && !isEllipsoidTerrainProvider(viewer.terrainProvider)) {
       viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+    } else {
+      const _url = currentTerrainUrlRef.current
+      if (_url) viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_API_URL + _url);
     }
 
     setOptions((prevOptions) => ({
