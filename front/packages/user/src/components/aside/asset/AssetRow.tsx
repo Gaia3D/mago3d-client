@@ -1,10 +1,8 @@
 import React, { memo, useState, useEffect } from 'react';
 import { dataFormatter } from "@mnd/shared";
 import {
-    AssetForDownloadConvertFileDocument,
-    AssetForDownloadOriginFileDocument,
+    AssetForDownloadOriginFileDocument, AssetForDownloadOriginFileQuery, AssetForDownloadOriginFileQueryVariables,
     AssetType,
-    ConvertedFile,
     DatasetDeleteAssetDocument,
     DatasetProcessLogDocument,
     ProcessTaskStatus
@@ -24,6 +22,9 @@ import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 import {Asset} from "@/types/assets/Data.ts";
 import {useTranslation} from "react-i18next";
 import {terrainState} from "@/recoils/Layer.ts";
+import axios from 'axios';
+import Keycloak from "keycloak-js";
+import keycloak from "@/api/keycloak.js";
 
 type AssetRowProps = {
     item: Asset;
@@ -37,18 +38,39 @@ const formatStatus = (status: ProcessTaskStatus | null | undefined): string => {
     return statusMap[status] || status;
 };
 
-// 백엔드 개발 후 한번에 다운 받을 수 있도록 수정
-const downloadByUrlArr = (urlArr: ConvertedFile[]) => {
-    if (urlArr.length > 0) {
-        urlArr.forEach((fileData) => {
-            if (!fileData.download) return;
-            const link = document.createElement('a');
-            link.href = fileData.download;
-            link.download = fileData.filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+
+const downloadFile = async (url: string, fileName: string, token: string) => {
+    try {
+        const response = await axios.get(url, {
+            responseType: 'blob', // 파일 데이터를 받을 때는 blob 타입으로 설정
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         });
+
+        // Blob 생성 시 MIME 타입을 설정
+        const urlBlob = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));
+        const link = document.createElement('a');
+        link.href = urlBlob;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        console.error('Error downloading file:', error);
+        throw error;
+    }
+};
+
+const readyDownload = async (fileName: string, url: string, keycloak: Keycloak) => {
+    try {
+        const token = keycloak.token;
+        if (!token) {
+            throw new Error('Token is not available');
+        }
+        await downloadFile(url, fileName, token);
+    } catch (error) {
+        console.error('Failed to download file:', error);
     }
 };
 
@@ -60,9 +82,6 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
 
     const [getOriginFileData, { data: originFileData }] = useLazyQuery(AssetForDownloadOriginFileDocument);
     const [downOriginFile, setDownOriginFile] = useState(false);
-
-    const [getConvertFileData, { data: convertFileData }] = useLazyQuery(AssetForDownloadConvertFileDocument);
-    const [downConvertFile, setDownConvertFile] = useState(false);
 
     const [getGroupData, { data: groupData }] = useLazyQuery(GroupByIdDocument);
     const [deleteMutation] = useMutation(DatasetDeleteAssetDocument);
@@ -84,22 +103,19 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     }, [showLog, logData]);
 
     const downAsset = (id: string) => {
-        getConvertFileData({
+        getOriginFileData({
             variables: { id: id }
         });
-        setDownConvertFile(true);
+        setDownOriginFile(true);
     };
 
     useEffect(() => {
-        if (downConvertFile && convertFileData) {
-            const fileUrlArr = convertFileData?.asset?.convertedFiles;
-            if (fileUrlArr) {
-                const validFiles = fileUrlArr.filter((file): file is ConvertedFile => file !== null && file !== undefined);
-                downloadByUrlArr(validFiles);
-            }
-            setDownConvertFile(false);
+        if (downOriginFile && originFileData) {
+            const { asset } = originFileData;
+            setDownOriginFile(false);
+            if (asset?.download) readyDownload(asset.name, asset.download, keycloak);
         }
-    }, [downConvertFile, convertFileData]);
+    }, [downOriginFile, originFileData]);
 
     const deleteAsset = (id: string, type: string, name: string) => {
         if (confirm(t("confirm.asset.delete"))) {

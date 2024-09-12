@@ -356,6 +356,9 @@ importers:
       '@habx/apollo-multi-endpoint-link':
         specifier: ^2.9.0
         version: 2.9.0(@apollo/client@3.9.2(@types/react@18.2.52)(graphql-ws@5.14.3(graphql@16.8.1))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
+      '@keycloak/keycloak-admin-client':
+        specifier: ^21.1.1
+        version: 21.1.2
       '@minoru/react-dnd-treeview':
         specifier: ^3.4.4
         version: 3.4.4(react-dnd@16.0.1(@types/node@20.11.16)(@types/react@18.2.52)(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
