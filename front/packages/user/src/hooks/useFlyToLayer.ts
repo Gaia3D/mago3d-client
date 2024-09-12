@@ -39,6 +39,8 @@ export const useFlyToLayer = () => {
     }, []);
 
     const flyToLayer = useCallback((asset: UserLayerAsset) => {
+
+        console.log(asset)
         const layerType = asset.type;
         const viewer = globeController.viewer;
         if (!viewer || !layerType) return;

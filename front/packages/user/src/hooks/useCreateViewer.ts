@@ -21,24 +21,23 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
 
       let nowMap = currentMap;
 
-      if (localStorage.getItem('BACKGROUND_MAP')) {
-          const bg_map = localStorage.getItem('BACKGROUND_MAP')
-          if (!bg_map) return;
-          nowMap = JSON.parse(bg_map);
+      const localBackgroundMap = localStorage.getItem('BACKGROUND_MAP')
+      if ( localBackgroundMap ) {
+          nowMap = JSON.parse(localBackgroundMap);
           setCurrentMap(nowMap);
       }
       const initializeViewer = async () => {
 
           let terrainProvider;
           if (terrainUrl) {
-              // localhost에 저장된 url이 있다면 해당 terrain 호출
+              // localstorage 저장된 url이 있다면 해당 terrain 호출
               terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_API_URL + terrainUrl);
               setOptions((prevOptions) => ({
                   ...prevOptions,
                   isTerrain: true,
               }));
           } else {
-              // localhost에 저장된 url이 없다면 민둥 terrain 호출
+              // localstorage에 저장된 url이 없다면 민둥 terrain 호출
               terrainProvider = await new Cesium.EllipsoidTerrainProvider();
           }
 
@@ -122,7 +121,7 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
               }
           );
       } else {
-          return getWmsLayer(currentMap.url);
+          return getWmsLayer(url);
       }
     }
 };

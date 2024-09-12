@@ -67,34 +67,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     }, [setUserLayerGroups, userLayerGroups.length]);
 
     useEffect(() => {
-        if (newLayerCount !== 0) {
-            layersetGraphqlFetcher<Mutation>(RESTORE_USERLAYER)
-                .then((result) => {
-                    const { saveUserLayer } = result;
-                    const filteredGroup = saveUserLayer.find(group => group?.groupId === '0');
-                    if (!filteredGroup) return;
-                    const newGroup = userLayerGroups.map((prevGroup) => {
-                        if (prevGroup?.groupId === '0') {
-                            const newAssets = filteredGroup.assets.filter(filteredAsset =>
-                                !prevGroup.assets.some(prevAsset => prevAsset.assetId === filteredAsset.assetId)
-                            );
-                            return {
-                                ...prevGroup,
-                                assets: [...prevGroup.assets, ...newAssets]
-                            };
-                        }
-                        return prevGroup;
-                    });
-                    setUserLayerGroups(newGroup);
-                    const input = nodeModlesToCreateUserGroupInput(layerGroupsToNodemodels(newGroup));
-                    saveUserLayerMutateAsync({ input });
-                    const tempLayers = newGroup.flatMap(group => group?.assets ?? []);
-                    debouncedSetLayers(tempLayers);
-                });
-        }
-    }, [newLayerCount]);
 
-    useEffect(() => {
         if (userLayerGroups.length <= 0) return;
         if (!reRenderLayer) {
             setReRenderLayer(true);

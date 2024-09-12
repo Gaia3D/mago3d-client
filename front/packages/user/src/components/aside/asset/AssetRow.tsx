@@ -10,21 +10,23 @@ import {
 import { statusMap } from "@/components/aside/asset/AsideAssets.tsx";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
+    AppendUserLayerInput,
     CreateAssetInput,
     CreateLayerGroupDocument, GroupByIdDocument,
-    LayerAccess,
-    LayerAssetType,
-    LayersetCreateAssetDocument,
-    PublishContextValue,
+    LayerAccess, LayerAssetLog,
+    LayerAssetType, LayersetAppendUserLayerDocument, LayersetAssetDocument,
+    LayersetCreateAssetDocument, Maybe,
+    PublishContextValue, Scalars, UserLayerAsset, UserLayerGroup,
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 import {Asset} from "@/types/assets/Data.ts";
 import {useTranslation} from "react-i18next";
-import {terrainState} from "@/recoils/Layer.ts";
+import {layersState, terrainState, UserLayerGroupState} from "@/recoils/Layer.ts";
 import axios from 'axios';
 import Keycloak from "keycloak-js";
 import keycloak from "@/api/keycloak.js";
+import {layerGroupsToNodemodels, nodeModlesToCreateUserGroupInput} from "@/components/aside/layer/LayerNodeModel.ts";
 
 type AssetRowProps = {
     item: Asset;
@@ -84,10 +86,14 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     const [downOriginFile, setDownOriginFile] = useState(false);
 
     const [getGroupData, { data: groupData }] = useLazyQuery(GroupByIdDocument);
+    const [getAssetData, { data: assetData }] = useLazyQuery(LayersetAssetDocument);
     const [deleteMutation] = useMutation(DatasetDeleteAssetDocument);
     const [createLayerGroupMutation] = useMutation(CreateLayerGroupDocument);
     const [createLayerMutation] = useMutation(LayersetCreateAssetDocument);
+    const [appendLayerMutation] = useMutation(LayersetAppendUserLayerDocument);
     const setNewLayerCount = useSetRecoilState(newLayerCountState);
+    const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
+    const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
 
     const showAssetLog = (id: string) => {
         getLogData({
@@ -168,7 +174,47 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
         };
 
         try {
-            await createLayerMutation({ variables: { input } });
+            const newLayer =  await createLayerMutation({ variables: { input } });
+            const newAsset = newLayer.data?.createAsset
+            if (!newAsset) return;
+
+            const appendInput: AppendUserLayerInput = {
+                groupId: '0',
+                assetId: newAsset.id
+            }
+            await appendLayerMutation({variables: {input : appendInput}})
+
+            const layerAsset = await getAssetData({ variables: { id: newAsset.id } });
+
+            const updateAsset: UserLayerAsset = {
+                type: selectedType.assetType,
+                access: LayerAccess.Private,
+                assetId: newAsset.id,
+                createdAt: newAsset.createdAt,
+                createdBy: newAsset.createdBy,
+                description: newAsset.description,
+                enabled: newAsset.enabled,
+                id: newAsset.id,
+                properties: layerAsset.data?.asset.properties,
+                name: newAsset.name,
+                visible: true
+            }
+
+            const updatedLayerGroups = userLayerGroups.map(group => {
+                if (group?.groupId === '0') {
+                    return {
+                        ...group, // 객체를 복사하여 수정 가능하게 만듭니다.
+                        assets: [...group.assets, updateAsset] // 배열도 복사 후 새로운 asset을 추가합니다.
+                    };
+                }
+                return group;
+            });
+
+            setUserLayerGroups(updatedLayerGroups);
+
+            const tempLayers = updatedLayerGroups.flatMap(group => group?.assets ?? []);
+            setLayers(tempLayers);
+
             alert(t("success.asset.publish"));
             setNewLayerCount(prev => prev + 1);
         } catch (e) {

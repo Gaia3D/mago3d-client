@@ -17,7 +17,6 @@
     "@emotion/styled": "^11.11.0",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@habx/apollo-multi-endpoint-link": "^2.9.0",
-    "@keycloak/keycloak-admin-client": "^21.1.1",
     "@minoru/react-dnd-treeview": "^3.4.4",
     "@mnd/shared": "workspace:*",
     "@mui/icons-material": "^5.15.14",
