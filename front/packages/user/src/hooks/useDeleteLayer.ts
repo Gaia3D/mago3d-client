@@ -11,7 +11,6 @@ export const useDeleteLayer = () => {
     const {t} = useTranslation();
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const [deleteAssetMutation] = apolloUseMutation(LayersetDeleteAssetDocument);
-    const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
 
     const deleteLayer = async (item: UserLayerAsset) => {
         if (!confirm(t("confirm.layer.delete"))) return;
@@ -28,8 +27,6 @@ export const useDeleteLayer = () => {
                 } as UserLayerGroup
             ));
             setUserLayerGroups(updatedGroups);
-            const tempLayers = updatedGroups.flatMap(group => group?.assets ?? []);
-            setLayers(tempLayers);
             alert(t("success.layer.delete"));
         } catch (error) {
             console.error(error);

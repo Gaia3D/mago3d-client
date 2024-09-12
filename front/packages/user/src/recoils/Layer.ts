@@ -12,6 +12,11 @@ export const layersState = atom<UserLayerAsset[]>({
   default: []
 });
 
+export const reRenderLayerState = atom<boolean>({
+  key: 'reRenderLayerState',
+  default: false
+})
+
 export const terrainState = atom<Maybe<TerrainAsset>[]>({
   key:"terrainState",
   default: []

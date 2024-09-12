@@ -7,8 +7,8 @@ import {
     Query, UserLayerAsset, UserLayerGroup,
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query.ts";
-import {useRecoilState, useRecoilValueLoadable, useSetRecoilState} from "recoil";
-import {layersState, UserLayerGroupState} from "@/recoils/Layer.ts";
+import {useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState} from "recoil";
+import {layersState, reRenderLayerState, UserLayerGroupState} from "@/recoils/Layer.ts";
 import {debounce} from "@mui/material";
 import {useMutation} from "@tanstack/react-query";
 import {RESTORE_USERLAYER, SAVE_USERLAYER} from "@/graphql/layerset/Mutation.ts";
@@ -31,6 +31,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     const prevUserLayerGroupsRef = useRef<Maybe<UserLayerGroup>[]>([]);
     const {contents} = useRecoilValueLoadable(currentUserProfileSelector);
     const userId = contents.id;
+    const [reRenderLayer, setReRenderLayer] = useRecoilState<boolean>(reRenderLayerState);
 
     const { mutateAsync: restoreUserLayerMutateAsync } = useMutation({
         mutationFn: () => layersetGraphqlFetcher<Mutation>(RESTORE_USERLAYER),
@@ -95,13 +96,16 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
 
     useEffect(() => {
         if (userLayerGroups.length <= 0) return;
-
+        if (!reRenderLayer) {
+            setReRenderLayer(true);
+            return
+        }
         if (JSON.stringify(userLayerGroups) !== JSON.stringify(prevUserLayerGroupsRef.current)) {
             const tempLayers = userLayerGroups.flatMap(group => group?.assets ?? []);
             debouncedSetLayers(tempLayers);
             prevUserLayerGroupsRef.current = userLayerGroups;
         }
-    }, [userLayerGroups.length, debouncedSetLayers]);
+    }, [userLayerGroups, debouncedSetLayers, setReRenderLayer]);
 
     useEffect(() => {
         if (userLayerGroups.length === 0) return;
@@ -150,6 +154,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     }, [setUserLayerGroups]);
 
     const toggleGroupCollapsed = (groupId: string) => {
+        setReRenderLayer(false);
         setUserLayerGroups((prevGroups) => {
             return prevGroups.map(group => {
                 if (!group) return group;
@@ -165,8 +170,6 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
         if (!confirm(t("confirm.layer.restore"))) return;
         const {saveUserLayer} = await restoreUserLayerMutateAsync();
         setUserLayerGroups(saveUserLayer);
-        const tempLayers = saveUserLayer.flatMap(group => group?.assets ?? []);
-        setLayers(tempLayers);
     };
 
     const saveState = async () => {
