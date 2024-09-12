@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { dataFormatter } from "@mnd/shared";
 import {
-    AssetForDownloadOriginFileDocument, AssetForDownloadOriginFileQuery, AssetForDownloadOriginFileQueryVariables,
+    AssetForDownloadOriginFileDocument,
     AssetType,
     DatasetDeleteAssetDocument,
     DatasetProcessLogDocument,
@@ -13,7 +13,7 @@ import {
     AppendUserLayerInput,
     CreateAssetInput,
     CreateLayerGroupDocument, GroupByIdDocument,
-    LayerAccess, LayerAssetLog,
+    LayerAccess,
     LayerAssetType, LayersetAppendUserLayerDocument, LayersetAssetDocument,
     LayersetCreateAssetDocument, Maybe,
     PublishContextValue, Scalars, UserLayerAsset, UserLayerGroup,
@@ -26,7 +26,6 @@ import {layersState, terrainState, UserLayerGroupState} from "@/recoils/Layer.ts
 import axios from 'axios';
 import Keycloak from "keycloak-js";
 import keycloak from "@/api/keycloak.js";
-import {layerGroupsToNodemodels, nodeModlesToCreateUserGroupInput} from "@/components/aside/layer/LayerNodeModel.ts";
 
 type AssetRowProps = {
     item: Asset;
