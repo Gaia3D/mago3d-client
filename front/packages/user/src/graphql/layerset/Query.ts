@@ -3,12 +3,6 @@ import gql from "graphql-tag";
 export const GET_USERLAYERGROUPS = gql `
     query GET_USERLAYERGROUPS{
     userGroups
-    (
-    filter: {
-        parentId: {
-            isNull: true
-        }
-    })
     {
         groupId
         name
