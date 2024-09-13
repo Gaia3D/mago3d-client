@@ -2,52 +2,32 @@ import React, { useState, FC, useCallback, useEffect, useRef } from 'react';
 import { TreeGroup } from "./TreeGroup.tsx";
 import { layersetGraphqlFetcher } from "@/api/queryClient.ts";
 import {
-    CreateUserGroupInput,
-    Maybe, Mutation,
+    Maybe,
     Query, UserLayerAsset, UserLayerGroup,
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query.ts";
-import {useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState} from "recoil";
+import {useRecoilState, useRecoilValueLoadable, useSetRecoilState} from "recoil";
 import {layersState, reRenderLayerState, UserLayerGroupState} from "@/recoils/Layer.ts";
 import {debounce} from "@mui/material";
-import {useMutation} from "@tanstack/react-query";
-import {RESTORE_USERLAYER, SAVE_USERLAYER} from "@/graphql/layerset/Mutation.ts";
-import {layerGroupsToNodemodels, nodeModlesToCreateUserGroupInput} from "@/components/aside/layer/LayerNodeModel.ts";
 import {currentUserProfileSelector} from "@/recoils/Auth.ts";
-import {useTranslation} from "react-i18next";
-import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 
 interface TreeContainerProps {
     searchTerm: string;
 }
 
 export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
-    const {t} = useTranslation();
-    const [newLayerCount, setNewLayerCount] = useRecoilState(newLayerCountState);
+
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
     const [filteredGroups, setFilteredGroups] = useState<Maybe<UserLayerGroup>[]>([]);
-    const [visibleAll, setVisibleAll] = useState<boolean>(false);
+
     const prevUserLayerGroupsRef = useRef<Maybe<UserLayerGroup>[]>([]);
     const {contents} = useRecoilValueLoadable(currentUserProfileSelector);
     const userId = contents.id;
     const [reRenderLayer, setReRenderLayer] = useRecoilState<boolean>(reRenderLayerState);
 
-    const { mutateAsync: restoreUserLayerMutateAsync } = useMutation({
-        mutationFn: () => layersetGraphqlFetcher<Mutation>(RESTORE_USERLAYER),
-        onError: (error) => {
-            console.error("Error restoring user layer:", error);
-            alert(t("error.layer.restore"));
-        },
-    });
 
-    const { mutateAsync: saveUserLayerMutateAsync } = useMutation({
-        mutationFn: ({ input }: { input: CreateUserGroupInput[] }) => layersetGraphqlFetcher<Mutation>(SAVE_USERLAYER, { input }),
-        onError: (error) => {
-            console.error("Error saving user layer:", error);
-            alert(t("error.layer.save"));
-        },
-    });
+
 
     const debouncedSetLayers = useCallback(
         debounce((layers: UserLayerAsset[]) => {
@@ -139,42 +119,8 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
         });
     };
 
-    const restoreToDefault = async () => {
-        if (!confirm(t("confirm.layer.restore"))) return;
-        const {saveUserLayer} = await restoreUserLayerMutateAsync();
-        setUserLayerGroups(saveUserLayer);
-    };
-
-    const saveState = async () => {
-        if (!confirm(t("confirm.layer.save"))) return;
-        const input = nodeModlesToCreateUserGroupInput(layerGroupsToNodemodels(userLayerGroups));
-        await saveUserLayerMutateAsync({ input });
-    };
-
-    const toggleAllLayer = () => {
-        const newVisibleState = !visibleAll;
-
-        setUserLayerGroups(prevGroups =>
-            prevGroups.map(group => {
-                if (!group) return group;
-                return {
-                    ...group,
-                    assets: group.assets.map(asset => ({ ...asset, visible: newVisibleState }))
-                };
-            })
-        );
-        setVisibleAll(newVisibleState);
-    };
-
     return (
         <>
-                <div className='tileset-button'>
-                    <button type="button" onClick={toggleAllLayer}
-                    className={`layer-funtion-button ${!visibleAll ? 'visible' : 'not-visible'}`}></button>
-                    <button onClick={restoreToDefault} className='layer-funtion-button reset'></button>
-                    <button onClick={saveState} className='layer-funtion-button save'></button>
-                    
-                </div>
             <ul className="layer-list">                
                     {filteredGroups.map((group, index) => {
                         if (!group) return null;
