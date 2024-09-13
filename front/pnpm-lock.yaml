@@ -356,6 +356,9 @@ importers:
       '@habx/apollo-multi-endpoint-link':
         specifier: ^2.9.0
         version: 2.9.0(@apollo/client@3.9.2(@types/react@18.2.52)(graphql-ws@5.14.3(graphql@16.8.1))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
+      '@hookform/resolvers':
+        specifier: ^3.3.4
+        version: 3.3.4(react-hook-form@7.50.0(react@18.2.0))
       '@minoru/react-dnd-treeview':
         specifier: ^3.4.4
         version: 3.4.4(react-dnd@16.0.1(@types/node@20.11.16)(@types/react@18.2.52)(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -518,6 +521,9 @@ importers:
       xml-js:
         specifier: ^1.6.11
         version: 1.6.11
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     devDependencies:
       '@graphql-codegen/cli':
         specifier: ^5.0.0
