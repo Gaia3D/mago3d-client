@@ -572,6 +572,82 @@
       .layer-scroll {
         &.height-plus-44 {
           height: calc(100% - 136px);
+
+          .entity-row {
+            font-size: 12px;
+            text-align: left;
+            border-radius: 3px;
+            margin-bottom: 2px;
+            margin-right: 6px;
+            display: flex;
+            vertical-align: middle;
+            line-height: 33px;
+            flex-direction: row;
+            background-color: var(--nav-hover-color);
+            padding: 4px;
+            justify-content: space-between;
+
+            &:hover {
+              background: var(--layer-sblist-hover-color);
+            }
+
+            .entity-icon {
+              width: 32px;
+              height: 32px;
+              background-image: var(--icon-current);
+              background-position: -408px -419px;
+              background-size: 777px 1076px;
+              background-repeat: no-repeat;
+              border: none;
+              cursor: pointer;
+            }
+
+            .entity-name {
+              width: calc(100% - 112px);
+            }
+
+            .entity-buttons {
+              width: 76px;
+              margin-left: 0;
+              padding: 0;
+              button {
+                width: 22px;
+                height: 22px;
+                border-radius: 5px;
+                background: var(--circle-button-color);
+                vertical-align: middle;
+                margin-right: 2px;
+                margin-top: -3px;
+                background-size: 777px 1076px;
+                background-repeat: no-repeat;
+                border: none;
+                cursor: pointer;
+
+                &:hover {
+                  background-color: var(--layer-hover-color);
+                }
+              }
+              .visible {
+                background-image: var(--icon-current);
+                background-color: var(--layer-hover-color);
+                background-position: -113px -7px;
+
+              }
+              .not-visible {
+                background-image: var(--icon-current);
+                background-position: -113px -55px;
+              }
+              .map-view {
+                background-image: var(--icon-current);
+                background-position: -114px -181px;
+              }
+              .delete {
+                background-image: var(--icon-current);
+                background-position: -113px -115px;
+              }
+            }
+          }
+
         }
       }
     }
