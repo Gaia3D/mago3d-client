@@ -27,7 +27,6 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                     <SearchInput value={searchTerm} change={setSearchTerm} />
                 </div>
                 <div className="content--wrapper">
-                    <TerrainChanger />
                     <ul className="layer">
                         <li className={`${layerMenu === 'tileset' ? 'selected': ''}`} onClick={() => setLayerMenu('tileset')}><span className="text">Tileset</span></li>
                         <li className={`${layerMenu === 'primitives' ? 'selected': ''}`} onClick={() => setLayerMenu('primitives')}><span className="text">Primitives</span></li>

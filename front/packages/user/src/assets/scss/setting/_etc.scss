@@ -537,6 +537,29 @@
         opacity: 0;
       }
     }
+    .terrain-scroll {
+      overflow-y: scroll;
+      overflow-x: hidden;
+      height: calc(100% - 60px);
+      margin-top: 26px;
+      .terrain-list {
+        li {
+          display: flex;
+          flex-direction: row;
+          background-color: var(--nav-hover-color);
+          padding: 4px 0;
+          &:hover {
+            background: var(--layer-sblist-hover-color);
+          }
+          &.selected {
+            border: 2px solid #5299F8;
+          }
+          .type {
+            margin: 0 8px
+          }
+        }
+      }
+    }
   }
 
   .compass {
