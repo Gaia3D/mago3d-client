@@ -26,6 +26,7 @@ import {layersState, terrainState, UserLayerGroupState} from "@/recoils/Layer.ts
 import axios from 'axios';
 import Keycloak from "keycloak-js";
 import keycloak from "@/api/keycloak.js";
+import {IsLogModalState, LogModalContentState} from "@/recoils/Modal.ts";
 
 type AssetRowProps = {
     item: Asset;
@@ -78,7 +79,6 @@ const readyDownload = async (fileName: string, url: string, keycloak: Keycloak) 
 const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     const {t} = useTranslation();
     const [getLogData, { data: logData }] = useLazyQuery(DatasetProcessLogDocument);
-    const [showLog, setShowLog] = useState(false);
     const [userTerrains, setUserTerrains] = useRecoilState(terrainState);
 
     const [getOriginFileData, { data: originFileData }] = useLazyQuery(AssetForDownloadOriginFileDocument);
@@ -93,19 +93,22 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
     const setNewLayerCount = useSetRecoilState(newLayerCountState);
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
+    const setIsLogModal = useSetRecoilState(IsLogModalState);
+    const setLogContent = useSetRecoilState(LogModalContentState);
 
     const showAssetLog = (id: string) => {
         getLogData({
             variables: { assetId: id }
         });
-        setShowLog(true);
+        setIsLogModal(true);
     };
 
     useEffect(() => {
-        if (showLog && logData) {
-            console.log(logData);
+        if (logData) {
+            if (logData.processes.items[0]?.tasks)
+                setLogContent(logData.processes.items[0]?.tasks[0]?.stacktrace?? 'unknown');
         }
-    }, [showLog, logData]);
+    }, [logData]);
 
     const downAsset = (id: string) => {
         getOriginFileData({

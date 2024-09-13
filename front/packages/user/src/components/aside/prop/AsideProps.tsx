@@ -103,7 +103,7 @@ export const AsideProps: React.FC<AsideDisplayProps> = ({ display }) => {
                                         </li>
                                     ))
                             }
-                            <div ref={loadMoreRef} className="data-end-ref">
+                            <div ref={loadMoreRef} className="data-end-ref f-size-12">
                                 {loading ? (
                                     <span className="spin-loader"></span>
                                 ) : (

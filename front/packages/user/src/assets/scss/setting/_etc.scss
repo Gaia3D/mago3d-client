@@ -64,6 +64,10 @@
 }
 
 #map {
+  .f-size-12 {
+    font-size: 12px;
+  }
+
   .cesium-viewer-bottom {
     left: 8px !important;
     bottom: 8px !important;
@@ -288,6 +292,10 @@
   }
   .modal {
 
+    .modal-popup-body {
+      display: block;
+    }
+
     &.on {
       display: flex;
     }
@@ -334,9 +342,6 @@
       display: flex;
       flex-direction: column;
 
-      .f-size-12 {
-        font-size: 12px;
-      }
       .modal-full-width, .file-upload-wrapper {
         width: calc(720px - 224px);
       }
