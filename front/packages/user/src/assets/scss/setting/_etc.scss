@@ -537,6 +537,27 @@
         opacity: 0;
       }
     }
+
+    .layer-wrapper {
+      margin-top: 26px;
+      display: flex;
+      flex-direction: column;
+      .tileset-button {
+        display: flex;
+        align-items: center;
+        justify-content: right;
+        margin-top: 20px;
+        &.off {
+          display: none;
+        }
+      }
+      .layer-scroll {
+        &.height-plus-44 {
+          height: calc(100% - 136px);
+        }
+      }
+    }
+
     .terrain-scroll {
       overflow-y: scroll;
       overflow-x: hidden;
