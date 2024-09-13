@@ -8,7 +8,7 @@ const link = new MultiAPILink({
     endpoints: {
         dataset: import.meta.env.VITE_GRAPHQL_DATASET_URL,
         layerset: import.meta.env.VITE_GRAPHQL_LAYERSET_URL,
-        // userset: import.meta.env.VITE_GRAPHQL_USERSET_URL
+        userset: import.meta.env.VITE_GRAPHQL_USERSET_URL
     },
     defaultEndpoint: 'dataset',
     createHttpLink: () => createHttpLink()

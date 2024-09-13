@@ -8,7 +8,8 @@ interface GroupProps {
     groupIndex: number;
     moveItem: (dragGroupIndex: number, dragItemIndex: number, hoverGroupIndex: number, hoverItemIndex: number) => void;
     moveGroup: (dragIndex: number, hoverIndex: number) => void;
-    toggleGroup: (groupId: string) => void
+    toggleGroup: (groupId: string) => void;
+    userId: string;
 }
 
 interface DragGroupItem {
@@ -18,7 +19,7 @@ interface DragGroupItem {
     groupIndex: number;
 }
 
-export const TreeGroup: FC<GroupProps> = ({ group, groupIndex, moveItem, moveGroup, toggleGroup }) => {
+export const TreeGroup: FC<GroupProps> = ({ group, groupIndex, moveItem, moveGroup, toggleGroup, userId }) => {
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -57,7 +58,7 @@ export const TreeGroup: FC<GroupProps> = ({ group, groupIndex, moveItem, moveGro
     return (
         <div ref={ref}  className="group-node-container">
             <div className="group-node" onClick={()=>toggleGroup(group.groupId)}>
-                <div className="group-icon">G</div>
+                <div className="group-icon folder-close"></div>
                 <div className="group-name">{group.name}</div>
             </div>
             <ul className="layer-list">
@@ -70,6 +71,7 @@ export const TreeGroup: FC<GroupProps> = ({ group, groupIndex, moveItem, moveGro
                         groupIndex={groupIndex}
                         moveItem={moveItem}
                         item={item}
+                        userId={userId}
                     />
                 </li>
             ))}

@@ -1,37 +1,133 @@
 {
   "assets": "저장소",
   "layers": "레이어",
+  "terrains": "지형",
   "props": "물체",
   "search": "검색",
   "nim": "님",
   "graphic": "그래픽",
   "time": "날짜/시간",
   "logout": "로그아웃",
+  "remove": "삭제",
+  "aside": {
+    "close-sidebar": "창 닫기",
+    "common": {
+      "no-data": "자료 없음",
+      "data-end": "마지막 자료",
+      "wrong-data": "잘못된 자료",
+      "project-name": "자료명",
+      "input-format": "입력 포맷",
+      "output-format": "출력 포맷",
+      "origin-projection": "원본 투영법",
+      "origin-encoding": "원본 인코딩",
+      "converted-projection": "변환 투영법",
+      "converted-encoding": "변환 인코딩",
+      "detail-setting": "상세 설정",
+      "file-upload": "파일 업로드",
+      "drop-file-here": "파일을 놓아 주세요."
+    },
+    "asset": {
+      "new-asset": "자료 생성",
+      "type": "종류",
+      "name-upload-date": "자료명/업로드 날짜",
+      "status": "상태",
+      "function": "기능",
+      "y-up-axis": "Y축을 높이 축으로 설정",
+      "auto-up-axis": "자동 높이 축 할당",
+      "flip-coordinate": "X, Y 좌표 뒤집기",
+      "refine-add": "구체화(Refine) 추가 모드",
+      "png-texture": "PNG 텍스처 모드",
+      "reverse-tex-coord": "텍스처를 반대로",
+      "max-count": "노드 최대값",
+      "max-lod": "최대 LOD",
+      "min-lod": "최소 LOD",
+      "max-points": "포인트 클라우드 데이터 최대 포인트 수",
+      "description": "사용자 추가 데이터입니다.",
+      "crs-epsg": "좌표 기준 체계 (EPSG)",
+      "projection-code": "투영 코드 (proj4)",
+      "min-tile-depth": "타일 최소 깊이",
+      "max-tile-depth": "타일 최대 깊이",
+      "interpolation-type": "보간 유형",
+      "normal-calculation": "법선 계산",
+      "tile-status": "타일 여부",
+      "overview-status": "오버뷰 여부",
+      "file-uploading": "파일 업로드 중",
+      "convert": "변환"
+    }
+  },
+  "msg": {
+    "file-upload": "파일을 업로드 중입니다."
+  },
+  "alert": {
+    "file-upload": "파일을 업로드해 주세요.",
+    "confirm-value": "값을 확인해 주세요."
+  },
+  "confirm": {
+    "register": "등록하시겠습니까?",
+    "delete": "삭제하시겠습니까?",
+    "asset": {
+      "delete": "해당 자료를 삭제하시겠습니까?",
+      "layer": "해당 자료를 레이어로 발행하시겠습니까?"
+    },
+    "layer": {
+      "delete": "해당 레이어를 삭제하시겠습니까?",
+      "restore": "시스템 설정으로 복원하시겠습니까?",
+      "save": "현재 설정을 저장하시겠습니끼?"
+    }
+  },
+  "error": {
+    "admin": "에러가 발생했습니다. 관리자에게 문의 바랍니다.",
+    "data": {
+      "add": "데이터 추가 중 오류가 발생했습니다."
+    },
+    "file": {
+      "convert": "파일 변환 중 오류가 발생했습니다.",
+      "upload": "파일 업로드에 실패했습니다.",
+      "validate": "허용되지 않는 파일 유형입니다. 다시 시도해주세요.\n허용되는 파일 유형: "
+    },
+    "asset": {
+      "file": "발행할 수 없는 자료 종류입니다."
+    },
+    "layer": {
+      "delete": "레이어 삭제 중 오류가 발생했습니다.",
+      "restore": "레이어 복원 중 오류가 발생했습니다.",
+      "save": "레이어 저장 중 오류가 발생했습니다."
+    }
+  },
+  "success": {
+    "asset": {
+      "delete": "자료가 성공적으로 삭제되었습니다.",
+      "publish": "성공적으로 발행되었습니다."
+    },
+    "layer": {
+      "delete": "레이어가 성공적으로 삭제되었습니다."
+    }
+  },
   "tool": {
     "home": "초기화",
-    "save":"저장하기",
-    "reset-direction": "방향초기화",
-    "set-terrain-trans":"지형불투명설정",
-    "open-clock-tool": "시간도구",
-    "open-setting-tool":"설정도구",
-    "visible":"시야도구",
-    "ruler":"측정도구",
-    "first-person-view": "사람시점",
-    "indoor":"실내시점",
-    "go-to-point": "시점이동",
-    "view-axis":"축시점",
-    "camera-info": "카메라정보",
-    "bounding-volume":"경계선표시",
-    "point": "위치측정",
-    "length":"길이측정",
-    "area": "면적측정",
-    "angle":"각도",
-    "composite": "복합거리",
-    "radius":"반지름측정",
-    "object": "객체선택",
-    "full-screen":"전체화면",
-    "terrain": "지형설정",
-    "zoom-in":"확대",
+    "save": "저장하기",
+    "reset-direction": "방향 초기화",
+    "set-terrain-trans": "지형 불투명 설정",
+    "open-clock-tool": "시간 도구",
+    "open-setting-tool": "설정 도구",
+    "visible": "시야 도구",
+    "ruler": "측정 도구",
+    "first-person-view": "사람 시점",
+    "indoor": "실내 시점",
+    "go-to-point": "시점 이동",
+    "view-axis": "축 시점",
+    "camera-info": "카메라 정보",
+    "bounding-volume": "경계선 표시",
+    "point": "위치 측정",
+    "length": "길이 측정",
+    "area": "면적 측정",
+    "angle": "각도",
+    "composite": "복합 거리",
+    "radius": "반지름 측정",
+    "object": "객체 선택",
+    "full-screen": "전체 화면",
+    "terrain": "지형 설정",
+    "zoom-in": "확대",
     "zoom-out": "축소",
     "translation": "이동",
     "rotation": "회전",
@@ -41,6 +137,75 @@
     "add-floor": "층 더하기",
     "remove-floor": "층 빼기",
     "coloring": "색상",
-    "theme": "밝은테마"
-  }
+    "theme": "밝은 테마",
+    "shadow": "시간 도구"
+  },
+  "clock-tool": "시간 도구",
+  "clock": {
+    "multiplier": "배율",
+    "function": "기능"
+  },
+  "graphic-setting": "그래픽 설정",
+  "setting": {
+    "resolution": "렌더링 해상도",
+    "shadow": "그림자",
+    "shadow-quality": "그림자 품질",
+    "global-lighting": "전역 조명",
+    "fxaa": "계단 현상 최소화 (FXAA)",
+    "edge": "경계선",
+    "ambient": "화면 공간 주변 차폐",
+    "description": {
+      "resolution": "렌더링 해상도를 설정합니다. 값이 높을수록 성능에 더 큰 영향을 줍니다.",
+      "shadow": "그림자 활성화 / 비활성화",
+      "shadow-quality": "그림자 품질을 설정합니다.",
+      "global-lighting": "전역 조명을 시각화합니다. 시간에 따라 영향을 받습니다.",
+      "fxaa": "낮은 해상도에서 나타나는 계단 현상 최소화를 적용합니다.",
+      "edge": "객체의 경계선을 시각화합니다.",
+      "ambient": "객체 간의 세부 음영을 시각화합니다."
+    }
+  },
+  "measure": {
+    "area": "면적 측정",
+    "composite": "복합 거리 측정",
+    "distance": "거리 측정",
+    "position": "위치 측정",
+    "area-unit": "면적 단위",
+    "distance-unit": "거리 단위",
+    "measure-area": "측정 면적",
+    "measure-distance": "측정 거리",
+    "radius": "반지름 측정",
+    "lat": "위도",
+    "lon": "경도",
+    "alt": "고도",
+    "zenith": "천정각",
+    "elevation": "고도각",
+    "straight": "직선 거리",
+    "horizon": "수평 거리",
+    "height": "수직 거리",
+    "m": "m (미터)",
+    "km": "km (킬로미터)",
+    "nmi": "nmi (해리)",
+    "in": "in (인치)",
+    "ft": "ft (피트)",
+    "yd": "yd (야드)",
+    "mi": "mi (마일)",
+    "m2": "m² (제곱미터)",
+    "km2": "km² (제곱킬로미터)",
+    "yd2": "yd² (제곱야드)",
+    "mi2": "mi² (제곱마일)",
+    "acre": "acre (에이커)",
+    "ha": "ha (헥타르)"
+  },
+  "on": "켜기",
+  "off": "끄기",
+  "very-high": "매우 높음",
+  "high": "높음",
+  "mid": "중간",
+  "low": "낮음",
+  "very-low": "매우 낮음",
+  "latitude": "위도",
+  "longitude": "경도",
+  "altitude": "고도",
+  "heading": "방위"
+
 }

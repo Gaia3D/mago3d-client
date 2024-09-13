@@ -41,6 +41,25 @@ query LayersetGroupListWithAsset @api(name: layerset) {
     }
 }
 
+query GroupById($id: ID!) @api(name: layerset) {
+    group(
+        id: $id
+    ) {
+        id
+        name
+        description
+        order
+        enabled
+        published
+        collapsed
+        access
+        createdBy
+        createdAt
+        updatedBy
+        updatedAt
+    }
+}
+
 query LayersetAsset($id: ID!) @api(name: layerset) {
     asset(
         id : $id

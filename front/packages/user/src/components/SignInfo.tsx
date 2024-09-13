@@ -9,7 +9,12 @@ const SignInfo = () => {
     const {keycloak} = useKeycloak();
     const popLayer = useRef<HTMLDivElement | null>(null);
 
-    const {onClockTool, onSettingTool} = useMapTool();
+    const {onSettingTool} = useMapTool();
+
+    const handleSettingTool = () => {
+        onSettingTool();
+        togglePopLayer();
+    };
 
     const togglePopLayer = () => {
         if (popLayer.current) {
@@ -25,8 +30,7 @@ const SignInfo = () => {
 
     const settingItems = useMemo(() => {
         return [
-            {className: "graphic", text: "graphic", onClick: onSettingTool},
-            {className: "time", text: "time", onClick: onClockTool},
+            {className: "graphic", text: "graphic", onClick: handleSettingTool},
         ];
     }, []);
 
@@ -38,7 +42,7 @@ const SignInfo = () => {
 
   return (
     <>
-      <button onClick={togglePopLayer} type="button" className="user-icon">{keycloak.profile?.firstName}</button>
+      <button onClick={togglePopLayer} type="button" className="user-icon">{keycloak.profile?.firstName?.charAt(0).toUpperCase()??"N"}</button>
       <div ref={popLayer} className={"pop-layer user"}>
           <ul>
               {settingItems.map((item) => {

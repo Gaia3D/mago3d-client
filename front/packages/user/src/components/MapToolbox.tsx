@@ -5,8 +5,9 @@ import { useViewTool } from "@/hooks/useViewTool.tsx";
 import {useObjectTool} from "@/hooks/useObjectTool.tsx";
 import {useTranslation} from "react-i18next";
 import {Compass} from "@/components/maptool/Compass.tsx";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {CurrentCreatePropIdState} from "@/recoils/Tool.ts";
+import {TerrainUrlState} from "@/recoils/Terrain.ts";
 
 interface ToolButtonProps {
     tool: MapTool;
@@ -70,7 +71,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         onClickHome, onClickExpand, onClickReduce, onClickArea,
         onClickLength, onClickAngle, onClickSave, onClickComplex, toggleCoordinate, toggleMeasureRadius,
         toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent,
-        toggleTheme
+        toggleTheme, onClockTool
     } = useMapTool();
     const {
         toggleFirstPersonView, toggleViewCenter, toggleViewPoint,
@@ -78,7 +79,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
     } = useViewTool();
 
     const { toggleSelector } = useObjectTool();
-
+    const terrainUrl = useRecoilValue<string>(TerrainUrlState);
     const initialTools: MapTool[] = useMemo(() => [
         { toolBoxIndex: 0, className: "global-click-event-control", group: CLICK_EVENT_GROUP, onClick: ()=>{console.log()} },
         { toolBoxIndex: 0, className: "home", group: TOOLBOX_SEP, onClick: onClickHome },
@@ -97,8 +98,9 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         { toolBoxIndex: 2, className: "radius", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleMeasureRadius },
         { toolBoxIndex: 3, className: "object", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleSelector },
         { toolBoxIndex: 4, className: "full-screen", group: TOOLBOX_SEP, toggle: true, onClick: toggleFullscreen },
-        { toolBoxIndex: 4, className: "terrain", group: TOOLBOX_SEP, toggle: true, onClick: toggleDefaultTerrain },
-        { toolBoxIndex: 4, className: "theme", group: TOOLBOX_SEP, toggle: true, onClick: toggleTheme },
+        { toolBoxIndex: 4, className: "terrain", group: TOOLBOX_SEP, active: terrainUrl!=='',  toggle: true, onClick: toggleDefaultTerrain },
+        // { toolBoxIndex: 4, className: "theme", group: TOOLBOX_SEP, toggle: true, onClick: toggleTheme },
+        { toolBoxIndex: 4, className: "shadow", group: TOOLBOX_SEP, toggle: true, onClick: onClockTool },
         { toolBoxIndex: 5, className: "zoom-in", group: TOOLBOX_SEP, onClick: onClickExpand },
         { toolBoxIndex: 5, className: "zoom-out", group: TOOLBOX_SEP, onClick: onClickReduce },
     ], [onClickHome, onClickLength, onClickArea, onClickAngle, onClickComplex, onClickSave, onClickExpand, onClickReduce, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, toggleFirstPersonView, toggleViewCenter, toggleViewPoint, toggleViewAxis, toggleCameraTool, toggleBoundingVolume]);

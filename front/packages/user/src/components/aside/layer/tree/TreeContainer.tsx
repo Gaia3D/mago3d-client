@@ -2,44 +2,32 @@ import React, { useState, FC, useCallback, useEffect, useRef } from 'react';
 import { TreeGroup } from "./TreeGroup.tsx";
 import { layersetGraphqlFetcher } from "@/api/queryClient.ts";
 import {
-    CreateUserGroupInput,
-    Maybe, Mutation,
+    Maybe,
     Query, UserLayerAsset, UserLayerGroup,
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query.ts";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import {layersState, UserLayerGroupState, visibleToggledLayerIdsState} from "@/recoils/Layer.ts";
+import {useRecoilState, useRecoilValueLoadable, useSetRecoilState} from "recoil";
+import {layersState, reRenderLayerState, UserLayerGroupState} from "@/recoils/Layer.ts";
 import {debounce} from "@mui/material";
-import {useMutation} from "@tanstack/react-query";
-import {RESTORE_USERLAYER, SAVE_USERLAYER} from "@/graphql/layerset/Mutation.ts";
-import {layerGroupsToNodemodels, nodeModlesToCreateUserGroupInput} from "@/components/aside/layer/LayerNodeModel.ts";
+import {currentUserProfileSelector} from "@/recoils/Auth.ts";
 
 interface TreeContainerProps {
     searchTerm: string;
 }
 
 export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
+
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
     const [filteredGroups, setFilteredGroups] = useState<Maybe<UserLayerGroup>[]>([]);
-    const [visibleAll, setVisibleAll] = useState<boolean>(false);
+
     const prevUserLayerGroupsRef = useRef<Maybe<UserLayerGroup>[]>([]);
+    const {contents} = useRecoilValueLoadable(currentUserProfileSelector);
+    const userId = contents.id;
+    const [reRenderLayer, setReRenderLayer] = useRecoilState<boolean>(reRenderLayerState);
 
-    const { mutateAsync: restoreUserLayerMutateAsync } = useMutation({
-        mutationFn: () => layersetGraphqlFetcher<Mutation>(RESTORE_USERLAYER),
-        onError: (error) => {
-            console.error("Error restoring user layer:", error);
-            alert("복원 중 오류가 발생했습니다. 관리자에게 문의해주세요.");
-        },
-    });
 
-    const { mutateAsync: saveUserLayerMutateAsync } = useMutation({
-        mutationFn: ({ input }: { input: CreateUserGroupInput[] }) => layersetGraphqlFetcher<Mutation>(SAVE_USERLAYER, { input }),
-        onError: (error) => {
-            console.error("Error saving user layer:", error);
-            alert("저장 중 오류가 발생했습니다. 관리자에게 문의해주세요.");
-        },
-    });
+
 
     const debouncedSetLayers = useCallback(
         debounce((layers: UserLayerAsset[]) => {
@@ -59,14 +47,18 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     }, [setUserLayerGroups, userLayerGroups.length]);
 
     useEffect(() => {
-        if (userLayerGroups.length <= 0) return;
 
+        if (userLayerGroups.length <= 0) return;
+        if (!reRenderLayer) {
+            setReRenderLayer(true);
+            return
+        }
         if (JSON.stringify(userLayerGroups) !== JSON.stringify(prevUserLayerGroupsRef.current)) {
             const tempLayers = userLayerGroups.flatMap(group => group?.assets ?? []);
             debouncedSetLayers(tempLayers);
             prevUserLayerGroupsRef.current = userLayerGroups;
         }
-    }, [userLayerGroups.length, debouncedSetLayers]);
+    }, [userLayerGroups, debouncedSetLayers, setReRenderLayer]);
 
     useEffect(() => {
         if (userLayerGroups.length === 0) return;
@@ -115,6 +107,7 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     }, [setUserLayerGroups]);
 
     const toggleGroupCollapsed = (groupId: string) => {
+        setReRenderLayer(false);
         setUserLayerGroups((prevGroups) => {
             return prevGroups.map(group => {
                 if (!group) return group;
@@ -126,57 +119,27 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
         });
     };
 
-    const restoreToDefault = async () => {
-        if (!confirm('시스템 설정으로 복원하시겠습니까?')) return;
-        const result = await restoreUserLayerMutateAsync();
-        setUserLayerGroups(result.saveUserLayer);
-    };
-
-    const saveState = async () => {
-        if (!confirm('현 설정을 저장하시겠습니까?')) return;
-        const input = nodeModlesToCreateUserGroupInput(layerGroupsToNodemodels(userLayerGroups));
-        await saveUserLayerMutateAsync({ input });
-    };
-
-    const toggleAllLayer = () => {
-        const newVisibleState = !visibleAll;
-
-        setUserLayerGroups(prevGroups =>
-            prevGroups.map(group => {
-                if (!group) return group;
-                return {
-                    ...group,
-                    assets: group.assets.map(asset => ({ ...asset, visible: newVisibleState }))
-                };
-            })
-        );
-        setVisibleAll(newVisibleState);
-    };
-
     return (
         <>
-            <ul className="layer-list">
-                <button type="button" onClick={toggleAllLayer}
-                className={`layer-funtion-button ${!visibleAll ? 'visible' : 'not-visible'}`}></button>
-                <button onClick={restoreToDefault} >R</button>
-                <button onClick={saveState} >S</button>
-                {filteredGroups.map((group, index) => {
-                    if (!group) return null;
-                    return (
-                        <li
-                            key={group.groupId}
-                            className={`${group.collapsed? 'open-group' : 'close-group'}`}
-                        >
-                            <TreeGroup
-                                group={group}
-                                groupIndex={index}
-                                moveItem={moveLayer}
-                                moveGroup={moveLayerGroup}
-                                toggleGroup={toggleGroupCollapsed}
-                            />
-                        </li>
-                    );
-                })}
+            <ul className="layer-list">                
+                    {filteredGroups.map((group, index) => {
+                        if (!group) return null;
+                        return (
+                            <li
+                                key={group.groupId}
+                                className={`${group.collapsed? 'close-group' : 'open-group'}`}
+                            >
+                                <TreeGroup
+                                    group={group}
+                                    groupIndex={index}
+                                    moveItem={moveLayer}
+                                    moveGroup={moveLayerGroup}
+                                    toggleGroup={toggleGroupCollapsed}
+                                    userId={userId}
+                                />
+                            </li>
+                        );
+                    })}
             </ul>
         </>
     );

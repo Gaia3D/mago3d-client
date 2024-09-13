@@ -1,12 +1,13 @@
 import React from 'react';
 
 interface WeatherContentProps {
-    display: boolean;
+    assetType: string;
+    contentType: string;
 }
 
-const WeatherContent:React.FC<WeatherContentProps> = ({display}) => {
+const WeatherContent:React.FC<WeatherContentProps> = ({assetType, contentType}) => {
     return (
-        <div className={`modal-popup-body ${display ? "on" : "off"}`}>
+        <div className={`modal-popup-body ${assetType === contentType ? "on" : "off"}`}>
             WeatherContent
         </div>
     );

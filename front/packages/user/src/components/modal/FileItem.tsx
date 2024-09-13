@@ -1,4 +1,5 @@
 import React, {MouseEvent} from 'react';
+import {useTranslation} from "react-i18next";
 
 interface FileItemProps {
     uuid: string,
@@ -8,6 +9,7 @@ interface FileItemProps {
 }
 
 const FileItem: React.FC<FileItemProps> = ({name, progress = 0, deleteFunc, uuid}) => {
+    const {t} = useTranslation();
     return (
         <div className="file" onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
             <div className="img"></div>
@@ -21,7 +23,7 @@ const FileItem: React.FC<FileItemProps> = ({name, progress = 0, deleteFunc, uuid
             </div>
             <button type="button" className="file-delete" onClick={() => {
                 deleteFunc(uuid)
-            }}>삭제
+            }}>{t("remove")}
             </button>
         </div>
     );

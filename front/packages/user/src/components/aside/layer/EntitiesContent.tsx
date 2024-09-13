@@ -78,12 +78,16 @@ const EntitiesContent = () => {
     return (
         <div>
             {dsCol.map((ds, index) => (
-                <div key={`${ds.name}-${index}`}>
-                    <span>{ds.name}</span>
-                    <button onClick={() => toggleVisibility(ds)}>view {`${ds.show? 'on' : 'off'}`}</button>
-                    <button onClick={() => flyTo(ds)}>fly</button>
-                    <button onClick={() => removePrimitive(ds)}>del</button>
+                <div className="entity-row" key={`${ds.name}-${index}`}>
+                    <span className="entity-icon"></span>
+                    <span className="entity-name">{ds.name}</span>
+                    <div className="entity-buttons">
+                        <button className={`${ds.show? 'visible' : 'not-visible'}`} onClick={() => toggleVisibility(ds)}></button>
+                        <button className="map-view" onClick={() => flyTo(ds)}></button>
+                        <button className="delete" onClick={() => removePrimitive(ds)}></button>
+                    </div>
                 </div>
+
             ))}
         </div>
     );

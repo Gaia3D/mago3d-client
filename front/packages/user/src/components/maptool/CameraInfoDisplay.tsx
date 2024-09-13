@@ -3,8 +3,10 @@ import { OptionsState } from "@/recoils/Tool.ts";
 import { useEffect } from "react";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 import { offCameraInformation, onCameraInformation } from "@/api/camera/magoCameraInformation.ts";
+import {useTranslation} from "react-i18next";
 
 export const CameraInfoDisplay = () => {
+    const {t} = useTranslation();
     const { globeController, initialized } = useGlobeController();
     const [options, setOptions] = useRecoilState(OptionsState);
 
@@ -60,13 +62,27 @@ export const CameraInfoDisplay = () => {
         };
     }, [options.viewOptions.isOpenCameraInfo]);
 
-    return options.viewOptions.isOpenCameraInfo ? (
-        <div className="default-layer camera-tool">
-            <h3>Camera Information</h3>
-            <label>Longitude: {options.viewOptions.longitude}m</label>
-            <label>Latitude: {options.viewOptions.latitude}m</label>
-            <label>Altitude: {options.viewOptions.height}m</label>
-            <label>Heading: <span>{options.viewOptions.compass}</span> ({options.viewOptions.heading}°)</label>
+    return options.viewOptions.isOpenCameraInfo && (
+        <div className="pop-layer-pointer-location">
+            <div className="pop-layer-content">
+                <div className="value-container">
+                    <span className="title">{t("latitude")}</span>
+                    <span className="value">{options.viewOptions.latitude}m</span>
+                </div>
+                <div className="value-container">
+                    <span className="title">{t("longitude")}</span>
+                    <span className="value">{options.viewOptions.longitude}m</span>
+                </div>
+                <div className="value-container">
+                    <span className="title">{t("altitude")}</span>
+                    <span className="value"> {options.viewOptions.height}m</span>
+                </div>
+                <div className="value-container">
+                    <span className="title">{t("heading")}</span>
+                    <span className="value">{options.viewOptions.compass} ({options.viewOptions.heading}°)</span>
+                </div>
+            </div>
         </div>
-    ) : null;
+)
+    ;
 };

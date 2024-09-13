@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useReducer, useState } from "react";
 import { useQuery } from '@tanstack/react-query'
 import request, {gql} from "graphql-request";
-import {GroupsDocument} from "@/types/layerset/gql/graphql.ts";
 import {Group} from "ol/layer";
 
 export interface BaseLayer {

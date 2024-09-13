@@ -25,3 +25,13 @@ export const assetLoadingState = atom<AssetLoadingStateType>({
         msg: 'asset loading...'
     }
 })
+
+type StackAlertType = {
+    id: string,
+    msg: string
+}
+
+export const stackAlertArrState = atom<StackAlertType[]>({
+    key: 'stackAlertArrState',
+    default: []
+})

@@ -1,26 +1,32 @@
 import React, { memo, useState, useEffect } from 'react';
 import { dataFormatter } from "@mnd/shared";
-import { Asset } from "@/types/assets/Data.ts";
 import {
-    AssetForDownloadConvertFileDocument,
     AssetForDownloadOriginFileDocument,
     AssetType,
-    ConvertedFile,
     DatasetDeleteAssetDocument,
     DatasetProcessLogDocument,
     ProcessTaskStatus
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
 import { statusMap } from "@/components/aside/asset/AsideAssets.tsx";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import {CreateAssetInput, LayerAccess, LayerAssetType, PublishContextValue} from "@/types/layerset/gql/graphql.ts";
 import {
-    CogInput,
-    CoverageInput, F4DInput, FeatureInput,
-    InputMaybe,
-    LayersetCreateAssetDocument, RemoteInput, RemoteT3DInput, Scalars, SmartTileInput, T3DInput
+    AppendUserLayerInput,
+    CreateAssetInput,
+    CreateLayerGroupDocument, GroupByIdDocument,
+    LayerAccess,
+    LayerAssetType, LayersetAppendUserLayerDocument, LayersetAssetDocument,
+    LayersetCreateAssetDocument, Maybe,
+    PublishContextValue, Scalars, UserLayerAsset, UserLayerGroup,
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
+import {Asset} from "@/types/assets/Data.ts";
+import {useTranslation} from "react-i18next";
+import {layersState, terrainState, UserLayerGroupState} from "@/recoils/Layer.ts";
+import axios from 'axios';
+import Keycloak from "keycloak-js";
+import keycloak from "@/api/keycloak.js";
+import {IsLogModalState, LogModalContentState} from "@/recoils/Modal.ts";
 
 type AssetRowProps = {
     item: Asset;
@@ -34,121 +40,195 @@ const formatStatus = (status: ProcessTaskStatus | null | undefined): string => {
     return statusMap[status] || status;
 };
 
-// 백엔드 개발 후 한번에 다운 받을 수 있도록 수정
-const downloadByUrlArr = (urlArr: ConvertedFile[]) => {
-    if (urlArr.length > 0) {
-        urlArr.forEach((fileData) => {
-            if (!fileData.download) return;
-            const link = document.createElement('a');
-            link.href = fileData.download;
-            link.download = fileData.filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+
+const downloadFile = async (url: string, fileName: string, token: string) => {
+    try {
+        const response = await axios.get(url, {
+            responseType: 'blob', // 파일 데이터를 받을 때는 blob 타입으로 설정
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         });
+
+        // Blob 생성 시 MIME 타입을 설정
+        const urlBlob = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));
+        const link = document.createElement('a');
+        link.href = urlBlob;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        console.error('Error downloading file:', error);
+        throw error;
+    }
+};
+
+const readyDownload = async (fileName: string, url: string, keycloak: Keycloak) => {
+    try {
+        const token = keycloak.token;
+        if (!token) {
+            throw new Error('Token is not available');
+        }
+        await downloadFile(url, fileName, token);
+    } catch (error) {
+        console.error('Failed to download file:', error);
     }
 };
 
 const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
+    const {t} = useTranslation();
     const [getLogData, { data: logData }] = useLazyQuery(DatasetProcessLogDocument);
-    const [showLog, setShowLog] = useState(false);
+    const [userTerrains, setUserTerrains] = useRecoilState(terrainState);
 
     const [getOriginFileData, { data: originFileData }] = useLazyQuery(AssetForDownloadOriginFileDocument);
     const [downOriginFile, setDownOriginFile] = useState(false);
 
-    const [getConvertFileData, { data: convertFileData }] = useLazyQuery(AssetForDownloadConvertFileDocument);
-    const [downConvertFile, setDownConvertFile] = useState(false);
-
+    const [getGroupData, { data: groupData }] = useLazyQuery(GroupByIdDocument);
+    const [getAssetData, { data: assetData }] = useLazyQuery(LayersetAssetDocument);
     const [deleteMutation] = useMutation(DatasetDeleteAssetDocument);
+    const [createLayerGroupMutation] = useMutation(CreateLayerGroupDocument);
     const [createLayerMutation] = useMutation(LayersetCreateAssetDocument);
+    const [appendLayerMutation] = useMutation(LayersetAppendUserLayerDocument);
     const setNewLayerCount = useSetRecoilState(newLayerCountState);
+    const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
+    const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
+    const setIsLogModal = useSetRecoilState(IsLogModalState);
+    const setLogContent = useSetRecoilState(LogModalContentState);
 
     const showAssetLog = (id: string) => {
         getLogData({
             variables: { assetId: id }
         });
-        setShowLog(true);
+        setIsLogModal(true);
     };
 
     useEffect(() => {
-        if (showLog && logData) {
-            console.log(logData);
+        if (logData) {
+            if (logData.processes.items[0]?.tasks)
+                setLogContent(logData.processes.items[0]?.tasks[0]?.stacktrace?? 'unknown');
         }
-    }, [showLog, logData]);
+    }, [logData]);
 
     const downAsset = (id: string) => {
-        getConvertFileData({
+        getOriginFileData({
             variables: { id: id }
         });
-        setDownConvertFile(true);
+        setDownOriginFile(true);
     };
 
     useEffect(() => {
-        if (downConvertFile && convertFileData) {
-            const fileUrlArr = convertFileData?.asset?.convertedFiles;
-            if (fileUrlArr) {
-                const validFiles = fileUrlArr.filter((file): file is ConvertedFile => file !== null && file !== undefined);
-                downloadByUrlArr(validFiles);
-            }
-            setDownConvertFile(false);
+        if (downOriginFile && originFileData) {
+            const { asset } = originFileData;
+            setDownOriginFile(false);
+            if (asset?.download) readyDownload(asset.name, asset.download, keycloak);
         }
-    }, [downConvertFile, convertFileData]);
+    }, [downOriginFile, originFileData]);
 
-    const deleteAsset = (id: string, name: string) => {
-        console.log("delete ", id);
-        if (window.confirm(`데이터 ${name}을 삭제하시겠습니까?`)) {
+    const deleteAsset = (id: string, type: string, name: string) => {
+        if (confirm(t("confirm.asset.delete"))) {
             deleteMutation({ variables: { id } })
                 .then(() => {
-                    alert('삭제되었습니다.');
+                    if ( type === AssetType.Terrain) {
+                        const currentTerrain = userTerrains.filter(terrain => terrain?.id !== id );
+                        setUserTerrains(currentTerrain);
+                    }
+                    alert(t("success.asset.delete"));
                     onDelete(id);
                 });
         }
     };
 
-    const publishAsset = (id: string, type: string, name: string) => {
-        confirm(`${name} 데이터를 레이어로 발행하시겠습니까?`);
+    const publishAsset = async (id: string, type: string, name: string) => {
+        if (!confirm(t("confirm.asset.layer"))) return;
 
         const typeMapping: Record<string, { assetType: LayerAssetType; contextKey: keyof PublishContextValue }> = {
-            [AssetType.Shp]: { assetType: LayerAssetType.Vector, contextKey: "feature" },
             [AssetType.Tiles3D]: { assetType: LayerAssetType.Tiles3D, contextKey: "t3d" },
-            [AssetType.Cog]: { assetType: LayerAssetType.Cog, contextKey: "cog" },
+            [AssetType.Shp]: { assetType: LayerAssetType.Vector, contextKey: "feature" },
+            [AssetType.GeoJson]: { assetType: LayerAssetType.Vector, contextKey: "feature" },
             [AssetType.Imagery]: { assetType: LayerAssetType.Raster, contextKey: "coverage" },
+            [AssetType.Cog]: { assetType: LayerAssetType.Cog, contextKey: "cog" },
         };
 
         const selectedType = typeMapping[type];
 
         if (!selectedType) {
-            alert("파일 형식을 변경해주세요.");
+            alert(t("error.asset.file"));
             return;
         }
 
-        const data: CreateAssetInput = {
+        const { data: existingGroupData } = await getGroupData({ variables: { id: '0' } });
+
+        if (!existingGroupData?.group) {
+            await createLayerGroupMutation({
+                variables: { input: { access: LayerAccess.Public, name: 'User Layer', order: 0, published: true } }
+            });
+        }
+
+        const input: CreateAssetInput = {
             name,
-            groupIds: ['76'],
+            groupIds: ['0'],
             access: LayerAccess.Private,
             enabled: true,
             visible: true,
             type: selectedType.assetType,
-            context: {
-                [selectedType.contextKey]: { dataAssetId: id }
-            },
+            context: { [selectedType.contextKey]: { dataAssetId: id } },
         };
 
-        createLayerMutation({ variables: { input: data } })
-            .then(() => {
-                alert('성공적으로 발행되었습니다.');
-                setNewLayerCount((prev) => prev + 1);
-            })
-            .catch(e => {
-                console.error(e);
-                alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
+        try {
+            const newLayer =  await createLayerMutation({ variables: { input } });
+            const newAsset = newLayer.data?.createAsset
+            if (!newAsset) return;
+
+            const appendInput: AppendUserLayerInput = {
+                groupId: '0',
+                assetId: newAsset.id
+            }
+            await appendLayerMutation({variables: {input : appendInput}})
+
+            const layerAsset = await getAssetData({ variables: { id: newAsset.id } });
+
+            const updateAsset: UserLayerAsset = {
+                type: selectedType.assetType,
+                access: LayerAccess.Private,
+                assetId: newAsset.id,
+                createdAt: newAsset.createdAt,
+                createdBy: newAsset.createdBy,
+                description: newAsset.description,
+                enabled: newAsset.enabled,
+                id: newAsset.id,
+                properties: layerAsset.data?.asset.properties,
+                name: newAsset.name,
+                visible: true
+            }
+
+            const updatedLayerGroups = userLayerGroups.map(group => {
+                if (group?.groupId === '0') {
+                    return {
+                        ...group, // 객체를 복사하여 수정 가능하게 만듭니다.
+                        assets: [...group.assets, updateAsset] // 배열도 복사 후 새로운 asset을 추가합니다.
+                    };
+                }
+                return group;
             });
+
+            setUserLayerGroups(updatedLayerGroups);
+
+            const tempLayers = updatedLayerGroups.flatMap(group => group?.assets ?? []);
+            setLayers(tempLayers);
+
+            alert(t("success.asset.publish"));
+            setNewLayerCount(prev => prev + 1);
+        } catch (e) {
+            console.error(e);
+            alert(t("error.admin"));
+        }
     };
     if (! item || !item.id || !item.name) {
         console.error("Error. Check Asset ID");
         return (
             <tr>
-                <td colSpan={4}>잘못된 데이터</td>
+                <td colSpan={4}>{t("aside.common.wrong-data")}</td>
             </tr>
         );
     }
@@ -177,12 +257,15 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
             </td>
             <td>
                 {status === "success" || status === "none" ? (
-                    <button type="button" onClick={() => publishAsset(item.id, item.assetType, item.name)} className="function-button publish"></button>
+                    item.assetType !== AssetType.Terrain &&
+                    <button type="button" onClick={() => publishAsset(item.id, item.assetType, item.name)}
+                            className="function-button publish"></button>
                 ) : (
-                    <button type="button" onClick={() => showAssetLog(item.id)} className="function-button log"></button>
+                    <button type="button" onClick={() => showAssetLog(item.id)}
+                            className="function-button log"></button>
                 )}
                 <button type="button" onClick={() => downAsset(item.id)} className="function-button down"></button>
-                <button type="button" onClick={() => deleteAsset(item.id, item.name)} className="function-button delete"></button>
+                <button type="button" onClick={() => deleteAsset(item.id, item.assetType, item.name)} className="function-button delete"></button>
             </td>
         </tr>
     );

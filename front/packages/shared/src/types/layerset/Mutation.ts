@@ -55,7 +55,14 @@ gql`
             createdBy
             updatedAt
             updatedBy
+            properties
         }
+    }
+    
+    mutation LayersetAppendUserLayer ($input :AppendUserLayerInput!) @api(name: layerset) {
+        appendUserLayer (
+            input: $input
+        )
     }
 
     mutation LayersetUpdateAsset($id:ID!, $input: UpdateAssetInput!) @api(name: layerset) {
