@@ -12,6 +12,7 @@ import {useSetRecoilState} from "recoil";
 import Footer from "@/components/Footer";
 import NewAssetModal from "@/components/modal/NewAssetModal.tsx";
 import MapSelector from "@/components/aside/MapSelector.tsx";
+import LogModal from "@/components/modal/common/LogModal.tsx";
 
 const globeController = getInstance();
 
@@ -35,6 +36,7 @@ const MainPage = () => {
               <BoundarySearchWrapper/>
               <MapToolbox onToolClick={handleToolClick}/>
               <NewAssetModal />
+              <LogModal />
               <Footer/>
             </div>
           </TimeSeriesProvider>

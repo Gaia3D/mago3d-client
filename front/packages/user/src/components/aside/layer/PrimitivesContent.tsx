@@ -51,11 +51,14 @@ const PrimitivesContent = () => {
     return (
         <div>
             {priArr.map((prop: Model, index: number) => (
-                <div key={`${prop.id}-${index}`}>
-                    <span>{prop.id}</span>
-                    <button onClick={() => toggleVisibility(prop)}>view {`${prop.show? 'on' : 'off'}`}</button>
-                    <button onClick={() => flyTo(prop)}>fly</button>
-                    <button onClick={() => removePrimitive(prop)}>del</button>
+                <div className="entity-row" key={`${prop.id}-${index}`}>
+                    <span className="entity-icon"></span>
+                    <span className="entity-name">{prop.id}</span>
+                    <div className="entity-buttons">
+                        <button className={`${prop.show? 'visible' : 'not-visible'}`} onClick={() => toggleVisibility(prop)}></button>
+                        <button className="map-view" onClick={() => flyTo(prop)}></button>
+                        <button className="delete" onClick={() => removePrimitive(prop)}></button>
+                    </div>
                 </div>
             ))}
         </div>
