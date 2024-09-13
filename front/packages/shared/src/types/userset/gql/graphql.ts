@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -159,7 +160,7 @@ export type JoinUserInput = {
   cellphones?: InputMaybe<Array<Scalars['String']['input']>>;
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
-  groups: Array<Scalars['ID']['input']>;
+  groups?: InputMaybe<Array<Scalars['ID']['input']>>;
   lastName?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   properties?: InputMaybe<Scalars['JSON']['input']>;
@@ -220,9 +221,11 @@ export enum JsonPropertyPatchOperation {
 export type Mutation = {
   __typename?: 'Mutation';
   associateUserRole: Scalars['Boolean']['output'];
+  /**  사용자 */
   createUser: CreateUserResponse;
   /**  그룹 */
   createUserGroup: CreateUserGroupResponse;
+  /**  권한 */
   createUserRole: CreateUserRoleResponse;
   deleteUser: Scalars['Boolean']['output'];
   deleteUserGroup: Scalars['Boolean']['output'];
@@ -342,10 +345,12 @@ export type Query = {
   __typename?: 'Query';
   existsUser: ExistsUserResponse;
   profile: User;
+  /**  사용자 조회 */
   user?: Maybe<User>;
   /**  그룹 조회 */
   userGroup: UserGroup;
   userGroups: UserGroupPaged;
+  /**  권한 */
   userRole: UserRole;
   userRoles: UserRolePaged;
   users: UserPaged;
@@ -689,3 +694,54 @@ export type WithJsonProperty = {
 export type WithSimpleTags = {
   tags: Array<Maybe<SimpleTagValue>>;
 };
+
+export type UsersetJoinUserMutationVariables = Exact<{
+  input: JoinUserInput;
+}>;
+
+
+export type UsersetJoinUserMutation = { __typename?: 'Mutation', joinUser: { __typename: 'DefaultError', message: string } | { __typename: 'User', username: string } };
+
+export type UsersetUpdateUserMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: UpdateUserInput;
+}>;
+
+
+export type UsersetUpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserResponse', id: string } };
+
+export type UsersetUpdatePasswordMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  oldPassword: Scalars['String']['input'];
+  newPassword: Scalars['String']['input'];
+}>;
+
+
+export type UsersetUpdatePasswordMutation = { __typename?: 'Mutation', updateUserPassword: boolean };
+
+export type UsersetResetUserPasswordMutationVariables = Exact<{
+  input: ResetUserPasswordInput;
+}>;
+
+
+export type UsersetResetUserPasswordMutation = { __typename?: 'Mutation', resetUserPassword: { __typename?: 'DefaultError', message: string } | { __typename?: 'User', username: string } };
+
+export type UsersetUserGroupsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UsersetUserGroupsQuery = { __typename?: 'Query', userGroups: { __typename?: 'UserGroupPaged', items: Array<{ __typename?: 'UserGroup', id: string, name: string }> } };
+
+export type UsersetProfileQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type UsersetProfileQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, username: string, firstName?: string | null, cellphones?: Array<string> | null, telephones?: Array<string> | null, email?: string | null, enabled: boolean, properties?: any | null } | null };
+
+
+export const UsersetJoinUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UsersetJoinUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JoinUserInput"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"userset","block":false}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"joinUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Error"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<UsersetJoinUserMutation, UsersetJoinUserMutationVariables>;
+export const UsersetUpdateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UsersetUpdateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUserInput"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"userset","block":false}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UsersetUpdateUserMutation, UsersetUpdateUserMutationVariables>;
+export const UsersetUpdatePasswordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UsersetUpdatePassword"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"oldPassword"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newPassword"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"userset","block":false}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUserPassword"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"oldPassword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"oldPassword"}}},{"kind":"Argument","name":{"kind":"Name","value":"newPassword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newPassword"}}}]}]}}]} as unknown as DocumentNode<UsersetUpdatePasswordMutation, UsersetUpdatePasswordMutationVariables>;
+export const UsersetResetUserPasswordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UsersetResetUserPassword"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ResetUserPasswordInput"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"userset","block":false}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resetUserPassword"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Error"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<UsersetResetUserPasswordMutation, UsersetResetUserPasswordMutationVariables>;
+export const UsersetUserGroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsersetUserGroups"},"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"userset","block":false}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<UsersetUserGroupsQuery, UsersetUserGroupsQueryVariables>;
+export const UsersetProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsersetProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"StringValue","value":"userset","block":false}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"cellphones"}},{"kind":"Field","name":{"kind":"Name","value":"telephones"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"properties"}}]}}]}}]} as unknown as DocumentNode<UsersetProfileQuery, UsersetProfileQueryVariables>;

@@ -26,7 +26,7 @@ const config: CodegenConfig = {
     },
     "src/types/userset/gql/": {
       schema: "https://mdtp.gaia3d.com/app/api/userset/graphql",
-      documents: "src/types/userset/doc/*.graphql",
+      documents: "src/types/userset/doc/*.{ts,tsx,graphql}",
       plugins: [],
       preset: "client",
     },

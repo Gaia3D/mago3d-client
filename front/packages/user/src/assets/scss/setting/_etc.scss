@@ -18,6 +18,27 @@
   }
 }
 
+// Register Page
+.register-wrapper {
+  height: 90vh;
+  max-height: 740px;
+
+  form {
+    height: 100%;
+  }
+
+  .register-button {
+    margin-top: 12px;
+    margin-bottom: 40px;
+  }
+
+  .input-error {
+    color: red;
+    font-size: 14px;
+  }
+}
+
+// User Page
 #container {
   nav{
     z-index: 3;
