@@ -140,16 +140,9 @@ query DatasetAssetForDetail($id:ID!) @api(name: dataset) {
 
 query AssetForDownloadOriginFile($id:ID!) @api(name: dataset) {
     asset(id: $id){
-        id
+       id
         name
-        files {
-             id
-            filename
-            contentType
-            contentSize
-            download
-            filepath
-        }
+        download
     }
 }
 

@@ -19,16 +19,17 @@ import {
     DatasetCreateProcessDocument,
     InputMaybe,
     InterpolationType,
-    ProcessContextInput,
+    ProcessContextInput, ProcessTaskStatus,
     Scalars,
     T3DConvertInput,
     T3DFormatType,
     TerrainConvertInput
 } from "@mnd/shared/src/types/dataset/gql/graphql.ts";
-import {useSetRecoilState} from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
 import FileUpload from "@/components/modal/FileUpload.tsx";
 import {useTranslation} from "react-i18next";
+import {newTerrainCountState} from "@/recoils/MainMenuState.tsx";
 
 interface TerrainContentProps {
     assetType: string;
@@ -53,6 +54,7 @@ const initialOptions = {
 const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) => {
     const {t} = useTranslation();
     const [componentKey, setComponentKey] = useState(0);
+    const [newTerrainCount, setNewTerrainCount] = useRecoilState(newTerrainCountState);
     const setAssetsRefetchTrigger = useSetRecoilState(assetsRefetchTriggerState);
     const setAssetsConvertingListState = useSetRecoilState(assetsConvertingListState);
     const [options, setOptions] = useState(initialOptions);
@@ -76,6 +78,9 @@ const TerrainContent:React.FC<TerrainContentProps> = ({assetType, contentType}) 
     useEffect(() => {
         if (!statusQuerySkip) {
             setAssetsRefetchTrigger(prev => prev + 1);
+            if (statusData?.asset?.status === ProcessTaskStatus.Done) {
+                setNewTerrainCount((prev) => prev + 1);
+            }
         }
     }, [statusData, statusQuerySkip, setAssetsRefetchTrigger]);
 
