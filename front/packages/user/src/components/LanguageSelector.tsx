@@ -19,8 +19,8 @@ const LanguageSelector = () => {
 	}, [i18n]);
 
 	const languageItems = [
-		{ lang: "en", text: "English" },
-		{ lang: "ko", text: "한국어" },
+		{ lang: "en-US", text: "English" },
+		{ lang: "ko-KR", text: "한국어" },
 	];
 
 	useEffect(() => {

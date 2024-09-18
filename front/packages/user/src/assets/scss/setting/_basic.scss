@@ -236,11 +236,11 @@ header {
         border-radius:30px;
         background:white;
         box-shadow: var(--small-box-shadow);
-        &.en {
+        &.en, &.en-US {
             //border:1px solid var(--border-light-color) !important;
             @include icon-button(-745px, -80px);
         }
-        &.ko {
+        &.ko, &.ko-KR {
             //border:1px solid var(--border-light-color) !important;
             @include icon-button(-745px, -1px);
         }
