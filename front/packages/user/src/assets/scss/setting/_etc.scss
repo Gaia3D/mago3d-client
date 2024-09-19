@@ -95,10 +95,32 @@
   }
 
     .background-map {
+
+      .span-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50px;
+        border:1px solid rgb(250, 250, 250);
+
+        &.osm_white {
+          background-image: url("../images/osm_white.png");
+        }
+        &.osm_basic {
+          background-image: url("../images/osm_basic.png");
+        }
+        &.osm_dark {
+          background-image: url("../images/osm_dark.png");
+        }
+      }
+
       .map-wrapper {
-        margin: 12px 0 20px;
+        //margin: 12px 0 20px;
         height: unset;
+
         .map-type {
+          height: 72px;
           border: unset;
           display: flex;
           flex-direction: column;
@@ -110,8 +132,9 @@
             outline: unset;
           }
           img {
-            width: 100%;
-            height: 100%;
+
+            width: 34px;
+            height: 34px;
             object-fit: cover;
             border-radius: 8px;
             border:1px solid rgb(250, 250, 250);
