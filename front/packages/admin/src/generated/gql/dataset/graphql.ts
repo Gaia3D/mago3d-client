@@ -66,6 +66,7 @@ export type Asset = {
   createdBy: Scalars['ID']['output'];
   createdByUser: User;
   description?: Maybe<Scalars['String']['output']>;
+  download?: Maybe<Scalars['String']['output']>;
   enabled: Scalars['Boolean']['output'];
   files: Array<Maybe<AssetFile>>;
   flags?: Maybe<Array<Maybe<DataAssetFlag>>>;
@@ -688,6 +689,7 @@ export type Mutation = {
   appendAssetFile: Scalars['Boolean']['output'];
   /**  Asset */
   createAsset: CreateAssetResponse;
+  /**  Group */
   createGroup: CreateGroupResponse;
   /**  Label */
   createLabel: CreateLabelResponse;
@@ -712,7 +714,6 @@ export type Mutation = {
   updateGroup: UpdateGroupResponse;
   updateLabel: UpdateLabelResponse;
   updateProcess: UpdateProcessResponse;
-  updateProp: UpdatePropResponse;
 };
 
 
@@ -1042,6 +1043,7 @@ export type Query = {
   /**  Asset */
   asset?: Maybe<Asset>;
   assets: AssetPaged;
+  /**  Group */
   group?: Maybe<Group>;
   groups: GroupPaged;
   /**  Label */
