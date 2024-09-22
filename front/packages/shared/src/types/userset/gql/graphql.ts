@@ -159,6 +159,7 @@ export type IntFilter = {
 export type JoinUserInput = {
   cellphones?: InputMaybe<Array<Scalars['String']['input']>>;
   email: Scalars['String']['input'];
+  enabled?: Scalars['Boolean']['input'];
   firstName: Scalars['String']['input'];
   groups?: InputMaybe<Array<Scalars['ID']['input']>>;
   lastName?: InputMaybe<Scalars['String']['input']>;
