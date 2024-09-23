@@ -22,11 +22,7 @@ const useLayerVisibilityToggle = () => {
         setVisibleToggledLayerId(item.assetId.toString());
     };
 
-    const layerVisibilityAllTF = (status: boolean) => {
-
-    }
-
-    return { layerVisibilityToggle, layerVisibilityAllTF };
+    return { layerVisibilityToggle };
 };
 
 export default useLayerVisibilityToggle;
