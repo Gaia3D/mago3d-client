@@ -5,7 +5,7 @@ const SignInfo = () => {
   const { t } = useTranslation();
   const {keycloak} = useKeycloak();
   const logout = () => keycloak.logout({
-    redirectUri: import.meta.env.VITE_BASE_URL
+    redirectUri: `${window.location.origin}` + import.meta.env.VITE_BASE_URL
   });
 
   return (
