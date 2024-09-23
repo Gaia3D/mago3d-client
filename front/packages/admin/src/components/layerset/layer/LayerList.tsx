@@ -137,7 +137,36 @@ const LayerList = () => {
           }
         });
       } else {
-        //다른 그룹으로 이동
+        const siblings = newTree.filter((node: NodeModel) => node.parent === dropTarget.id);
+        const idx = siblings.findIndex((node: NodeModel) => node.id === dragSource.id);
+        //const offsetAsset = siblings[idx === 0 ? idx + 1 : idx - 1];
+        let a = idx === 0 ? idx + 1 : idx - 1;
+        if (a < 0) a = 0;
+        if (a >= siblings.length) a = siblings.length - 1;
+        const offsetAsset = siblings[a];
+        const offsetAssetId = offsetAsset.data.id;
+        const locateOption = idx === 0 ? LocateOption.Before : LocateOption.After;
+
+        const offsetAssetGroup = newTree.find((node: NodeModel) => node.id === offsetAsset.parent);
+        const dragSourceGroup = newTree.find((node: NodeModel) => node.id === dragSource.parent);
+
+        locateAssetMutation({
+          variables: {
+            input:
+              {
+                target: {
+                  //groupId: nodeModelIdToString(offsetAssetGroup.data.id),
+                  id: nodeModelIdToString(offsetAssetGroup.data.id),
+                },
+                source: {
+                  groupId: nodeModelIdToString(dragSourceGroup.data.id),
+                  id: nodeModelIdToString(dragSource.data.id)
+                },
+                option: locateOption
+              }
+          }
+        });
+
         /*
         const originalGroup = newTree.find((node: NodeModel) => node.id === dragSource.parent);
         const locateOption = LocateOption.LastChild;
