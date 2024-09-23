@@ -1,4 +1,4 @@
-import React, { useState, FC, useCallback, useEffect, useRef } from 'react';
+import React, { useState, FC, useCallback, useEffect } from 'react';
 import { TreeGroup } from "./TreeGroup.tsx";
 import { layersetGraphqlFetcher } from "@/api/queryClient.ts";
 import {
@@ -7,7 +7,7 @@ import {
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { GET_USERLAYERGROUPS } from "@/graphql/layerset/Query.ts";
 import {useRecoilState, useRecoilValueLoadable, useSetRecoilState} from "recoil";
-import {layersState, reRenderLayerState, UserLayerGroupState} from "@/recoils/Layer.ts";
+import {layersState, UserLayerGroupState} from "@/recoils/Layer.ts";
 import {debounce} from "@mui/material";
 import {currentUserProfileSelector} from "@/recoils/Auth.ts";
 
@@ -20,13 +20,8 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
     const [filteredGroups, setFilteredGroups] = useState<Maybe<UserLayerGroup>[]>([]);
-
-    const prevUserLayerGroupsRef = useRef<Maybe<UserLayerGroup>[]>([]);
     const {contents} = useRecoilValueLoadable(currentUserProfileSelector);
     const userId = contents.id;
-    const [reRenderLayer, setReRenderLayer] = useRecoilState<boolean>(reRenderLayerState);
-
-
 
 
     const debouncedSetLayers = useCallback(
@@ -42,23 +37,11 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
                 .then((result) => {
                     const { userGroups } = result;
                     setUserLayerGroups(userGroups);
+                    const flatLayerGroup = userGroups.flatMap(group => group?.assets ?? []);
+                    setLayers(flatLayerGroup);
                 });
         }
-    }, [setUserLayerGroups, userLayerGroups.length]);
-
-    useEffect(() => {
-
-        if (userLayerGroups.length <= 0) return;
-        if (!reRenderLayer) {
-            setReRenderLayer(true);
-            return
-        }
-        if (JSON.stringify(userLayerGroups) !== JSON.stringify(prevUserLayerGroupsRef.current)) {
-            const tempLayers = userLayerGroups.flatMap(group => group?.assets ?? []);
-            debouncedSetLayers(tempLayers);
-            prevUserLayerGroupsRef.current = userLayerGroups;
-        }
-    }, [userLayerGroups, debouncedSetLayers, setReRenderLayer]);
+    }, [setUserLayerGroups, userLayerGroups.length, ]);
 
     useEffect(() => {
         if (userLayerGroups.length === 0) return;
@@ -92,7 +75,8 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
 
             updatedGroups[dragGroupIndex]?.assets.splice(dragItemIndex, 1);
             updatedGroups[hoverGroupIndex]?.assets.splice(hoverItemIndex, 0, dragItem);
-
+            const flatLayerGroup = updatedGroups.flatMap((group: Maybe<UserLayerGroup>) => group?.assets ?? []);
+            debouncedSetLayers(flatLayerGroup);
             return updatedGroups;
         });
     }, [setUserLayerGroups]);
@@ -102,12 +86,13 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
             const updatedGroups = [...prevGroups];
             const [removed] = updatedGroups.splice(dragIndex, 1);
             updatedGroups.splice(hoverIndex, 0, removed);
+            const flatLayerGroup = updatedGroups.flatMap(group => group?.assets ?? []);
+            debouncedSetLayers(flatLayerGroup);
             return updatedGroups;
         });
     }, [setUserLayerGroups]);
 
     const toggleGroupCollapsed = (groupId: string) => {
-        setReRenderLayer(false);
         setUserLayerGroups((prevGroups) => {
             return prevGroups.map(group => {
                 if (!group) return group;

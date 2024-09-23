@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {
-    layerMenuState, UserLayerGroupState
+    layerMenuState, UserLayerGroupState, visibleToggledLayerIdsState
 } from "@/recoils/Layer";
-import { useRecoilState } from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
 import SearchInput from "@/components/SearchInput.tsx";
 import {useDebounce} from "@/hooks/useDebounce.ts";
-import TerrainChanger from "@/components/aside/layer/TerrainChanger.tsx";
 import PrimitivesContent from "@/components/aside/layer/PrimitivesContent.tsx";
 import EntitiesContent from "@/components/aside/layer/EntitiesContent.tsx";
 import TilesetContent from "@/components/aside/layer/TilesetContent.tsx";
@@ -17,15 +16,14 @@ import {useMutation} from "@tanstack/react-query";
 import {layersetGraphqlFetcher} from "@/api/queryClient.ts";
 import {CreateUserGroupInput, Maybe, Mutation, UserLayerGroup} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {RESTORE_USERLAYER, SAVE_USERLAYER} from "@/graphql/layerset/Mutation.ts";
-import {newLayerCountState} from "@/recoils/MainMenuState.tsx";
 
 export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const {t} = useTranslation();
     const [layerMenu, setLayerMenu] = useRecoilState(layerMenuState);
     const [searchTerm, setSearchTerm] = useState('');
-    const [newLayerCount, setNewLayerCount] = useRecoilState(newLayerCountState);
     const [visibleAll, setVisibleAll] = useState<boolean>(false);
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
+    const setVisibleToggledLayerIds = useSetRecoilState<{ids:string[], visible:boolean} | null>(visibleToggledLayerIdsState);
 
     const debouncedSearch = useDebounce(searchTerm, 300);
 
@@ -59,17 +57,27 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
 
     const toggleAllLayer = () => {
         const newVisibleState = !visibleAll;
+        setVisibleAll(newVisibleState);
+        const toggleIds: string[] = [];
 
         setUserLayerGroups(prevGroups =>
             prevGroups.map(group => {
                 if (!group) return group;
                 return {
                     ...group,
-                    assets: group.assets.map(asset => ({ ...asset, visible: newVisibleState }))
+                    assets: group.assets.map(asset => {
+                        toggleIds.push(asset.assetId);
+                        return { ...asset, visible: newVisibleState }
+                    })
                 };
             })
         );
-        setVisibleAll(newVisibleState);
+
+        setVisibleToggledLayerIds({
+            ids: toggleIds,
+            visible: newVisibleState
+        });
+
     };
 
 

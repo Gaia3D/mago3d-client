@@ -46,6 +46,7 @@ const Register = () => {
             email: data.email,
             password: data.password,
             groups: [],
+            enabled: true
         } as JoinUserInput;
 
         console.log("payload", payload);

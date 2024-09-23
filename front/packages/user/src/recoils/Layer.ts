@@ -63,21 +63,21 @@ export const LayerMapArrState = atom<LayerMapType[]>({
       url : "https://a.basemaps.cartocdn.com/light_all/",
       background : "#d2d8dd",
       name : "OSM White",
-      image : "osm_white.png",
+      image : "osm_white",
     },
     {
       type: 'osm',
       url : "https://a.basemaps.cartocdn.com/dark_all/",
       background : "#090909",
       name : "OSM Dark",
-      image : "osm_dark.png",
+      image : "osm_dark",
     },
     {
       type: 'osm',
       url : "https://tile.openstreetmap.org/",
       background : "#edebe5",
       name : "OSM Basic",
-      image : "osm_basic.png",
+      image : "osm_basic",
     },
     // {
     //   type: 'vworld',
@@ -103,6 +103,6 @@ export const CurrentLayerMapState = atom<LayerMapType>({
     url: "https://a.tile.openstreetmap.org/",
     background : "#edebe5",
     name: "default",
-    image : "osm_basic.png",
+    image : "osm_basic",
   }
 });

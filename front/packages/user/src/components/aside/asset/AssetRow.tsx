@@ -157,13 +157,14 @@ const AssetRow: React.FC<AssetRowProps> = memo(({ item, onDelete }) => {
             return;
         }
 
-        const { data: existingGroupData } = await getGroupData({ variables: { id: '0' } });
-
-        if (!existingGroupData?.group) {
-            await createLayerGroupMutation({
-                variables: { input: { access: LayerAccess.Public, name: 'User Layer', order: 0, published: true } }
-            });
-        }
+        // DB에 id 0번 그룹을 추가하고 시작한다면 주석처리
+        // const { data: existingGroupData } = await getGroupData({ variables: { id: '0' } });
+        //
+        // if (!existingGroupData?.group) {
+        //     await createLayerGroupMutation({
+        //         variables: { input: { access: LayerAccess.Public, name: 'User Layer', order: 0, published: true } }
+        //     });
+        // }
 
         const input: CreateAssetInput = {
             name,

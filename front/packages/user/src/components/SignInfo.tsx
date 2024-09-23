@@ -24,7 +24,7 @@ const SignInfo = () => {
 
     const logout = useCallback(() => {
         keycloak.logout({
-            redirectUri: import.meta.env.VITE_BASE_URL
+            redirectUri: `${window.location.origin}` + import.meta.env.VITE_BASE_URL
         });
     }, [keycloak]);
 

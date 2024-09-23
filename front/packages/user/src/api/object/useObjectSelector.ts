@@ -100,9 +100,7 @@ export const useObjectSelector = () => {
 
         leftClickHandler = async function (movement: any) {
             silhouetteGreen.selected = [];
-            // if (currentFeature?.id instanceof Cesium.Entity) {
-            //     currentFeature = currentFeature.id;
-            // }
+
             if (!Cesium.defined(currentFeature)) {
                 if (clickHandler) {
                     clickHandler(movement);
@@ -117,18 +115,30 @@ export const useObjectSelector = () => {
                 const terrainProvider = viewer.terrainProvider;
                 const cartographic = Cesium.Cartographic.fromCartesian(pickedPosition);
                 const positions = [cartographic];
-                const updatedPositions = await Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
-                const clampedPosition = Cesium.Cartesian3.fromRadians(
-                    cartographic.longitude,
-                    cartographic.latitude,
-                    updatedPositions[0].height
-                );
-                // Cesium 객체를 직접 상태에 저장하지 않고, 필요한 최소한의 정보만 저장
-                setOptions((prevOptions) => ({
-                    ...prevOptions,
-                    pickedObject: { id: currentFeature._id, name: currentFeature._name, position: clampedPosition },
-                }));
-                addDivElement();
+                let clampedPosition: Cesium.Cartesian3 | undefined;
+                try {
+                    const updatedPositions = await Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+                    clampedPosition = Cesium.Cartesian3.fromRadians(
+                        cartographic.longitude,
+                        cartographic.latitude,
+                        updatedPositions[0].height
+                    );
+                } catch (error) {
+                    clampedPosition = Cesium.Cartesian3.fromRadians(
+                        cartographic.longitude,
+                        cartographic.latitude,
+                        0 // 기본 고도 값으로 0을 사용
+                    );
+                }
+
+                if (clampedPosition) {
+                    // Cesium 객체를 직접 상태에 저장하지 않고, 필요한 최소한의 정보만 저장
+                    setOptions((prevOptions) => ({
+                        ...prevOptions,
+                        pickedObject: { id: currentFeature._id, name: currentFeature._name, position: clampedPosition },
+                    }));
+                    addDivElement();
+                }
             }
             silhouetteBlue.selected = [];
             silhouetteGreen.selected = [currentFeature];
