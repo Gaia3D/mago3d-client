@@ -46,7 +46,8 @@ export const useFlyToLayer = () => {
 
         switch (layerType) {
             case LayerAssetType.Tiles3D: {
-                const model = Cesium.Cesium3DTileset.fromUrl(asset?.properties.resource);
+                const resourceUrl = import.meta.env.VITE_API_URL + asset?.properties.resource;
+                const model = Cesium.Cesium3DTileset.fromUrl(resourceUrl);
                 viewer.flyTo(model, { duration: 2 });
                 return;
             }
