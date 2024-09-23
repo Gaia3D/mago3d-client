@@ -23,7 +23,7 @@ const FileItem: React.FC<FileItemProps> = ({name, progress = 0, deleteFunc, uuid
             </div>
             <button type="button" className="file-delete" onClick={() => {
                 deleteFunc(uuid)
-            }}>{t("remove")}
+            }}>
             </button>
         </div>
     );

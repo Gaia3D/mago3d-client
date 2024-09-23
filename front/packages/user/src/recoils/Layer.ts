@@ -103,6 +103,6 @@ export const CurrentLayerMapState = atom<LayerMapType>({
     url: "https://a.tile.openstreetmap.org/",
     background : "#edebe5",
     name: "default",
-    image : "osm_basic.png",
+    image : "osm_basic",
   }
 });
