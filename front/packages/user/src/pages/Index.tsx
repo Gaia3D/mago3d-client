@@ -56,6 +56,7 @@ const MainPage = () => {
           <GlobeControllerProvider globeController={globeController}>
             <TimeSeriesProvider>
               <div id="map" className={"map"}>
+                <div className="mago3d-logo" />
                 <MapPopup/>
                 <Globe/>
                 <AsidePanel/>
