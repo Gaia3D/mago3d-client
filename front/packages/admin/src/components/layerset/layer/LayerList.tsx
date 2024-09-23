@@ -2,7 +2,7 @@ import {DndProvider} from "react-dnd";
 import {getBackendOptions, MultiBackend, NodeModel, Tree} from "@minoru/react-dnd-treeview";
 import {Suspense, useCallback, useEffect, useRef, useState} from "react";
 import {produce} from "immer";
-import {classifyAssetTypeClassNameByLayerAssetType, getPublishStatusName} from "../../../api/Data";
+import {classifyAssetTypeClassNameByLayerAssetType, getPublishStatusName} from "@src/api/Data";
 import {useNavigate} from "react-router-dom";
 import {
   LayerAccess,
@@ -54,12 +54,15 @@ const LayerList = () => {
   const prevCollapsedRef = useRef(collapsed);
 
   useEffect(() => {
-    const initOpen = data.groups
-      .map((group) => useFragment(LayersetGroupBasicFragmentDoc, group))
-      .filter((group) => !group.collapsed)
+    const nodeModels = layerGroupsToNodeModels(data);
+
+    const initOpen = nodeModels
+      .filter((node: NodeModel) => !node.parent)
+      //.map((group) => useFragment(LayersetGroupBasicFragmentDoc, group))
+      .filter((group) => !group.data.collapsed)
       .map((group) => group.id);
     setInitialOpen(initOpen);
-    setTreeData(layerGroupsToNodeModels(data));
+    setTreeData(nodeModels);
 
     if (prevCollapsedRef.current !== collapsed) {
       const tree = treeRef.current;
@@ -69,10 +72,10 @@ const LayerList = () => {
         tree.openAll();
       }
       treeData
-          .filter((node: NodeModel) => !node.parent)
-          .forEach((node: NodeModel) => {
-            updateGroup(node.id, {collapsed});
-          });
+        .filter((node: NodeModel) => !node.parent)
+        .forEach((node: NodeModel) => {
+          updateGroup(node.data.id, {collapsed});
+        });
       prevCollapsedRef.current = collapsed;
     }
 
@@ -80,44 +83,83 @@ const LayerList = () => {
 
   const handleDrop = (newTree: NodeModel[], options) => {
     const {dragSource, dropTarget} = options;
+    console.info('dragSource', dragSource);
+    console.info('dropTarget', dropTarget);
+
+    if (!dragSource) return;
 
     //LOCATE_GROUP
     if (dropTarget === undefined && dragSource.parent === 0) {
       const groups = newTree.filter((node: NodeModel) => !node.parent);
       const idx = groups.findIndex((group: NodeModel) => group.id === dragSource.id);
       const offsetGroup = groups[idx === 0 ? idx + 1 : idx - 1];
-      const offsetGroupId = offsetGroup.id;
+      const offsetGroupId = offsetGroup.data.id;
       const locateOption = idx === 0 ? LocateOption.Before : LocateOption.After;
 
       locateGroupMutation({
         variables: {
-          id: dragSource.id,
+          id: dragSource.data.id,
           input: {target: nodeModelIdToString(offsetGroupId), option: locateOption}
         }
       });
+
     } else if (dropTarget) {
-      //같은 그룹 내에서 위치 변경
-      const siblings = newTree.filter((node: NodeModel) => node.parent === dropTarget.id);
-      const idx = siblings.findIndex((node: NodeModel) => node.id === dragSource.id);
-      const offsetAsset = siblings[idx === 0 ? idx + 1 : idx - 1];
-      const offsetAssetId = offsetAsset.id;
-      const locateOption = idx === 0 ? LocateOption.Before : LocateOption.After;
-      locateAssetMutation({
-        variables: {
-          input:
-            {
-              target: {
-                groupId: nodeModelIdToString(offsetAsset.parent),
-                id: nodeModelIdToString(offsetAssetId)
-              },
-              source: {
-                groupId: nodeModelIdToString(dragSource.parent),
-                id: nodeModelIdToString(dragSource.id)
-              },
-              option: locateOption
-            }
-        }
-      });
+      if (dropTarget.id === dragSource.parent) {
+        //같은 그룹 내에서 위치 변경
+        const group = newTree.find((node: NodeModel) => node.id === dragSource.parent && !node.parent);
+        const siblings = newTree.filter((node: NodeModel) => node.parent === dropTarget.id);
+        //console.info(siblings);
+        const idx = siblings.findIndex((node: NodeModel) => node.id === dragSource.id);
+        //console.info(idx);
+        let a = idx === 0 ? idx + 1 : idx - 1;
+        if (a < 0) a = 0;
+        if (a >= siblings.length) a = siblings.length - 1;
+        const offsetAsset = siblings[a];
+        //console.info(offsetAsset);
+        const offsetAssetId = offsetAsset.data.id;
+        //console.info(offsetAssetId);
+        const locateOption = idx === 0 ? LocateOption.Before : LocateOption.After;
+        //console.info(locateOption);
+        locateAssetMutation({
+          variables: {
+            input:
+              {
+                target: {
+                  groupId: nodeModelIdToString(group.data.id),
+                  id: nodeModelIdToString(offsetAssetId)
+                },
+                source: {
+                  groupId: nodeModelIdToString(group.data.id),
+                  id: nodeModelIdToString(dragSource.data.id)
+                },
+                option: locateOption
+              }
+          }
+        });
+      } else {
+        //다른 그룹으로 이동
+        /*
+        const originalGroup = newTree.find((node: NodeModel) => node.id === dragSource.parent);
+        const locateOption = LocateOption.LastChild;
+
+        locateGroupMutation({
+          variables: {
+            input:
+              {
+                target: {
+                  groupId: 0,
+                  id: nodeModelIdToString(dropTarget.data.id)
+                },
+                source: {
+                  groupId: nodeModelIdToString(originalGroup.data.id),
+                  id: nodeModelIdToString(dragSource.data.id)
+                },
+                option: locateOption
+              }
+          }
+        });
+         */
+      }
     }
 
     setTreeData(newTree);
@@ -181,18 +223,23 @@ const LayerList = () => {
               initialOpen={initialOpen}
               sort={false}
               canDrop={(tree, {dragSource, dropTargetId, dropTarget}) => {
+                if (!dragSource) return;
+
                 if (
                   (dragSource.parent === 0 && dropTarget === undefined)
                   || (dragSource?.parent === dropTargetId)
+                  || (dragSource.parent && !dropTarget?.parent)
                 ) {
                   return true;
                 } else if (
-                  (dragSource.parent === 0 && dropTarget.parent === 0)
+                  (dragSource.parent === 0 && dropTarget?.parent === 0)
                 ) {
                   return false;
                 }
               }}
-              render={(node, params) => <TreeNode node={node} params={params}/>}
+              render={(node, params) => {
+                return <TreeNode node={node} params={params}/>
+              }}
               onDrop={handleDrop}
               /* onDragEnd={handleDragEnd} */
             />
@@ -272,7 +319,7 @@ const LayerNode = ({node, params }: TreeNodeProps) => {
   const deleteLayer = () => {
     if (!confirm(t("question.layer-delete"))) return;
     return deleteAssetMutation({
-      variables: {ids: nodeModelIdToString(node.id)}
+      variables: {ids: nodeModelIdToString(asset.id)}
     });
   }
 
@@ -322,7 +369,7 @@ const GroupNode = ({node, params}: TreeNodeProps) => {
     });
   }, [deleteMutation, group]);
 
-  const toggleCollapse = () => {
+  const toggleCollapse = useCallback(() => {
     return updateMutation({
       variables: {
         id: group.id,
@@ -331,7 +378,7 @@ const GroupNode = ({node, params}: TreeNodeProps) => {
         }
       }
     });
-  }
+  }, [updateMutation, group]);
 
   const toggleAccess = useCallback(() => {
     const access = group.access === LayerAccess.Public ? LayerAccess.Private : LayerAccess.Public;
@@ -380,9 +427,9 @@ const GroupNode = ({node, params}: TreeNodeProps) => {
 }
 
 
-const layerGroupToNodeModel = (group: LayersetGroupBasicFragment): NodeModel => {
+const layerGroupToNodeModel = (groupId:number, group: LayersetGroupBasicFragment): NodeModel => {
   return {
-    id: group.id,
+    id: groupId,
     text: group.name,
     droppable: true,
     parent: 0,
@@ -390,9 +437,9 @@ const layerGroupToNodeModel = (group: LayersetGroupBasicFragment): NodeModel => 
   };
 }
 
-const layerAssetToNodeModel = (parentId: string, asset: LayersetAssetBasicFragment): NodeModel => {
+const layerAssetToNodeModel = (parentId: number, assetId:number, asset: LayersetAssetBasicFragment): NodeModel => {
   return {
-    id: asset.id,
+    id: assetId,
     text: asset.name,
     droppable: false,
     parent: parentId,
@@ -412,18 +459,25 @@ const groupSortByOrder = (left: FragmentType<typeof LayersetGroupBasicFragmentDo
 }
 
 const layerGroupsToNodeModels = (data: LayersetGroupListWithAssetQuery): NodeModel[] => {
+
+  let index = 0;
   //그룹 정렬
   const groups = Array.from(data.groups)
     .sort(groupSortByOrder);
 
   // Tree 노드로 변환
   return groups.reduce((result, current) => {
+    index = index + 1;
+    const groupId = index;
     const group = useFragment(LayersetGroupBasicFragmentDoc, current);
-    result.push(layerGroupToNodeModel(group));
+    result.push(layerGroupToNodeModel(groupId, group));
 
     const children = current.assets
       .map((asset) => useFragment(LayersetAssetBasicFragmentDoc, asset))
-      .map((asset) => layerAssetToNodeModel(group.id, asset));
+      .map((asset) => {
+        index = index + 1;
+        return layerAssetToNodeModel(groupId, index, asset);
+      });
     result.push(...children);
     return result;
   }, [] as NodeModel[]);
