@@ -284,7 +284,7 @@ export const PrintPortal = () => {
   }
 
   const loadCapabilities = () => {
-    console.info('loadCapabilities');
+    // console.info('loadCapabilities');
     setloading({loading: true, msg: ''});
     axios.get(`${import.meta.env.VITE_MAP_FISH_URL}/print/${pagingType}/capabilities.json`)
     .then((response) => {

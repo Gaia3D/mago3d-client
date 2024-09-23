@@ -17,6 +17,16 @@
     transform: rotate(360deg);
   }
 }
+.mago3d-logo {
+  position: fixed;
+  top: 22px;
+  right: 176px;
+  width: 80px;
+  height: 24px;
+  background-size: 80px;
+  background-image: url("../images/mago3d-logo.png");
+  z-index: 9999;
+}
 
 // Register Page
 .register-wrapper {
