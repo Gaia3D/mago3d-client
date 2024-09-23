@@ -54,7 +54,7 @@ export default function AnalysisFilter () {
       setSelField(null);
     }
   }, [filterLayer]);
-  console.info('filterLayer', filterLayer)
+  // console.info('filterLayer', filterLayer)
   const { data:fields } = useQuery({
     queryKey: ['layerFields', filterLayer?.layerName],
     queryFn: () => axios.get(`https://mdtp.gaia3d.com/geoserver/ows?service=WFS&VERSION=1.1.0&request=DescribeFeatureType&TYPENAME=mdtp:${filterLayer?.layerName}&outputFormat=application/json`),

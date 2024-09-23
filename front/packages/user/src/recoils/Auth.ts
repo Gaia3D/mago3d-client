@@ -23,7 +23,7 @@ export const currentUserProfileSelector = selector<IUserInfo | null>({
             hasDownloadRole: keycloak.hasRealmRole('download'),
             hasAnalyzeRole: keycloak.hasRealmRole('analyze'),
         } as IUserInfo;
-        console.log('currentUserProfileSelector', userInfo);
+        // console.log('currentUserProfileSelector', userInfo);
         const keycloakProfile = await keycloak.loadUserProfile();
         
         return Object.assign(userInfo, keycloakProfile);
