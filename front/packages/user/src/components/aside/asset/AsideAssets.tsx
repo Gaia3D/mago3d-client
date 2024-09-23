@@ -46,7 +46,6 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
     const setSearch = useSetRecoilState(dataSearchTextState);
     const setStatus = useSetRecoilState(dataProcessStatusState);
     const statusTh = useRef<HTMLTableCellElement>(null);
-    const assetsRefetchTrigger = useRecoilValue(assetsRefetchTriggerState);
     const setIsNewAssetModal = useSetRecoilState(IsNewAssetModalState);
 
     const [dataArr, setDataArr] = useState<Asset[]>([]);
@@ -67,10 +66,6 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
         setDataArr([]);
         setPage(0);
     }, [setPage]);
-
-    useEffect(() => {
-        dataReset();
-    }, [assetsRefetchTrigger, dataReset]);
 
     const getMore = useCallback(() => {
         if (loading || !data) return;
@@ -117,7 +112,7 @@ const AsideAssets: React.FC<AsideDisplayProps> = ({ display }) => {
                         {t("aside.asset.new-asset")}
                     </button>
                     <table className="assets-list">
-                        <caption>assets 목록</caption>
+                        <caption>assets list</caption>
                         <thead>
                         <tr>
                             <th>{t("aside.asset.type")}</th>
