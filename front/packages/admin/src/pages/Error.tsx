@@ -16,7 +16,7 @@ const ErrorPage = () => {
           </div>
           <div className="alert--popup--button">
             <button type="button" onClick={() => {
-              window.location.replace(import.meta.env.VITE_API_URL + '/portal');
+              window.location.replace(import.meta.env.VITE_API_URL + '/user');
             }}>{t("portal-page")}
             </button>
           </div>

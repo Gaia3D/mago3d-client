@@ -62,7 +62,7 @@ export const classifyAssetTypeAcceptFile = (assetType:AssetType) => {
         case 'SHP': return {"application/zip":[".zip"]};
         case 'KML': return {"application/vnd.google-earth.kml+xml": [".kml"]};
         case 'GeoJSON': return {"application/json": [".json", ".geojson"]};
-        case 'Tiles3D': return {"image/*": [".png",".jpg",".jpeg",".bmp"], "application/octet-stream": [".3ds",".obj",".ifc", ".las", ".laz", ".fbx", ".gltf", ".glb", ".kml", ".dae", ".ase", ".gml", ".lxo", ".lwo", ".lws", ".x"], "application/zip":[".zip"]};
+        case 'Tiles3D': return {"image/*": [".png",".jpg",".jpeg",".bmp"], "application/octet-stream": [".3ds",".obj",".ifc", ".las", ".laz", ".fbx", ".gltf", ".glb", ".kml", ".dae", ".ase", ".gml", ".lxo", ".lwo", ".lws", ".x"], "application/zip":[".zip"], "application/json": [".json", ".geojson"]};
         case 'Terrain': return {"image/tiff": [".tif",".tiff"], "application/octet-stream": [".vrt"]};
         case 'CZML':
             return {};

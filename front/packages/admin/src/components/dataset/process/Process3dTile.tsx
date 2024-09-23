@@ -159,6 +159,7 @@ const Process3dTile = (props: {
                   <option value="LWO">LWO (*.lwo)</option>
                   <option value="LWS">LWS (*.lws)</option>
                   <option value="DirectX">DirectX (*.x)</option>
+                  <option value="GEOJSON">GeoJson</option>
                 </select>
                 <label htmlFor="data-process-t3d-crs">{t("epsg")}</label>
                 <input type="text" placeholder={t("placeholder.epsg")}
