@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 import * as Cesium from 'cesium';
 import { PrimitiveCollection, Model } from "cesium";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {mainMenuState} from "@/recoils/MainMenuState.tsx";
 
 interface PrimitiveCollectionExtended extends PrimitiveCollection {
     boundingSphere?: Cesium.BoundingSphere;
@@ -11,6 +13,7 @@ interface PrimitiveCollectionExtended extends PrimitiveCollection {
 const PrimitivesContent = () => {
     const { globeController, initialized } = useGlobeController();
     const { propPrimitives } = globeController;
+    const menu = useRecoilValue(mainMenuState);
 
     const [priArr, setPriArr] = useState<Model[]>([]);
 
@@ -25,7 +28,7 @@ const PrimitivesContent = () => {
             const primitives = (propPrimitives as PrimitiveCollectionExtended)._primitives || [];
             setPriArr(primitives);
         }
-    }, [propPrimitives]);
+    }, [propPrimitives, menu]);
 
     const flyTo = async (model: Model) => {
         const { viewer } = globeController;

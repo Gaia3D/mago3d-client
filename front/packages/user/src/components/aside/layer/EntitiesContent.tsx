@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 import { CustomDataSource } from "cesium";
 import * as Cesium from "cesium";
+import {useRecoilValue} from "recoil";
+import {mainMenuState} from "@/recoils/MainMenuState.tsx";
 
 interface CustomDataSourceExtended extends CustomDataSource {
     boundingSphere?: Cesium.BoundingSphere;
@@ -14,6 +16,8 @@ interface CustomDataSourceExtended extends CustomDataSource {
 
 const EntitiesContent = () => {
     const { globeController, initialized } = useGlobeController();
+    const menu = useRecoilValue(mainMenuState);
+
     const {
         viewer,
         eventDataSource,
@@ -49,7 +53,7 @@ const EntitiesContent = () => {
 
     useEffect(() => {
         getDataSourceCollection();
-    }, [getDataSourceCollection]);
+    }, [getDataSourceCollection, menu]);
 
     const toggleVisibility = (ds: CustomDataSourceExtended) => {
         ds.show = !ds.show;
