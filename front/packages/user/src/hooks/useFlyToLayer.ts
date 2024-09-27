@@ -3,11 +3,14 @@ import { useLazyQuery } from '@apollo/client';
 import { useGlobeController } from '@/components/providers/GlobeControllerProvider.tsx';
 import { LayerAssetType, RemoteDocument, RemoteQueryVariables, UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import * as Cesium from "cesium";
+import {LOCATE_GROUP} from "@/graphql/layerset/Mutation.ts";
 
 export const useFlyToLayer = () => {
     const { initialized, globeController } = useGlobeController();
     const [remoteType, setRemoteType] = useState<string>('');
-    const [getRemoteData, { data: remoteData }] = useLazyQuery(RemoteDocument);
+    const [getRemoteData, { data: remoteData }] = useLazyQuery(RemoteDocument, {
+        fetchPolicy: 'no-cache',
+    });
 
     useEffect(() => {
         if (remoteData) {
