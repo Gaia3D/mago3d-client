@@ -1019,6 +1019,9 @@ ul.prop {
                 @include icon-button(-180px, -890px);
             }
         }
+        &.terrain-trans {
+            @include icon-button(-246px, -889px);
+        }
         &.theme {
             @include icon-button(-105px, -938px);
         }
