@@ -1,18 +1,15 @@
 import React, {useEffect, useRef, useState} from 'react';
 import * as Cesium from 'cesium';
-import ParticleSystem from '@/modules/streamline/ParticleSystem';
+import ParticleSystem from '@/modules/streamline/ParticleSystem.js';
 import { useGlobeController } from '@/components/providers/GlobeControllerProvider.tsx';
 
 // constants
 const particlesTextureSize = Math.ceil(100); // 무조건 int
+const globeBoundingSphere = new Cesium.BoundingSphere(Cesium.Cartesian3.ZERO, 0.99 * 6378137.0);
 
-// variables
-const globeBoundingSphere = new Cesium.BoundingSphere(Cesium.Cartesian3.ZERO, 0.99 * 6378137.0)
-
-const StreamLine = () => {
+export const StreamLine = () => {
     const { globeController, initialized } = useGlobeController();
-    const { windPrimitives } = globeController;
-    const { viewer } = globeController;
+    const { windPrimitives, viewer } = globeController;
 
     const [windData, setWindData] = useState(undefined);
     const [windowResized, setWindowResized] = useState(false);
@@ -26,18 +23,17 @@ const StreamLine = () => {
         cameraPosition: new Cesium.Cartesian3(),
         pixelSize: 0.1,   // 줌레벨 관련 설정 (태국의 경우 메뉴얼로 설정해야 함. pixelSize를 수정하면 speedFactor, lineWidth 모두 적절한 값으로 수정해야 함)
         verticalScale: 1.0,
-    })
+    });
 
     const [particleSystemOptions, setParticleSystemOptions] = useState({
         particlesTextureSize: particlesTextureSize,             // 파티클 텍스쳐 가로(혹은 세로) 길이
         maxParticles: Math.pow(particlesTextureSize, 2.0),      // 무조건 n*n 형태여야 함
-
         fadeOpacity: 0.996,
         dropRate: 0.003,
         dropRateBump: 0.01,
         speedFactor: 2.0,  // 바람 속도 계수
         lineWidth: 100.0, // 바람 파티클 가로 크기
-    })
+    });
 
     useEffect(() => {
         if (!viewer) return;
@@ -209,9 +205,8 @@ const StreamLine = () => {
     }
 
     const makeAxisLines = (st_lon, st_lat, st_elev, end_lon, end_lat, end_elev, count_axis_lon, count_axis_lat, count_axis_elev) => {
-        const datasource = new Cesium.CustomDataSource()
-
-        const rhumb = Cesium.ArcType.RHUMB
+        const datasource = new Cesium.CustomDataSource();
+        const rhumb = Cesium.ArcType.RHUMB;
 
         const longitudeCount = count_axis_lon;//Math.abs(end_lon - st_lon) / (count_axis_lon ?? 10)
         const longitudeStep = (end_lon - st_lon) / (count_axis_lon)
@@ -227,8 +222,9 @@ const StreamLine = () => {
         const elevationStep = (end_elev - st_elev) / (elevationCount)
         const elevationAxis = new Array(elevationCount + 1).fill().map((v, i) => st_elev + i * elevationStep)
 
-        elevationAxis.map(elev => {
-            longitudeAxis.map(lon => {
+
+        for (let elev of elevationAxis) {
+            for (let lon of longitudeAxis) {
                 datasource.entities.add({
                     polyline: {
                         positions: [
@@ -237,11 +233,11 @@ const StreamLine = () => {
                         ],
                         arcType: rhumb,
                         material: new Cesium.Color(1, 1, 1, 0.1),
-                    }
-                })
-            })
+                    },
+                });
+            }
 
-            latitudeAxis.map(lat => {
+            for (let lat of latitudeAxis) {
                 datasource.entities.add({
                     polyline: {
                         positions: [
@@ -250,12 +246,12 @@ const StreamLine = () => {
                         ],
                         arcType: rhumb,
                         material: new Cesium.Color(1, 1, 1, 0.1),
-                    }
-                })
-            })
+                    },
+                });
+            }
 
-            longitudeAxis.map(lon => {
-                latitudeAxis.map(lat => {
+            for (let lon of longitudeAxis) {
+                for (let lat of latitudeAxis) {
                     datasource.entities.add({
                         polyline: {
                             positions: [
@@ -264,15 +260,14 @@ const StreamLine = () => {
                             ],
                             arcType: rhumb,
                             material: new Cesium.Color(1, 1, 1, 0.1),
-                        }
-                    })
-                })
-            })
-        })
+                        },
+                    });
+                }
+            }
+        }
 
-        return datasource
-    }
-
+        return datasource;
+    };
     useEffect(() => {
         if (!initialized || !viewer) return;
 
@@ -378,8 +373,4 @@ const StreamLine = () => {
             console.log(e)
         }
     }
-
-    return <></>;
 };
-
-export default StreamLine;
