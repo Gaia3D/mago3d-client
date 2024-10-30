@@ -2,6 +2,8 @@ import React, {useEffect, useRef, useState} from 'react';
 import * as Cesium from 'cesium';
 import ParticleSystem from '@/modules/streamline/ParticleSystem.js';
 import { useGlobeController } from '@/components/providers/GlobeControllerProvider.tsx';
+import {makeAxisLines} from "@/modules/streamline/makeAxisLines.js";
+import {viewRectangleToLonLatRange} from "@/modules/streamline/viewRectangleToLonLatRange.js";
 
 // constants
 const particlesTextureSize = Math.ceil(100); // 무조건 int
@@ -55,8 +57,9 @@ export const StreamLine = () => {
             });
         }
 
+
         return () => {
-            if (particleSystem?.primitiveCollection) {
+            if (particleSystem?.primitiveCollection && !particleSystem.primitiveCollection.isDestroyed()) {
                 windPrimitives.remove(particleSystem.primitiveCollection);
             }
         }
@@ -100,55 +103,6 @@ export const StreamLine = () => {
             pixelSize: viewerParameters.pixelSize,
             verticalScale: 1.0,
         })
-        console.log('??', viewerParameters.pixelSize)
-    };
-
-    const viewRectangleToLonLatRange = (viewRectangle) => {
-        const range = {};
-        const postiveWest = Cesium.Math.mod(viewRectangle.west, Cesium.Math.TWO_PI);
-        const postiveEast = Cesium.Math.mod(viewRectangle.east, Cesium.Math.TWO_PI);
-        const width = viewRectangle.width;
-
-        let longitudeMin, longitudeMax;
-        if (width > Cesium.Math.THREE_PI_OVER_TWO) {
-            longitudeMin = 0.0;
-            longitudeMax = Cesium.Math.TWO_PI;
-        } else {
-            if (postiveEast - postiveWest < width) {
-                longitudeMin = postiveWest;
-                longitudeMax = postiveWest + width;
-            } else {
-                longitudeMin = postiveWest;
-                longitudeMax = postiveEast;
-            }
-        }
-
-        range.lon = {
-            min: Cesium.Math.toDegrees(longitudeMin),
-            max: Cesium.Math.toDegrees(longitudeMax)
-        }
-
-        const south = viewRectangle.south;
-        const north = viewRectangle.north;
-        const height = viewRectangle.height;
-
-        const extendHeight = height > Cesium.Math.PI / 12 ? height / 2 : height / 2;
-        let extendedSouth = Cesium.Math.clampToLatitudeRange(south - extendHeight);
-        let extendedNorth = Cesium.Math.clampToLatitudeRange(north + extendHeight);
-        // extend the bound in high latitude area to make sure it can cover all the visible area
-        if (extendedSouth < -Cesium.Math.PI_OVER_THREE) {
-            extendedSouth = -Cesium.Math.PI_OVER_TWO;
-        }
-        if (extendedNorth > Cesium.Math.PI_OVER_THREE) {
-            extendedNorth = Cesium.Math.PI_OVER_TWO;
-        }
-
-        range.lat = {
-            min: Cesium.Math.toDegrees(extendedSouth),
-            max: Cesium.Math.toDegrees(extendedNorth)
-        }
-
-        return range;
     };
 
     const particleSystemRef = useRef();
@@ -204,70 +158,6 @@ export const StreamLine = () => {
         viewer.scene.camera.moveStart.removeEventListener(onCameraMoveStart);
     }
 
-    const makeAxisLines = (st_lon, st_lat, st_elev, end_lon, end_lat, end_elev, count_axis_lon, count_axis_lat, count_axis_elev) => {
-        const datasource = new Cesium.CustomDataSource();
-        const rhumb = Cesium.ArcType.RHUMB;
-
-        const longitudeCount = count_axis_lon;//Math.abs(end_lon - st_lon) / (count_axis_lon ?? 10)
-        const longitudeStep = (end_lon - st_lon) / (count_axis_lon)
-        const longitudeAxis = new Array(longitudeCount).fill().map((v, i) => st_lon + i * longitudeStep)
-        longitudeAxis.push(end_lon)
-
-        const latitudeCount = count_axis_lat;//Math.abs(end_lat - st_lat) / (count_axis_lat ?? 10)
-        const latitudeStep = (end_lat - st_lat) / (count_axis_lat)
-        const latitudeAxis = new Array(latitudeCount).fill().map((v, i) => st_lat + i * latitudeStep)
-        latitudeAxis.push(end_lat)
-
-        const elevationCount = count_axis_elev;//Math.abs(end_elev - st_elev) / (count_axis_elev ?? 10)
-        const elevationStep = (end_elev - st_elev) / (elevationCount)
-        const elevationAxis = new Array(elevationCount + 1).fill().map((v, i) => st_elev + i * elevationStep)
-
-
-        for (let elev of elevationAxis) {
-            for (let lon of longitudeAxis) {
-                datasource.entities.add({
-                    polyline: {
-                        positions: [
-                            Cesium.Cartesian3.fromDegrees(lon, st_lat, elev),
-                            Cesium.Cartesian3.fromDegrees(lon, end_lat, elev),
-                        ],
-                        arcType: rhumb,
-                        material: new Cesium.Color(1, 1, 1, 0.1),
-                    },
-                });
-            }
-
-            for (let lat of latitudeAxis) {
-                datasource.entities.add({
-                    polyline: {
-                        positions: [
-                            Cesium.Cartesian3.fromDegrees(st_lon, lat, elev),
-                            Cesium.Cartesian3.fromDegrees(end_lon, lat, elev),
-                        ],
-                        arcType: rhumb,
-                        material: new Cesium.Color(1, 1, 1, 0.1),
-                    },
-                });
-            }
-
-            for (let lon of longitudeAxis) {
-                for (let lat of latitudeAxis) {
-                    datasource.entities.add({
-                        polyline: {
-                            positions: [
-                                Cesium.Cartesian3.fromDegrees(lon, lat, st_elev),
-                                Cesium.Cartesian3.fromDegrees(lon, lat, end_elev),
-                            ],
-                            arcType: rhumb,
-                            material: new Cesium.Color(1, 1, 1, 0.1),
-                        },
-                    });
-                }
-            }
-        }
-
-        return datasource;
-    };
     useEffect(() => {
         if (!initialized || !viewer) return;
 
@@ -275,7 +165,7 @@ export const StreamLine = () => {
         return () => {
             unsetEventListeners();
 
-            if (particleSystem?.primitiveCollection) {
+            if (particleSystem?.primitiveCollection && !particleSystem.primitiveCollection.isDestroyed()) {
                 windPrimitives.remove(particleSystem.primitiveCollection);
             }
             axes.forEach(axis => {
@@ -345,7 +235,6 @@ export const StreamLine = () => {
                     W: json.WRange,
                 }
             }
-            // console.log(streamlineInfo);//, new Date());
 
             data = streamlineInfo;
             // vertical scale
