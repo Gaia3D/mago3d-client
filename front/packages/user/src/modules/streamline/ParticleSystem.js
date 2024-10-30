@@ -1,5 +1,4 @@
 import * as  Cesium from 'cesium';
-import { clamp } from '@/utils/utils'
 import fragmentShader_calculateSpeed from './glsl/calculateSpeed.frag?raw';
 import fragmentShader_updatePosition from './glsl/updatePosition.frag?raw';
 import fragmentShader_postProcessingPosition from './glsl/postProcessingPosition.frag?raw';
@@ -9,6 +8,10 @@ import fragmentShader_trailDraw from './glsl/trailDraw.frag?raw';
 
 import vertexShader_segmentDraw from './glsl/segmentDraw.vert?raw';
 import vertexShader_fullscreen from './glsl/fullscreen.vert?raw';
+
+export const clamp = (num, min, max) => {
+    return num <= min ? min : num >= max ? max : num
+}
 
 
 const createTexture = (options, typedArray) => {

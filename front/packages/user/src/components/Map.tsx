@@ -18,6 +18,7 @@ import {MeasurePosition} from "@/components/maptool/MeasurePosition.tsx";
 import {MeasureRadius} from "@/components/maptool/MeasureRadius.tsx";
 import SignInfo from "@/components/SignInfo.tsx";
 import LanguageSelector from "@/components/LanguageSelector.tsx";
+import StreamLine from "@/components/StreamLine.jsx";
 
 const Globe = () => {
     const cesiumContainer = useRef<HTMLDivElement>(null);
@@ -44,6 +45,7 @@ const Globe = () => {
             <SettingTool />
             <CameraInfoDisplay />
             <ObjectToolbox />
+            <StreamLine />
         </div>
     )
 }
