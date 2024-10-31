@@ -8,6 +8,7 @@ import {Compass} from "@/components/maptool/Compass.tsx";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {CurrentCreatePropIdState} from "@/recoils/Tool.ts";
 import {TerrainUrlState} from "@/recoils/Terrain.ts";
+import WindRoad from "@/components/WindRoad";
 
 interface ToolButtonProps {
     tool: MapTool;
@@ -184,6 +185,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
                 {tools.filter(tool => tool.toolBoxIndex === 5).map(tool => (
                     <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
                 ))}
+                <WindRoad />
             </div>
             <Compass handleClick={resetDirection} />
         </>

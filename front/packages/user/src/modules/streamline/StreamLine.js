@@ -177,88 +177,9 @@ export const StreamLine = () => {
 
     const initializeData = async () => {
         try{
-            viewer.camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(100.5452771, 13.72494, 15000),
-                duration: 0
-            })
-
-            viewer.scene.skyAtmosphere.show = false;
-            viewer.scene.globe.showGroundAtmosphere = false;
-            viewer.scene.fog.enabled = false;
-
             setEventListeners();
             updateViewerParameters();
-
-            // end conditions
-            let data = null;
-            // let stream = await getProductFile(product.product_name.replace(/\\/g, '/'));
-            // const json = stream.data;
-            const loadText = async (filePath) => {
-                const response = await fetch(filePath);
-                if (!response.ok) throw new Error(`Failed to load file: ${response.statusText}`);
-                const text = await response.text();
-                if (!text) throw new Error('Empty response');
-                return JSON.parse(text);
-            };
-            // const url = `stream.txt`;
-            const url = `/txt/stream_bangkok.txt`;
-            const json = await loadText(url);
-            const streamlineInfo = {
-                dimensions: {
-                    lon: json.dimensions[0],
-                    lat: json.dimensions[1],
-                    lev: json.dimensions[2],
-                },
-                boundary: {
-                    lon: json.boundaryLon,
-                    lat: json.boundaryLat,
-                    lev: json.boundaryAlt,
-                },
-                altitudesOfLevel: json.altitudesOfLevel,
-                UVW0: [
-                    new Float32Array(json.U0),
-                    new Float32Array(json.V0),
-                    new Float32Array(json.W0),
-                ],
-                UVW1: [
-                    new Float32Array(json.U1),
-                    new Float32Array(json.V1),
-                    new Float32Array(json.W1),
-                ],
-                UVW2: [
-                    new Float32Array(json.U2),
-                    new Float32Array(json.V2),
-                    new Float32Array(json.W2),
-                ],
-                valueRange: {
-                    U: json.URange,
-                    V: json.VRange,
-                    W: json.WRange,
-                }
-            }
-
-            data = streamlineInfo;
-            // vertical scale
-            const verticalScale = viewerParameters.verticalScale;
-            data.boundary.lev = data.boundary.lev.map(v => v ? v * verticalScale : 0);
-            data.altitudesOfLevel = data.altitudesOfLevel.map(v => v ? v * verticalScale : 0);
-            data.UVW0[2] = data.UVW0[2].map(v => v ? v * verticalScale : 0);
-            data.UVW1[2] = data.UVW1[2].map(v => v ? v * verticalScale : 0);
-            data.UVW2[2] = data.UVW2[2].map(v => v ? v * verticalScale : 0);
-            // axis
-            data.altitudesOfLevel.forEach((altitude, i) => {
-                if (i == data.altitudesOfLevel.length - 1)
-                    return;
-                const axis = makeAxisLines(data.boundary.lon[0], data.boundary.lat[0], data.altitudesOfLevel[i], data.boundary.lon[1], data.boundary.lat[1], data.altitudesOfLevel[i + 1],
-                    1,//Math.floor(data.dimensions.lon / 10),
-                    1,//Math.floor(data.dimensions.lat / 10),
-                    1)
-                viewer.dataSources.add(axis);
-                setAxes([...axes, axis]);
-            });
-            // display wind
-            setWindData(data);
-            gltfRenderer(globeController);
+            // gltfRenderer(globeController);
 
         } catch (e) {
             console.log(e)

@@ -18,12 +18,10 @@ import {MeasurePosition} from "@/components/maptool/MeasurePosition.tsx";
 import {MeasureRadius} from "@/components/maptool/MeasureRadius.tsx";
 import SignInfo from "@/components/SignInfo.tsx";
 import LanguageSelector from "@/components/LanguageSelector.tsx";
-import {StreamLine} from "@/modules/streamline/StreamLine";
 
 const Globe = () => {
     const cesiumContainer = useRef<HTMLDivElement>(null);
     useCreateViewer(cesiumContainer);
-    StreamLine();
     return (
         <div id="globe" className={"globe"} ref={cesiumContainer}>
             <header >
