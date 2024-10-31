@@ -4,6 +4,7 @@ import ParticleSystem from '@/modules/streamline/ParticleSystem.js';
 import { useGlobeController } from '@/components/providers/GlobeControllerProvider.tsx';
 import {makeAxisLines} from "@/modules/streamline/makeAxisLines.js";
 import {viewRectangleToLonLatRange} from "@/modules/streamline/viewRectangleToLonLatRange.js";
+import {gltfRenderer} from "@/modules/streamline/gltfRenderer.js";
 
 // constants
 const particlesTextureSize = Math.ceil(100); // 무조건 int
@@ -257,6 +258,7 @@ export const StreamLine = () => {
             });
             // display wind
             setWindData(data);
+            gltfRenderer(globeController);
 
         } catch (e) {
             console.log(e)
