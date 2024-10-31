@@ -127,6 +127,7 @@
     "object": "Select Object",
     "full-screen": "Full Screen",
     "terrain": "Terrain Settings",
+    "wind": "Wind Field Settings",
     "zoom-in": "Zoom In",
     "zoom-out": "Zoom Out",
     "translation": "Move",

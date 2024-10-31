@@ -399,7 +399,6 @@ export class ParticlesComputing {
         const dimension = new Cesium.Cartesian3(data.dimensions.lon, data.dimensions.lat, data.dimensions.lev);
         const minimum = new Cesium.Cartesian3(data.boundary.lon[0], data.boundary.lat[0], data.boundary.lev[0]);        // lla boundary
         const maximum = new Cesium.Cartesian3(data.boundary.lon[1], data.boundary.lat[1], data.boundary.lev[1]);        // lla boudnary
-        console.log(minimum, maximum)
         const interval = new Cesium.Cartesian3(
             (maximum.x - minimum.x) / (dimension.x - 1),
             (maximum.y - minimum.y) / (dimension.y - 1),

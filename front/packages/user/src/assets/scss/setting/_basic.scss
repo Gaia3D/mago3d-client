@@ -1022,6 +1022,9 @@ ul.prop {
         &.terrain-trans {
             @include icon-button(-246px, -889px);
         }
+        &.wind {
+            @include icon-button(-430px, -889px);
+        }
         &.theme {
             @include icon-button(-105px, -938px);
         }
@@ -1045,6 +1048,7 @@ ul.prop {
 .full-screen:hover .toolbox-description--content,
 .terrain:hover .toolbox-description--content,
 .terrain-trans:hover .toolbox-description--content,
+.wind:hover .toolbox-description--content,
 .theme:hover .toolbox-description--content {
     display:block;
     opacity: 1;

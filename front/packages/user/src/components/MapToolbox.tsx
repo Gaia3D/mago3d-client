@@ -97,9 +97,9 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         { toolBoxIndex: 2, className: "composite", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickComplex },
         { toolBoxIndex: 2, className: "radius", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleMeasureRadius },
         { toolBoxIndex: 3, className: "object", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleSelector },
-        { toolBoxIndex: 4, className: "full-screen", group: TOOLBOX_SEP, toggle: true, onClick: toggleFullscreen },
         { toolBoxIndex: 4, className: "terrain", group: TOOLBOX_SEP, active: terrainUrl!=='',  toggle: true, onClick: toggleDefaultTerrain },
         { toolBoxIndex: 4, className: "terrain-trans", group: TOOLBOX_SEP, toggle: true, onClick: toggleTerrainTranslucent },
+        { toolBoxIndex: 4, className: "full-screen", group: TOOLBOX_SEP, toggle: true, onClick: toggleFullscreen },
         // { toolBoxIndex: 4, className: "theme", group: TOOLBOX_SEP, toggle: true, onClick: toggleTheme },
         { toolBoxIndex: 4, className: "shadow", group: TOOLBOX_SEP, toggle: true, onClick: onClockTool },
         { toolBoxIndex: 5, className: "zoom-in", group: TOOLBOX_SEP, onClick: onClickExpand },
@@ -177,6 +177,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
                 ))}
             </div>
             <div className={"toolbox setup"}>
+                <WindRoad />
                 {tools.filter(tool => tool.toolBoxIndex === 4).map(tool => (
                     <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
                 ))}
@@ -185,7 +186,6 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
                 {tools.filter(tool => tool.toolBoxIndex === 5).map(tool => (
                     <ToolButton key={tool.className} tool={tool} handleClick={handleToolClick} />
                 ))}
-                <WindRoad />
             </div>
             <Compass handleClick={resetDirection} />
         </>

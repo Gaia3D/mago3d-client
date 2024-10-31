@@ -45,8 +45,8 @@ const getStreamData = async (streamUrl) => {
     }
 }
 
-export const getWindData = async (verticalScale) => {
-    const data = await getStreamData("/txt/stream_bangkok.txt");
+export const getWindData = async (verticalScale, url) => {
+    const data = await getStreamData(url);
 
     // verticalScale 적용 및 변환 작업 통합
     const scaledLev = data.boundary.lev.map(v => v ? v * verticalScale : 0);
