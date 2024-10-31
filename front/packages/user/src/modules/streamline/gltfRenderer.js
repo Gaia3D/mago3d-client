@@ -3,18 +3,17 @@ import {colorRamp} from "@/modules/streamline/colorRamp.js";
 
 export const gltfRenderer = (globeController) => {
     const { viewer } = globeController;
-    const opacities = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
 
     const ramp = colorRamp("#0000ff", "#00ff00", "#ff0000", 8);
 
-    const shaders = opacities.map((v, i) => {
+    const shaders = ramp.map((v, i) => {
         return new Cesium.CustomShader({
             translucencyMode: Cesium.CustomShaderTranslucencyMode.TRANSLUCENT,
             fragmentShaderText: `
                 void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material)
                 {
-                    material.diffuse = vec3(${ramp[i].r}, ${ramp[i].g}, ${ramp[i].b});
-                    material.alpha = ${v}; // custom alpha
+                    material.diffuse = vec3(${v.r}, ${v.g}, ${v.b});
+                    material.alpha = 0.5; // custom alpha
                 }
             `
         });

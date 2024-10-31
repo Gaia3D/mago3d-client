@@ -107,7 +107,7 @@
     "home": "Home",
     "save": "Save",
     "reset-direction": "Reset Direction",
-    "set-terrain-trans": "Set Terrain Opacity",
+    "terrain-trans": "Set Terrain Opacity",
     "open-clock-tool": "Time Tool",
     "open-setting-tool": "Settings Tool",
     "visible": "Visibility Tool",
