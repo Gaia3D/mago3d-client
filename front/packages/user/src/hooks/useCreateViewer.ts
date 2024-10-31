@@ -6,15 +6,21 @@ import { TerrainUrlState } from "@/recoils/Terrain.ts";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { CurrentLayerMapState, LayerMapType } from "@/recoils/Layer.ts";
 import {OptionsState} from "@/recoils/Tool.ts";
+import {gltfRenderer} from "@/modules/streamline/gltfRenderer";
 
 export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
 
-  const { globeController } = useGlobeController();
+  const { initialized, globeController } = useGlobeController();
   const [terrainUrl] = useRecoilState<string>(TerrainUrlState);
   const [options, setOptions] = useRecoilState(OptionsState);
   const [currentMap, setCurrentMap] = useRecoilState<LayerMapType>(CurrentLayerMapState);
   const viewerRef = useRef<Cesium.Viewer | null>(null);
   const baseLayerRef = useRef<Cesium.ImageryLayer | null>(null);
+
+    useEffect(() => {
+        if (!initialized || !globeController) return;
+        gltfRenderer(globeController)
+    }, [initialized, globeController]);
 
   useEffect(() => {
       if (!containerRef.current) return;
