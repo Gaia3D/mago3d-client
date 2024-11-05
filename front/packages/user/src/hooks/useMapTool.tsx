@@ -311,6 +311,7 @@ export const useMapTool = () => {
   let temp = false;
   const showTemperature = () => {
     if (temp) return;
+    if (!globeController) return;
     gltfRenderer(globeController);
     setOptions((prevOptions) => ({
       ...prevOptions,
