@@ -1,12 +1,12 @@
 import * as Cesium from "cesium";
-import {colorRamp} from "@/modules/streamline/colorRamp.js";
+import { colorRamp } from "@/modules/streamline/colorRamp.js";
 
 export const gltfRenderer = (globeController) => {
     const { viewer } = globeController;
 
     const ramp = colorRamp("#0000ff", "#00ff00", "#ff0000", 8);
 
-    const shaders = ramp.map((v, i) => {
+    const shaders = ramp.map((v) => {
         return new Cesium.CustomShader({
             translucencyMode: Cesium.CustomShaderTranslucencyMode.TRANSLUCENT,
             fragmentShaderText: `
@@ -36,7 +36,7 @@ export const gltfRenderer = (globeController) => {
     const dataSources = [];
     qValues.forEach(value => {
         dataSources.push(new Cesium.CustomDataSource(`temp-${value}`));
-    })
+    });
 
     const urls = generateUrls(yearMonth, baseTimes, qValues);
 
@@ -49,7 +49,7 @@ export const gltfRenderer = (globeController) => {
 
     const baseTimeGroups = [];
 
-    for (let k = 0; k < yearMonth.length; k ++) {
+    for (let k = 0; k < yearMonth.length; k++) {
         for (let i = 0; i < baseTimes.length; i++) {
             const group = []; // 각 baseTime마다 그룹으로 묶음
             group.id = `group-${yearMonth[k]}-${baseTimes[i]}`;
@@ -75,7 +75,21 @@ export const gltfRenderer = (globeController) => {
 
     dataSources.forEach(ds => {
         viewer.dataSources.add(ds);
-    })
+    });
+
+    // 순차적으로 모델을 로드하는 함수
+    const loadModelsSequentially = async (groups) => {
+        for (const group of groups) {
+            for (const entity of group) {
+                entity.show = true;
+                console.log(`Loaded model: ${entity.model.uri}`);
+                await new Promise(resolve => setTimeout(resolve, 100)); // 로딩 사이 간격 추가
+            }
+        }
+    };
+
+    // 초기에 순차적 로딩 시작
+    loadModelsSequentially(baseTimeGroups);
 
     let currentGroupIndex = 0;
     setInterval(() => {
