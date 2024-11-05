@@ -23,7 +23,7 @@ export const gltfRenderer = (globeController) => {
         return yearMonth.flatMap(ym =>
             baseTimes.flatMap(time =>
                 qValues.map(qValue =>
-                    `/nc/${ym}/${ym}${time}_output/mnc.h000.${ym}${time}00.pisosurface.l0.q${qValue}.000000.p0.craw/isoSurface.gltf`
+                    `/user/nc/${ym}/${ym}${time}_output/mnc.h000.${ym}${time}00.pisosurface.l0.q${qValue}.000000.p0.craw/isoSurface.gltf`
                 )
             )
         );

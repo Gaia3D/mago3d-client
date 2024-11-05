@@ -117,6 +117,7 @@ export type Options = {
   isAnimation: boolean;
   isSetting: boolean;
   isColoring: boolean;
+  isTemperature: boolean;
   renderOptions: RenderOptions;
   defaultRenderOptions: RenderOptions;
   viewOptions: ViewOptions;
@@ -145,6 +146,7 @@ export const OptionsState = atom<Options>({
     isAnimation: false,
     isSetting: false,
     isColoring: false,
+    isTemperature: false,
     renderOptions: { ...DEFAULT_RENDER_OPTIONS },
     defaultRenderOptions: { ...DEFAULT_RENDER_OPTIONS },
     viewOptions: { ...DEFAULT_VIEW_OPTIONS },

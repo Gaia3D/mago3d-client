@@ -20,6 +20,7 @@ import { download } from "@mnd/shared";
 import {useClockTool} from "@/hooks/useMapTool/useClockTool.ts";
 import {useWebStorage} from "@/hooks/useMapTool/useWebStorage.ts";
 import {TerrainUrlState} from "@/recoils/Terrain.ts";
+import {gltfRenderer} from "@/modules/streamline/gltfRenderer";
 
 export const useMapTool = () => {
   const { globeController, initialized } = useGlobeController();
@@ -307,5 +308,16 @@ export const useMapTool = () => {
     document.documentElement.setAttribute('data-theme', newTheme);
   }
 
-  return { toggleCoordinate, toggleMeasureRadius, angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, onClockTool, onSettingTool, toggleTheme, initWebStorage, toolStatus};
+  let temp = false;
+  const showTemperature = () => {
+    if (temp) return;
+    gltfRenderer(globeController);
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      isTemperature: true,
+    }));
+    temp = true;
+  }
+
+  return { showTemperature, toggleCoordinate, toggleMeasureRadius, angle, onClickCompas, onClickHome, onClickExpand, onClickReduce, onClickLength, onClickArea, onClickAngle, onClickSave, onClickPrint, onClickComplex, onClickSearch, toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, onClockTool, onSettingTool, toggleTheme, initWebStorage, toolStatus};
 };

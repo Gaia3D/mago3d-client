@@ -1004,6 +1004,9 @@ ul.prop {
         &.ruler {
             @include icon-button(-104px, -708px);
         }
+        &.temperature {
+            @include icon-button(-355px, -641px);
+        }
         &.object {
             @include icon-button(-104px, -778px);
         }
@@ -1048,6 +1051,7 @@ ul.prop {
 .full-screen:hover .toolbox-description--content,
 .terrain:hover .toolbox-description--content,
 .terrain-trans:hover .toolbox-description--content,
+.temperature:hover .toolbox-description--content,
 .wind:hover .toolbox-description--content,
 .theme:hover .toolbox-description--content {
     display:block;

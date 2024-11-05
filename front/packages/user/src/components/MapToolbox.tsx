@@ -9,6 +9,7 @@ import {useRecoilState, useRecoilValue} from "recoil";
 import {CurrentCreatePropIdState} from "@/recoils/Tool.ts";
 import {TerrainUrlState} from "@/recoils/Terrain.ts";
 import WindRoad from "@/components/WindRoad";
+import {gltfRenderer} from "@/modules/streamline/gltfRenderer";
 
 interface ToolButtonProps {
     tool: MapTool;
@@ -71,7 +72,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
     const {
         onClickHome, onClickExpand, onClickReduce, onClickArea,
         onClickLength, onClickAngle, onClickSave, onClickComplex, toggleCoordinate, toggleMeasureRadius,
-        toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent,
+        toggleFullscreen, resetDirection, toggleDefaultTerrain, toggleTerrainTranslucent, showTemperature,
         toggleTheme, onClockTool
     } = useMapTool();
     const {
@@ -97,6 +98,7 @@ export const MapToolbox = ({onToolClick}: { onToolClick: ToolClicked }) => {
         { toolBoxIndex: 2, className: "composite", group: CLICK_EVENT_GROUP, toggle: true, onClick: onClickComplex },
         { toolBoxIndex: 2, className: "radius", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleMeasureRadius },
         { toolBoxIndex: 3, className: "object", group: CLICK_EVENT_GROUP, toggle: true, onClick: toggleSelector },
+        { toolBoxIndex: 3, className: "temperature", group: TOOLBOX_SEP, toggle: false, onClick: showTemperature },
         { toolBoxIndex: 4, className: "terrain", group: TOOLBOX_SEP, active: terrainUrl!=='',  toggle: true, onClick: toggleDefaultTerrain },
         { toolBoxIndex: 4, className: "terrain-trans", group: TOOLBOX_SEP, toggle: true, onClick: toggleTerrainTranslucent },
         { toolBoxIndex: 4, className: "full-screen", group: TOOLBOX_SEP, toggle: true, onClick: toggleFullscreen },

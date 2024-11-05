@@ -17,11 +17,6 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
   const viewerRef = useRef<Cesium.Viewer | null>(null);
   const baseLayerRef = useRef<Cesium.ImageryLayer | null>(null);
 
-    useEffect(() => {
-        if (!initialized || !globeController) return;
-        gltfRenderer(globeController)
-    }, [initialized, globeController]);
-
   useEffect(() => {
       if (!containerRef.current) return;
 
