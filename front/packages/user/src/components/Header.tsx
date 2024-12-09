@@ -1,6 +1,6 @@
-import MapSelector from "@/components/aside/MapSelector.tsx";
-import LanguageSelector from "@/components/LanguageSelector.tsx";
-import SignInfo from "@/components/SignInfo.tsx";
+import MapSelector from "@/components/header/MapSelector.tsx";
+import LanguageSelector from "@/components/header/LanguageSelector.tsx";
+import SignInfo from "@/components/header/SignInfo.tsx";
 import React from "react";
 
 const Header = () => {
