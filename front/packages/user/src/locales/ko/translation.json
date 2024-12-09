@@ -9,6 +9,22 @@
   "time": "날짜/시간",
   "logout": "로그아웃",
   "remove": "삭제",
+  "document": {
+    "title": {
+      "introduction": "소개 문서",
+      "installation": "설치 문서",
+      "user": "사용자 문서",
+      "api": "API 문서",
+      "training": "교육 문서"
+    },
+    "url": {
+      "introduction": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ko/1_mago3D_Introduction.md",
+      "installation": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ko/2_mago3D_Installation_Guide.md",
+      "user": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ko/3_mago3D_User_Guide.md",
+      "api": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ko/4_mago3D_API_Guide.md",
+      "training": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ko/5_mago3D_Training_Guide.md"
+    }
+  },
   "aside": {
     "close-sidebar": "창 닫기",
     "common": {
