@@ -221,44 +221,6 @@ body {
     }
 }
 
-//header
-header {
-    position: absolute;
-    right:15px;
-    top:10px;
-    .lang-icon {
-        position: relative;
-        z-index: 1;
-        top: 4px;
-        right:20px;
-        width:32px;
-        height:32px;
-        border-radius:30px;
-        background:white;
-        box-shadow: var(--small-box-shadow);
-        &.en, &.en-US {
-            //border:1px solid var(--border-light-color) !important;
-            @include icon-button(-745px, -80px);
-        }
-        &.ko, &.ko-KR {
-            //border:1px solid var(--border-light-color) !important;
-            @include icon-button(-745px, -1px);
-        }
-    }
-    .user-icon {
-        position: relative;
-        z-index: 1;
-        width:40px;
-        height:40px;
-        border-radius:30px;
-        background-color: var(--slide-bar-color);
-        color:var(--text-color);
-        font-family: var(--font-family-light);
-        font-size:var(--font-size-regular);
-        box-shadow: var(--small-box-shadow);
-    }
-}
-
 //nav
 nav {
     position: absolute;
@@ -432,24 +394,21 @@ main {
 
 //background-map-select
 .background-map {
-    position: absolute;
-    right: 128px;
-    top: 14px;
     display: flex;
     flex-direction: row;
-    border:0; 
+    border:0;
     width:32px;
     height:34px;
-    border-radius:30px !important; 
+    border-radius:30px !important;
     box-shadow: var(--small-box-shadow) !important;
-    .map-type-current  {    
-        border:0; 
+    .map-type-current  {
+        border:0;
         width:32px;
         height:34px;
-        border-radius:30px !important;   
+        border-radius:30px !important;
         img {
-            
-            border-radius:30px !important;  
+
+            border-radius:30px !important;
         }
     }
     .background-map-select-layer {
@@ -459,7 +418,6 @@ main {
         padding:10px 10px;
         background-color: var( --background-color-silver);
         border-radius: 10px;
-        margin-top:48px;
         right:-60px;
         display: flex;
         flex-direction: row;
@@ -645,6 +603,7 @@ table {
     display: none;
     position: absolute;
     border-radius:10px;
+    border: 1px white solid;
     background-color: var( --background-color-silver);
     z-index:9;
     box-shadow: var(--box-shadow);
@@ -654,9 +613,6 @@ table {
     }
 
     &.user {
-        right:0;
-        //right:10px;
-        //top:55px;
         ul {
             padding:6px 0 6px 0;
             &.user-wrapper {
@@ -687,12 +643,8 @@ table {
         top:55px;
         background:black;
     }
-    &.lang {
-        right:40px;
-        top:55px;
-    }
     ul {
-        padding:8px 0;        
+        padding:8px 0;
         li {
             font-size: var(--font-size-regular);
             line-height:20px;
@@ -808,7 +760,7 @@ ul.layer {
         .layer-button {
             width:76px;
             margin-left:0;
-            padding:0;            
+            padding:0;
         }
     }
 }
@@ -850,7 +802,7 @@ ul.prop {
     color:var(--text-color);
     line-height:40px;
     vertical-align: middle;
-    &:hover .new-item {            
+    &:hover .new-item {
         background-color: var(--circle-button-color);
         transition: 0.3s;
     }
@@ -925,7 +877,7 @@ ul.prop {
     }
     &.publish {
         @include icon-button(-265px, -414px);
-      }
+    }
     &.log {
         @include icon-button(-256px, -4px);
     }
@@ -1004,6 +956,9 @@ ul.prop {
         &.ruler {
             @include icon-button(-104px, -708px);
         }
+        &.temperature {
+            @include icon-button(-355px, -641px);
+        }
         &.object {
             @include icon-button(-104px, -778px);
         }
@@ -1018,6 +973,12 @@ ul.prop {
             &.toggle {
                 @include icon-button(-180px, -890px);
             }
+        }
+        &.terrain-trans {
+            @include icon-button(-246px, -889px);
+        }
+        &.wind {
+            @include icon-button(-430px, -889px);
         }
         &.theme {
             @include icon-button(-105px, -938px);
@@ -1041,6 +1002,9 @@ ul.prop {
 .ruler:hover:not(.selected)>.toolbox-description--content,
 .full-screen:hover .toolbox-description--content,
 .terrain:hover .toolbox-description--content,
+.terrain-trans:hover .toolbox-description--content,
+.temperature:hover .toolbox-description--content,
+.wind:hover .toolbox-description--content,
 .theme:hover .toolbox-description--content {
     display:block;
     opacity: 1;
@@ -1442,12 +1406,12 @@ ul.prop {
     justify-content: center;
     //animation: slideLeft 0.5s forwards;
     //border-radius: 6px;
-    &.object {        
+    &.object {
         background:var(--background-color-silver) !important;
-        border-top-left-radius:9px;  
-        border-bottom-left-radius:9px;   
-        border-top-right-radius:9px;  
-        border-bottom-right-radius:9px; 
+        border-top-left-radius:9px;
+        border-bottom-left-radius:9px;
+        border-top-right-radius:9px;
+        border-bottom-right-radius:9px;
         button {
             display:inline-block !important;
         }
@@ -1465,10 +1429,10 @@ ul.prop {
     }
     &.expand {
         background:var(--background-color-silver) !important;
-        border-top-left-radius:9px;  
-        border-bottom-left-radius:9px;   
-        border-top-right-radius:9px;  
-        border-bottom-right-radius:9px;     
+        border-top-left-radius:9px;
+        border-bottom-left-radius:9px;
+        border-top-right-radius:9px;
+        border-bottom-right-radius:9px;
     }
     &.expand button:not(.selected){
         display:inline-block;
@@ -1931,10 +1895,10 @@ ul.prop {
             width:800px;
             height:auto;
             padding-bottom:20px;
-        }        
+        }
         &.log {
             width:700px;
-            height:auto;       
+            height:auto;
             .modal-popup-body {
                 padding:30px 40px;
             }
@@ -2348,4 +2312,3 @@ select {
         }
     }
 }
-

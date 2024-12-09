@@ -11,12 +11,12 @@ import {BoundarySearchWrapper} from "@/components/BoundarySearch";
 import {useSetRecoilState} from "recoil";
 import Footer from "@/components/Footer";
 import NewAssetModal from "@/components/modal/NewAssetModal.tsx";
-import MapSelector from "@/components/aside/MapSelector.tsx";
 import LogModal from "@/components/modal/common/LogModal.tsx";
 import keycloak from "@/api/keycloak.ts";
 import {AppLoader, AuthClientEvent} from "@mnd/shared";
 import {ReactKeycloakProvider} from "@react-keycloak/web";
 import {authenticateState} from "@/recoils/Auth.ts";
+import Header from "@/components/Header.tsx";
 
 const globeController = getInstance();
 
@@ -40,42 +40,41 @@ const MainPage = () => {
   };
 
   return (
-    <>
-      <ReactKeycloakProvider
-          authClient={keycloak}
-          onEvent={authEventHandler}
-          /* onTokens={tokenChangeHandler} */
-          initOptions={{
-            onLoad: 'login-required',
-            responseMode: 'query',
-            silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
-          }}
-          LoadingComponent={<AppLoader />}
-      >
-        <main>
-          <GlobeControllerProvider globeController={globeController}>
-            <TimeSeriesProvider>
-              <div id="map" className={"map"}>
-                <div className="mago3d-logo" />
-                <MapPopup/>
-                <Globe/>
-                <AsidePanel/>
-                <MapSelector />
-                <BoundarySearchWrapper/>
-                <MapToolbox onToolClick={handleToolClick}/>
-                <NewAssetModal />
-                <LogModal />
-                <Footer/>
-              </div>
-            </TimeSeriesProvider>
-          </GlobeControllerProvider>
-          <nav>
-            <h1 className="logo"></h1>
-            <AsideMenu/>
-          </nav>
-        </main>
-      </ReactKeycloakProvider>
-    </>
+      <>
+        <ReactKeycloakProvider
+            authClient={keycloak}
+            onEvent={authEventHandler}
+            /* onTokens={tokenChangeHandler} */
+            initOptions={{
+              onLoad: 'login-required',
+              responseMode: 'query',
+              silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
+            }}
+            LoadingComponent={<AppLoader />}
+        >
+          <main>
+            <GlobeControllerProvider globeController={globeController}>
+              <TimeSeriesProvider>
+                <div id="map" className={"map"}>
+                  <Header />
+                  <MapPopup/>
+                  <Globe/>
+                  <AsidePanel/>
+                  <BoundarySearchWrapper/>
+                  <MapToolbox onToolClick={handleToolClick}/>
+                  <NewAssetModal />
+                  <LogModal />
+                  <Footer/>
+                </div>
+              </TimeSeriesProvider>
+            </GlobeControllerProvider>
+            <nav>
+              <h1 className="logo"></h1>
+              <AsideMenu/>
+            </nav>
+          </main>
+        </ReactKeycloakProvider>
+      </>
   );
 };
 

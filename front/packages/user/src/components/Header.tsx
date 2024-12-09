@@ -1,18 +1,19 @@
-import { useKeycloak } from "@react-keycloak/web";
-import { Link, useLocation } from "react-router-dom";
+import MapSelector from "@/components/header/MapSelector.tsx";
+import LanguageSelector from "@/components/header/LanguageSelector.tsx";
+import SignInfo from "@/components/header/SignInfo.tsx";
+import React from "react";
+import DocsSelector from "@/components/header/DocsSelector.tsx";
 
 const Header = () => {
-  const { pathname } = useLocation();
-
-  return (
-    <header className={pathname === "/" ? "main" : "basic"}>
-      <div className="bar-center">
-        <Link to={"/"}>
-          <h1 className="logo">국방 디지털트윈 플랫폼</h1>
-        </Link>
-      </div>
-    </header>
-  );
+    return (
+        <div className="top-panel">
+            <div className="mago3d-logo"/>
+            <DocsSelector />
+            <MapSelector/>
+            <LanguageSelector/>
+            <SignInfo/>
+        </div>
+    );
 };
 
 export default Header;

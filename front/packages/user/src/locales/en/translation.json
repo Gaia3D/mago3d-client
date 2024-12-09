@@ -9,6 +9,22 @@
   "time": "Date/Time",
   "logout": "Logout",
   "remove": "Delete",
+  "document": {
+    "title": {
+      "introduction": "Intro Doc",
+      "installation": "Install Doc",
+      "user": "User Doc",
+      "api": "API Doc",
+      "training": "Training Doc"
+    },
+    "url": {
+      "introduction": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/en/1_mago3D_Introduction.md",
+      "installation": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/en/2_mago3D_Installation_Guide.md",
+      "user": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/en/3_mago3D_User_Guide.md",
+      "api": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/en/4_mago3D_API_Guide.md",
+      "training": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/en/5_mago3D_Training_Guide.md"
+    }
+  },
   "aside": {
     "close-sidebar": "Close Window",
     "common": {

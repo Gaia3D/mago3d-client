@@ -1,3 +1,124 @@
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.top-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 99;
+  width: 320px;
+  padding: 20px;
+
+  .mago3d-logo {
+    //width: 80px;
+    //height: 24px;
+    //background-size: 80px;
+    //background-image: url("../images/mago3d-logo.png");
+    width: 100px;
+    height: 24px;
+    background-size: 100px;
+    background-image: url("../images/mago3d-logo-new.png");
+  }
+
+  .docs-selector-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50px;
+      border: 0;
+      background-color: transparent;
+      background-image: url("../images/icon-help.svg");
+      background-size: 40px;
+      background-repeat: no-repeat;
+      background-position: center;
+      box-shadow: var(--small-box-shadow) !important;
+    }
+    .pop-layer {
+      top: 50px;
+      right: 0;
+      flex-direction: column;
+      width: 120px;
+      overflow: hidden;
+      .link-row {
+        width: 100%;
+        padding: 4px 12px;
+        color: white;
+        font-size: 12px;
+        &:hover {
+          background-color: var(--nav-hover-color);
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .map-selector-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    .pop-layer {
+      top: 50px;
+      right: 0;
+    }
+  }
+
+  .language-selector-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    .lang-icon {
+      width:32px;
+      height:32px;
+      border-radius:30px;
+      background:white;
+      box-shadow: var(--small-box-shadow);
+      &.en, &.en-US {
+        //border:1px solid var(--border-light-color) !important;
+        @include icon-button(-745px, -80px);
+      }
+      &.ko, &.ko-KR {
+        //border:1px solid var(--border-light-color) !important;
+        @include icon-button(-745px, -1px);
+      }
+    }
+    .pop-layer {
+      position: absolute;
+      top: 50px;
+      right: 0;
+    }
+  }
+
+  .sign-info-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    .user-icon {
+      width:40px;
+      height:40px;
+      border-radius:30px;
+      background-color: var(--slide-bar-color);
+      color:var(--text-color);
+      font-family: var(--font-family-light);
+      font-size:var(--font-size-regular);
+      box-shadow: var(--small-box-shadow);
+    }
+    .pop-layer {
+      position: absolute;
+      top: 50px;
+      right: 0;
+    }
+  }
+
+}
+
 .spin-loader {
   width: 20px;
   height: 20px;
@@ -16,16 +137,6 @@
   100% {
     transform: rotate(360deg);
   }
-}
-.mago3d-logo {
-  position: fixed;
-  top: 22px;
-  right: 176px;
-  width: 80px;
-  height: 24px;
-  background-size: 80px;
-  background-image: url("../images/mago3d-logo.png");
-  z-index: 9999;
 }
 
 // Register Page
@@ -104,70 +215,70 @@
     bottom: 8px !important;
   }
 
-    .background-map {
+  .background-map {
 
-      .span-img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50px;
-        border:1px solid rgb(250, 250, 250);
+    .span-img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50px;
+      border:1px solid rgb(250, 250, 250);
 
-        &.osm_white {
-          background-image: url("../images/osm_white.png");
-        }
-        &.osm_basic {
-          background-image: url("../images/osm_basic.png");
-        }
-        &.osm_dark {
-          background-image: url("../images/osm_dark.png");
-        }
+      &.osm_white {
+        background-image: url("../images/osm_white.png");
       }
+      &.osm_basic {
+        background-image: url("../images/osm_basic.png");
+      }
+      &.osm_dark {
+        background-image: url("../images/osm_dark.png");
+      }
+    }
 
-      .map-wrapper {
-        //margin: 12px 0 20px;
-        height: unset;
+    .map-wrapper {
+      //margin: 12px 0 20px;
+      height: unset;
 
-        .map-type {
-          height: 72px;
+      .map-type {
+        height: 72px;
+        border: unset;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        justify-content: center;
+        align-items: center;
+        &:hover {
           border: unset;
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          justify-content: center;
-          align-items: center;
-          &:hover {
-            border: unset;
-            outline: unset;
-          }
-          img {
+          outline: unset;
+        }
+        img {
 
-            width: 34px;
-            height: 34px;
-            object-fit: cover;
-            border-radius: 8px;
-            border:1px solid rgb(250, 250, 250);
-            &:hover, &.selected {
-              border:1px solid var(--primary-color);
-              outline:1px solid var(--primary-color);
-            }
-          }
-          .map-text {
-            line-height: unset;
-            margin-top: 5px;
+          width: 34px;
+          height: 34px;
+          object-fit: cover;
+          border-radius: 8px;
+          border:1px solid rgb(250, 250, 250);
+          &:hover, &.selected {
+            border:1px solid var(--primary-color);
+            outline:1px solid var(--primary-color);
           }
         }
-      }
-      .background-map-select-layer {
-        display: none;
-      }
-      &.expand {
-        .background-map-select-layer {
-          display: flex;
+        .map-text {
+          line-height: unset;
+          margin-top: 5px;
         }
       }
     }
+    .background-map-select-layer {
+      display: none;
+    }
+    &.expand {
+      .background-map-select-layer {
+        display: flex;
+      }
+    }
+  }
 
   .pop-layer-pointer-location {
     position: absolute;
@@ -175,17 +286,17 @@
     right: 15px;
   }
 
-.pop-layer-sub{
-  position: absolute;
-  top: 440px;
-  right: 52px;
-  &.measure {
-    top: 256px;
+  .pop-layer-sub{
+    position: absolute;
+    top: 440px;
+    right: 52px;
+    &.measure {
+      top: 256px;
+    }
+    label {
+      font-size: 14px;
+    }
   }
-  label {
-    font-size: 14px;
-  }
-}
   .pop-layer-graphic-setting {
     label {
       display: inline-block;
@@ -210,7 +321,7 @@
   }
 
   .description--content {
-      margin-left: unset;
+    margin-left: unset;
     .title:before {
       right: unset;
       left: 0;
@@ -277,8 +388,8 @@
         width: 100%;
         height: 38px;
         &:hover .group-icon, &.selected .group-icon  {
-          background:var(--layer-list-hover-color); 
-        }        
+          background:var(--layer-list-hover-color);
+        }
         &:hover .group-name, &.selected .group-name  {
           background:var(--layer-list-hover-color);
         }
@@ -287,17 +398,17 @@
           height: 38px;
           display: flex;
           justify-content: center;
-          align-items: center;      
-          background:var(--nav-hover-color);    
-          border-top-left-radius:6px;  
+          align-items: center;
+          background:var(--nav-hover-color);
+          border-top-left-radius:6px;
           border-bottom-left-radius:6px;
           &.folder-close {
             @include icon-button(-406px, -480px);
-          }   
+          }
           &.folder-open {
             @include icon-button(-406px, -480px);
-          }          
-        }        
+          }
+        }
         &:hover {
           background:var(--layer-list-hover-color);
           border-radius:6px;
@@ -307,8 +418,8 @@
           padding: 0;
           display: flex;
           align-items: center;
-          background:var(--nav-hover-color); 
-          border-top-right-radius:6px;  
+          background:var(--nav-hover-color);
+          border-top-right-radius:6px;
           border-bottom-right-radius:6px;
         }
       }
@@ -323,29 +434,17 @@
       margin-left:30px;
       border-top-right-radius:6px;
       border-bottom-right-radius:6px;
-      background-color: var(--nav-hover-color);   
+      background-color: var(--nav-hover-color);
       &:hover {
         background:var(--layer-sblist-hover-color);
-      }   
-        .layer-name {
-          width: calc(100% - 114px);
-          padding: 0;
-          float:left;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-    }
-  }
-
-  header {
-    display: flex;
-    .pop-layer {
-      margin-top: 52px;
-      right: 0;
-      top: 0;
-      &.lang {
-        margin-right: 30px;
+      }
+      .layer-name {
+        width: calc(100% - 114px);
+        padding: 0;
+        float:left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }
@@ -405,20 +504,20 @@
         width: calc(720px - 224px);
       }
       .modal-popup-type {
-          display: flex;
-          width: 87%;
-          margin:0 6.5% 0 6.5%;
-          //border-top:1px solid var(--border-light-color);
+        display: flex;
+        width: 87%;
+        margin:0 6.5% 0 6.5%;
+        //border-top:1px solid var(--border-light-color);
         .radio-label {
           width:100%;
           .radio-text-span {
             width: 100%;
-            display: flex;            
+            display: flex;
             justify-content: center;
             align-items: center;
             padding: 25px 0 10px 0;
             border-bottom:1px solid var(--border-light-color);
-            margin: 0;        
+            margin: 0;
             font-size:var(--font-size-xlarge);
             border-radius:0;
           }
@@ -484,7 +583,7 @@
             display: flex;
             align-items: center;
             margin-bottom: 8px;
-          }          
+          }
 
         }
         .detail-dot-value {
@@ -765,8 +864,8 @@
 
       &.on {
         .status-view {
-            @include icon-button(-408px, -117px);
-            opacity:0.8;
+          @include icon-button(-408px, -117px);
+          opacity:0.8;
         }
         .pop-layer {
           display: block;
