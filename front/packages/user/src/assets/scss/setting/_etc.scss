@@ -1,3 +1,8 @@
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
 .top-panel {
   position: fixed;
   top: 0;
@@ -6,15 +11,53 @@
   justify-content: space-between;
   align-items: center;
   z-index: 99;
-  width: 260px;
+  width: 320px;
   padding: 20px;
 
   .mago3d-logo {
-    //margin: 22px;
-    width: 80px;
+    //width: 80px;
+    //height: 24px;
+    //background-size: 80px;
+    //background-image: url("../images/mago3d-logo.png");
+    width: 100px;
     height: 24px;
-    background-size: 80px;
-    background-image: url("../images/mago3d-logo.png");
+    background-size: 100px;
+    background-image: url("../images/mago3d-logo-new.png");
+  }
+
+  .docs-selector-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50px;
+      border: 0;
+      background-color: transparent;
+      background-image: url("../images/icon-help.svg");
+      background-size: 40px;
+      background-repeat: no-repeat;
+      background-position: center;
+      box-shadow: var(--small-box-shadow) !important;
+    }
+    .pop-layer {
+      top: 50px;
+      right: 0;
+      flex-direction: column;
+      width: 120px;
+      overflow: hidden;
+      .link-row {
+        width: 100%;
+        padding: 4px 12px;
+        color: white;
+        font-size: 12px;
+        &:hover {
+          background-color: var(--nav-hover-color);
+          cursor: pointer;
+        }
+      }
+    }
   }
 
   .map-selector-container {
