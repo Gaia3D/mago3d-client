@@ -20,7 +20,7 @@ const WindRoad = () => {
     const particleSystemRef = useRef({});
     const addedAxesRef = useRef([]);
     const urls = [
-        "/txt/stream_bangkok.txt"
+        "/user/txt/stream_bangkok.txt"
     ];
     const [urlIndex, setUrlIndex] = useState(0);  // URL을 변경할 인덱스
 

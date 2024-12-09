@@ -44,7 +44,7 @@ const LayerList = () => {
   const {data} = useSuspenseQuery(LayersetGroupListWithAssetDocument)
 
   const [onCreate, setOnCreate] = useState<boolean>(false);
-  const [initialOpen, setInitialOpen] = useState<string[] | number[]>([]);
+  const [initialOpen, setInitialOpen] = useState<number[]>([]);
   const [collapsed, setCollapsed] = useState(false);
   const [visible, setVisible] = useState(false);
   const [enable, setEnable] = useState(false);
@@ -59,8 +59,11 @@ const LayerList = () => {
     const initOpen = nodeModels
       .filter((node: NodeModel) => !node.parent)
       //.map((group) => useFragment(LayersetGroupBasicFragmentDoc, group))
-      .filter((group) => !group.data.collapsed)
-      .map((group) => group.id);
+      .filter((group) => {
+        const groupData = group.data as LayersetGroupBasicFragment;
+        return !groupData.collapsed;
+      })
+      .map((group) => Number(group.id));
     setInitialOpen(initOpen);
     setTreeData(nodeModels);
 
@@ -74,7 +77,8 @@ const LayerList = () => {
       treeData
         .filter((node: NodeModel) => !node.parent)
         .forEach((node: NodeModel) => {
-          updateGroup(node.data.id, {collapsed});
+          const nodeData = node.data as LayersetGroupBasicFragment;
+          updateGroup(nodeData.id, {collapsed});
         });
       prevCollapsedRef.current = collapsed;
     }
@@ -93,7 +97,8 @@ const LayerList = () => {
       const groups = newTree.filter((node: NodeModel) => !node.parent);
       const idx = groups.findIndex((group: NodeModel) => group.id === dragSource.id);
       const offsetGroup = groups[idx === 0 ? idx + 1 : idx - 1];
-      const offsetGroupId = offsetGroup.data.id;
+      const offsetGroupData = offsetGroup.data as LayersetGroupBasicFragment;
+      const offsetGroupId = offsetGroupData.id;
       const locateOption = idx === 0 ? LocateOption.Before : LocateOption.After;
 
       locateGroupMutation({
@@ -107,6 +112,7 @@ const LayerList = () => {
       if (dropTarget.id === dragSource.parent) {
         //같은 그룹 내에서 위치 변경
         const group = newTree.find((node: NodeModel) => node.id === dragSource.parent && !node.parent);
+        const groupData = group.data as LayersetGroupBasicFragment;
         const siblings = newTree.filter((node: NodeModel) => node.parent === dropTarget.id);
         //console.info(siblings);
         const idx = siblings.findIndex((node: NodeModel) => node.id === dragSource.id);
@@ -116,7 +122,8 @@ const LayerList = () => {
         if (a >= siblings.length) a = siblings.length - 1;
         const offsetAsset = siblings[a];
         //console.info(offsetAsset);
-        const offsetAssetId = offsetAsset.data.id;
+        const offsetAssetData = offsetAsset.data as LayersetAssetBasicFragment;
+        const offsetAssetId = offsetAssetData.id;
         //console.info(offsetAssetId);
         const locateOption = idx === 0 ? LocateOption.Before : LocateOption.After;
         //console.info(locateOption);
@@ -125,11 +132,11 @@ const LayerList = () => {
             input:
               {
                 target: {
-                  groupId: nodeModelIdToString(group.data.id),
+                  groupId: nodeModelIdToString(groupData.id),
                   id: nodeModelIdToString(offsetAssetId)
                 },
                 source: {
-                  groupId: nodeModelIdToString(group.data.id),
+                  groupId: nodeModelIdToString(groupData.id),
                   id: nodeModelIdToString(dragSource.data.id)
                 },
                 option: locateOption
@@ -144,25 +151,28 @@ const LayerList = () => {
         if (a < 0) a = 0;
         if (a >= siblings.length) a = siblings.length - 1;
         const offsetAsset = siblings[a];
-        const offsetAssetId = offsetAsset.data.id;
+        const offsetAssetData = offsetAsset.data as LayersetAssetBasicFragment;
+        const offsetAssetId = offsetAssetData.id;
         const locateOption = idx === 0 ? LocateOption.Before : LocateOption.After;
 
         const offsetAssetGroup = newTree.find((node: NodeModel) => node.id === offsetAsset.parent);
+        const offsetAssetGroupData = offsetAssetGroup.data as LayersetGroupBasicFragment;
         const dragSourceGroup = newTree.find((node: NodeModel) => node.id === dragSource.parent);
+        const dragSourceGroupData = dragSourceGroup.data as LayersetGroupBasicFragment;
 
         locateAssetMutation({
           variables: {
             input:
               {
                 target: {
-                  //groupId: nodeModelIdToString(offsetAssetGroup.data.id),
-                  id: nodeModelIdToString(offsetAssetGroup.data.id),
+                  groupId: nodeModelIdToString(offsetAssetGroupData.id),
+                  //id: nodeModelIdToString(offsetAssetGroupData.id),
                 },
                 source: {
-                  groupId: nodeModelIdToString(dragSourceGroup.data.id),
+                  groupId: nodeModelIdToString(dragSourceGroupData.id),
                   id: nodeModelIdToString(dragSource.data.id)
                 },
-                option: locateOption
+                option: LocateOption.LastChild
               }
           }
         });
@@ -320,7 +330,7 @@ const LayerNode = ({node, params }: TreeNodeProps) => {
       alert('사용 불가능한 레이어입니다. (사용 가능으로 변경 후 이용 가능)');
       return;
     }*/
-    navigate(`/layerset/layer/detail/${node.id}`);
+    navigate(`/layerset/layer/detail/${asset.id}`);
   }, [node]);
 
   const toggleVisible = () => {
