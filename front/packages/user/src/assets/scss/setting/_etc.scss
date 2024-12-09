@@ -1,3 +1,81 @@
+.top-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 99;
+  width: 300px;
+  padding: 20px;
+
+  .mago3d-logo {
+    //margin: 22px;
+    width: 80px;
+    height: 24px;
+    background-size: 80px;
+    background-image: url("../images/mago3d-logo.png");
+  }
+
+  .map-selector-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    .pop-layer {
+      top: 50px;
+      right: 0;
+    }
+  }
+
+  .language-selector-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    .lang-icon {
+      width:32px;
+      height:32px;
+      border-radius:30px;
+      background:white;
+      box-shadow: var(--small-box-shadow);
+      &.en, &.en-US {
+        //border:1px solid var(--border-light-color) !important;
+        @include icon-button(-745px, -80px);
+      }
+      &.ko, &.ko-KR {
+        //border:1px solid var(--border-light-color) !important;
+        @include icon-button(-745px, -1px);
+      }
+    }
+    .pop-layer {
+      position: absolute;
+      top: 50px;
+      right: 0;
+    }
+  }
+
+  .sign-info-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    .user-icon {
+      width:40px;
+      height:40px;
+      border-radius:30px;
+      background-color: var(--slide-bar-color);
+      color:var(--text-color);
+      font-family: var(--font-family-light);
+      font-size:var(--font-size-regular);
+      box-shadow: var(--small-box-shadow);
+    }
+    .pop-layer {
+      position: absolute;
+      top: 50px;
+      right: 0;
+    }
+  }
+
+}
+
 .spin-loader {
   width: 20px;
   height: 20px;
@@ -16,16 +94,6 @@
   100% {
     transform: rotate(360deg);
   }
-}
-.mago3d-logo {
-  position: fixed;
-  top: 22px;
-  right: 176px;
-  width: 80px;
-  height: 24px;
-  background-size: 80px;
-  background-image: url("../images/mago3d-logo.png");
-  z-index: 9999;
 }
 
 // Register Page
@@ -335,18 +403,6 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
-    }
-  }
-
-  header {
-    display: flex;
-    .pop-layer {
-      margin-top: 52px;
-      right: 0;
-      top: 0;
-      &.lang {
-        margin-right: 30px;
-      }
     }
   }
   .modal {

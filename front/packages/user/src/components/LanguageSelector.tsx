@@ -28,7 +28,7 @@ const LanguageSelector = () => {
 	}, [i18n.language]);
 
 	return (
-		<>
+		<div className="language-selector-container">
 			<button onClick={togglePopLayer} type="button" className={`lang-icon ${nowLang}`}></button>
 			<div ref={popLayer} className={"pop-layer lang"}>
 				<ul>
@@ -43,7 +43,7 @@ const LanguageSelector = () => {
 					))}
 				</ul>
 			</div>
-		</>
+		</div>
 	);
 };
 

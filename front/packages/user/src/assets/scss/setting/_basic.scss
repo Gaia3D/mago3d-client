@@ -221,44 +221,6 @@ body {
     }
 }
 
-//header
-header {
-    position: absolute;
-    right:15px;
-    top:10px;
-    .lang-icon {
-        position: relative;
-        z-index: 1;
-        top: 4px;
-        right:20px;
-        width:32px;
-        height:32px;
-        border-radius:30px;
-        background:white;
-        box-shadow: var(--small-box-shadow);
-        &.en, &.en-US {
-            //border:1px solid var(--border-light-color) !important;
-            @include icon-button(-745px, -80px);
-        }
-        &.ko, &.ko-KR {
-            //border:1px solid var(--border-light-color) !important;
-            @include icon-button(-745px, -1px);
-        }
-    }
-    .user-icon {
-        position: relative;
-        z-index: 1;
-        width:40px;
-        height:40px;
-        border-radius:30px;
-        background-color: var(--slide-bar-color);
-        color:var(--text-color);
-        font-family: var(--font-family-light);
-        font-size:var(--font-size-regular);
-        box-shadow: var(--small-box-shadow);
-    }
-}
-
 //nav
 nav {
     position: absolute;
@@ -432,9 +394,6 @@ main {
 
 //background-map-select
 .background-map {
-    position: absolute;
-    right: 128px;
-    top: 14px;
     display: flex;
     flex-direction: row;
     border:0; 
@@ -459,7 +418,6 @@ main {
         padding:10px 10px;
         background-color: var( --background-color-silver);
         border-radius: 10px;
-        margin-top:48px;
         right:-60px;
         display: flex;
         flex-direction: row;
@@ -654,9 +612,6 @@ table {
     }
 
     &.user {
-        right:0;
-        //right:10px;
-        //top:55px;
         ul {
             padding:6px 0 6px 0;
             &.user-wrapper {
@@ -686,10 +641,6 @@ table {
         left:285px;
         top:55px;
         background:black;
-    }
-    &.lang {
-        right:40px;
-        top:55px;
     }
     ul {
         padding:8px 0;        

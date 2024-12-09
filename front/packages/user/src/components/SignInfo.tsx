@@ -41,7 +41,7 @@ const SignInfo = () => {
     },[logout]);
 
   return (
-    <>
+    <div className="sign-info-container">
       <button onClick={togglePopLayer} type="button" className="user-icon">{keycloak.profile?.firstName?.charAt(0).toUpperCase()??"N"}</button>
       <div ref={popLayer} className={"pop-layer user"}>
           <ul>
@@ -69,7 +69,7 @@ const SignInfo = () => {
               })}
           </ul>
       </div>
-    </>
+    </div>
   )
 }
 

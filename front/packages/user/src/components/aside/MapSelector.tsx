@@ -18,12 +18,12 @@ const MapSelector = () => {
     }
 
     return (
-        <div onClick={toggleMapSelector} ref={mapRef} className="background-map">            
+        <div onClick={toggleMapSelector} ref={mapRef} className="map-selector-container background-map">
             <button type="button" className="map-type-current">
                 <span className={`span-img ${currentLayerMap.image}`}></span>
                 {/*<img className="selected" src={`/images/${currentLayerMap.image}`} alt={`${currentLayerMap.name} image`}/>*/}
             </button>
-            <div className="background-map-select-layer">
+            <div className="pop-layer background-map-select-layer">
             {
                     layerMapArr.map(map => (
                         <div key={map.name} className="map-wrapper">

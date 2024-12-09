@@ -11,12 +11,12 @@ import {BoundarySearchWrapper} from "@/components/BoundarySearch";
 import {useSetRecoilState} from "recoil";
 import Footer from "@/components/Footer";
 import NewAssetModal from "@/components/modal/NewAssetModal.tsx";
-import MapSelector from "@/components/aside/MapSelector.tsx";
 import LogModal from "@/components/modal/common/LogModal.tsx";
 import keycloak from "@/api/keycloak.ts";
 import {AppLoader, AuthClientEvent} from "@mnd/shared";
 import {ReactKeycloakProvider} from "@react-keycloak/web";
 import {authenticateState} from "@/recoils/Auth.ts";
+import Header from "@/components/Header.tsx";
 
 const globeController = getInstance();
 
@@ -56,11 +56,10 @@ const MainPage = () => {
           <GlobeControllerProvider globeController={globeController}>
             <TimeSeriesProvider>
               <div id="map" className={"map"}>
-                <div className="mago3d-logo" />
+                <Header />
                 <MapPopup/>
                 <Globe/>
                 <AsidePanel/>
-                <MapSelector />
                 <BoundarySearchWrapper/>
                 <MapToolbox onToolClick={handleToolClick}/>
                 <NewAssetModal />
