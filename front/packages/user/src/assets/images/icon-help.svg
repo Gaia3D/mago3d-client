@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="34.196" height="34.196" viewBox="0 0 34.196 34.196">
+  <defs>
+    <filter id="help_1_" x="0" y="0" width="34.196" height="34.196" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feFlood flood-opacity="0.459"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#help_1_)">
+    <path id="help_1_2" data-name="help (1)" d="M14.448,2A12.448,12.448,0,1,0,26.9,14.448,12.462,12.462,0,0,0,14.448,2Zm0,23.158a10.71,10.71,0,1,1,10.71-10.71A10.722,10.722,0,0,1,14.448,25.158Zm.091-17.09c-2.557,0-4.324,1.638-4.218,4h1.7a2.238,2.238,0,0,1,2.444-2.364,2.152,2.152,0,0,1,2.364,2.17,3.352,3.352,0,0,1-1.591,2.566,4.187,4.187,0,0,0-1.916,3.385H15.2A3.386,3.386,0,0,1,16.711,15.3a4.371,4.371,0,0,0,1.864-3.462A3.81,3.81,0,0,0,14.539,8.07ZM13.293,19.9h1.932v1.932H13.293Z" transform="translate(2.65 2.65)" fill="#fff" stroke="#fff" stroke-width="0.3" fill-rule="evenodd"/>
+  </g>
+</svg>

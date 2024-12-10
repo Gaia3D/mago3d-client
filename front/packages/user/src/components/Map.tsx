@@ -16,18 +16,12 @@ import {CameraInfoDisplay} from "@/components/maptool/CameraInfoDisplay.tsx";
 import {ObjectToolbox} from "./ObjectToolbox.tsx";
 import {MeasurePosition} from "@/components/maptool/MeasurePosition.tsx";
 import {MeasureRadius} from "@/components/maptool/MeasureRadius.tsx";
-import SignInfo from "@/components/SignInfo.tsx";
-import LanguageSelector from "@/components/LanguageSelector.tsx";
 
 const Globe = () => {
     const cesiumContainer = useRef<HTMLDivElement>(null);
     useCreateViewer(cesiumContainer);
     return (
         <div id="globe" className={"globe"} ref={cesiumContainer}>
-            <header >
-                <LanguageSelector />
-                <SignInfo />
-            </header>
             <MapFunction />
             <RasterProfileChart />
             <PrintPortal />
