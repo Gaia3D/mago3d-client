@@ -40,41 +40,41 @@ const MainPage = () => {
   };
 
   return (
-    <>
-      <ReactKeycloakProvider
-          authClient={keycloak}
-          onEvent={authEventHandler}
-          /* onTokens={tokenChangeHandler} */
-          initOptions={{
-            onLoad: 'login-required',
-            responseMode: 'query',
-            silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
-          }}
-          LoadingComponent={<AppLoader />}
-      >
-        <main>
-          <GlobeControllerProvider globeController={globeController}>
-            <TimeSeriesProvider>
-              <div id="map" className={"map"}>
-                <Header />
-                <MapPopup/>
-                <Globe/>
-                <AsidePanel/>
-                <BoundarySearchWrapper/>
-                <MapToolbox onToolClick={handleToolClick}/>
-                <NewAssetModal />
-                <LogModal />
-                <Footer/>
-              </div>
-            </TimeSeriesProvider>
-          </GlobeControllerProvider>
-          <nav>
-            <h1 className="logo"></h1>
-            <AsideMenu/>
-          </nav>
-        </main>
-      </ReactKeycloakProvider>
-    </>
+      <>
+        <ReactKeycloakProvider
+            authClient={keycloak}
+            onEvent={authEventHandler}
+            /* onTokens={tokenChangeHandler} */
+            initOptions={{
+              onLoad: 'login-required',
+              responseMode: 'query',
+              silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
+            }}
+            LoadingComponent={<AppLoader />}
+        >
+          <main>
+            <GlobeControllerProvider globeController={globeController}>
+              <TimeSeriesProvider>
+                <div id="map" className={"map"}>
+                  <Header />
+                  <MapPopup/>
+                  <Globe/>
+                  <AsidePanel/>
+                  <BoundarySearchWrapper/>
+                  <MapToolbox onToolClick={handleToolClick}/>
+                  <NewAssetModal />
+                  <LogModal />
+                  <Footer/>
+                </div>
+              </TimeSeriesProvider>
+            </GlobeControllerProvider>
+            <nav>
+              <h1 className="logo"></h1>
+              <AsideMenu/>
+            </nav>
+          </main>
+        </ReactKeycloakProvider>
+      </>
   );
 };
 

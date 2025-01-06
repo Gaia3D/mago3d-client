@@ -5,15 +5,15 @@ import React from "react";
 import DocsSelector from "@/components/header/DocsSelector.tsx";
 
 const Header = () => {
-  return (
-      <div className="top-panel">
-          <div className="mago3d-logo"/>
-          <DocsSelector />
-          <MapSelector/>
-          <LanguageSelector/>
-          <SignInfo/>
-      </div>
-  );
+    return (
+        <div className="top-panel">
+            <div className="mago3d-logo"/>
+            <DocsSelector />
+            <MapSelector/>
+            <LanguageSelector/>
+            <SignInfo/>
+        </div>
+    );
 };
 
 export default Header;

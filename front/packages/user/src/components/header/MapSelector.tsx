@@ -24,17 +24,17 @@ const MapSelector = () => {
                 {/*<img className="selected" src={`/images/${currentLayerMap.image}`} alt={`${currentLayerMap.name} image`}/>*/}
             </button>
             <div className="pop-layer background-map-select-layer">
-            {
+                {
                     layerMapArr.map(map => (
                         <div key={map.name} className="map-wrapper">
                             <button onClick={() => switchMap(map)} type="button" className="map-type">
                                 <span className={`span-img ${map.image} ${map.name===currentLayerMap.name?"selected":""}`}></span>
                                 {/*<img className={map.name===currentLayerMap.name?"selected":""} src={`/images/${map.image}.png`} alt={`${map.name} image`}/>*/}
                                 <span className="map-text">{map.name}</span>
-                        </button>
-                    </div>
-                ))
-            }
+                            </button>
+                        </div>
+                    ))
+                }
             </div>
         </div>
     );

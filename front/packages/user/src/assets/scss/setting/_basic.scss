@@ -396,19 +396,19 @@ main {
 .background-map {
     display: flex;
     flex-direction: row;
-    border:0; 
+    border:0;
     width:32px;
     height:34px;
-    border-radius:30px !important; 
+    border-radius:30px !important;
     box-shadow: var(--small-box-shadow) !important;
-    .map-type-current  {    
-        border:0; 
+    .map-type-current  {
+        border:0;
         width:32px;
         height:34px;
-        border-radius:30px !important;   
+        border-radius:30px !important;
         img {
-            
-            border-radius:30px !important;  
+
+            border-radius:30px !important;
         }
     }
     .background-map-select-layer {
@@ -644,7 +644,7 @@ table {
         background:black;
     }
     ul {
-        padding:8px 0;        
+        padding:8px 0;
         li {
             font-size: var(--font-size-regular);
             line-height:20px;
@@ -760,7 +760,7 @@ ul.layer {
         .layer-button {
             width:76px;
             margin-left:0;
-            padding:0;            
+            padding:0;
         }
     }
 }
@@ -802,7 +802,7 @@ ul.prop {
     color:var(--text-color);
     line-height:40px;
     vertical-align: middle;
-    &:hover .new-item {            
+    &:hover .new-item {
         background-color: var(--circle-button-color);
         transition: 0.3s;
     }
@@ -877,7 +877,7 @@ ul.prop {
     }
     &.publish {
         @include icon-button(-265px, -414px);
-      }
+    }
     &.log {
         @include icon-button(-256px, -4px);
     }
@@ -1406,12 +1406,12 @@ ul.prop {
     justify-content: center;
     //animation: slideLeft 0.5s forwards;
     //border-radius: 6px;
-    &.object {        
+    &.object {
         background:var(--background-color-silver) !important;
-        border-top-left-radius:9px;  
-        border-bottom-left-radius:9px;   
-        border-top-right-radius:9px;  
-        border-bottom-right-radius:9px; 
+        border-top-left-radius:9px;
+        border-bottom-left-radius:9px;
+        border-top-right-radius:9px;
+        border-bottom-right-radius:9px;
         button {
             display:inline-block !important;
         }
@@ -1429,10 +1429,10 @@ ul.prop {
     }
     &.expand {
         background:var(--background-color-silver) !important;
-        border-top-left-radius:9px;  
-        border-bottom-left-radius:9px;   
-        border-top-right-radius:9px;  
-        border-bottom-right-radius:9px;     
+        border-top-left-radius:9px;
+        border-bottom-left-radius:9px;
+        border-top-right-radius:9px;
+        border-bottom-right-radius:9px;
     }
     &.expand button:not(.selected){
         display:inline-block;
@@ -1895,10 +1895,10 @@ ul.prop {
             width:800px;
             height:auto;
             padding-bottom:20px;
-        }        
+        }
         &.log {
             width:700px;
-            height:auto;       
+            height:auto;
             .modal-popup-body {
                 padding:30px 40px;
             }
@@ -2312,4 +2312,3 @@ select {
         }
     }
 }
-

@@ -29,13 +29,13 @@ const DocsSelector = () => {
             <button onClick={() => setPop(!pop)}/>
             <div className={`pop-layer ${pop ? "on" : "off"}`}>
                 <div className="flex-column">
-                {
-                    DOC_LINKS.map((link, index) => (
-                        <a href={link.url} target="_blank" className="link-row" key={index}>
-                            {link.title}
-                        </a>
-                    ))
-                }
+                    {
+                        DOC_LINKS.map((link, index) => (
+                            <a href={link.url} target="_blank" className="link-row" key={index}>
+                                {link.title}
+                            </a>
+                        ))
+                    }
                 </div>
             </div>
         </div>

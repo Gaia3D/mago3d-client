@@ -40,37 +40,37 @@ const SignInfo = () => {
         ]
     },[logout]);
 
-  return (
-    <div className="sign-info-container">
-      <button onClick={togglePopLayer} type="button" className="user-icon">{keycloak.profile?.firstName?.charAt(0).toUpperCase()??"N"}</button>
-      <div ref={popLayer} className={"pop-layer user"}>
-          <ul>
-              {settingItems.map((item) => {
-                  return (
-                      <li
-                          key={item.className}
-                          className={item.className}
-                          onClick={item.onClick}
-                      >
-                          <span className={"text"}>{t(item.text)}</span>
-                      </li>);
-              })}
-          </ul>
-          <ul className={"user-wrapper"}>
-              {userItems.map((item) => {
-                  return (
-                      <li
-                          onClick={item.onClick}
-                          key={item.className}
-                          className={item.className}
-                      >
-                          <span className={"text"}>{t(item.text)}</span>
-                      </li>);
-              })}
-          </ul>
-      </div>
-    </div>
-  )
+    return (
+        <div className="sign-info-container">
+            <button onClick={togglePopLayer} type="button" className="user-icon">{keycloak.profile?.firstName?.charAt(0).toUpperCase()??"N"}</button>
+            <div ref={popLayer} className={"pop-layer user"}>
+                <ul>
+                    {settingItems.map((item) => {
+                        return (
+                            <li
+                                key={item.className}
+                                className={item.className}
+                                onClick={item.onClick}
+                            >
+                                <span className={"text"}>{t(item.text)}</span>
+                            </li>);
+                    })}
+                </ul>
+                <ul className={"user-wrapper"}>
+                    {userItems.map((item) => {
+                        return (
+                            <li
+                                onClick={item.onClick}
+                                key={item.className}
+                                className={item.className}
+                            >
+                                <span className={"text"}>{t(item.text)}</span>
+                            </li>);
+                    })}
+                </ul>
+            </div>
+        </div>
+    )
 }
 
 export default SignInfo;
