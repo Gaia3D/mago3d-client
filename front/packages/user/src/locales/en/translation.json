@@ -174,7 +174,7 @@
       "resolution": "Set the rendering resolution. A higher value has a greater impact on performance.",
       "shadow": "Enable/Disable Shadows",
       "shadow-quality": "Set the shadow quality.",
-      "global-lighting": "Visualize global lighting. Affected by time of day.",
+      "global-lighting": "Visualize global lighting.",
       "fxaa": "Apply anti-aliasing to reduce jagged edges at lower resolutions.",
       "edge": "Visualize the edges of objects.",
       "ambient": "Visualize ambient shading between objects."
