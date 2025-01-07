@@ -107,7 +107,7 @@ export const useSettingTool = () => {
         const { viewer } = globeController;
         if (!viewer) return;
 
-        viewer.scene.globe.enableLighting = !on;
+        viewer.scene.globe.enableLighting = on;
         setOptions((prevOptions) => {
             const updatedOptions = ({
                 ...prevOptions,
