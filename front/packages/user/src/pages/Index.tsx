@@ -17,6 +17,7 @@ import {AppLoader, AuthClientEvent} from "@mnd/shared";
 import {ReactKeycloakProvider} from "@react-keycloak/web";
 import {authenticateState} from "@/recoils/Auth.ts";
 import Header from "@/components/Header.tsx";
+import SideToolContainer from "@/components/tool/SideToolContainer.tsx";
 
 const globeController = getInstance();
 
@@ -61,7 +62,8 @@ const MainPage = () => {
                   <Globe/>
                   <AsidePanel/>
                   <BoundarySearchWrapper/>
-                  <MapToolbox onToolClick={handleToolClick}/>
+                  <SideToolContainer />
+                  {/*<MapToolbox onToolClick={handleToolClick}/>*/}
                   <NewAssetModal />
                   <LogModal />
                   <Footer/>
