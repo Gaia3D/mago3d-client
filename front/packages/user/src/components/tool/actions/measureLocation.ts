@@ -1,6 +1,7 @@
 import * as Cesium from "cesium";
 import { eventManager } from "@/components/tool/actions/eventManager.ts";
 import { GlobeController } from "@/api/GlobeController.ts";
+import {getUnitFactor} from "@/components/tool/actions/index.ts";
 
 const color = Cesium.Color.WHITE;
 const bgColor = Cesium.Color.BLACK.withAlpha(0.8);
@@ -10,19 +11,6 @@ export const createMeasureLocation = (globeController: GlobeController, unit: st
     if (!viewer) return;
 
     eventManager.init(viewer);
-
-    const getUnitFactor = (unit: string): number => {
-        switch (unit) {
-            case "m": return 1;
-            case "km": return 1000;
-            case "nmi": return 1852;
-            case "in": return 0.0254;
-            case "ft": return 0.3048;
-            case "yd": return 0.9144;
-            case "mi": return 1609.344;
-            default: return 1;
-        }
-    };
 
     const getUnitHeight = (distance: number): string => {
         return `${Math.round((distance / getUnitFactor(unit)) * 100) / 100} ${unit}`;

@@ -70,8 +70,8 @@ export const createSetPersonView = (globeController: GlobeController) => {
         camera.frustum.fov = Cesium.Math.toRadians(FOV);
     }
 
-    const mouseWheelHandler = (event: any) => {
-        const delta = event / 100.0;
+    const mouseWheelHandler = (wheelRate: number) => {
+        const delta = wheelRate / 100.0;
         camera.moveForward(WHEEL_MOVE_RATE * delta);
     };
 

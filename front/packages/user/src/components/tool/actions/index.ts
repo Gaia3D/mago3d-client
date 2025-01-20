@@ -7,6 +7,7 @@ import {createSetIndoorView, removeSetIndoorView} from "@/components/tool/action
 import {createSetLocationView, removeSetLocationView} from "@/components/tool/actions/setLocationView.ts";
 import {createSetAxisView, removeSetAxisView} from "@/components/tool/actions/setAxisView.ts";
 import {createMeasureLocation, removeMeasureLocation} from "@/components/tool/actions/measureLocation.ts";
+import {createMeasureLength, removeMeasureLength} from "@/components/tool/actions/measureLength.ts";
 
 export const createToolActions = (globeController: GlobeController): Record<string, () => void> => ({
     "set-person-view": () => createSetPersonView(globeController),
@@ -15,7 +16,7 @@ export const createToolActions = (globeController: GlobeController): Record<stri
     "set-axis-view": () => createSetAxisView(globeController),
     "show-camera-info": () => createShowCameraInfo(globeController),
     "measure-location": () => createMeasureLocation(globeController, "m"),
-    "measure-length": () => createMeasureLength(globeController),
+    "measure-length": () => createMeasureLength(globeController, "m"),
     "measure-area": () => createMeasureArea(globeController),
     "measure-angle": () => createMeasureAngle(globeController),
     "measure-complex-distance": () => createMeasureComplexDistance(globeController),
@@ -73,3 +74,16 @@ export const TOOL_IDS = [
     "zoom-in",
     "zoom-out",
 ];
+
+export const getUnitFactor = (unit: string): number => {
+    switch (unit) {
+        case "m": return 1;
+        case "km": return 1000;
+        case "nmi": return 1852;
+        case "in": return 0.0254;
+        case "ft": return 0.3048;
+        case "yd": return 0.9144;
+        case "mi": return 1609.344;
+        default: return 1;
+    }
+};
