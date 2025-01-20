@@ -29,6 +29,19 @@ const calculateCartesian = (
     );
 };
 
+function updateModelMatrix(object: any, modelMatrix: any) {
+    const owner = object.id.entityCollection.owner;
+    const primitives = owner._primitives._primitives;
+    for (let i = 1; i < primitives.length; i++) {
+        const primitive = primitives[i];
+        if (primitive instanceof Cesium.Primitive) {
+            primitive.modelMatrix = modelMatrix;
+        }
+    }
+    object.id.entityCollection.show = true;
+}
+
+
 export const createSetIndoorView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
@@ -96,17 +109,6 @@ export const createSetIndoorView = (globeController: GlobeController) => {
             duration: 2.0,
         });
 
-        function updateModelMatrix(object: any, modelMatrix: any) {
-            const owner = object.id.entityCollection.owner;
-            const primitives = owner._primitives._primitives;
-            for (let i = 1; i < primitives.length; i++) {
-                const primitive = primitives[i];
-                if (primitive instanceof Cesium.Primitive) {
-                    primitive.modelMatrix = modelMatrix;
-                }
-            }
-            object.id.entityCollection.show = true;
-        }
 
         if (tempObject?.primitive instanceof Cesium.Primitive && tempObject.id?.polygon) {
             tempObject.id.polygon.material = tempMaterial;
@@ -144,6 +146,19 @@ export const createSetIndoorView = (globeController: GlobeController) => {
 export const removeSetIndoorView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
+
+    if (pickedObject?.primitive instanceof Cesium.Primitive && pickedObject.id?.polygon) {
+        pickedObject.id.polygon.material = tempMaterial;
+        pickedObject.id.polygon.outlineColor = tempColor;
+
+        const modelMatrix = pickedObject.primitive.modelMatrix;
+        pickedObject.id.entityCollection.show = false;
+        setTimeout(() => {
+            if (pickedObject) {
+                updateModelMatrix(pickedObject, modelMatrix);
+            }
+        }, 100);
+    }
 
     eventManager.destroy();
 };
