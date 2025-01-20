@@ -1,47 +1,51 @@
-import {setPersonView} from "@/components/tool/actions/setPersonView.ts";
-import {setIndoorView} from "@/components/tool/actions/setIndoorView.ts";
-import {setLocationView} from "@/components/tool/actions/setLocationView.ts";
-import {setAxisView} from "@/components/tool/actions/setAxisView.ts";
-import {showCameraInfo} from "@/components/tool/actions/showCameraInfo.ts";
-import {measureLocation} from "@/components/tool/actions/measureLocation.ts";
-import {measureLength} from "@/components/tool/actions/measureLength.ts";
-import {measureArea} from "@/components/tool/actions/measureArea.ts";
-import {measureAngle} from "@/components/tool/actions/measureAngle.ts";
-import {measureComplexDistance} from "@/components/tool/actions/measureComplexDistance.ts";
-import {measureRadius} from "@/components/tool/actions/measureRadius.ts";
-import {selectObject} from "@/components/tool/actions/selectObject.ts";
-import {showTemperature} from "@/components/tool/actions/showTemperature.ts";
-import {showWind} from "@/components/tool/actions/showWind.ts";
-import {configureTerrain} from "@/components/tool/actions/configureTerrain.ts";
-import {setTerrainTransparency} from "@/components/tool/actions/setTerrainTransparency.ts";
-import {toggleFullScreen} from "@/components/tool/actions/toggleFullScreen.ts";
-import {configureTime} from "@/components/tool/actions/configureTime.ts";
+import {GlobeController} from "@/api/GlobeController.ts";
+import {createSetPersonView, removeSetPersonView} from "@/components/tool/actions/setPersonView.ts";
 import {zoomIn} from "@/components/tool/actions/zoomIn.ts";
 import {zoomOut} from "@/components/tool/actions/zoomOut.ts";
-import {GlobeController} from "@/api/GlobeController.ts";
+import {toggleFullScreen} from "@/components/tool/actions/toggleFullScreen.ts";
 
 export const createToolActions = (globeController: GlobeController): Record<string, () => void> => ({
-    "set-person-view": () => setPersonView(globeController),
-    "set-indoor-view": () => setIndoorView(globeController),
-    "set-location-view": () => setLocationView(globeController),
-    "set-axis-view": () => setAxisView(globeController),
-    "show-camera-info": () => showCameraInfo(globeController),
-    "measure-location": () => measureLocation(globeController),
-    "measure-length": () => measureLength(globeController),
-    "measure-area": () => measureArea(globeController),
-    "measure-angle": () => measureAngle(globeController),
-    "measure-complex-distance": () => measureComplexDistance(globeController),
-    "measure-radius": () => measureRadius(globeController),
-    "select-object": () => selectObject(globeController),
-    "show-temperature": () => showTemperature(globeController),
-    "show-wind": () => showWind(globeController),
-    "configure-terrain": () => configureTerrain(globeController),
-    "set-terrain-transparency": () => setTerrainTransparency(globeController),
+    "set-person-view": () => createSetPersonView(globeController),
+    "set-indoor-view": () => createSetIndoorView(globeController),
+    "set-location-view": () => createSetLocationView(globeController),
+    "set-axis-view": () => createSetAxisView(globeController),
+    "show-camera-info": () => createShowCameraInfo(globeController),
+    "measure-location": () => createMeasureLocation(globeController),
+    "measure-length": () => createMeasureLength(globeController),
+    "measure-area": () => createMeasureArea(globeController),
+    "measure-angle": () => createMeasureAngle(globeController),
+    "measure-complex-distance": () => createMeasureComplexDistance(globeController),
+    "measure-radius": () => createMeasureRadius(globeController),
+    "select-object": () => createSelectObject(globeController),
+    "show-temperature": () => createShowTemperature(globeController),
+    "show-wind": () => createShowWind(globeController),
+    "configure-terrain": () => createConfigureTerrain(globeController),
+    "set-terrain-transparency": () => createSetTerrainTransparency(globeController),
     "toggle-full-screen": () => toggleFullScreen(),
-    "configure-time": () => configureTime(globeController),
+    "configure-time": () => createConfigureTime(globeController),
     "zoom-in": () => zoomIn(globeController),
     "zoom-out": () => zoomOut(globeController),
 });
+
+export const removeToolActions = (globeController: GlobeController): Record<string, () => void> => ({
+    "set-person-view": () => removeSetPersonView(globeController),
+    "set-indoor-view": () => removeSetIndoorView(globeController),
+    "set-location-view": () => removeSetLocationView(globeController),
+    "set-axis-view": () => removeSetAxisView(globeController),
+    "show-camera-info": () => removeShowCameraInfo(globeController),
+    "measure-location": () => removeMeasureLocation(globeController),
+    "measure-length": () => removeMeasureLength(globeController),
+    "measure-area": () => removeMeasureArea(globeController),
+    "measure-angle": () => removeMeasureAngle(globeController),
+    "measure-complex-distance": () => removeMeasureComplexDistance(globeController),
+    "measure-radius": () => removeMeasureRadius(globeController),
+    "select-object": () => removeSelectObject(globeController),
+    "show-temperature": () => removeShowTemperature(globeController),
+    "show-wind": () => removeShowWind(globeController),
+    "configure-terrain": () => removeConfigureTerrain(globeController),
+    "set-terrain-transparency": () => removeSetTerrainTransparency(globeController),
+    "configure-time": () => removeConfigureTime(globeController),
+})
 
 export const TOOL_IDS = [
     "set-person-view",

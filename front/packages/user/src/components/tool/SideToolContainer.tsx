@@ -1,38 +1,77 @@
 import React, { useState } from "react";
 import ToolButton from "@/components/tool/ToolButton";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
-import { createToolActions, TOOL_IDS } from "@/components/tool/actions";
+import { createToolActions, removeToolActions, TOOL_IDS } from "@/components/tool/actions";
 
-const EXCLUSIVE_BUTTONS = ["set-person-view", "set-indoor-view", "set-location-view"];
+interface ButtonSetting {
+    id: string;
+    toggleYn: boolean;
+    groupYn: boolean;
+    groupId?: string;
+}
+
+const SIDE_BUTTONS: ButtonSetting[] = [
+    { id: "set-person-view", toggleYn: true, groupYn: true, groupId: "view" },
+    { id: "set-indoor-view", toggleYn: true, groupYn: true, groupId: "view" },
+    { id: "set-location-view", toggleYn: true, groupYn: true, groupId: "view" },
+    { id: "set-axis-view", toggleYn: true, groupYn: true, groupId: "view" },
+    { id: "show-camera-info", toggleYn: true, groupYn: false },
+    { id: "measure-location", toggleYn: true, groupYn: true, groupId: "measure" },
+    { id: "measure-length", toggleYn: true, groupYn: true, groupId: "measure" },
+    { id: "measure-area", toggleYn: true, groupYn: true, groupId: "measure" },
+    { id: "measure-angle", toggleYn: true, groupYn: true, groupId: "measure" },
+    { id: "measure-complex-distance", toggleYn: true, groupYn: true, groupId: "measure" },
+    { id: "measure-radius", toggleYn: true, groupYn: true, groupId: "measure" },
+    { id: "select-object", toggleYn: true, groupYn: true, groupId: "object" },
+    { id: "show-temperature", toggleYn: true, groupYn: false },
+    { id: "show-wind", toggleYn: true, groupYn: false },
+    { id: "configure-terrain", toggleYn: true, groupYn: false },
+    { id: "set-terrain-transparency", toggleYn: true, groupYn: false },
+    { id: "toggle-full-screen", toggleYn: false, groupYn: false },
+    { id: "configure-time", toggleYn: true, groupYn: false },
+    { id: "zoom-in", toggleYn: false, groupYn: false },
+    { id: "zoom-out", toggleYn: false, groupYn: false },
+];
 
 const SideToolContainer: React.FC = () => {
     const { globeController } = useGlobeController();
-    const [selectedTools, setSelectedTools] = useState<string[]>([]);
-    const [exclusiveSelected, setExclusiveSelected] = useState<string | null>(null);
-
+    const [activeTools, setActiveTools] = useState<Record<string, boolean>>({});
     const TOOL_ACTIONS = createToolActions(globeController);
+    const TOOL_REMOVE_ACTIONS = removeToolActions(globeController);
 
     const handleToolClick = (toolId: string) => {
-        const action = TOOL_ACTIONS[toolId];
-        if (!action) return;
+        const buttonSetting = SIDE_BUTTONS.find((btn) => btn.id === toolId);
+        if (!buttonSetting) return;
 
-        if (EXCLUSIVE_BUTTONS.includes(toolId)) {
-            setExclusiveSelected((prev) => {
-                if (prev === toolId) {
-                    action(); // OFF 동작
-                    return null;
+        const { toggleYn, groupYn, groupId } = buttonSetting;
+
+        if (toggleYn) {
+            setActiveTools((prev) => {
+                const isActive = !!prev[toolId];
+                const updatedTools = { ...prev };
+
+                if (isActive) {
+                    TOOL_REMOVE_ACTIONS[toolId]?.(); // OFF
+                    delete updatedTools[toolId];
                 } else {
-                    if (prev) TOOL_ACTIONS[prev]?.(); // 이전 버튼 OFF
-                    action(); // 새 버튼 ON
-                    return toolId;
+                    TOOL_ACTIONS[toolId]?.(); // ON
+                    updatedTools[toolId] = true;
+
+                    if (groupYn && groupId) {
+                        Object.keys(prev).forEach((id) => {
+                            const groupBtn = SIDE_BUTTONS.find((btn) => btn.id === id);
+                            if (groupBtn?.groupId === groupId && id !== toolId) {
+                                TOOL_REMOVE_ACTIONS[id]?.(); // OFF 다른 그룹 버튼
+                                delete updatedTools[id];
+                            }
+                        });
+                    }
                 }
+
+                return updatedTools;
             });
         } else {
-            setSelectedTools((prev) => {
-                const isSelected = prev.includes(toolId);
-                action(); // 동작 실행
-                return isSelected ? prev.filter((id) => id !== toolId) : [...prev, toolId];
-            });
+            TOOL_ACTIONS[toolId]?.(); // 항상 ON 동작
         }
     };
 
@@ -42,12 +81,8 @@ const SideToolContainer: React.FC = () => {
                 <ToolButton
                     key={toolId}
                     toolId={toolId}
-                    selected={
-                        EXCLUSIVE_BUTTONS.includes(toolId)
-                            ? exclusiveSelected === toolId
-                            : selectedTools.includes(toolId)
-                    }
-                    onClick={handleToolClick}
+                    selected={!!activeTools[toolId]}
+                    onClick={() => handleToolClick(toolId)}
                 />
             ))}
         </div>
