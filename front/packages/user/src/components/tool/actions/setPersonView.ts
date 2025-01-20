@@ -1,11 +1,9 @@
 import * as Cesium from "cesium";
 import { PerspectiveFrustum } from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
+import {eventManager} from "@/components/tool/actions/eventManager.ts";
 
-let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | undefined;
 let keyboardEventHandler: (() => void) | null = null;
-let keyDownEventHandler: ((e: KeyboardEvent) => void) | null = null;
-let keyUpEventHandler: ((e: KeyboardEvent) => void) | null = null;
 let previousFov: number | undefined;
 
 let status = false;
@@ -63,12 +61,9 @@ export const createSetPersonView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    const { scene, camera } = viewer;
+    eventManager.init(viewer);
 
-    if (!screenSpaceEventHandler) {
-        screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
-    }
-    const handler = screenSpaceEventHandler;
+    const { scene, camera } = viewer;
 
     if (camera.frustum instanceof PerspectiveFrustum) {
         previousFov = camera.frustum.fov;
@@ -80,21 +75,31 @@ export const createSetPersonView = (globeController: GlobeController) => {
         camera.moveForward(WHEEL_MOVE_RATE * delta);
     };
 
-    const mouseDownHandler = () => {
-        status = true;
-    };
+    const mouseDownHandler = () => (status = true);
 
-    const mouseMoveHandler = (moveEvent: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
+    const mouseMoveHandler = (moveEvent: Cesium.ScreenSpaceEventHandler.MotionEvent) =>
         handleMouseMove(moveEvent, viewer, 1.5);
+
+    const mouseUpHandler = () => (status = false);
+
+    const keyDownHandler = (e: KeyboardEvent) => {
+        const flagName = getFlagForKeyCode(e.code);
+        if (flagName) flags[flagName] = true;
     };
 
-    const mouseMoveWithShiftHandler = (moveEvent: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
-        handleMouseMove(moveEvent, viewer, 4.0);
+    const keyUpHandler = (e: KeyboardEvent) => {
+        const flagName = getFlagForKeyCode(e.code);
+        if (flagName) flags[flagName] = false;
     };
 
-    const mouseUpHandler = () => {
-        status = false;
-    };
+    console.log("add person")
+    eventManager.addHandler(Cesium.ScreenSpaceEventType.WHEEL, mouseWheelHandler);
+    eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_DOWN, mouseDownHandler);
+    eventManager.addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, mouseMoveHandler);
+    eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_UP, mouseUpHandler);
+
+    eventManager.addGlobalHandler("keydown", keyDownHandler as EventListener);
+    eventManager.addGlobalHandler("keyup", keyUpHandler as EventListener);
 
     keyboardEventHandler = () => {
         if (flags.moveForward) camera.moveForward(MOVE_RATE);
@@ -104,26 +109,7 @@ export const createSetPersonView = (globeController: GlobeController) => {
         if (flags.moveLeft) camera.moveLeft(MOVE_RATE);
         if (flags.moveRight) camera.moveRight(MOVE_RATE);
     };
-
-    keyDownEventHandler = (e: KeyboardEvent) => {
-        const flagName = getFlagForKeyCode(e.code);
-        if (flagName) flags[flagName] = true;
-    };
-
-    keyUpEventHandler = (e: KeyboardEvent) => {
-        const flagName = getFlagForKeyCode(e.code);
-        if (flagName) flags[flagName] = false;
-    };
-
     viewer.clock.onTick.addEventListener(keyboardEventHandler);
-    document.addEventListener("keydown", keyDownEventHandler, false);
-    document.addEventListener("keyup", keyUpEventHandler, false);
-
-    handler.setInputAction(mouseDownHandler, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-    handler.setInputAction(mouseMoveHandler, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    handler.setInputAction(mouseMoveWithShiftHandler, Cesium.ScreenSpaceEventType.MOUSE_MOVE, Cesium.KeyboardEventModifier.SHIFT);
-    handler.setInputAction(mouseUpHandler, Cesium.ScreenSpaceEventType.LEFT_UP);
-    handler.setInputAction(mouseWheelHandler, Cesium.ScreenSpaceEventType.WHEEL);
 
     Object.assign(scene.screenSpaceCameraController, {
         enableRotate: false,
@@ -138,6 +124,13 @@ export const removeSetPersonView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
+    console.log("destroy person")
+    eventManager.destroy();
+
+    if (keyboardEventHandler) {
+        viewer.clock.onTick.removeEventListener(keyboardEventHandler);
+    }
+
     const { scene, camera } = viewer;
 
     Object.assign(scene.screenSpaceCameraController, {
@@ -150,28 +143,5 @@ export const removeSetPersonView = (globeController: GlobeController) => {
 
     if (camera.frustum instanceof PerspectiveFrustum && previousFov !== undefined) {
         camera.frustum.fov = previousFov;
-    }
-
-    if (keyboardEventHandler !== null) {
-        viewer.clock.onTick.removeEventListener(keyboardEventHandler);
-    }
-
-    if (keyDownEventHandler !== null) {
-        document.removeEventListener("keydown", keyDownEventHandler, false);
-    }
-
-    if (keyUpEventHandler !== null) {
-        document.removeEventListener("keyup", keyUpEventHandler, false);
-    }
-
-    const handler = screenSpaceEventHandler;
-    if (handler) {
-        handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOWN);
-        handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE, Cesium.KeyboardEventModifier.SHIFT);
-        handler.removeInputAction(Cesium.ScreenSpaceEventType.WHEEL);
-        handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_UP);
-
-        screenSpaceEventHandler = undefined;
     }
 };

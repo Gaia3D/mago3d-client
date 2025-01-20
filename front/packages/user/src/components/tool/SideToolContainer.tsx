@@ -39,39 +39,50 @@ const SideToolContainer: React.FC = () => {
     const TOOL_ACTIONS = createToolActions(globeController);
     const TOOL_REMOVE_ACTIONS = removeToolActions(globeController);
 
-    const handleToolClick = (toolId: string) => {
+    const handleToolClick = async (toolId: string) => {
         const buttonSetting = SIDE_BUTTONS.find((btn) => btn.id === toolId);
         if (!buttonSetting) return;
 
         const { toggleYn, groupYn, groupId } = buttonSetting;
 
         if (toggleYn) {
-            setActiveTools((prev) => {
-                const isActive = !!prev[toolId];
-                const updatedTools = { ...prev };
+            // 항상 OFF를 먼저 수행
+            await new Promise<void>((resolve) => {
+                setActiveTools((prev) => {
+                    const updatedTools = { ...prev };
 
-                if (isActive) {
-                    TOOL_REMOVE_ACTIONS[toolId]?.(); // OFF
-                    delete updatedTools[toolId];
-                } else {
-                    TOOL_ACTIONS[toolId]?.(); // ON
-                    updatedTools[toolId] = true;
+                    // 현재 버튼 OFF
+                    if (updatedTools[toolId]) {
+                        TOOL_REMOVE_ACTIONS[toolId]?.(); // OFF
+                        delete updatedTools[toolId];
+                    }
 
+                    // 같은 그룹의 다른 버튼 OFF
                     if (groupYn && groupId) {
-                        Object.keys(prev).forEach((id) => {
+                        Object.keys(updatedTools).forEach((id) => {
                             const groupBtn = SIDE_BUTTONS.find((btn) => btn.id === id);
                             if (groupBtn?.groupId === groupId && id !== toolId) {
-                                TOOL_REMOVE_ACTIONS[id]?.(); // OFF 다른 그룹 버튼
+                                TOOL_REMOVE_ACTIONS[id]?.(); // OFF
                                 delete updatedTools[id];
                             }
                         });
                     }
-                }
 
+                    resolve();
+                    return updatedTools;
+                });
+            });
+
+            // ON 수행
+            setActiveTools((prev) => {
+                const updatedTools = { ...prev };
+                TOOL_ACTIONS[toolId]?.(); // ON
+                updatedTools[toolId] = true;
                 return updatedTools;
             });
         } else {
-            TOOL_ACTIONS[toolId]?.(); // 항상 ON 동작
+            // 항상 ON 동작
+            TOOL_ACTIONS[toolId]?.();
         }
     };
 

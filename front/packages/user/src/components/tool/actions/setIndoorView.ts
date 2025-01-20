@@ -1,5 +1,6 @@
 import * as Cesium from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
+import {eventManager} from "@/components/tool/actions/eventManager.ts";
 
 interface ExtendedCesium3DTileFeature extends Cesium.Cesium3DTileFeature {
     content: {
@@ -8,8 +9,6 @@ interface ExtendedCesium3DTileFeature extends Cesium.Cesium3DTileFeature {
         };
     };
 }
-
-let screenSpaceEventHandler: Cesium.ScreenSpaceEventHandler | undefined = undefined;
 
 const color: Cesium.Color = Cesium.Color.fromCssColorString("#0675e6");
 const manHeight = 1.5;
@@ -34,11 +33,9 @@ export const createSetIndoorView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    const scene = viewer.scene;
+    eventManager.init(viewer);
 
-    if (!screenSpaceEventHandler) {
-        screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
-    }
+    const scene = viewer.scene;
 
     const mouseLeftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
         const tempObject = pickedObject;
@@ -141,15 +138,14 @@ export const createSetIndoorView = (globeController: GlobeController) => {
         }
     };
 
-    screenSpaceEventHandler.setInputAction(mouseLeftClickHandler, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    console.log("add indoor")
+    eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, mouseLeftClickHandler);
 };
 
 export const removeSetIndoorView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    if (screenSpaceEventHandler) {
-        screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        screenSpaceEventHandler = undefined;
-    }
+    console.log("destroy indoor")
+    eventManager.destroy();
 };
