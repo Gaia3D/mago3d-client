@@ -4,6 +4,7 @@ import {zoomIn} from "@/components/tool/actions/zoomIn.ts";
 import {zoomOut} from "@/components/tool/actions/zoomOut.ts";
 import {toggleFullScreen} from "@/components/tool/actions/toggleFullScreen.ts";
 import {createSetIndoorView, removeSetIndoorView} from "@/components/tool/actions/setIndoorView.ts";
+import {createSetLocationView, removeSetLocationView} from "@/components/tool/actions/setLocationView.ts";
 
 export const createToolActions = (globeController: GlobeController): Record<string, () => void> => ({
     "set-person-view": () => createSetPersonView(globeController),
@@ -31,7 +32,7 @@ export const createToolActions = (globeController: GlobeController): Record<stri
 export const removeToolActions = (globeController: GlobeController): Record<string, () => void> => ({
     "set-person-view": () => removeSetPersonView(globeController),
     "set-indoor-view": () => removeSetIndoorView(globeController),
-    "set-location-view": () => removeSetLocationView(globeController),
+    "set-location-view": () => removeSetLocationView(),
     "set-axis-view": () => removeSetAxisView(globeController),
     "show-camera-info": () => removeShowCameraInfo(globeController),
     "measure-location": () => removeMeasureLocation(globeController),

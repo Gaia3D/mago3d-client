@@ -1,5 +1,69 @@
-import {GlobeController} from "@/api/GlobeController.ts";
+import * as Cesium from "cesium";
+import { GlobeController } from "@/api/GlobeController.ts";
+import {eventManager} from "@/components/tool/actions/eventManager.ts";
 
-export const setLocationView = (globeController: GlobeController) => {
-    console.log(globeController);
-}
+let pickedObject: any | undefined = undefined;
+const MAN_HEIGHT = 2;
+
+const getCenterHeight = (
+    pickedObject: any | undefined,
+    startCartesian: Cesium.Cartesian3,
+    scene: Cesium.Scene
+): number => {
+    if (pickedObject instanceof Cesium.Cesium3DTileFeature) {
+        return Cesium.Cartographic.fromCartesian(startCartesian).height;
+    } else if (pickedObject?.primitive instanceof Cesium.Primitive) {
+        return pickedObject.id.polygon.height.getValue();
+    } else {
+        const cartographic = Cesium.Cartographic.fromCartesian(startCartesian);
+        return scene.globe.getHeight(cartographic) || 0;
+    }
+};
+
+export const createSetLocationView = (globeController: GlobeController) => {
+    const { viewer } = globeController;
+    if (!viewer) return;
+
+    eventManager.init(viewer);
+
+    const scene = viewer.scene;
+
+    const mouseLeftClickHandler = (event: { position: Cesium.Cartesian2 }) => {
+        pickedObject = scene.pick(event.position);
+
+        const pickedEllipsoidPosition = scene.pickPositionSupported
+            ? scene.pickPosition(event.position)
+            : viewer.camera.pickEllipsoid(event.position, scene.globe.ellipsoid);
+
+        if (!pickedEllipsoidPosition) {
+            console.warn("Position not found on ellipsoid");
+            return;
+        }
+
+        const startCartesian = pickedEllipsoidPosition;
+        const cartographic = Cesium.Cartographic.fromCartesian(startCartesian);
+        const centerHeight = getCenterHeight(pickedObject, startCartesian, scene);
+        const startDestination = Cesium.Cartesian3.fromRadians(
+            cartographic.longitude,
+            cartographic.latitude,
+            centerHeight + MAN_HEIGHT
+        );
+
+        const camera = viewer.camera;
+
+        viewer.camera.flyTo({
+            destination: startDestination,
+            orientation: {
+                direction: camera.direction,
+                up: camera.up,
+            },
+            duration: 2.0,
+        });
+    };
+
+    eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, mouseLeftClickHandler);
+};
+
+export const removeSetLocationView = () => {
+    eventManager.destroy();
+};
