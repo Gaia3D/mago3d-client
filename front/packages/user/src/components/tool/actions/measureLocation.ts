@@ -39,9 +39,10 @@ export const createMeasureLocation = (globeController: GlobeController, unit: st
 
         console.log(`Lat: ${lat}, Lon: ${lon}, Height: ${height}`);
 
-        toolDataSource.entities.removeAll();
+        toolDataSource.entities.removeById("location");
 
         toolDataSource.entities.add({
+            id: "location",
             position: cartesian,
             point: {
                 show: true,
@@ -71,6 +72,6 @@ export const removeMeasureLocation = (globeController: GlobeController) => {
     const { viewer, toolDataSource } = globeController;
     if (!viewer) return;
 
-    toolDataSource.entities.removeAll();
+    toolDataSource.entities.removeById("location");
     eventManager.destroy();
 };

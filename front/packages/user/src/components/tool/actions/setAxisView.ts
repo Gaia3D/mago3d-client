@@ -43,7 +43,8 @@ export const createSetAxisView = (globeController: GlobeController) => {
     const mouseLeftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
         if (!status) {
             status = true;
-            toolDataSource.entities.removeAll();
+            toolDataSource.entities.removeById("start-point");
+            toolDataSource.entities.removeById("axis-polyline");
         } else {
             status = false;
             if (startCartesian && endCartesian) {
@@ -60,6 +61,7 @@ export const createSetAxisView = (globeController: GlobeController) => {
             endCartesian = startCartesian;
 
             toolDataSource.entities.add({
+                id: "start-point",
                 position: startCartesian,
                 point: {
                     color: Cesium.Color.RED,
@@ -69,6 +71,7 @@ export const createSetAxisView = (globeController: GlobeController) => {
             });
 
             toolDataSource.entities.add({
+                id: "axis-polyline",
                 polyline: {
                     positions: new Cesium.CallbackProperty(() => [startCartesian, endCartesian], false),
                     width: 5,
@@ -116,6 +119,7 @@ export const removeSetAxisView = (globeController: GlobeController) => {
     const { viewer, toolDataSource } = globeController;
     if (!viewer) return;
 
-    toolDataSource.entities.removeAll();
+    toolDataSource.entities.removeById("start-point");
+    toolDataSource.entities.removeById("axis-polyline");
     eventManager.destroy();
 };
