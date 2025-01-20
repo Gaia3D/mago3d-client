@@ -92,7 +92,6 @@ export const createSetPersonView = (globeController: GlobeController) => {
         if (flagName) flags[flagName] = false;
     };
 
-    console.log("add person")
     eventManager.addHandler(Cesium.ScreenSpaceEventType.WHEEL, mouseWheelHandler);
     eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_DOWN, mouseDownHandler);
     eventManager.addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, mouseMoveHandler);
@@ -124,7 +123,6 @@ export const removeSetPersonView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    console.log("destroy person")
     eventManager.destroy();
 
     if (keyboardEventHandler) {

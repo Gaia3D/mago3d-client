@@ -55,6 +55,7 @@ const SideToolContainer: React.FC = () => {
                     if (updatedTools[toolId]) {
                         TOOL_REMOVE_ACTIONS[toolId]?.(); // OFF
                         delete updatedTools[toolId];
+                        return updatedTools;
                     }
 
                     // 같은 그룹의 다른 버튼 OFF

@@ -138,7 +138,6 @@ export const createSetIndoorView = (globeController: GlobeController) => {
         }
     };
 
-    console.log("add indoor")
     eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, mouseLeftClickHandler);
 };
 
@@ -146,6 +145,5 @@ export const removeSetIndoorView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    console.log("destroy indoor")
     eventManager.destroy();
 };
