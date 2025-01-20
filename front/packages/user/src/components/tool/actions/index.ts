@@ -5,6 +5,7 @@ import {zoomOut} from "@/components/tool/actions/zoomOut.ts";
 import {toggleFullScreen} from "@/components/tool/actions/toggleFullScreen.ts";
 import {createSetIndoorView, removeSetIndoorView} from "@/components/tool/actions/setIndoorView.ts";
 import {createSetLocationView, removeSetLocationView} from "@/components/tool/actions/setLocationView.ts";
+import {createSetAxisView, removeSetAxisView} from "@/components/tool/actions/setAxisView.ts";
 
 export const createToolActions = (globeController: GlobeController): Record<string, () => void> => ({
     "set-person-view": () => createSetPersonView(globeController),
