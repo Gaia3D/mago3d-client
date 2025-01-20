@@ -6,6 +6,7 @@ import {toggleFullScreen} from "@/components/tool/actions/toggleFullScreen.ts";
 import {createSetIndoorView, removeSetIndoorView} from "@/components/tool/actions/setIndoorView.ts";
 import {createSetLocationView, removeSetLocationView} from "@/components/tool/actions/setLocationView.ts";
 import {createSetAxisView, removeSetAxisView} from "@/components/tool/actions/setAxisView.ts";
+import {createMeasureLocation, removeMeasureLocation} from "@/components/tool/actions/measureLocation.ts";
 
 export const createToolActions = (globeController: GlobeController): Record<string, () => void> => ({
     "set-person-view": () => createSetPersonView(globeController),
@@ -13,7 +14,7 @@ export const createToolActions = (globeController: GlobeController): Record<stri
     "set-location-view": () => createSetLocationView(globeController),
     "set-axis-view": () => createSetAxisView(globeController),
     "show-camera-info": () => createShowCameraInfo(globeController),
-    "measure-location": () => createMeasureLocation(globeController),
+    "measure-location": () => createMeasureLocation(globeController, "m"),
     "measure-length": () => createMeasureLength(globeController),
     "measure-area": () => createMeasureArea(globeController),
     "measure-angle": () => createMeasureAngle(globeController),

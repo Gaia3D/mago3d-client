@@ -11,18 +11,8 @@ let status = false;
 let startCartesian: Cesium.Cartesian3 | undefined = undefined;
 let endCartesian: Cesium.Cartesian3 | undefined = undefined;
 
-let startEntity: Cesium.Entity | undefined = undefined;
-let lineEntity: Cesium.Entity | undefined = undefined;
-
-const clearEntities = (viewer: Cesium.Viewer) => {
-    if (lineEntity) viewer.entities.remove(lineEntity);
-    if (startEntity) viewer.entities.remove(startEntity);
-    lineEntity = undefined;
-    startEntity = undefined;
-};
-
 export const createSetAxisView = (globeController: GlobeController) => {
-    const { viewer } = globeController;
+    const { viewer, toolDataSource } = globeController;
     if (!viewer) return;
 
     eventManager.init(viewer);
@@ -53,7 +43,7 @@ export const createSetAxisView = (globeController: GlobeController) => {
     const mouseLeftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
         if (!status) {
             status = true;
-            clearEntities(viewer);
+            toolDataSource.entities.removeAll();
         } else {
             status = false;
             if (startCartesian && endCartesian) {
@@ -69,7 +59,7 @@ export const createSetAxisView = (globeController: GlobeController) => {
             startCartesian = pickedEllipsoidPosition;
             endCartesian = startCartesian;
 
-            startEntity = viewer.entities.add({
+            toolDataSource.entities.add({
                 position: startCartesian,
                 point: {
                     color: Cesium.Color.RED,
@@ -78,7 +68,7 @@ export const createSetAxisView = (globeController: GlobeController) => {
                 },
             });
 
-            lineEntity = viewer.entities.add({
+            toolDataSource.entities.add({
                 polyline: {
                     positions: new Cesium.CallbackProperty(() => [startCartesian, endCartesian], false),
                     width: 5,
@@ -123,8 +113,9 @@ export const createSetAxisView = (globeController: GlobeController) => {
 };
 
 export const removeSetAxisView = (globeController: GlobeController) => {
-    const { viewer } = globeController;
+    const { viewer, toolDataSource } = globeController;
     if (!viewer) return;
-    clearEntities(viewer);
+
+    toolDataSource.entities.removeAll();
     eventManager.destroy();
 };
