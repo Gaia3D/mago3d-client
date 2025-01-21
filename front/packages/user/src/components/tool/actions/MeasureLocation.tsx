@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as Cesium from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
-import {getUnitFactor} from "@/components/utils/unit.ts";
+import {getLengthUnitFactor} from "@/components/utils/unit.ts";
 
 interface MeasureLocationProps {
     globeController: GlobeController;
@@ -16,7 +16,7 @@ const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
         if (!viewer) return;
 
         const getUnitHeight = (distance: number): string => {
-            return `${Math.round((distance / getUnitFactor(unit)) * 100) / 100} ${unit}`;
+            return `${Math.round((distance / getLengthUnitFactor(unit)) * 100) / 100} ${unit}`;
         };
 
         const mouseLeftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {

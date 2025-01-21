@@ -46,8 +46,6 @@ export const createSetIndoorView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    eventManager.init(viewer);
-
     const scene = viewer.scene;
 
     const mouseLeftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
@@ -140,6 +138,7 @@ export const createSetIndoorView = (globeController: GlobeController) => {
         }
     };
 
+    eventManager.init(viewer);
     eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, mouseLeftClickHandler);
 };
 

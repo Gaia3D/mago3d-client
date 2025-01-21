@@ -15,8 +15,6 @@ export const createSetAxisView = (globeController: GlobeController) => {
     const { viewer, toolDataSource } = globeController;
     if (!viewer) return;
 
-    eventManager.init(viewer);
-
     const adjustHeight = (cartesian: Cesium.Cartesian3, height: number): Cesium.Cartesian3 => {
         const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
         return Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height + height);
@@ -111,6 +109,7 @@ export const createSetAxisView = (globeController: GlobeController) => {
         return pickedEllipsoidPosition;
     };
 
+    eventManager.init(viewer);
     eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, mouseLeftClickHandler);
     eventManager.addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, mouseMoveHandler);
 };

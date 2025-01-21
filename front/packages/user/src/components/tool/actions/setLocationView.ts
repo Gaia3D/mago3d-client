@@ -24,8 +24,6 @@ export const createSetLocationView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    eventManager.init(viewer);
-
     const scene = viewer.scene;
 
     const mouseLeftClickHandler = (event: { position: Cesium.Cartesian2 }) => {
@@ -61,6 +59,7 @@ export const createSetLocationView = (globeController: GlobeController) => {
         });
     };
 
+    eventManager.init(viewer);
     eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, mouseLeftClickHandler);
 };
 

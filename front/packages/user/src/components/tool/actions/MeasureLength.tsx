@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import * as Cesium from "cesium";
 import { eventManager } from "@/components/tool/actions/eventManager.ts";
 import { GlobeController } from "@/api/GlobeController.ts";
-import { getUnitFactor } from "@/components/utils/unit.ts";
+import { getLengthUnitFactor } from "@/components/utils/unit.ts";
 
 interface MeasureLengthProps {
     globeController: GlobeController;
@@ -38,7 +38,7 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
         const segmentDistances: number[] = [];
 
         const getUnitDistance = (distance: number): string => {
-            return `${Math.round((distance / getUnitFactor(unit)) * 100) / 100} ${unit}`;
+            return `${Math.round((distance / getLengthUnitFactor(unit)) * 100) / 100} ${unit}`;
         };
 
         const calculateTerrainDistance = async (start: Cesium.Cartographic, end: Cesium.Cartographic) => {
@@ -169,12 +169,11 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
 
         eventManager.init(viewer);
         eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
-        window.addEventListener("keydown", escKeyHandler);
+        eventManager.addGlobalHandler("keydown", escKeyHandler as EventListener);
 
         return () => {
             toolDataSource.entities.removeAll();
             eventManager.destroy();
-            window.removeEventListener("keydown", escKeyHandler);
         };
     }, [globeController, unit]);
 

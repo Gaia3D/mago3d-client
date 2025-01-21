@@ -61,8 +61,6 @@ export const createSetPersonView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    eventManager.init(viewer);
-
     const { scene, camera } = viewer;
 
     if (camera.frustum instanceof PerspectiveFrustum) {
@@ -92,6 +90,7 @@ export const createSetPersonView = (globeController: GlobeController) => {
         if (flagName) flags[flagName] = false;
     };
 
+    eventManager.init(viewer);
     eventManager.addHandler(Cesium.ScreenSpaceEventType.WHEEL, mouseWheelHandler);
     eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_DOWN, mouseDownHandler);
     eventManager.addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, mouseMoveHandler);

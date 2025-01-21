@@ -2,7 +2,7 @@ import { GlobeController } from "@/api/GlobeController.ts";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import * as Cesium from "cesium";
-import {getUnitFactor} from "@/components/utils/unit.ts";
+import {getLengthUnitFactor} from "@/components/utils/unit.ts";
 
 interface ShowCameraInfoProps {
     globeController: GlobeController;
@@ -38,7 +38,7 @@ const ShowCameraInfo = ({ globeController, unit }: ShowCameraInfoProps) => {
 
             setLongitude(lon);
             setLatitude(lat);
-            setAltitude(alt / getUnitFactor(unit));
+            setAltitude(alt / getLengthUnitFactor(unit));
             setHeading(head);
             setDirection(getCardinalDirection(head));
         };
