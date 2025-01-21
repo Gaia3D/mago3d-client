@@ -8,7 +8,7 @@ interface MeasureLocationProps {
     unit: string;
 }
 
-const MeasureLocation: React.FC<MeasureLocationProps> = ({ globeController, unit }) => {
+const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
     const { viewer, toolDataSource } = globeController;
     const [locationData, setLocationData] = useState<{ lat: number; lon: number; height: string } | null>(null);
 

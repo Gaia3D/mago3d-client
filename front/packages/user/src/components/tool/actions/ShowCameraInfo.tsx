@@ -52,22 +52,20 @@ const ShowCameraInfo = ({ globeController, unit }: ShowCameraInfoProps) => {
     return (
         <div>
             <div>
-                <div>
-                    <span>{t("latitude")}</span>
-                    <span>{latitude.toFixed(6)}</span>
-                </div>
-                <div>
-                    <span>{t("longitude")}</span>
-                    <span>{longitude.toFixed(6)}</span>
-                </div>
-                <div>
-                    <span>{t("altitude")}</span>
-                    <span>{altitude.toFixed(2)} {unit}</span>
-                </div>
-                <div>
-                    <span>{t("heading")}</span>
-                    <span>{direction} ({heading.toFixed(2)}°)</span>
-                </div>
+                <span>{t("latitude")}</span>
+                <span>{latitude.toFixed(6)}</span>
+            </div>
+            <div>
+                <span>{t("longitude")}</span>
+                <span>{longitude.toFixed(6)}</span>
+            </div>
+            <div>
+                <span>{t("altitude")}</span>
+                <span>{altitude.toFixed(2)} {unit}</span>
+            </div>
+            <div>
+                <span>{t("heading")}</span>
+                <span>{direction} ({heading.toFixed(2)}°)</span>
             </div>
         </div>
     );
