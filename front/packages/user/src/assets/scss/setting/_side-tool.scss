@@ -13,3 +13,14 @@
     }
   }
 }
+
+.temp-tool-container {
+  position: fixed;
+  bottom: 0;
+  button {
+    &.selected {
+      background-color: black;
+      color: white;
+    }
+  }
+}

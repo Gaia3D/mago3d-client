@@ -1,101 +1,79 @@
-import React, { useState } from "react";
-import ToolButton from "@/components/tool/ToolButton";
-import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
-import { createToolActions, removeToolActions, TOOL_IDS } from "@/components/tool/actions";
-
-interface ButtonSetting {
-    id: string;
-    toggleYn: boolean;
-    groupYn: boolean;
-    groupId?: string;
-}
-
-const SIDE_BUTTONS: ButtonSetting[] = [
-    { id: "set-person-view", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "set-indoor-view", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "set-location-view", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "set-axis-view", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "show-camera-info", toggleYn: true, groupYn: false },
-    { id: "measure-location", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "measure-length", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "measure-area", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "measure-angle", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "measure-complex-distance", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "measure-radius", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "select-object", toggleYn: true, groupYn: true, groupId: "mouse-left-click" },
-    { id: "show-temperature", toggleYn: true, groupYn: false },
-    { id: "show-wind", toggleYn: true, groupYn: false },
-    { id: "configure-terrain", toggleYn: true, groupYn: false },
-    { id: "set-terrain-transparency", toggleYn: true, groupYn: false },
-    { id: "toggle-full-screen", toggleYn: false, groupYn: false },
-    { id: "configure-time", toggleYn: true, groupYn: false },
-    { id: "zoom-in", toggleYn: false, groupYn: false },
-    { id: "zoom-out", toggleYn: false, groupYn: false },
-];
+import React, { useState, useEffect } from "react";
+import {ToolConfig, useToolConfig} from "@/components/utils/toolConfig.tsx";
 
 const SideToolContainer: React.FC = () => {
-    const { globeController } = useGlobeController();
-    const [activeTools, setActiveTools] = useState<Record<string, boolean>>({});
-    const TOOL_ACTIONS = createToolActions(globeController);
-    const TOOL_REMOVE_ACTIONS = removeToolActions(globeController);
+    const TOOLS = useToolConfig();
+    const [selectedTools, setSelectedTools] = useState<Record<string, boolean>>({});
+    const [exclusiveSelected, setExclusiveSelected] = useState<string | null>(null);
 
-    const handleToolClick = async (toolId: string) => {
-        const buttonSetting = SIDE_BUTTONS.find((btn) => btn.id === toolId);
-        if (!buttonSetting) return;
+    useEffect(() => {
+        const initialStates = TOOLS.reduce((acc, button) => {
+            acc[button.id] = false;
+            return acc;
+        }, {} as Record<string, boolean>);
+        setSelectedTools(initialStates);
+    }, [TOOLS]);
 
-        const { toggleYn, groupYn, groupId } = buttonSetting;
+    const handleClick = (button: ToolConfig) => {
+        const { id, type, onSelect, onDeselect } = button;
 
-        if (toggleYn) {
-            // 항상 OFF를 먼저 수행
-            await new Promise<void>((resolve) => {
-                setActiveTools((prev) => {
-                    const updatedTools = { ...prev };
+        if (type === "default") {
+            onSelect?.();
+            return;
+        }
 
-                    // 현재 버튼 OFF
-                    if (updatedTools[toolId]) {
-                        TOOL_REMOVE_ACTIONS[toolId]?.(); // OFF
-                        delete updatedTools[toolId];
-                        return updatedTools;
-                    }
-
-                    // 같은 그룹의 다른 버튼 OFF
-                    if (groupYn && groupId) {
-                        Object.keys(updatedTools).forEach((id) => {
-                            const groupBtn = SIDE_BUTTONS.find((btn) => btn.id === id);
-                            if (groupBtn?.groupId === groupId && id !== toolId) {
-                                TOOL_REMOVE_ACTIONS[id]?.(); // OFF
-                                delete updatedTools[id];
-                            }
-                        });
-                    }
-
-                    resolve();
-                    return updatedTools;
-                });
+        if (type === "toggle") {
+            setSelectedTools((prev) => {
+                const newState = !prev[id];
+                if (newState) {
+                    onSelect?.();
+                } else {
+                    onDeselect?.();
+                }
+                return { ...prev, [id]: newState };
             });
+        }
 
-            // ON 수행
-            setActiveTools((prev) => {
-                const updatedTools = { ...prev };
-                TOOL_ACTIONS[toolId]?.(); // ON
-                updatedTools[toolId] = true;
-                return updatedTools;
+        if (type === "exclusive") {
+            setSelectedTools((prev) => {
+                const newState = { ...prev };
+
+                // 현재 선택된 exclusive 버튼 해제
+                if (exclusiveSelected && exclusiveSelected !== id) {
+                    newState[exclusiveSelected] = false;
+                    const previousTool = TOOLS.find((b) => b.id === exclusiveSelected);
+                    previousTool?.onDeselect?.();
+                }
+
+                // 새로운 exclusive 버튼 선택
+                if (prev[id]) {
+                    onDeselect?.(); // 선택된 상태 해제
+                    setExclusiveSelected(null);
+                } else {
+                    onSelect?.(); // 새로운 상태 선택
+                    setExclusiveSelected(id);
+                }
+
+                newState[id] = !prev[id];
+                return newState;
             });
-        } else {
-            // 항상 ON 동작
-            TOOL_ACTIONS[toolId]?.();
         }
     };
 
     return (
-        <div className="side-tool-container">
-            {TOOL_IDS.map((toolId) => (
-                <ToolButton
-                    key={toolId}
-                    toolId={toolId}
-                    selected={!!activeTools[toolId]}
-                    onClick={() => handleToolClick(toolId)}
-                />
+        <div className="temp-tool-container">
+            {TOOLS.map((button) => (
+                <div key={button.id}>
+                    <button
+                        onClick={() => handleClick(button)}
+                        style={{
+                            backgroundColor: selectedTools[button.id] ? "lightblue" : "white",
+                        }}
+                    >
+                        {button.id}
+                    </button>
+                    {selectedTools[button.id] && button.component}
+                </div>
             ))}
         </div>
     );
