@@ -10,6 +10,8 @@ interface MeasureAreaProps {
     unit: string;
 }
 
+const eventGroupId = "MeasureArea";
+
 const createPolygonEntity = (toolDataSource: Cesium.CustomDataSource, cartesians: Cesium.Cartesian3[]) => {
     toolDataSource.entities.add({
         polygon: {
@@ -115,12 +117,12 @@ export const MeasureArea = ({ globeController, unit }: MeasureAreaProps) => {
         };
 
         eventManager.init(viewer);
-        eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
-        eventManager.addGlobalHandler("keydown", escKeyHandler as EventListener);
+        eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
+        eventManager.addGlobalHandler(eventGroupId, "keydown", escKeyHandler as EventListener);
 
         return () => {
             toolDataSource.entities.removeAll();
-            eventManager.destroy();
+            eventManager.destroyGroup(eventGroupId);
         };
     }, [globeController, unit]);
 

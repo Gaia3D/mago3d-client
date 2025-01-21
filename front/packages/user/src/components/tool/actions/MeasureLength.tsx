@@ -9,6 +9,8 @@ interface MeasureLengthProps {
     unit: string;
 }
 
+const eventGroupId = "MeasureLength";
+
 const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
     toolDataSource.entities.add({
         position: cartesian,
@@ -178,12 +180,12 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
         };
 
         eventManager.init(viewer);
-        eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
-        eventManager.addGlobalHandler("keydown", escKeyHandler as EventListener);
+        eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
+        eventManager.addGlobalHandler(eventGroupId, "keydown", escKeyHandler as EventListener);
 
         return () => {
             toolDataSource.entities.removeAll();
-            eventManager.destroy();
+            eventManager.destroyGroup(eventGroupId);
         };
     }, [globeController, unit]);
 

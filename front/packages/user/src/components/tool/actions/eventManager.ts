@@ -2,8 +2,8 @@ import * as Cesium from "cesium";
 
 export const eventManager = {
     screenSpaceEventHandler: undefined as Cesium.ScreenSpaceEventHandler | undefined,
-    handlers: new Map<Cesium.ScreenSpaceEventType, (event: any) => void>(),
-    globalHandlers: new Map<string, EventListener>(),
+    eventGroups: new Map<string, { type: Cesium.ScreenSpaceEventType; handler: (event: any) => void }[]>(),
+    globalEventGroups: new Map<string, { type: string; handler: EventListener }[]>(),
 
     init(viewer: Cesium.Viewer) {
         if (!this.screenSpaceEventHandler) {
@@ -11,42 +11,56 @@ export const eventManager = {
         }
     },
 
-    addHandler(eventType: Cesium.ScreenSpaceEventType, handler: (event: any) => void) {
+    addHandler(groupId: string, eventType: Cesium.ScreenSpaceEventType, handler: (event: any) => void) {
         if (!this.screenSpaceEventHandler) throw new Error("EventManager not initialized");
-        if (this.handlers.has(eventType)) {
-            this.removeHandler(eventType);
+
+        if (!this.eventGroups.has(groupId)) {
+            this.eventGroups.set(groupId, []);
         }
-        this.handlers.set(eventType, handler);
+
+        this.eventGroups.get(groupId)?.push({ type: eventType, handler });
         this.screenSpaceEventHandler.setInputAction(handler, eventType);
     },
 
-    removeHandler(eventType: Cesium.ScreenSpaceEventType) {
-        if (!this.screenSpaceEventHandler) return;
-        this.screenSpaceEventHandler.removeInputAction(eventType);
-        this.handlers.delete(eventType);
+    removeHandler(groupId: string) {
+        const group = this.eventGroups.get(groupId);
+        if (group && this.screenSpaceEventHandler) {
+            group.forEach(({ type }) => {
+                this.screenSpaceEventHandler?.removeInputAction(type);
+            });
+            this.eventGroups.delete(groupId);
+        }
     },
 
-    addGlobalHandler(eventType: string, handler: EventListener) {
-        if (this.globalHandlers.has(eventType)) {
-            this.removeGlobalHandler(eventType);
+    addGlobalHandler(groupId: string, eventType: string, handler: EventListener) {
+        if (!this.globalEventGroups.has(groupId)) {
+            this.globalEventGroups.set(groupId, []);
         }
+
+        this.globalEventGroups.get(groupId)?.push({ type: eventType, handler });
         document.addEventListener(eventType, handler);
-        this.globalHandlers.set(eventType, handler);
     },
 
-    removeGlobalHandler(eventType: string) {
-        const handler = this.globalHandlers.get(eventType);
-        if (handler) {
-            document.removeEventListener(eventType, handler);
-            this.globalHandlers.delete(eventType);
+    removeGlobalHandler(groupId: string) {
+        const group = this.globalEventGroups.get(groupId);
+        if (group) {
+            group.forEach(({ type, handler }) => {
+                document.removeEventListener(type, handler);
+            });
+            this.globalEventGroups.delete(groupId);
         }
     },
 
-    destroy() {
+    destroyGroup(groupId: string) {
+        this.removeHandler(groupId);
+        this.removeGlobalHandler(groupId);
+    },
+
+    destroyAll() {
         if (this.screenSpaceEventHandler) {
-            this.handlers.forEach((_, eventType) => this.removeHandler(eventType));
+            Array.from(this.eventGroups.keys()).forEach((groupId) => this.removeHandler(groupId));
             this.screenSpaceEventHandler = undefined;
         }
-        this.globalHandlers.forEach((_, eventType) => this.removeGlobalHandler(eventType));
+        Array.from(this.globalEventGroups.keys()).forEach((groupId) => this.removeGlobalHandler(groupId));
     },
 };

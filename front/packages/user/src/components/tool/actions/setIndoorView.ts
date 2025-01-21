@@ -10,6 +10,8 @@ interface ExtendedCesium3DTileFeature extends Cesium.Cesium3DTileFeature {
     };
 }
 
+const eventGroupId = "IndoorView";
+
 const color: Cesium.Color = Cesium.Color.fromCssColorString("#0675e6");
 const manHeight = 1.5;
 let tempColor: Cesium.Color | undefined = undefined;
@@ -48,7 +50,7 @@ export const createSetIndoorView = (globeController: GlobeController) => {
 
     const scene = viewer.scene;
 
-    const mouseLeftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+    const leftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
         const tempObject = pickedObject;
         pickedObject = scene.pick(event.position);
 
@@ -139,7 +141,7 @@ export const createSetIndoorView = (globeController: GlobeController) => {
     };
 
     eventManager.init(viewer);
-    eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, mouseLeftClickHandler);
+    eventManager.addHandler("eventGroupId", Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
 };
 
 export const removeSetIndoorView = (globeController: GlobeController) => {
@@ -159,5 +161,5 @@ export const removeSetIndoorView = (globeController: GlobeController) => {
         }, 100);
     }
 
-    eventManager.destroy();
+    eventManager.destroyGroup(eventGroupId);
 };

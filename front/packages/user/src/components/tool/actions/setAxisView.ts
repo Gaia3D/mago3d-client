@@ -11,6 +11,8 @@ let status = false;
 let startCartesian: Cesium.Cartesian3 | undefined = undefined;
 let endCartesian: Cesium.Cartesian3 | undefined = undefined;
 
+const eventGroupId = "AxisView";
+
 export const createSetAxisView = (globeController: GlobeController) => {
     const { viewer, toolDataSource } = globeController;
     if (!viewer) return;
@@ -38,7 +40,7 @@ export const createSetAxisView = (globeController: GlobeController) => {
         });
     };
 
-    const mouseLeftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+    const leftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
         if (!status) {
             status = true;
             toolDataSource.entities.removeById("start-point");
@@ -110,8 +112,8 @@ export const createSetAxisView = (globeController: GlobeController) => {
     };
 
     eventManager.init(viewer);
-    eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, mouseLeftClickHandler);
-    eventManager.addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, mouseMoveHandler);
+    eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
+    eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.MOUSE_MOVE, mouseMoveHandler);
 };
 
 export const removeSetAxisView = (globeController: GlobeController) => {
@@ -120,5 +122,5 @@ export const removeSetAxisView = (globeController: GlobeController) => {
 
     toolDataSource.entities.removeById("start-point");
     toolDataSource.entities.removeById("axis-polyline");
-    eventManager.destroy();
+    eventManager.destroyGroup(eventGroupId);
 };

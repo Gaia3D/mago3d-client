@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import * as Cesium from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
 import {getLengthUnitFactor} from "@/components/utils/unit.ts";
+import { eventManager } from "@/components/tool/actions/eventManager.ts";
 
 interface MeasureLocationProps {
     globeController: GlobeController;
     unit: string;
 }
+
+const eventGroupId = "MeasureLocation";
 
 const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3, labelText: string) => {
     toolDataSource.entities.add({
@@ -33,39 +36,38 @@ const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
     });
 }
 
+const getUnitHeight = (distance: number, unit: string) => {
+    return Math.round((distance / getLengthUnitFactor(unit)) * 100) / 100;
+};
+
 const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
     const { viewer, toolDataSource } = globeController;
-    const [locationData, setLocationData] = useState<{ lat: number; lon: number; height: string } | null>(null);
+    const [locationData, setLocationData] = useState<{ lat: number; lon: number; height: number } | null>(null);
 
     useEffect(() => {
         if (!viewer) return;
 
-        const getUnitHeight = (distance: number): string => {
-            return `${Math.round((distance / getLengthUnitFactor(unit)) * 100) / 100} ${unit}`;
-        };
-
-        const mouseLeftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+        const leftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
             const cartesian = globeController.pickPosition(event.position);
             if (!cartesian) return;
 
             const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
             const lat = parseFloat(Cesium.Math.toDegrees(cartographic.latitude).toFixed(6));
             const lon = parseFloat(Cesium.Math.toDegrees(cartographic.longitude).toFixed(6));
-            const height = getUnitHeight(cartographic.height);
+            const height = getUnitHeight(cartographic.height, unit);
 
             setLocationData({ lat, lon, height });
 
             toolDataSource.entities.removeById("locationPoint");
-            const labelText = `Lat: ${lat}\nLon: ${lon}\nHeight: ${height}`;
+            const labelText = `Lat: ${lat}\nLon: ${lon}\nHeight: ${height}${unit}`;
             createPointEntity(toolDataSource, cartesian, labelText)
         };
 
-        const eventManager = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-        eventManager.setInputAction(mouseLeftClickHandler, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
+        eventManager.init(viewer);
+        eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
         return () => {
             toolDataSource.entities.removeById("locationPoint");
-            eventManager.destroy();
+            eventManager.destroyGroup(eventGroupId);
         };
     }, [viewer, toolDataSource, globeController, unit]);
 

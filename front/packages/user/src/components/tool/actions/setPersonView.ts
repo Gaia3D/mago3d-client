@@ -3,6 +3,8 @@ import { PerspectiveFrustum } from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
 import {eventManager} from "@/components/tool/actions/eventManager.ts";
 
+const eventGroupId = "PersonView";
+
 let keyboardEventHandler: (() => void) | null = null;
 let previousFov: number | undefined;
 
@@ -91,13 +93,13 @@ export const createSetPersonView = (globeController: GlobeController) => {
     };
 
     eventManager.init(viewer);
-    eventManager.addHandler(Cesium.ScreenSpaceEventType.WHEEL, mouseWheelHandler);
-    eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_DOWN, mouseDownHandler);
-    eventManager.addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, mouseMoveHandler);
-    eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_UP, mouseUpHandler);
+    eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.WHEEL, mouseWheelHandler);
+    eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_DOWN, mouseDownHandler);
+    eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.MOUSE_MOVE, mouseMoveHandler);
+    eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_UP, mouseUpHandler);
 
-    eventManager.addGlobalHandler("keydown", keyDownHandler as EventListener);
-    eventManager.addGlobalHandler("keyup", keyUpHandler as EventListener);
+    eventManager.addGlobalHandler(eventGroupId, "keydown", keyDownHandler as EventListener);
+    eventManager.addGlobalHandler(eventGroupId, "keyup", keyUpHandler as EventListener);
 
     keyboardEventHandler = () => {
         if (flags.moveForward) camera.moveForward(MOVE_RATE);
@@ -122,7 +124,7 @@ export const removeSetPersonView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    eventManager.destroy();
+    eventManager.destroyGroup(eventGroupId); // 특정 그룹만 제거
 
     if (keyboardEventHandler) {
         viewer.clock.onTick.removeEventListener(keyboardEventHandler);

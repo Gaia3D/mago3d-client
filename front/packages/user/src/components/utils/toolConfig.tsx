@@ -31,7 +31,7 @@ export const useToolConfig = (): ToolConfig[] => {
         return [
             {
                 id: "set-person-view",
-                type: "exclusive",
+                type: "toggle",
                 onSelect: () => createSetPersonView(globeController),
                 onDeselect: () => removeSetPersonView(globeController),
             },

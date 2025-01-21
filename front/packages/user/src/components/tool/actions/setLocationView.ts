@@ -2,6 +2,8 @@ import * as Cesium from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
 import {eventManager} from "@/components/tool/actions/eventManager.ts";
 
+const eventGroupId = "LocationView";
+
 let pickedObject: any | undefined = undefined;
 const MAN_HEIGHT = 2;
 
@@ -24,9 +26,8 @@ export const createSetLocationView = (globeController: GlobeController) => {
     const { viewer } = globeController;
     if (!viewer) return;
 
-    const scene = viewer.scene;
-
-    const mouseLeftClickHandler = (event: { position: Cesium.Cartesian2 }) => {
+    const leftClickHandler = (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+        const scene = viewer.scene;
         pickedObject = scene.pick(event.position);
 
         const pickedEllipsoidPosition = scene.pickPositionSupported
@@ -60,9 +61,9 @@ export const createSetLocationView = (globeController: GlobeController) => {
     };
 
     eventManager.init(viewer);
-    eventManager.addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, mouseLeftClickHandler);
+    eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
 };
 
 export const removeSetLocationView = () => {
-    eventManager.destroy();
+    eventManager.destroyGroup(eventGroupId);
 };
