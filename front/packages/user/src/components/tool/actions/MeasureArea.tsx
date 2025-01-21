@@ -17,7 +17,7 @@ const createPolygonEntity = (toolDataSource: Cesium.CustomDataSource, cartesians
             material: Cesium.Color.RED.withAlpha(0.5),
             heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         },
-        id: "polygonGraphics",
+        id: "areaPolygon",
     });
 };
 
@@ -30,7 +30,7 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource) => {
             font: "14px monospace",
             fillColor: Cesium.Color.fromCssColorString('#FF015F'),
             backgroundColor: Cesium.Color.fromCssColorString('#FFF').withAlpha(1),
-            horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
             style: Cesium.LabelStyle.FILL,
             heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,

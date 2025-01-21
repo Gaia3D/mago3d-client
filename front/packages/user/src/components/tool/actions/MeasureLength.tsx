@@ -9,6 +9,50 @@ interface MeasureLengthProps {
     unit: string;
 }
 
+const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
+    toolDataSource.entities.add({
+        position: cartesian,
+        point: {
+            pixelSize: 10,
+            color: Cesium.Color.WHITE,
+            outlineColor: Cesium.Color.RED,
+            outlineWidth: 2,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+    });
+}
+
+const createPolylineEntity = (toolDataSource: Cesium.CustomDataSource, cartesians: Cesium.Cartesian3[]) => {
+    toolDataSource.entities.add({
+        polyline: {
+            positions: cartesians,
+            width: 2,
+            material: Cesium.Color.RED,
+            clampToGround: true,
+        },
+    });
+}
+
+const createLabelEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
+    return toolDataSource.entities.add({
+        position: cartesian,
+        label: {
+            text: "",
+            font: "14px monospace",
+            showBackground: true,
+            backgroundColor: Cesium.Color.WHITE,
+            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            fillColor: Cesium.Color.RED,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+    });
+}
+
+const getUnitDistance = (distance: number, unit: string): string => {
+    return `${Math.round((distance / getLengthUnitFactor(unit)) * 100) / 100} ${unit}`;
+};
+
 // 선형 보간 함수
 const lerp = (start: number, end: number, t: number): number => {
     return start + t * (end - start);
@@ -30,16 +74,8 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
         const { viewer, toolDataSource } = globeController;
 
         if (!viewer) return;
-
-        const color = Cesium.Color.WHITE;
-        const outlineColor = Cesium.Color.RED;
-        const bgColor = Cesium.Color.WHITE.withAlpha(1);
         const cartesians: Cesium.Cartesian3[] = [];
         const segmentDistances: number[] = [];
-
-        const getUnitDistance = (distance: number): string => {
-            return `${Math.round((distance / getLengthUnitFactor(unit)) * 100) / 100} ${unit}`;
-        };
 
         const calculateTerrainDistance = async (start: Cesium.Cartographic, end: Cesium.Cartographic) => {
             const globe = viewer.scene.globe;
@@ -108,29 +144,13 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
             const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
             cartesians.push(cartesian);
 
-            toolDataSource.entities.add({
-                position: cartesian,
-                point: {
-                    pixelSize: 10,
-                    color: color,
-                    outlineColor: outlineColor,
-                    outlineWidth: 2,
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                },
-            });
+            createPointEntity(toolDataSource, cartesian);
 
             if (cartesians.length > 1) {
                 const start = Cesium.Cartographic.fromCartesian(cartesians[cartesians.length - 2]);
                 const end = cartographic;
 
-                toolDataSource.entities.add({
-                    polyline: {
-                        positions: cartesians,
-                        width: 2,
-                        material: outlineColor,
-                        clampToGround: true,
-                    },
-                });
+                createPolylineEntity(toolDataSource, cartesians);
 
                 const terrainDistance = await calculateTerrainDistance(start, end);
                 segmentDistances.push(terrainDistance);
@@ -143,19 +163,9 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
                     new Cesium.Cartesian3()
                 );
 
-                toolDataSource.entities.add({
-                    position: midPoint,
-                    label: {
-                        text: getUnitDistance(terrainDistance),
-                        font: "14px monospace",
-                        showBackground: true,
-                        backgroundColor: bgColor,
-                        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                        fillColor: outlineColor,
-                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                    },
-                });
+                const labelEntity = createLabelEntity(toolDataSource, midPoint);
+                if (!labelEntity?.label) return;
+                labelEntity.label.text = new Cesium.ConstantProperty(getUnitDistance(terrainDistance, unit));
             }
         };
 

@@ -8,6 +8,31 @@ interface MeasureLocationProps {
     unit: string;
 }
 
+const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3, labelText: string) => {
+    toolDataSource.entities.add({
+        id: "locationPoint",
+        position: cartesian,
+        point: {
+            show: true,
+            pixelSize: 5,
+            color: Cesium.Color.WHITE,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+        label: {
+            text: labelText,
+            font: "14px monospace",
+            horizontalOrigin: Cesium.HorizontalOrigin.RIGHT,
+            verticalOrigin: Cesium.VerticalOrigin.TOP,
+            pixelOffset: new Cesium.Cartesian2(-15, 0),
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            fillColor: Cesium.Color.WHITE,
+            showBackground: true,
+            backgroundColor: Cesium.Color.BLACK.withAlpha(0.8),
+            backgroundPadding: new Cesium.Cartesian2(16, 8),
+        },
+    });
+}
+
 const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
     const { viewer, toolDataSource } = globeController;
     const [locationData, setLocationData] = useState<{ lat: number; lon: number; height: string } | null>(null);
@@ -30,37 +55,16 @@ const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
 
             setLocationData({ lat, lon, height });
 
-            toolDataSource.entities.removeById("location");
-
-            toolDataSource.entities.add({
-                id: "location",
-                position: cartesian,
-                point: {
-                    show: true,
-                    pixelSize: 5,
-                    color: Cesium.Color.WHITE,
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                },
-                label: {
-                    text: `Lat: ${lat}\nLon: ${lon}\nHeight: ${height}`,
-                    font: "14px monospace",
-                    horizontalOrigin: Cesium.HorizontalOrigin.RIGHT,
-                    verticalOrigin: Cesium.VerticalOrigin.TOP,
-                    pixelOffset: new Cesium.Cartesian2(-15, 0),
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                    fillColor: Cesium.Color.WHITE,
-                    showBackground: true,
-                    backgroundColor: Cesium.Color.BLACK.withAlpha(0.8),
-                    backgroundPadding: new Cesium.Cartesian2(16, 8),
-                },
-            });
+            toolDataSource.entities.removeById("locationPoint");
+            const labelText = `Lat: ${lat}\nLon: ${lon}\nHeight: ${height}`;
+            createPointEntity(toolDataSource, cartesian, labelText)
         };
 
         const eventManager = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
         eventManager.setInputAction(mouseLeftClickHandler, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         return () => {
-            toolDataSource.entities.removeById("location");
+            toolDataSource.entities.removeById("locationPoint");
             eventManager.destroy();
         };
     }, [viewer, toolDataSource, globeController, unit]);
