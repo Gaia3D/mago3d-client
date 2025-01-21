@@ -8,6 +8,7 @@ import {createSetPersonView, removeSetPersonView} from "@/components/tool/action
 import {createSetIndoorView, removeSetIndoorView} from "@/components/tool/actions/setIndoorView.ts";
 import {createSetLocationView, removeSetLocationView} from "@/components/tool/actions/setLocationView.ts";
 import {createSetAxisView, removeSetAxisView} from "@/components/tool/actions/setAxisView.ts";
+import ShowCameraInfo from "@/components/tool/actions/ShowCameraInfo.tsx";
 
 export interface ToolConfig {
     id: string;
@@ -44,6 +45,11 @@ export const useToolConfig = (): ToolConfig[] => {
             type: "exclusive",
             onSelect: () => createSetAxisView(globeController),
             onDeselect: () => removeSetAxisView(globeController)
+        },
+        {
+            id: "show-camera-info",
+            type: "toggle",
+            component: <ShowCameraInfo globeController={globeController} unit={"m"} />
         },
         {
             id: "measure-location",
