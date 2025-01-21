@@ -11,6 +11,7 @@ import { createSetAxisView, removeSetAxisView } from "@/components/tool/actions/
 import ShowCameraInfo from "@/components/tool/actions/ShowCameraInfo.tsx";
 import { useTerrainController } from "@/components/tool/actions/useTerrainController.ts";
 import MeasureLength from "@/components/tool/actions/MeasureLength.tsx";
+import {MeasureArea} from "@/components/tool/actions/MeasureArea.tsx";
 
 export interface ToolConfig {
     id: string;
@@ -66,6 +67,11 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "measure-length",
                 type: "exclusive",
                 component: <MeasureLength globeController={globeController} unit={"m"} />,
+            },
+            {
+                id: "measure-area",
+                type: "exclusive",
+                component: <MeasureArea globeController={globeController} unit={"m²"} />,
             },
             {
                 id: "terrain-controller",
