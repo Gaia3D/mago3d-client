@@ -19,6 +19,7 @@ const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
             color: Cesium.Color.WHITE,
             outlineColor: Cesium.Color.RED,
             outlineWidth: 2,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
         },
     });
@@ -47,6 +48,7 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
             fillColor: Cesium.Color.RED,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         },
     });
 }
@@ -75,8 +77,8 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
 
     useEffect(() => {
         const { viewer, toolDataSource } = globeController;
-
         if (!viewer) return;
+
         const cartesians: Cesium.Cartesian3[] = [];
         const baseDistances: number[] = [];
         const terrainDistances: number[] = [];

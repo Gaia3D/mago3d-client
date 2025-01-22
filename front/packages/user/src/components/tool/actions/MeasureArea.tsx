@@ -49,6 +49,7 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource) => {
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
             fillColor: Cesium.Color.RED,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         },
         id: "areaLabel",
     });
