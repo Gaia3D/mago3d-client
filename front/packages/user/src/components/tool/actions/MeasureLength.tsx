@@ -70,70 +70,71 @@ const interpolateArray = (start: number, end: number, steps: number): number[] =
 };
 
 const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
-    const [totalLength, setTotalLength] = useState(0);
+    const [totalBaseLength, setTotalBaseLength] = useState(0); // 직선 거리
+    const [totalTerrainLength, setTotalTerrainLength] = useState(0); // 지형 거리
 
     useEffect(() => {
         const { viewer, toolDataSource } = globeController;
 
         if (!viewer) return;
         const cartesians: Cesium.Cartesian3[] = [];
-        const segmentDistances: number[] = [];
+        const baseDistances: number[] = [];
+        const terrainDistances: number[] = [];
 
-        const calculateTerrainDistance = async (start: Cesium.Cartographic, end: Cesium.Cartographic) => {
-            const globe = viewer.scene.globe;
+        const calculateDistances = async (start: Cesium.Cartographic, end: Cesium.Cartographic, globe: Cesium.Globe) => {
+            const ellipsoid = Cesium.Ellipsoid.WGS84;
 
-            // 두 점 사이를 일정 간격으로 분할하여 지형 샘플링
-            const interpolationSteps = 100; // 분할 개수
+            // 직선 거리 계산
+            const startCartesian = Cesium.Cartesian3.fromRadians(start.longitude, start.latitude, 0, ellipsoid);
+            const endCartesian = Cesium.Cartesian3.fromRadians(end.longitude, end.latitude, 0, ellipsoid);
+            const baseDistance = Cesium.Cartesian3.distance(startCartesian, endCartesian);
+
+            // 샘플링 간격 설정 (1m 단위)
+            const divMeter = 1;
+            const interpolationSteps = Math.max(1, Math.ceil(baseDistance / divMeter));
             const longitudes = interpolateArray(start.longitude, end.longitude, interpolationSteps);
             const latitudes = interpolateArray(start.latitude, end.latitude, interpolationSteps);
+
             const positions = longitudes.map((lon, idx) =>
                 Cesium.Cartographic.fromRadians(lon, latitudes[idx])
             );
 
-            // terrain이 없는 경우 EllipsoidTerrainProvider를 사용하여 처리
+            // 지형 높이 샘플링
+            let terrainDistance = 0;
             if (globe.terrainProvider instanceof Cesium.EllipsoidTerrainProvider) {
-                console.warn("No terrain detected. Using Ellipsoid for distance calculation.");
-                let ellipsoidDistance = 0;
-                for (let i = 0; i < positions.length - 1; i++) {
+                console.warn("No terrain detected. Using base distance as terrain distance.");
+                terrainDistance = baseDistance; // 지형 데이터가 없는 경우
+            } else {
+                const sampledPositions = await Cesium.sampleTerrainMostDetailed(globe.terrainProvider, positions);
+
+                for (let i = 0; i < sampledPositions.length - 1; i++) {
+                    const cartographic1 = sampledPositions[i];
+                    const cartographic2 = sampledPositions[i + 1];
+
                     const cartesian1 = Cesium.Cartesian3.fromRadians(
-                        positions[i].longitude,
-                        positions[i].latitude,
-                        0
+                        cartographic1.longitude,
+                        cartographic1.latitude,
+                        cartographic1.height
                     );
                     const cartesian2 = Cesium.Cartesian3.fromRadians(
-                        positions[i + 1].longitude,
-                        positions[i + 1].latitude,
-                        0
+                        cartographic2.longitude,
+                        cartographic2.latitude,
+                        cartographic2.height
                     );
-                    ellipsoidDistance += Cesium.Cartesian3.distance(cartesian1, cartesian2);
+
+                    terrainDistance += Cesium.Cartesian3.distance(cartesian1, cartesian2);
                 }
-                return ellipsoidDistance;
             }
 
-            // terrain이 있는 경우 샘플링 후 처리
-            const sampledPositions = await Cesium.sampleTerrainMostDetailed(
-                globe.terrainProvider,
-                positions
-            );
-
-            let terrainDistance = 0;
-            for (let i = 0; i < sampledPositions.length - 1; i++) {
-                const cartographic1 = sampledPositions[i];
-                const cartographic2 = sampledPositions[i + 1];
-                const cartesian1 = Cesium.Cartesian3.fromRadians(
-                    cartographic1.longitude,
-                    cartographic1.latitude,
-                    cartographic1.height
-                );
-                const cartesian2 = Cesium.Cartesian3.fromRadians(
-                    cartographic2.longitude,
-                    cartographic2.latitude,
-                    cartographic2.height
-                );
-                terrainDistance += Cesium.Cartesian3.distance(cartesian1, cartesian2);
+            // BaseLength가 TerrainLength보다 큰 경우 보정
+            if (terrainDistance < baseDistance) {
+                console.warn("Terrain distance is less than base distance. Adjusting terrain distance to base distance.");
+                terrainDistance = baseDistance;
             }
-            return terrainDistance;
+
+            return { baseDistance, terrainDistance };
         };
+
 
         const leftClickHandler = async (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
             const scene = viewer.scene;
@@ -154,10 +155,13 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
 
                 createPolylineEntity(toolDataSource, cartesians);
 
-                const terrainDistance = await calculateTerrainDistance(start, end);
-                segmentDistances.push(terrainDistance);
+                const { baseDistance, terrainDistance } = await calculateDistances(start, end, viewer.scene.globe);
 
-                setTotalLength(segmentDistances.reduce((sum, distance) => sum + distance, 0));
+                baseDistances.push(baseDistance);
+                terrainDistances.push(terrainDistance);
+
+                setTotalBaseLength(baseDistances.reduce((sum, distance) => sum + distance, 0));
+                setTotalTerrainLength(terrainDistances.reduce((sum, distance) => sum + distance, 0));
 
                 const midPoint = Cesium.Cartesian3.midpoint(
                     cartesians[cartesians.length - 2],
@@ -167,14 +171,19 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
 
                 const labelEntity = createLabelEntity(toolDataSource, midPoint);
                 if (!labelEntity?.label) return;
-                labelEntity.label.text = new Cesium.ConstantProperty(getUnitDistance(terrainDistance, unit));
+                labelEntity.label.text = new Cesium.ConstantProperty(
+                    `Base: ${getUnitDistance(baseDistance, unit)}\nTerrain: ${getUnitDistance(terrainDistance, unit)}`
+                );
             }
         };
 
         const escKeyHandler = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 cartesians.length = 0;
-                segmentDistances.length = 0;
+                baseDistances.length = 0;
+                terrainDistances.length = 0;
+                setTotalBaseLength(0);
+                setTotalTerrainLength(0);
                 toolDataSource.entities.removeAll();
             }
         };
@@ -191,8 +200,9 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
 
     return (
         <div className="measure-length">
-            <h3>Measure Terrain Length</h3>
-            <div>total length: {totalLength.toFixed(2)} {unit}</div>
+            <h3>Measure Length</h3>
+            <div>Total Base Length: {totalBaseLength.toFixed(2)} {unit}</div>
+            <div>Total Terrain Length: {totalTerrainLength.toFixed(2)} {unit}</div>
         </div>
     );
 };
