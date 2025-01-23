@@ -57,10 +57,10 @@ export const eventManager = {
             const index = group.findIndex(({ type }) => type === eventType);
             if (index !== -1) {
                 this.screenSpaceEventHandler.removeInputAction(eventType);
-                group.splice(index, 1); // Remove the specific handler from the group
+                group.splice(index, 1);
             }
             if (group.length === 0) {
-                this.eventGroups.delete(groupId); // If no handlers remain, remove the group
+                this.eventGroups.delete(groupId);
             }
         }
     },

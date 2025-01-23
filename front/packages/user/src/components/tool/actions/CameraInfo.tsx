@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import * as Cesium from "cesium";
 import {getLengthUnitFactor} from "@/components/utils/unit.ts";
 
-interface ShowCameraInfoProps {
+interface CameraInfoProps {
     globeController: GlobeController;
     unit: string;
 }
@@ -15,7 +15,7 @@ const getCardinalDirection = (angle: number) => {
     return DIRECTIONS[Math.round(angle / 45) % 8];
 };
 
-const ShowCameraInfo = ({ globeController, unit }: ShowCameraInfoProps) => {
+const CameraInfo = ({ globeController, unit }: CameraInfoProps) => {
     const { t } = useTranslation();
     const { viewer } = globeController;
 
@@ -71,4 +71,4 @@ const ShowCameraInfo = ({ globeController, unit }: ShowCameraInfoProps) => {
     );
 };
 
-export default ShowCameraInfo;
+export default CameraInfo;

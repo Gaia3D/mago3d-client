@@ -4,16 +4,16 @@ import { zoomOut } from "@/components/tool/actions/zoomOut";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import MeasureLocation from "@/components/tool/actions/MeasureLocation.tsx";
 import { enterFullScreen, exitFullScreen } from "@/components/tool/actions/fullScreen.ts";
-import { createSetPersonView, removeSetPersonView } from "@/components/tool/actions/setPersonView.ts";
-import { createSetIndoorView, removeSetIndoorView } from "@/components/tool/actions/setIndoorView.ts";
-import { createSetLocationView, removeSetLocationView } from "@/components/tool/actions/setLocationView.ts";
-import { createSetAxisView, removeSetAxisView } from "@/components/tool/actions/setAxisView.ts";
-import ShowCameraInfo from "@/components/tool/actions/ShowCameraInfo.tsx";
 import { useTerrainController } from "@/components/tool/actions/useTerrainController.ts";
 import {MeasureLength} from "@/components/tool/actions/MeasureLength.tsx";
 import {MeasureArea} from "@/components/tool/actions/MeasureArea.tsx";
 import {MeasureAngle} from "@/components/tool/actions/MeasureAngle.tsx";
 import {MeasureRadius} from "@/components/tool/actions/MeasureRadius.tsx";
+import {IndoorView} from "@/components/tool/actions/IndoorView.tsx";
+import {PersonView} from "@/components/tool/actions/PersonView.tsx";
+import {LocationView} from "@/components/tool/actions/LocationView.tsx";
+import {AxisView} from "@/components/tool/actions/AxisView.tsx";
+import CameraInfo from "@/components/tool/actions/CameraInfo.tsx";
 
 export interface ToolConfig {
     id: string;
@@ -32,33 +32,29 @@ export const useToolConfig = (): ToolConfig[] => {
 
         return [
             {
-                id: "set-person-view",
+                id: "person-view",
                 type: "toggle",
-                onSelect: () => createSetPersonView(globeController),
-                onDeselect: () => removeSetPersonView(globeController),
+                component: <PersonView globeController={globeController} />
             },
             {
-                id: "set-indoor-view",
+                id: "indoor-view",
                 type: "exclusive",
-                onSelect: () => createSetIndoorView(globeController),
-                onDeselect: () => removeSetIndoorView(globeController),
+                component: <IndoorView globeController={globeController} />
             },
             {
-                id: "set-location-view",
+                id: "location-view",
                 type: "exclusive",
-                onSelect: () => createSetLocationView(globeController),
-                onDeselect: () => removeSetLocationView(),
+                component: <LocationView globeController={globeController} />
             },
             {
-                id: "set-axis-view",
+                id: "axis-view",
                 type: "exclusive",
-                onSelect: () => createSetAxisView(globeController),
-                onDeselect: () => removeSetAxisView(globeController),
+                component: <AxisView globeController={globeController} />
             },
             {
-                id: "show-camera-info",
+                id: "camera-info",
                 type: "toggle",
-                component: <ShowCameraInfo globeController={globeController} unit={"m"} />,
+                component: <CameraInfo globeController={globeController} unit={"m"} />,
             },
             {
                 id: "measure-location",

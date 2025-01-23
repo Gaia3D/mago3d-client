@@ -125,20 +125,6 @@ const calculate3DArea = (polygonCoords: [number, number, number][]) => {
     return terrainArea;
 };
 
-// 선형 보간 함수
-const lerp = (start: number, end: number, t: number): number => {
-    return start + t * (end - start);
-};
-
-// 배열 형태의 보간값 생성 함수
-const interpolateArray = (start: number, end: number, steps: number): number[] => {
-    const result = [];
-    for (let i = 0; i < steps; i++) {
-        result.push(lerp(start, end, i / steps));
-    }
-    return result;
-};
-
 export const MeasureArea = ({ globeController, unit }: MeasureAreaProps) => {
     const initResult = { baseArea: 0, terrainArea: 0 };
     const [result, setResult] = useState(initResult);
