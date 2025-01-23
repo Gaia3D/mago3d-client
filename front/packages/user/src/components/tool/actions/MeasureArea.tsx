@@ -54,17 +54,37 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource) => {
         id: "areaLabel",
     });
 };
+const dividePolygonIntoPoints = (cartesians: Cesium.Cartesian3[], interval: number): Cesium.Cartesian3[] => {
+    const points: Cesium.Cartesian3[] = [];
+    for (let i = 0; i < cartesians.length; i++) {
+        const start = cartesians[i];
+        const end = cartesians[(i + 1) % cartesians.length];
+        const distance = Cesium.Cartesian3.distance(start, end);
+        const steps = Math.ceil(distance / interval);
+
+        for (let j = 0; j <= steps; j++) {
+            const point = Cesium.Cartesian3.lerp(start, end, j / steps, new Cesium.Cartesian3());
+            points.push(point);
+        }
+    }
+    return points;
+};
 
 const calculateTerrainArea = async (cartesians: Cesium.Cartesian3[], globe: Cesium.Globe) => {
     const ellipsoid = Cesium.Ellipsoid.WGS84;
-    const cartographics = cartesians.map((cartesian) => Cesium.Cartographic.fromCartesian(cartesian));
+
+    // 다각형을 점으로 세분화
+    const subdividedPoints = dividePolygonIntoPoints(cartesians, 10); // 점 간격 10m
+    const cartographics = subdividedPoints.map((cartesian) => Cesium.Cartographic.fromCartesian(cartesian));
     const polygonCoords: [number, number, number][] = [];
 
     // 지형 높이 샘플링
     let sampledCartographics: Cesium.Cartographic[] = [];
+    let terrainDetected = true;
 
     if (globe.terrainProvider instanceof Cesium.EllipsoidTerrainProvider) {
         console.warn("No terrain detected. Using ellipsoid-based heights for area calculation.");
+        terrainDetected = false;
         sampledCartographics = cartographics.map((cartographic) => {
             const height = ellipsoid.cartesianToCartographic(
                 Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0)
@@ -94,18 +114,34 @@ const calculateTerrainArea = async (cartesians: Cesium.Cartesian3[], globe: Cesi
     const baseArea = turfArea(polygon2D);
 
     // 3D 면적 계산
-    const terrainArea = calculate3DArea(polygonCoords);
+    let terrainArea = calculate3DArea(polygonCoords);
+
+    // 지형이 없는 경우 terrainArea를 baseArea와 동일하게 설정
+    if (!terrainDetected) {
+        terrainArea = baseArea;
+    }
 
     return { baseArea, terrainArea };
 };
-
 const calculate3DArea = (polygonCoords: [number, number, number][]) => {
     let terrainArea = 0;
+    const processedTriangles = new Set<string>();
+
     for (let i = 1; i < polygonCoords.length - 1; i++) {
         const p0 = polygonCoords[0];
         const p1 = polygonCoords[i];
         const p2 = polygonCoords[i + 1];
 
+        // 삼각형 중복 방지
+        const triangleKey = [p0, p1, p2]
+            .map((p) => p.join(","))
+            .sort()
+            .join("-");
+        if (processedTriangles.has(triangleKey)) continue;
+
+        processedTriangles.add(triangleKey);
+
+        // 3D 삼각형의 각 변의 길이 계산
         const a = Cesium.Cartesian3.distance(
             Cesium.Cartesian3.fromDegrees(p0[0], p0[1], p0[2]),
             Cesium.Cartesian3.fromDegrees(p1[0], p1[1], p1[2])
@@ -119,8 +155,9 @@ const calculate3DArea = (polygonCoords: [number, number, number][]) => {
             Cesium.Cartesian3.fromDegrees(p0[0], p0[1], p0[2])
         );
 
-        const s = (a + b + c) / 2; // 반둘레
-        terrainArea += Math.sqrt(s * (s - a) * (s - b) * (s - c)); // 헤론의 공식
+        // 헤론의 공식을 사용하여 삼각형의 면적 계산
+        const s = (a + b + c) / 2; // 삼각형 둘레의 절반
+        terrainArea += Math.sqrt(s * (s - a) * (s - b) * (s - c)); // 삼각형 면적
     }
     return terrainArea;
 };
