@@ -51,6 +51,20 @@ export const eventManager = {
         }
     },
 
+    removeSpecificHandler(groupId: string, eventType: Cesium.ScreenSpaceEventType) {
+        const group = this.eventGroups.get(groupId);
+        if (group && this.screenSpaceEventHandler) {
+            const index = group.findIndex(({ type }) => type === eventType);
+            if (index !== -1) {
+                this.screenSpaceEventHandler.removeInputAction(eventType);
+                group.splice(index, 1); // Remove the specific handler from the group
+            }
+            if (group.length === 0) {
+                this.eventGroups.delete(groupId); // If no handlers remain, remove the group
+            }
+        }
+    },
+
     destroyGroup(groupId: string) {
         this.removeHandler(groupId);
         this.removeGlobalHandler(groupId);

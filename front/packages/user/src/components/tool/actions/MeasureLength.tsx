@@ -71,7 +71,7 @@ const interpolateArray = (start: number, end: number, steps: number): number[] =
     return result;
 };
 
-const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
+export const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
     const [totalBaseLength, setTotalBaseLength] = useState(0); // 직선 거리
     const [totalTerrainLength, setTotalTerrainLength] = useState(0); // 지형 거리
 
@@ -208,5 +208,3 @@ const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
         </div>
     );
 };
-
-export default MeasureLength;

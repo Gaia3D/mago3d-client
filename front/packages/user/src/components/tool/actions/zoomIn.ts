@@ -7,8 +7,8 @@ export const zoomIn = (globeController: GlobeController) => {
     // 카메라의 현재 고도를 가져옴
     const currentAltitude = viewer.camera.positionCartographic.height;
 
-    // 고도가 500m 이하라면 알림을 띄우고 동작 중지
-    if (currentAltitude < 500) {
+    // 고도가 50m 이하라면 알림을 띄우고 동작 중지
+    if (currentAltitude < 50) {
         alert("현재 고도가 너무 낮아 더 이상 줌인할 수 없습니다.");
         return;
     }

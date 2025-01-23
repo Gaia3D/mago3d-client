@@ -10,9 +10,10 @@ import { createSetLocationView, removeSetLocationView } from "@/components/tool/
 import { createSetAxisView, removeSetAxisView } from "@/components/tool/actions/setAxisView.ts";
 import ShowCameraInfo from "@/components/tool/actions/ShowCameraInfo.tsx";
 import { useTerrainController } from "@/components/tool/actions/useTerrainController.ts";
-import MeasureLength from "@/components/tool/actions/MeasureLength.tsx";
+import {MeasureLength} from "@/components/tool/actions/MeasureLength.tsx";
 import {MeasureArea} from "@/components/tool/actions/MeasureArea.tsx";
 import {MeasureAngle} from "@/components/tool/actions/MeasureAngle.tsx";
+import {MeasureRadius} from "@/components/tool/actions/MeasureRadius.tsx";
 
 export interface ToolConfig {
     id: string;
@@ -78,6 +79,11 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "measure-angle",
                 type: "exclusive",
                 component: <MeasureAngle globeController={globeController} />,
+            },
+            {
+                id: "measure-radius",
+                type: "exclusive",
+                component: <MeasureRadius globeController={globeController} unit={"m"} />,
             },
             {
                 id: "terrain-controller",
