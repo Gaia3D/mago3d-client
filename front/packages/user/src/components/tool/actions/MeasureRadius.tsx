@@ -39,6 +39,23 @@ const createDashLineEntity = (toolDataSource: Cesium.CustomDataSource, start: Ce
     });
 };
 
+const createLabelEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
+    return toolDataSource.entities.add({
+        position: cartesian,
+        label: {
+            text: "",
+            font: "14px monospace",
+            showBackground: true,
+            backgroundColor: Cesium.Color.WHITE,
+            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            fillColor: Cesium.Color.RED,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+        },
+    });
+}
+
 const createEllipsoidEntity = async (
     toolDataSource: Cesium.CustomDataSource,
     start: Cesium.Cartesian3,
@@ -76,6 +93,23 @@ export const MeasureRadius = ({ globeController, unit }: MeasureRadiusProps) => 
     const [result, setResult] = useState("0 m");
     let ellipsoidEntity: Cesium.Entity | undefined;
     let clickCount = 0;
+    let isCreatingEllipsoid = false;
+
+    const createEllipsoidEntitySafe = async (
+        toolDataSource: Cesium.CustomDataSource,
+        start: Cesium.Cartesian3,
+        end: Cesium.Cartesian3,
+        globe: Cesium.Globe
+    ) => {
+        if (isCreatingEllipsoid) return;
+        isCreatingEllipsoid = true;
+
+        try {
+            ellipsoidEntity = await createEllipsoidEntity(toolDataSource, start, end, globe);
+        } finally {
+            isCreatingEllipsoid = false;
+        }
+    };
 
     useEffect(() => {
         const { viewer, toolDataSource } = globeController;
@@ -123,6 +157,21 @@ export const MeasureRadius = ({ globeController, unit }: MeasureRadiusProps) => 
                 const distance = Cesium.Cartesian3.distance(cartesians.start!, cartesians.end!);
                 const convertedDistance = (distance / getLengthUnitFactor(unit)).toFixed(2);
                 setResult(`${convertedDistance} ${unit}`);
+
+                if (cartesians.start && cartesians.end) {
+                    const midPoint = Cesium.Cartesian3.midpoint(
+                        cartesians.start,
+                        cartesians.end,
+                        new Cesium.Cartesian3()
+                    );
+
+                    // 라벨 생성 및 텍스트 설정
+                    const labelEntity = createLabelEntity(toolDataSource, midPoint);
+                    if (labelEntity?.label) {
+                        labelEntity.label.text = new Cesium.ConstantProperty(`${convertedDistance} ${unit}`);
+                    }
+                }
+
                 eventManager.removeSpecificHandler(eventGroupId, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
             }
         };
@@ -139,7 +188,7 @@ export const MeasureRadius = ({ globeController, unit }: MeasureRadiusProps) => 
             cartesians.end = cartesian;
 
             if (!ellipsoidEntity) {
-                ellipsoidEntity = await createEllipsoidEntity(toolDataSource, cartesians.start, cartesians.end, viewer.scene.globe);
+                await createEllipsoidEntitySafe(toolDataSource, cartesians.start, cartesians.end, viewer.scene.globe);
             } else {
                 ellipsoidEntity.ellipsoid!.radii = new Cesium.CallbackProperty(() => {
                     const distance = Cesium.Cartesian3.distance(cartesians.start!, cartesians.end!);
@@ -151,7 +200,6 @@ export const MeasureRadius = ({ globeController, unit }: MeasureRadiusProps) => 
             const convertedDistance = (distance / getLengthUnitFactor(unit)).toFixed(2);
             setResult(`${convertedDistance} ${unit}`);
         };
-
         const escKeyHandler = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 cartesians.start = undefined;
