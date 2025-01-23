@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import * as Cesium from "cesium";
-import { polygon as turfPolygon, area as turfArea } from "@turf/turf";
+import { polygon as turfPolygon, area as turfArea, tesselate as turfTesselate } from "@turf/turf";
 import { GlobeController } from "@/api/GlobeController.ts";
 import { eventManager } from "@/components/tool/actions/eventManager.ts";
 import { getAreaUnitFactor } from "@/components/utils/unit.ts";
@@ -49,42 +49,23 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource) => {
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
             fillColor: Cesium.Color.RED,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         },
         id: "areaLabel",
     });
 };
-const dividePolygonIntoPoints = (cartesians: Cesium.Cartesian3[], interval: number): Cesium.Cartesian3[] => {
-    const points: Cesium.Cartesian3[] = [];
-    for (let i = 0; i < cartesians.length; i++) {
-        const start = cartesians[i];
-        const end = cartesians[(i + 1) % cartesians.length];
-        const distance = Cesium.Cartesian3.distance(start, end);
-        const steps = Math.ceil(distance / interval);
 
-        for (let j = 0; j <= steps; j++) {
-            const point = Cesium.Cartesian3.lerp(start, end, j / steps, new Cesium.Cartesian3());
-            points.push(point);
-        }
-    }
-    return points;
-};
+const calculateTerrainArea = async (cartesians: Cesium.Cartesian3[], globe: Cesium.Globe, toolDataSource: Cesium.CustomDataSource) => {
+    toolDataSource.entities.removeAll();
 
-const calculateTerrainArea = async (cartesians: Cesium.Cartesian3[], globe: Cesium.Globe) => {
     const ellipsoid = Cesium.Ellipsoid.WGS84;
-
-    // 다각형을 점으로 세분화
-    const subdividedPoints = dividePolygonIntoPoints(cartesians, 10); // 점 간격 10m
-    const cartographics = subdividedPoints.map((cartesian) => Cesium.Cartographic.fromCartesian(cartesian));
+    const cartographics = cartesians.map((cartesian) => Cesium.Cartographic.fromCartesian(cartesian));
     const polygonCoords: [number, number, number][] = [];
 
     // 지형 높이 샘플링
     let sampledCartographics: Cesium.Cartographic[] = [];
-    let terrainDetected = true;
 
     if (globe.terrainProvider instanceof Cesium.EllipsoidTerrainProvider) {
         console.warn("No terrain detected. Using ellipsoid-based heights for area calculation.");
-        terrainDetected = false;
         sampledCartographics = cartographics.map((cartographic) => {
             const height = ellipsoid.cartesianToCartographic(
                 Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0)
@@ -109,57 +90,97 @@ const calculateTerrainArea = async (cartesians: Cesium.Cartesian3[], globe: Cesi
         polygonCoords.push([...polygonCoords[0]]);
     }
 
-    // 2D 면적 계산 (Turf.js)
+    // 2D 다각형 생성 및 tessellation
     const polygon2D = turfPolygon([polygonCoords.map(([lon, lat]) => [lon, lat])]);
+    const tessellated = turfTesselate(polygon2D);
+
+    createTessellatedPolygons(tessellated, toolDataSource);
+
+    // 2D 면적 계산
     const baseArea = turfArea(polygon2D);
 
-    // 3D 면적 계산
-    let terrainArea = calculate3DArea(polygonCoords);
+    // 3D 면적 계산 (tessellated 삼각형 사용)
+    let terrainArea = 0;
+    tessellated.features.forEach((triangle) => {
+        const coords = triangle.geometry.coordinates[0];
+        const [p0, p1, p2] = coords.map(([lon, lat]) => {
+            const height = polygonCoords.find(
+                ([plon, plat]) => plon === lon && plat === lat
+            )?.[2] || 0;
+            return Cesium.Cartesian3.fromDegrees(lon, lat, height);
+        });
 
-    // 지형이 없는 경우 terrainArea를 baseArea와 동일하게 설정
-    if (!terrainDetected) {
-        terrainArea = baseArea;
-    }
+        const a = Cesium.Cartesian3.distance(p0, p1);
+        const b = Cesium.Cartesian3.distance(p1, p2);
+        const c = Cesium.Cartesian3.distance(p2, p0);
+
+        const s = (a + b + c) / 2; // 반둘레
+        terrainArea += Math.sqrt(s * (s - a) * (s - b) * (s - c)); // 헤론의 공식
+    });
 
     return { baseArea, terrainArea };
 };
-const calculate3DArea = (polygonCoords: [number, number, number][]) => {
-    let terrainArea = 0;
-    const processedTriangles = new Set<string>();
 
-    for (let i = 1; i < polygonCoords.length - 1; i++) {
-        const p0 = polygonCoords[0];
-        const p1 = polygonCoords[i];
-        const p2 = polygonCoords[i + 1];
+const MAX_EDGE_LENGTH = 100; // 최대 한 변의 길이 (단위: m)
 
-        // 삼각형 중복 방지
-        const triangleKey = [p0, p1, p2]
-            .map((p) => p.join(","))
-            .sort()
-            .join("-");
-        if (processedTriangles.has(triangleKey)) continue;
+// 삼각형을 분할하는 함수
+const subdivideTriangle = (triangle, maxLength) => {
+    const [p0, p1, p2] = triangle.geometry.coordinates[0];
 
-        processedTriangles.add(triangleKey);
+    const cartesianP0 = Cesium.Cartesian3.fromDegrees(p0[0], p0[1], 0);
+    const cartesianP1 = Cesium.Cartesian3.fromDegrees(p1[0], p1[1], 0);
+    const cartesianP2 = Cesium.Cartesian3.fromDegrees(p2[0], p2[1], 0);
 
-        // 3D 삼각형의 각 변의 길이 계산
-        const a = Cesium.Cartesian3.distance(
-            Cesium.Cartesian3.fromDegrees(p0[0], p0[1], p0[2]),
-            Cesium.Cartesian3.fromDegrees(p1[0], p1[1], p1[2])
-        );
-        const b = Cesium.Cartesian3.distance(
-            Cesium.Cartesian3.fromDegrees(p1[0], p1[1], p1[2]),
-            Cesium.Cartesian3.fromDegrees(p2[0], p2[1], p2[2])
-        );
-        const c = Cesium.Cartesian3.distance(
-            Cesium.Cartesian3.fromDegrees(p2[0], p2[1], p2[2]),
-            Cesium.Cartesian3.fromDegrees(p0[0], p0[1], p0[2])
-        );
+    const d01 = Cesium.Cartesian3.distance(cartesianP0, cartesianP1);
+    const d12 = Cesium.Cartesian3.distance(cartesianP1, cartesianP2);
+    const d20 = Cesium.Cartesian3.distance(cartesianP2, cartesianP0);
 
-        // 헤론의 공식을 사용하여 삼각형의 면적 계산
-        const s = (a + b + c) / 2; // 삼각형 둘레의 절반
-        terrainArea += Math.sqrt(s * (s - a) * (s - b) * (s - c)); // 삼각형 면적
+    if (d01 <= maxLength && d12 <= maxLength && d20 <= maxLength) {
+        return [triangle]; // 모든 변의 길이가 기준 이하일 경우 현재 삼각형 반환
     }
-    return terrainArea;
+
+    // 중간점을 계산
+    const midP01 = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+    const midP12 = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+    const midP20 = [(p2[0] + p0[0]) / 2, (p2[1] + p0[1]) / 2];
+
+    // 새로운 삼각형 생성
+    const triangles = [
+        turfPolygon([[p0, midP01, midP20, p0]]),
+        turfPolygon([[midP01, p1, midP12, midP01]]),
+        turfPolygon([[midP12, p2, midP20, midP12]]),
+        turfPolygon([[midP01, midP12, midP20, midP01]]),
+    ];
+
+    // 재귀적으로 분할
+    return triangles.flatMap((subTriangle) => subdivideTriangle(subTriangle, maxLength));
+};
+
+// tessellated 데이터를 처리하는 함수 수정
+const createTessellatedPolygons = (tessellated, toolDataSource) => {
+    tessellated.features.forEach((triangle) => {
+        // 삼각형 분할
+        const subdividedTriangles = subdivideTriangle(triangle, MAX_EDGE_LENGTH);
+        console.log("subdividedTriangles", subdividedTriangles);
+        subdividedTriangles.forEach((subTriangle) => {
+            const coordinates = subTriangle.geometry.coordinates[0];
+            const positions = coordinates.map(([lon, lat]) =>
+                Cesium.Cartesian3.fromDegrees(lon, lat, 0)
+            );
+
+            toolDataSource.entities.add({
+                polygon: {
+                    hierarchy: new Cesium.PolygonHierarchy(positions),
+                    material: Cesium.Color.BLUE.withAlpha(0),
+                    extrudedHeight: 0,
+                    perPositionHeight: true,
+                    outline: true,
+                    outlineWidth: 100,
+                    outlineColor: Cesium.Color.BLACK,
+                },
+            });
+        });
+    });
 };
 
 export const MeasureArea = ({ globeController, unit }: MeasureAreaProps) => {
@@ -187,7 +208,7 @@ export const MeasureArea = ({ globeController, unit }: MeasureAreaProps) => {
             createPointEntity(toolDataSource, cartesian);
 
             if (cartesians.length >= 3) {
-                const { baseArea, terrainArea } = await calculateTerrainArea(cartesians, viewer.scene.globe);
+                const { baseArea, terrainArea } = await calculateTerrainArea(cartesians, viewer.scene.globe, toolDataSource);
                 const baseAreaUnitValue = Math.round((baseArea / getAreaUnitFactor(unit)) * 100) / 100;
                 const terrainAreaUnitValue = Math.round((terrainArea / getAreaUnitFactor(unit)) * 100) / 100;
                 setResult({
