@@ -55,8 +55,6 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource) => {
     });
 };
 
-const MAX_EDGE_LENGTH = 100; // 최대 한 변의 길이 (단위: m)
-
 // 삼각형을 분할하는 함수
 const subdivideTriangle = (
     triangle: GeoJSON.Feature<GeoJSON.Polygon>,
@@ -93,15 +91,23 @@ const subdivideTriangle = (
     return triangles.flatMap((t) => subdivideTriangle(t, maxLength));
 };
 
+// MAX_EDGE_LENGTH를 동적으로 계산하는 함수
+const calculateMaxEdgeLength = (baseArea: number) => {
+    // baseArea가 클수록 MAX_EDGE_LENGTH를 증가시킴
+    return Math.sqrt(baseArea) / 5; // baseArea의 제곱근을 사용하여 동적으로 조절
+};
+
 // 3D Tessellated Polygon 생성 및 면적 계산
 const calculateTessellatedArea = async (
     tessellated: GeoJSON.FeatureCollection<GeoJSON.Polygon>,
-    globe: Cesium.Globe
+    globe: Cesium.Globe,
+    baseArea: number
 ): Promise<number> => {
+    const maxEdgeLength = calculateMaxEdgeLength(baseArea); // baseArea에 따른 MAX_EDGE_LENGTH 설정
     let totalArea = 0;
 
     for (const triangle of tessellated.features) {
-        const subdivided = subdivideTriangle(triangle, MAX_EDGE_LENGTH);
+        const subdivided = subdivideTriangle(triangle, maxEdgeLength);
 
         for (const subTriangle of subdivided) {
             const coords = subTriangle.geometry.coordinates[0] as [number, number][];
@@ -160,9 +166,9 @@ const calculateTerrainArea = async (
 
     const polygon2D = turfPolygon([polygonCoords.map(([lon, lat]) => [lon, lat])]);
     const tessellated = turfTesselate(polygon2D);
-    const baseArea = turfArea(polygon2D);
+    const baseArea = turfArea(polygon2D); // baseArea 계산
 
-    const terrainArea = await calculateTessellatedArea(tessellated, globe);
+    const terrainArea = await calculateTessellatedArea(tessellated, globe, baseArea); // baseArea를 전달
 
     return { baseArea, terrainArea };
 };
