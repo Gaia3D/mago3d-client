@@ -94,9 +94,9 @@ const subdivideTriangle = (
 const createTessellatedPolygonsWithHeights = async (
     tessellated: GeoJSON.FeatureCollection<GeoJSON.Polygon>,
     toolDataSource: Cesium.CustomDataSource,
-    polygonCoords: number[][][],
     globe: Cesium.Globe
 ) => {
+    const uniqueTriangles: { positions: Cesium.Cartesian3[] }[] = [];
 
     for (const triangle of tessellated.features) {
         // 삼각형 분할
@@ -124,32 +124,43 @@ const createTessellatedPolygonsWithHeights = async (
                 )
             );
 
-            // 각 삼각형의 높이를 사용해 3D Polygon 생성
-            toolDataSource.entities.add({
-                polygon: {
-                    hierarchy: new Cesium.PolygonHierarchy(positions),
-                    material: Cesium.Color.BLUE.withAlpha(0.5), // 반투명한 파란색
-                    perPositionHeight: true, // 각 좌표에 따라 높이 반영
-                    outline: true,
-                    outlineColor: Cesium.Color.BLACK,
-                },
-            });
+            // 중복 확인
+            const triangleExists = uniqueTriangles.some((t) =>
+                t.positions.every((pos, index) =>
+                    Cesium.Cartesian3.equals(pos, positions[index])
+                )
+            );
+            if (!triangleExists) {
+                uniqueTriangles.push({ positions });
+
+                // 각 삼각형의 높이를 사용해 3D Polygon 생성
+                toolDataSource.entities.add({
+                    polygon: {
+                        hierarchy: new Cesium.PolygonHierarchy(positions),
+                        material: Cesium.Color.BLUE.withAlpha(0.5), // 반투명한 파란색
+                        perPositionHeight: true, // 각 좌표에 따라 높이 반영
+                        outline: true,
+                        outlineColor: Cesium.Color.BLACK,
+                    },
+                });
+            }
         }
     }
+
+    return uniqueTriangles;
 };
 
-// 기존의 calculateTerrainArea 함수에서 호출 부분 수정
+// 수정된 calculateTerrainArea
 const calculateTerrainArea = async (
     cartesians: Cesium.Cartesian3[],
     globe: Cesium.Globe,
     toolDataSource: Cesium.CustomDataSource
 ) => {
-
     toolDataSource.entities.removeAll();
 
     const ellipsoid = Cesium.Ellipsoid.WGS84;
     const cartographics = cartesians.map((cartesian) => Cesium.Cartographic.fromCartesian(cartesian));
-    const polygonCoords : number[][]= [];
+    const polygonCoords: number[][] = [];
 
     // 지형 높이 샘플링
     let sampledCartographics = [];
@@ -182,23 +193,19 @@ const calculateTerrainArea = async (
     // 2D 다각형 생성 및 tessellation
     const polygon2D = turfPolygon([polygonCoords.map(([lon, lat]) => [lon, lat])]);
     const tessellated = turfTesselate(polygon2D);
-
-    const polygonCoordsWrapped = [polygonCoords];
-    await createTessellatedPolygonsWithHeights(tessellated, toolDataSource, polygonCoordsWrapped, globe);
-
-    // 2D 면적 계산
     const baseArea = turfArea(polygon2D);
 
-    // 3D 면적 계산 (tessellated 삼각형 사용)
+    // 3D tessellated 삼각형 생성
+    const uniqueTriangles = await createTessellatedPolygonsWithHeights(
+        tessellated,
+        toolDataSource,
+        globe
+    );
+
+    // 3D 면적 계산
     let terrainArea = 0;
-    tessellated.features.forEach((triangle) => {
-        const coords = triangle.geometry.coordinates[0];
-        const [p0, p1, p2] = coords.map(([lon, lat]) => {
-            const height = polygonCoords.find(
-                ([plon, plat]) => plon === lon && plat === lat
-            )?.[2] || 0;
-            return Cesium.Cartesian3.fromDegrees(lon, lat, height);
-        });
+    uniqueTriangles.forEach(({ positions }) => {
+        const [p0, p1, p2] = positions;
 
         const a = Cesium.Cartesian3.distance(p0, p1);
         const b = Cesium.Cartesian3.distance(p1, p2);
