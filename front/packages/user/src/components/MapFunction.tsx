@@ -46,7 +46,7 @@ const MapFunction = () => {
       if (!initialized) return;
       const viewer = globeController?.viewer;
       const tempUrl = "/user/geojson/extrusion.geojson";
-      loadGeojson(viewer, tempUrl);
+      //loadGeojson(viewer, tempUrl);
 
       //const gridUrl = "/user/geojson/grid_4326.geojson";
       //loadGridGeojson(viewer, gridUrl).then(r => {console.log(r);});
@@ -90,7 +90,7 @@ const MapFunction = () => {
                 case LayerAssetType.Tiles3D: {
                     if(!tilesPrimitives) break;
                     const {resource} = properties;
-                    Cesium.Cesium3DTileset.fromUrl(resource)
+                    Cesium.Cesium3DTileset.fromUrl(import.meta.env.VITE_API_URL + resource)
                     .then(model => {
                         model.show = !!visible;
                         model.pointCloudShading.attenuation = true;

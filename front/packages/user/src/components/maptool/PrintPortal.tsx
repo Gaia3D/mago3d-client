@@ -235,7 +235,7 @@ export const PrintPortal = () => {
   }, [clientWidth, clientHeight, changedMap]);
 
   useEffect(() => {
-    loadCapabilities();
+    //loadCapabilities();
   }, [paperSize, printDirection, pagingType]);
 
   useEffect(() => {

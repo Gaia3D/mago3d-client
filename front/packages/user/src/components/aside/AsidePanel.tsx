@@ -25,8 +25,8 @@ export const AsidePanel = () => {
         <>
             <AsideAssets key={key} display={menu.SelectedId === "assets"} />
             <AsideLayers display={menu.SelectedId === "layers"} />
-            <AsideTerrains display={menu.SelectedId === "terrains"} />
-            <AsideProps display={menu.SelectedId === "props"} />
+            {/*<AsideTerrains display={menu.SelectedId === "terrains"} />*/}
+            {/*<AsideProps display={menu.SelectedId === "props"} />*/}
         </>
     );
 };

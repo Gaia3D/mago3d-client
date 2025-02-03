@@ -71,7 +71,7 @@ export type Article = WithAuditable & WithJsonProperty & WithSimpleTags & {
 
 export type ArticleCursored = {
   __typename?: 'ArticleCursored';
-  content: Array<Article>;
+  content: Array<Maybe<Article>>;
   hasNext?: Maybe<Scalars['Boolean']['output']>;
   hasPrevious?: Maybe<Scalars['Boolean']['output']>;
   number?: Maybe<Scalars['Long']['output']>;
@@ -131,7 +131,7 @@ export type ArticlePageable = {
 
 export type ArticlePaged = {
   __typename?: 'ArticlePaged';
-  items: Array<Article>;
+  items: Array<Maybe<Article>>;
   pageInfo: PaginationInfo;
 };
 
@@ -426,6 +426,11 @@ export type CommonCriteria = {
   notIn?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
 };
 
+/**
+ * ##################################################################################
+ * # Create
+ * ##################################################################################
+ */
 export type CreateArticleInput = {
   access?: BbsAccess;
   answer?: InputMaybe<Scalars['String']['input']>;
@@ -699,17 +704,6 @@ export type DateTimeCriteria = {
   notIn?: InputMaybe<Array<InputMaybe<Scalars['DateTime']['input']>>>;
 };
 
-/**
- * ##################################################################################
- * # Delete
- * ##################################################################################
- */
-export type DeleteArticleInput = {
-  boardId: Scalars['ID']['input'];
-  id: Scalars['ID']['input'];
-  password?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type FloatCriteria = {
   between?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   eq?: InputMaybe<Scalars['Float']['input']>;
@@ -878,7 +872,7 @@ export type MapNotePageable = {
 
 export type MapNotePaged = {
   __typename?: 'MapNotePaged';
-  items: Array<MapNote>;
+  items: Array<Maybe<MapNote>>;
   pageInfo: PaginationInfo;
 };
 
@@ -907,7 +901,6 @@ export type Mutation = {
   createSymbol: CreateSymbolResponse;
   /**  SymbolGroup */
   createSymbolGroup: CreateSymbolGroupResponse;
-  deleteAllMapNotes: Scalars['Boolean']['output'];
   deleteArticle: Scalars['Boolean']['output'];
   deleteArticleFile: Scalars['Boolean']['output'];
   deleteBoard: Scalars['Boolean']['output'];
@@ -976,7 +969,7 @@ export type MutationCreateSymbolGroupArgs = {
 
 
 export type MutationDeleteArticleArgs = {
-  input: DeleteArticleInput;
+  id: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1036,6 +1029,7 @@ export type MutationDeleteUploadFileArgs = {
 
 
 export type MutationUpdateArticleArgs = {
+  id: Scalars['ID']['input'];
   input: UpdateArticleInput;
 };
 
@@ -1114,39 +1108,40 @@ export type PaginationInfo = {
 export type Query = {
   __typename?: 'Query';
   /**  Article */
-  article?: Maybe<Article>;
-  articles: ArticleCursored;
-  articlesPaged: ArticlePaged;
-  articlesPinned: Array<Article>;
+  article: Article;
+  articles?: Maybe<ArticleCursored>;
+  articlesPaged?: Maybe<ArticlePaged>;
+  articlesPinned?: Maybe<Array<Maybe<Article>>>;
   /**  Board */
-  board?: Maybe<Board>;
+  board: Board;
   boards: Array<Board>;
   categories: Array<Category>;
   /**  Category */
-  category?: Maybe<Category>;
+  category: Category;
   /**  Comment */
-  comment?: Maybe<Comment>;
+  comment: Comment;
   commentTreeView: CommentTreeResponse;
-  comments: Array<Comment>;
+  comments: Array<Maybe<Comment>>;
   /**  MapNote */
-  mapNote?: Maybe<MapNote>;
-  mapNotes: MapNotePaged;
+  mapNote: MapNote;
+  mapNotes?: Maybe<MapNotePaged>;
   /**  Symbol */
-  symbol?: Maybe<Symbol>;
+  symbol: Symbol;
   /**  SymbolGroup */
-  symbolGroup?: Maybe<SymbolGroup>;
+  symbolGroup: SymbolGroup;
   symbolGroupTreeView: SymbolGroupTree;
   symbolGroups: Array<SymbolGroup>;
   symbolGroupsPaged: SymbolGroupPaged;
   symbols: SymbolPaged;
   /**  Upload */
-  uploadFile?: Maybe<UploadFile>;
+  uploadFile: UploadFile;
   uploadFiles: UploadFilePagedResponse;
 };
 
 
 export type QueryArticleArgs = {
-  input: ReadArticleInput;
+  id: Scalars['ID']['input'];
+  password?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1252,17 +1247,6 @@ export type QueryUploadFileArgs = {
 export type QueryUploadFilesArgs = {
   filter?: InputMaybe<UploadFileFilterInput>;
   pageable?: InputMaybe<UploadFilePageable>;
-};
-
-/**
- * ##################################################################################
- * # Read
- * ##################################################################################
- */
-export type ReadArticleInput = {
-  boardId: Scalars['ID']['input'];
-  id: Scalars['ID']['input'];
-  password?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SimpleCriteria = {
@@ -1526,14 +1510,12 @@ export type UpdateArticleInput = {
   access?: InputMaybe<BbsAccess>;
   answer?: InputMaybe<Scalars['String']['input']>;
   answered?: InputMaybe<Scalars['Boolean']['input']>;
-  boardId: Scalars['ID']['input'];
+  boardId?: InputMaybe<Scalars['ID']['input']>;
   content?: InputMaybe<Scalars['String']['input']>;
   enabled?: InputMaybe<Scalars['Boolean']['input']>;
   flags?: InputMaybe<Array<InputMaybe<ArticleFlag>>>;
-  id: Scalars['ID']['input'];
   lockedInput?: InputMaybe<ArticleLockedInput>;
   name?: InputMaybe<Scalars['String']['input']>;
-  password?: InputMaybe<Scalars['String']['input']>;
   /**  비밀글 */
   pinnedInput?: InputMaybe<ArticlePinnedInput>;
   properties?: InputMaybe<JsonPropertyInput>;
@@ -1675,7 +1657,7 @@ export type UpdateMapNoteInput = {
   cameraPosition?: InputMaybe<Scalars['JSON']['input']>;
   content?: InputMaybe<Scalars['String']['input']>;
   drawGeometry?: InputMaybe<Scalars['JSON']['input']>;
-  orientation?: InputMaybe<Scalars['JSON']['input']>;
+  orientation?: InputMaybe<JsonPropertyInput>;
   symbolId?: InputMaybe<Array<Scalars['ID']['input']>>;
   title?: InputMaybe<Scalars['String']['input']>;
   uploadId?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -1791,7 +1773,7 @@ export type UploadFilePageable = {
 
 export type UploadFilePagedResponse = {
   __typename?: 'UploadFilePagedResponse';
-  items: Array<UploadFile>;
+  items: Array<Maybe<UploadFile>>;
   pageInfo: PaginationInfo;
 };
 
@@ -1835,7 +1817,7 @@ export type SymbolGroupQueryVariables = Exact<{
 }>;
 
 
-export type SymbolGroupQuery = { __typename?: 'Query', symbolGroup?: { __typename?: 'SymbolGroup', id: string, name: string, order: number, count: number, enabled: boolean, collapsed: boolean, access: SymbolAccess, symbols?: Array<{ __typename?: 'Symbol', id: string, name: string, files: Array<{ __typename?: 'SymbolFile', id: string, contentType?: string | null, contentSize?: string | null, download?: string | null, thumbnail?: { __typename?: 'SymbolFileThumbnail', filename: string, contentType?: string | null, download?: string | null } | null }> }> | null } | null };
+export type SymbolGroupQuery = { __typename?: 'Query', symbolGroup: { __typename?: 'SymbolGroup', id: string, name: string, order: number, count: number, enabled: boolean, collapsed: boolean, access: SymbolAccess, symbols?: Array<{ __typename?: 'Symbol', id: string, name: string, files: Array<{ __typename?: 'SymbolFile', id: string, contentType?: string | null, contentSize?: string | null, download?: string | null, thumbnail?: { __typename?: 'SymbolFileThumbnail', filename: string, contentType?: string | null, download?: string | null } | null }> }> | null } };
 
 export type SymbolGroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1855,7 +1837,7 @@ export type SymbolQueryVariables = Exact<{
 }>;
 
 
-export type SymbolQuery = { __typename?: 'Query', symbol?: { __typename?: 'Symbol', id: string, name: string, group?: { __typename?: 'SymbolGroup', id: string, name: string } | null, files: Array<{ __typename?: 'SymbolFile', id: string, filename: string, download?: string | null, contentSize?: string | null, width?: number | null, height?: number | null }> } | null };
+export type SymbolQuery = { __typename?: 'Query', symbol: { __typename?: 'Symbol', id: string, name: string, group?: { __typename?: 'SymbolGroup', id: string, name: string } | null, files: Array<{ __typename?: 'SymbolFile', id: string, filename: string, download?: string | null, contentSize?: string | null, width?: number | null, height?: number | null }> } };
 
 export type SymbolsQueryVariables = Exact<{
   filter?: InputMaybe<SymbolFilterInput>;

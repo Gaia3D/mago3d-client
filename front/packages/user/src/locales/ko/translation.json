@@ -123,7 +123,7 @@
     "home": "초기화",
     "save": "저장하기",
     "reset-direction": "방향 초기화",
-    "set-terrain-trans": "지형 불투명 설정",
+    "terrain-trans": "지형 불투명 설정",
     "open-clock-tool": "시간 도구",
     "open-setting-tool": "설정 도구",
     "visible": "시야 도구",

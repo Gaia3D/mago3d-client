@@ -137,7 +137,6 @@ export type CreateProductResponse = WithAuditable & WithJsonProperty & WithSimpl
   date?: Maybe<Scalars['DateTime']['output']>;
   download?: Maybe<Scalars['String']['output']>;
   downloadThumbnail?: Maybe<Scalars['String']['output']>;
-  downloadThumbnailTransparent?: Maybe<Scalars['String']['output']>;
   enabled?: Maybe<Scalars['Boolean']['output']>;
   extension?: Maybe<Scalars['String']['output']>;
   flags?: Maybe<Array<Maybe<ProductFlag>>>;
@@ -211,7 +210,6 @@ export type DownloadFile = {
   count: Scalars['Int']['output'];
   createdAt?: Maybe<Scalars['String']['output']>;
   createdBy?: Maybe<Scalars['ID']['output']>;
-  download?: Maybe<Scalars['String']['output']>;
   expiredAt?: Maybe<Scalars['String']['output']>;
   filename: Scalars['String']['output'];
   id: Scalars['ID']['output'];
@@ -532,11 +530,9 @@ export type Product = {
   date?: Maybe<Scalars['DateTime']['output']>;
   download?: Maybe<Scalars['String']['output']>;
   downloadThumbnail?: Maybe<Scalars['String']['output']>;
-  downloadThumbnailTransparent?: Maybe<Scalars['String']['output']>;
   doyeop?: Maybe<DoyeopInfo>;
   enabled?: Maybe<Scalars['Boolean']['output']>;
   extension?: Maybe<Scalars['String']['output']>;
-  filename?: Maybe<Scalars['String']['output']>;
   flags?: Maybe<Array<Maybe<ProductFlag>>>;
   footprint?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
@@ -552,13 +548,10 @@ export type Product = {
 };
 
 export type ProductFilterInput = {
-  and?: InputMaybe<Array<ProductFilterInput>>;
   boundaryCode?: InputMaybe<Scalars['String']['input']>;
   date?: InputMaybe<DateTimeCriteria>;
-  month?: InputMaybe<IntCriteria>;
+  month?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<StringCriteria>;
-  not?: InputMaybe<ProductFilterInput>;
-  or?: InputMaybe<Array<ProductFilterInput>>;
   searchArea?: InputMaybe<Scalars['JSON']['input']>;
   type?: InputMaybe<StringCriteria>;
 };

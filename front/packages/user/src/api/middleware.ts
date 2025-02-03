@@ -7,7 +7,7 @@ import { GraphQLClientResponse } from "node_modules/graphql-request/build/esm/ty
 export const requestMiddleware: RequestMiddleware = (request: RequestInit) => {
     const {token} = keycloak;
     const returnRequest = {
-        url: 'https://mdtp.gaia3d.com/app/api/layerset/graphql',
+        url: import.meta.env.VITE_GRAPHQL_LAYERSET_URL + '/graphql',
         ...request,
         headers: {
             ...request.headers
