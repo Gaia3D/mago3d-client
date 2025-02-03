@@ -21,7 +21,7 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const {t} = useTranslation();
     const [layerMenu, setLayerMenu] = useRecoilState(layerMenuState);
     const [searchTerm, setSearchTerm] = useState('');
-    const [visibleAll, setVisibleAll] = useState<boolean>(false);
+    const [visibleAll, setVisibleAll] = useState<boolean>(true);
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const setVisibleToggledLayerIds = useSetRecoilState<{ids:string[], visible:boolean} | null>(visibleToggledLayerIdsState);
 
@@ -100,7 +100,7 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                     </ul>
                     <div className={`tileset-button ${layerMenu === 'tileset' ? 'on' : 'off'}`}>
                         <button type="button" onClick={toggleAllLayer}
-                                className={`layer-funtion-button ${!visibleAll ? 'visible' : 'not-visible'}`}></button>
+                                className={`layer-funtion-button ${visibleAll ? 'visible' : 'not-visible'}`}></button>
                         <button onClick={restoreToDefault} className='layer-funtion-button reset'></button>
                         <button onClick={saveState} className='layer-funtion-button save'></button>
                     </div>
