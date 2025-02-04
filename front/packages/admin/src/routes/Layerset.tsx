@@ -24,6 +24,6 @@ export default {
         {path: ':id', element: <LayerPublish/>},
       ]
     },
-    {path: 'map', element: <MapList/>},
+    /*{path: 'map', element: <MapList/>},*/
   ]
 }
