@@ -1,0 +1,226 @@
+{
+  "assets": "الأصول",
+  "layers": "الطبقات",
+  "terrains": "التضاريس",
+  "props": "الدعائم",
+  "search": "بحث",
+  "nim": "",
+  "graphic": "الرسومات",
+  "time": "التاريخ/الوقت",
+  "logout": "تسجيل الخروج",
+  "remove": "حذف",
+  "document": {
+    "title": {
+      "introduction": "وثيقة المقدمة",
+      "installation": "وثيقة التثبيت",
+      "user": "وثيقة المستخدم",
+      "api": "وثيقة واجهة برمجة التطبيقات",
+      "training": "وثيقة التدريب"
+    },
+    "url": {
+      "introduction": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ar/1_mago3D_Introduction.md",
+      "installation": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ar/2_mago3D_Installation_Guide.md",
+      "user": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ar/3_mago3D_User_Guide.md",
+      "api": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ar/4_mago3D_API_Guide.md",
+      "training": "https://github.com/Gaia3D/mago3d-doc/blob/main/lang/ar/5_mago3D_Training_Guide.md"
+    }
+  },
+  "aside": {
+    "close-sidebar": "إغلاق النافذة",
+    "common": {
+      "no-data": "لا توجد بيانات",
+      "data-end": "نهاية البيانات",
+      "wrong-data": "بيانات غير صحيحة",
+      "project-name": "اسم المشروع",
+      "input-format": "تنسيق الإدخال",
+      "output-format": "تنسيق الإخراج",
+      "origin-projection": "الإسقاط الأصلي",
+      "origin-encoding": "الترميز الأصلي",
+      "converted-projection": "الإسقاط المحول",
+      "converted-encoding": "الترميز المحول",
+      "detail-setting": "الإعدادات التفصيلية",
+      "file-upload": "تحميل الملف",
+      "drop-file-here": "قم بإسقاط الملف هنا."
+    },
+    "asset": {
+      "new-asset": "إضافة أصل جديد",
+      "type": "النوع",
+      "name-upload-date": "الاسم/تاريخ التحميل",
+      "status": "الحالة",
+      "function": "الوظيفة",
+      "y-up-axis": "تعيين المحور Y كمحور علوي",
+      "auto-up-axis": "تعيين المحور العلوي تلقائيًا",
+      "flip-coordinate": "عكس إحداثيات X و Y",
+      "refine-add": "إضافة وضع التنقيح",
+      "png-texture": "وضع نسيج PNG",
+      "reverse-tex-coord": "عكس إحداثيات النسيج",
+      "max-count": "الحد الأقصى لعدد العقد",
+      "max-lod": "أقصى مستوى تفصيل",
+      "min-lod": "أدنى مستوى تفصيل",
+      "max-points": "الحد الأقصى للنقاط في بيانات السحاب النقطي",
+      "description": "بيانات مضافة من قبل المستخدم.",
+      "crs-epsg": "نظام الإحداثيات المرجعية (EPSG)",
+      "projection-code": "رمز الإسقاط (proj4)",
+      "min-tile-depth": "العمق الأدنى للبلاط",
+      "max-tile-depth": "العمق الأقصى للبلاط",
+      "interpolation-type": "نوع الاستيفاء",
+      "normal-calculation": "حساب النمط",
+      "tile-status": "حالة البلاط",
+      "overview-status": "حالة النظرة العامة",
+      "file-uploading": "جاري تحميل الملف",
+      "convert": "تحويل"
+    }
+  },
+  "msg": {
+    "file-upload": "جاري تحميل الملف."
+  },
+  "alert": {
+    "file-upload": "يرجى تحميل الملف.",
+    "confirm-value": "يرجى تأكيد القيمة."
+  },
+  "confirm": {
+    "register": "هل تريد التسجيل؟",
+    "delete": "هل تريد الحذف؟",
+    "asset": {
+      "delete": "هل تريد حذف هذا الأصل؟",
+      "layer": "هل تريد نشر هذا الأصل كطبقة؟"
+    },
+    "layer": {
+      "delete": "هل تريد حذف هذه الطبقة؟",
+      "restore": "هل تريد استعادة إعدادات النظام؟",
+      "save": "هل تريد حفظ الإعدادات الحالية؟"
+    }
+  },
+  "error": {
+    "admin": "حدث خطأ. يرجى الاتصال بالمسؤول.",
+    "data": {
+      "add": "حدث خطأ أثناء إضافة البيانات."
+    },
+    "file": {
+      "convert": "حدث خطأ أثناء تحويل الملف.",
+      "upload": "فشل في تحميل الملف.",
+      "validate": "نوع الملف غير صالح. يرجى المحاولة مجددًا.\nأنواع الملفات المسموح بها: "
+    },
+    "asset": {
+      "file": "لا يمكن نشر هذا النوع من الأصول."
+    },
+    "layer": {
+      "delete": "حدث خطأ أثناء حذف الطبقة.",
+      "restore": "حدث خطأ أثناء استعادة الطبقة.",
+      "save": "حدث خطأ أثناء حفظ الطبقة."
+    }
+  },
+  "success": {
+    "asset": {
+      "delete": "تم حذف الأصل بنجاح.",
+      "publish": "تم النشر بنجاح."
+    },
+    "layer": {
+      "delete": "تم حذف الطبقة بنجاح."
+    }
+  },
+  "tool": {
+    "home": "الرئيسية",
+    "save": "حفظ",
+    "reset-direction": "إعادة تعيين الاتجاه",
+    "terrain-trans": "ضبط شفافية التضاريس",
+    "open-clock-tool": "أداة الوقت",
+    "open-setting-tool": "أداة الإعدادات",
+    "visible": "أداة الرؤية",
+    "ruler": "أداة القياس",
+    "first-person-view": "عرض الشخص الأول",
+    "indoor": "عرض داخلي",
+    "go-to-point": "الانتقال إلى نقطة",
+    "view-axis": "عرض المحاور",
+    "camera-info": "معلومات الكاميرا",
+    "bounding-volume": "عرض الحدود",
+    "point": "قياس الموقع",
+    "length": "قياس الطول",
+    "area": "قياس المساحة",
+    "angle": "قياس الزاوية",
+    "composite": "المسافة المركبة",
+    "radius": "قياس نصف القطر",
+    "object": "اختيار كائن",
+    "full-screen": "ملء الشاشة",
+    "terrain": "إعدادات التضاريس",
+    "zoom-in": "تكبير",
+    "zoom-out": "تصغير",
+    "translation": "تحريك",
+    "rotation": "تدوير",
+    "scaling": "تغيير الحجم",
+    "copy": "نسخ",
+    "remove": "حذف",
+    "add-floor": "إضافة طابق",
+    "remove-floor": "إزالة طابق",
+    "coloring": "تلوين",
+    "theme": "الوضع الفاتح",
+    "shadow": "محاكي الوقت"
+  },
+  "clock-tool": "محاكي الوقت",
+  "clock": {
+    "multiplier": "عامل الضرب",
+    "function": "وظيفة"
+  },
+  "graphic-setting": "إعدادات الرسومات",
+  "setting": {
+    "resolution": "دقة العرض",
+    "shadow": "الظل",
+    "shadow-quality": "جودة الظل",
+    "global-lighting": "الإضاءة العامة",
+    "fxaa": "إزالة التعرجات (FXAA)",
+    "edge": "الحواف",
+    "ambient": "تظليل المساحة المحيطة",
+    "description": {
+      "resolution": "اضبط دقة العرض. القيم العالية تؤثر بشكل كبير على الأداء.",
+      "shadow": "تفعيل/إلغاء الظلال",
+      "shadow-quality": "اضبط جودة الظل.",
+      "global-lighting": "تصور الإضاءة العامة. تتأثر بالوقت من اليوم.",
+      "fxaa": "تطبيق إزالة التعرجات لتقليل الحواف الخشنة عند الدقة المنخفضة.",
+      "edge": "تصور حواف الكائنات.",
+      "ambient": "تصور التظليل بين الكائنات."
+    }
+  },
+  "measure": {
+    "area": "قياس المساحة",
+    "composite": "القياس المركب",
+    "distance": "قياس المسافة",
+    "position": "قياس الموقع",
+    "area-unit": "وحدة المساحة",
+    "distance-unit": "وحدة المسافة",
+    "measure-area": "المساحة المقاسة",
+    "measure-distance": "المسافة المقاسة",
+    "radius": "قياس نصف القطر",
+    "lat": "خط العرض",
+    "lon": "خط الطول",
+    "alt": "الارتفاع",
+    "zenith": "زاوية الذروة",
+    "elevation": "الارتفاع",
+    "straight": "مستقيم",
+    "horizon": "أفقي",
+    "height": "رأسي",
+    "m": "م (متر)",
+    "km": "كم (كيلومتر)",
+    "nmi": "ميل بحري (nmi)",
+    "in": "إنش (in)",
+    "ft": "قدم (ft)",
+    "yd": "ياردة (yd)",
+    "mi": "ميل (mi)",
+    "m2": "م² (متر مربع)",
+    "km2": "كم² (كيلومتر مربع)",
+    "yd2": "ياردة² (ياردة مربعة)",
+    "mi2": "ميل² (ميل مربع)",
+    "acre": "فدان (Acre)",
+    "ha": "هكتار (Hectare)"
+  },
+  "on": "تشغيل",
+  "off": "إيقاف",
+  "very-high": "عالي جدًا",
+  "high": "عالي",
+  "mid": "متوسط",
+  "low": "منخفض",
+  "very-low": "منخفض جدًا",
+  "latitude": "خط العرض",
+  "longitude": "خط الطول",
+  "altitude": "الارتفاع",
+  "heading": "الاتجاه"
+}

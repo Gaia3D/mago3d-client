@@ -21,6 +21,7 @@ const LanguageSelector = () => {
 	const languageItems = [
 		{ lang: "en-US", text: "English" },
 		{ lang: "ko-KR", text: "한국어" },
+		{ lang: "ur-PK", text: "اردو" },
 	];
 
 	useEffect(() => {
