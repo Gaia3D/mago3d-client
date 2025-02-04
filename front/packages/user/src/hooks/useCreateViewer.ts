@@ -55,8 +55,8 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
               timeline: false,
               fullscreenButton: false,
               shouldAnimate: true,
-              infoBox: false,
-              selectionIndicator: false,
+              infoBox: true,
+              selectionIndicator: true,
           } as Cesium.Viewer.ConstructorOptions);
 
           const viewer = viewerRef.current;
