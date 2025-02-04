@@ -330,7 +330,6 @@ const LayerNode = ({node, params }: TreeNodeProps) => {
       alert('사용 불가능한 레이어입니다. (사용 가능으로 변경 후 이용 가능)');
       return;
     }*/
-    const asset = node.data as LayersetAssetBasicFragment;
     navigate(`/layerset/layer/detail/${asset.id}`);
   }, [node]);
 
