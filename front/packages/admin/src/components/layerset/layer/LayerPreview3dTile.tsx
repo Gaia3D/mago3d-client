@@ -36,7 +36,7 @@ const LayerPreview3dTile = ({asset}:{asset:LayerAsset}) => {
 
         const {properties} = asset;
         const {resource} = properties;
-        Cesium.Cesium3DTileset.fromUrl(resource)
+        Cesium.Cesium3DTileset.fromUrl(import.meta.env.VITE_API_URL + resource)
           .then((model) => {
               tilesPrimitives.add(model);
               viewer.flyTo(model, {duration: 0.1});
