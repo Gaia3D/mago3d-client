@@ -1,10 +1,11 @@
 import {useRecoilState, useRecoilValue} from "recoil";
 import {useGlobeController} from "./providers/GlobeControllerProvider";
-import {layersState, visibleToggledLayerIdState, visibleToggledLayerIdsState} from "@/recoils/Layer";
+import {layersState, visibleToggledLayerIdsState, visibleToggledLayerIdState} from "@/recoils/Layer";
 import {useEffect} from "react";
 import {LayerAssetType, UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql";
 import TIFFImageryProvider, {TIFFImageryProviderOptions} from 'tiff-imagery-provider';
 import * as Cesium from "cesium";
+import {Rectangle, UrlTemplateImageryProvider} from "cesium";
 import keycloak from "@/api/keycloak";
 import {loadGeojson, loadGridGeojson} from "@/components/utils/loadGeojson.ts";
 
@@ -186,6 +187,21 @@ const MapFunction = () => {
                         console.error(err);
                     });
                     break;
+                }
+                // TODO: 임시 코드
+                case LayerAssetType.F4D: {
+                    const tmsProvider = new UrlTemplateImageryProvider({
+                        url: 'https://pmtiles.vallarismaps.com/Orthophoto_KKC/{z}/{x}/{y}.png',
+                        minimumLevel: 11,
+                        maximumLevel: 22,
+                        rectangle: Rectangle.fromDegrees(102.7986189, 16.3958764, 102.8791851, 16.4870325),
+                        hasAlphaChannel: true,
+                    })
+                    const imageryLayer = imageryLayers?.addImageryProvider(tmsProvider);
+                    if (imageryLayer) {
+                        imageryLayer.show = !!visible;
+                        layerCache[assetId] = imageryLayer;
+                    }
                 }
             }
         });
