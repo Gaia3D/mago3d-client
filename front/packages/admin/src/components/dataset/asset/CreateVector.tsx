@@ -31,7 +31,7 @@ type FormType = z.infer<FormSchemaType>;
 const CreateVector = () => {
   const {t} = useTranslation();
   const back = useToPath('/dataset/asset');
-  const [selectedAssetType, setSelectedAssetType] = useState<AssetType>(AssetType.Terrain);
+  const [selectedAssetType, setSelectedAssetType] = useState<AssetType>(AssetType.GeoJson);
   const navigate = useNavigate();
   const currentLoadingState = useRecoilValue<LoadingStateType>(loadingState);
   const uploadedFilesState = useState<UploadedFile[]>([]);
