@@ -6,6 +6,7 @@ import {AsideProps} from "@/components/aside/prop/AsideProps.tsx";
 import AsideTerrains from "@/components/aside/terrain/AsideTerrain.tsx";
 import {useEffect, useState} from "react";
 import {assetsRefetchTriggerState} from "@/recoils/Assets.ts";
+import {AsideSimulation} from "@/components/aside/simulation/AsideSimulation.tsx";
 
 export interface AsideDisplayProps {
     display: boolean;
@@ -25,6 +26,7 @@ export const AsidePanel = () => {
         <>
             <AsideAssets key={key} display={menu.SelectedId === "assets"} />
             <AsideLayers display={menu.SelectedId === "layers"} />
+            <AsideSimulation display={menu.SelectedId === "simulation"} />
             {/*<AsideTerrains display={menu.SelectedId === "terrains"} />*/}
             {/*<AsideProps display={menu.SelectedId === "props"} />*/}
         </>
