@@ -5,7 +5,7 @@ import { GlobeController } from "@/api/GlobeController.ts";
 import { useRecoilValue } from "recoil";
 import { UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { layersState } from "@/recoils/Layer.ts";
-import BasicLayerInfoTemplate from "@/components/tool/template/BasicLayerInfoTemplate.tsx";
+import LayerInfoTemplate from "@/components/tool/actions/layer-info/LayerInfoTemplate.tsx";
 
 interface LayerInfoProps {
     globeController: GlobeController;
@@ -99,7 +99,7 @@ const LayerInfo = ({ globeController }: LayerInfoProps) => {
     }, [viewer, toolDataSource, handleClickEvent]);
 
     return (
-        <BasicLayerInfoTemplate selectedFeatures={selectedFeatures} />
+        <LayerInfoTemplate selectedFeatures={selectedFeatures} />
     );
 };
 

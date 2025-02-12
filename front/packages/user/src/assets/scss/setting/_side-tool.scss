@@ -24,3 +24,15 @@
     }
   }
 }
+
+.layer-info-container {
+  position: fixed;
+  top: 100px;
+  right: 100px;
+  color: black;
+  background-color: white;
+
+  .layer-info-table {
+    paddin: 10px;
+  }
+}
