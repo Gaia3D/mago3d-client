@@ -15,7 +15,7 @@ const eventGroupId = "LayerInfo";
 
 const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
     toolDataSource.entities.add({
-        id: "layerInfoPoint",
+        id: "layer-info-point",
         position: cartesian,
         point: {
             show: true,
@@ -68,6 +68,9 @@ const LayerInfo = ({ globeController }: LayerInfoProps) => {
             return;
         }
 
+        toolDataSource.entities.removeById("layer-info-point");
+        createPointEntity(toolDataSource, cartesian);
+
         try {
             const pickedFeatures = await viewer.imageryLayers.pickImageryLayerFeatures(ray, scene);
 
@@ -78,9 +81,6 @@ const LayerInfo = ({ globeController }: LayerInfoProps) => {
             }
 
             setSelectedFeatures(processPickedFeatures(pickedFeatures, layers));
-
-            toolDataSource.entities.removeById("layerInfoPoint");
-            createPointEntity(toolDataSource, cartesian);
         } catch (error) {
             console.error("레이어 정보를 가져오는 중 문제가 발생했습니다.", error);
         }
@@ -93,7 +93,7 @@ const LayerInfo = ({ globeController }: LayerInfoProps) => {
         eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, handleClickEvent);
 
         return () => {
-            toolDataSource.entities.removeById("layerInfoPoint");
+            toolDataSource.entities.removeById("layer-info-point");
             eventManager.destroyGroup(eventGroupId);
         };
     }, [viewer, toolDataSource, handleClickEvent]);

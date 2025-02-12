@@ -13,7 +13,7 @@ const eventGroupId = "MeasureLocation";
 
 const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3, labelText: string) => {
     toolDataSource.entities.add({
-        id: "locationPoint",
+        id: "location-point",
         position: cartesian,
         point: {
             show: true,
@@ -58,7 +58,7 @@ const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
 
             setLocationData({ lat, lon, height });
 
-            toolDataSource.entities.removeById("locationPoint");
+            toolDataSource.entities.removeById("location-point");
             const labelText = `Lat: ${lat}\nLon: ${lon}\nHeight: ${height}${unit}`;
             createPointEntity(toolDataSource, cartesian, labelText)
         };
@@ -66,7 +66,7 @@ const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
         eventManager.init(viewer);
         eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
         return () => {
-            toolDataSource.entities.removeById("locationPoint");
+            toolDataSource.entities.removeById("location-point");
             eventManager.destroyGroup(eventGroupId);
         };
     }, [viewer, toolDataSource, globeController, unit]);
