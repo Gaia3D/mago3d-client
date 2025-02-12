@@ -1,7 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState, useCallback } from "react";
 import * as Cesium from "cesium";
 import { eventManager } from "@/components/tool/actions/eventManager.ts";
-import {GlobeController} from "@/api/GlobeController.ts";
+import { GlobeController } from "@/api/GlobeController.ts";
+import { useRecoilValue } from "recoil";
+import { UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import { layersState } from "@/recoils/Layer.ts";
+import BasicLayerInfoTemplate from "@/components/tool/template/BasicLayerInfoTemplate.tsx";
 
 interface LayerInfoProps {
     globeController: GlobeController;
@@ -22,66 +26,80 @@ const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
     });
 };
 
-const LayerInfo = ({globeController}: LayerInfoProps) => {
+const processPickedFeatures = (
+    pickedFeatures: Cesium.ImageryLayerFeatureInfo[],
+    layers: UserLayerAsset[]
+): Cesium.ImageryLayerFeatureInfo[] => {
+    return pickedFeatures.map((feature) => {
+        if (!feature.data?.id || typeof feature.data.id !== "string") {
+            console.warn("Feature ID가 없거나 잘못된 형식입니다.", feature);
+            return feature;
+        }
+
+        const featureId = feature.data.id.split(".")[0];
+        const tempLayer = layers.find(layer => layer.properties?.layer?.name === featureId);
+
+        return {
+            ...Object.create(Object.getPrototypeOf(feature), Object.getOwnPropertyDescriptors(feature)),
+            name: tempLayer?.name || "Unknown Layer"
+        };
+    });
+};
+
+const LayerInfo = ({ globeController }: LayerInfoProps) => {
     const { viewer, toolDataSource } = globeController;
     const [selectedFeatures, setSelectedFeatures] = useState<Cesium.ImageryLayerFeatureInfo[]>([]);
+    const layers = useRecoilValue<UserLayerAsset[]>(layersState);
+
+    const handleClickEvent = useCallback(async (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+        if (!event.position) {
+            console.error("event.position이 정의되지 않았습니다.");
+            return;
+        }
+
+        const scene = viewer?.scene;
+        if (!scene) return;
+
+        const cartesian = globeController.pickPosition(event.position);
+        const ray = scene.camera.getPickRay(event.position);
+
+        if (!cartesian || !ray) {
+            console.error("Cartesian 좌표 또는 Ray를 찾을 수 없습니다.");
+            return;
+        }
+
+        try {
+            const pickedFeatures = await viewer.imageryLayers.pickImageryLayerFeatures(ray, scene);
+
+            if (!Array.isArray(pickedFeatures) || pickedFeatures.length === 0) {
+                console.warn("선택된 피처가 없습니다.");
+                setSelectedFeatures([]);
+                return;
+            }
+
+            setSelectedFeatures(processPickedFeatures(pickedFeatures, layers));
+
+            toolDataSource.entities.removeById("layerInfoPoint");
+            createPointEntity(toolDataSource, cartesian);
+        } catch (error) {
+            console.error("레이어 정보를 가져오는 중 문제가 발생했습니다.", error);
+        }
+    }, [viewer, globeController, toolDataSource, layers]);
 
     useEffect(() => {
         if (!viewer) return;
 
-        const leftClickHandler = async (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
-            if (!event.position) {
-                console.error("event.position is undefined.");
-                return;
-            }
-
-            const scene = viewer.scene;
-            const cartesian = globeController.pickPosition(event.position);
-            const ray = scene.camera.getPickRay(event.position);
-
-            if (!cartesian) {
-                console.error("Cartesian position could not be determined.");
-                return;
-            }
-            if (!ray) {
-                console.error("Ray could not be determined.");
-                return;
-            }
-
-            try {
-                const pickedFeatures = await viewer.imageryLayers.pickImageryLayerFeatures(ray, scene);
-
-                if (pickedFeatures && pickedFeatures.length > 0) {
-                    console.log("Picked features:", pickedFeatures);
-                    setSelectedFeatures(pickedFeatures);
-                } else {
-                    setSelectedFeatures([]);
-                    console.log("No layer features found at this position.");
-                }
-
-                toolDataSource.entities.removeById("layerInfoPoint");
-                createPointEntity(toolDataSource, cartesian);
-            } catch (error) {
-                console.error("Error fetching layer features:", error);
-            }
-        };
-
         eventManager.init(viewer);
-        eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
+        eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, handleClickEvent);
 
         return () => {
             toolDataSource.entities.removeById("layerInfoPoint");
             eventManager.destroyGroup(eventGroupId);
         };
-    }, [viewer, toolDataSource, globeController]);
+    }, [viewer, toolDataSource, handleClickEvent]);
 
     return (
-        <div style={{position: "fixed", top: "100px", right: "100px", color: "black", backgroundColor: "white", padding: "10px"}}>
-            {selectedFeatures.map((feature, index) => (
-                <div key={index} dangerouslySetInnerHTML={{__html: feature?.description ?? ""}}/>
-            ))}
-        </div>
-
+        <BasicLayerInfoTemplate selectedFeatures={selectedFeatures} />
     );
 };
 
