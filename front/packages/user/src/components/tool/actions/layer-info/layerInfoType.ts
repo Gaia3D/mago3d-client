@@ -4,6 +4,6 @@ export interface ProcessedFeature {
     name: string;
     featureGroups: {
         featureName: string;
-        properties: Array<{ label: string; title: string; value: string }>;
+        properties: Array<{ label: string; field: string; value: string }>;
     }[];
 }

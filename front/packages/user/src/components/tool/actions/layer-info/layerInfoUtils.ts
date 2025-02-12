@@ -9,9 +9,9 @@ export const processFeatures = (
     return selectedFeatures.map((feature) => {
         const featureProps = feature?.data?.properties ?? {};
 
-        // 기존 그룹에서 사용된 property title 목록
-        const usedTitles = new Set(
-            featureGroups.flatMap((group) => group.properties.map((p) => p.title))
+        // 기존 그룹에서 사용된 property field 목록
+        const usedFields = new Set(
+            featureGroups.flatMap((group) => group.properties.map((p) => p.field))
         );
 
         // 기존 그룹에 속하는 속성 필터링
@@ -20,7 +20,7 @@ export const processFeatures = (
                 const validProperties = group.properties
                     .map((property) => ({
                         ...property,
-                        value: featureProps[property.title] ?? "",
+                        value: featureProps[property.field] ?? "",
                     }))
                     .filter((property) =>
                         typeof property.value === "string"
@@ -34,15 +34,15 @@ export const processFeatures = (
             })
             .filter(Boolean) as Array<{
             featureName: string;
-            properties: Array<{ label: string; title: string; value: string }>;
+            properties: Array<{ label: string; field: string; value: string }>;
         }>;
 
         // 기타 그룹에 속할 속성들 필터링
         const otherProperties = Object.keys(featureProps)
-            .filter((key) => !usedTitles.has(key))
+            .filter((key) => !usedFields.has(key))
             .map((key) => ({
                 label: key,
-                title: key,
+                field: key,
                 value: featureProps[key] ?? "",
             }));
 
