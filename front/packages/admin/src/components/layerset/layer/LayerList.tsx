@@ -44,7 +44,7 @@ const LayerList = () => {
   const {data} = useSuspenseQuery(LayersetGroupListWithAssetDocument)
 
   const [onCreate, setOnCreate] = useState<boolean>(false);
-  const [initialOpen, setInitialOpen] = useState<number[]>([]);
+  const [initialOpen, setInitialOpen] = useState<string[] | number[]>([]);
   const [collapsed, setCollapsed] = useState(false);
   const [visible, setVisible] = useState(false);
   const [enable, setEnable] = useState(false);
@@ -166,7 +166,7 @@ const LayerList = () => {
               {
                 target: {
                   groupId: nodeModelIdToString(offsetAssetGroupData.id),
-                  //id: nodeModelIdToString(offsetAssetGroupData.id),
+                  //id: nodeModelIdToString(offsetAssetGroup.data.id),
                 },
                 source: {
                   groupId: nodeModelIdToString(dragSourceGroupData.id),

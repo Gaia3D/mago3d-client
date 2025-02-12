@@ -6,7 +6,8 @@ FROM node:lts as builder
 
 # Corepack와 PNPM 설치
 # Corepack을 활성화하여 종속성 관리를 제공하며, PNPM 패키지 매니저를 준비합니다.
-RUN corepack enable \
+RUN npm install -g corepack \
+    && corepack enable \
     && corepack prepare pnpm@latest --activate
 
 # 작업 디렉터리를 컨테이너 내부의 /app으로 설정합니다.
