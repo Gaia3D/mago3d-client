@@ -1,6 +1,6 @@
 import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
 import {useTranslation} from "react-i18next";
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
 import * as Cesium from "cesium";
 import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
@@ -39,23 +39,94 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 	const {initialized, globeController} = useGlobeController();
 	const viewer = globeController?.viewer;
 
-	let simulationLayers: Cesium.ImageryLayer[] = [];
+	const [selectedCase, setSelectedCase] = useState<string>("");
+	const [selectedInterval, setSelectedInterval] = useState<number>(500);
+	const [simulationLayers, setSimulationLayers] = useState<Cesium.ImageryLayer[]>([]);
+
+	const intervalRef = useRef<number | null>(null);
 
 	const selectCase = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setSelectedCase(e.target.value);
+	};
+
+	useEffect(() => {
+		console.log(`Selected value changed: ${selectedCase}`);
+
 		// Reset simulation layers and reload new case
-		resetSimulationLayers();
+		removeLayers();
 
-		const selectedCase = e.target.value;
 		if (!selectedCase) return;
-
 		zoomToExtent(selectedCase);
-		preloadLayers(selectedCase);
-		revealLayers();
+		//addLayers(selectedCase);
+
+	}, [selectedCase]); // selectedValue가 변경될 때 실행됨
+
+	const selectInterval = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setSelectedInterval(parseInt(e.target.value));
 	};
 
-	const resetSimulationLayers = () => {
-		simulationLayers = [];
+	useEffect(() => {
+		console.log(`Selected interval changed: ${selectedInterval}`);
+		stopSimulation();
+	},	[selectedInterval]);
+
+	useEffect(() => {
+		console.log("Simulation layers changed.");
+		revealLayers();
+	}, [simulationLayers]);
+
+	const addLayers = (caseName: string) => {
+		const caseLayers = layers.caseName === caseName ? layers.layers : [];
+		if (!caseLayers || !initialized) return;
+
+		const imageryLayers = viewer?.scene.imageryLayers;
+		if (!imageryLayers) return;
+
+		const newLayers = caseLayers.map(layer => {
+			const imageryLayer = createImageryLayer(layer);
+			imageryLayers.add(imageryLayer);
+			return imageryLayer;
+		});
+		setSimulationLayers(newLayers);
+		console.log("All layers loaded.");
 	};
+
+	const removeLayers = () => {
+		if (!viewer) return;
+		const imageryLayers = viewer?.scene.imageryLayers;
+		if (!imageryLayers) return;
+
+		simulationLayers.forEach(layer => {
+			imageryLayers.remove(layer);
+		});
+		setSimulationLayers([]);
+		console.log("All layers removed.");
+	};
+
+	const revealLayers = () => {
+		if (!initialized || simulationLayers.length === 0) return;
+		let index = 0;
+
+		// 기존 인터벌이 실행 중이라면 정리
+		if (intervalRef.current !== null) {
+			clearInterval(intervalRef.current);
+		}
+
+		intervalRef.current = setInterval(() => {
+			if (index > 0) {
+				simulationLayers[index - 1].show = false; // 이전 레이어 숨김
+			}
+			if (index < simulationLayers.length) {
+				simulationLayers[index].show = true; // 현재 레이어 표시
+				index++;
+			} else {
+				clearInterval(intervalRef.current!); // 모든 레이어 표시 후 종료
+				intervalRef.current = null;
+				console.log("All layers displayed.");
+			}
+			//}, 1000); // 1초 간격으로 변경
+		}, selectedInterval); // 0.5초 간격으로 변경
+	}
 
 	const zoomToExtent = (caseName: string) => {
 		const caseData = layers.caseName === caseName ? layers : undefined;
@@ -66,21 +137,6 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 			destination: rectangle,
 			duration: 2
 		});
-	};
-
-	const preloadLayers = (caseName: string) => {
-		const caseLayers = layers.caseName === caseName ? layers.layers : [];
-		if (!caseLayers || !initialized) return;
-
-		const imageryLayers = viewer?.scene.imageryLayers;
-		if (!imageryLayers) return;
-
-		simulationLayers = caseLayers.map(layer => {
-			const imageryLayer = createImageryLayer(layer);
-			imageryLayers.add(imageryLayer);
-			return imageryLayer;
-		});
-		console.log("All layers loaded.");
 	};
 
 	const createImageryLayer = (layer: Layer) => {
@@ -102,22 +158,18 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 		);
 	};
 
-	const revealLayers = () => {
-		if (!initialized || simulationLayers.length === 0) return;
-		let index = 0;
-		const interval = setInterval(() => {
-			if (index > 0) {
-				simulationLayers[index - 1].show = false; // 이전 레이어 숨김
-			}
-			if (index < simulationLayers.length) {
-				simulationLayers[index].show = true; // 현재 레이어 표시
-				index++;
-			} else {
-				clearInterval(interval); // 모든 레이어 표시 후 종료
-				console.log("All layers displayed.");
-			}
-		}, 1000); // 1초 간격으로 변경
+	const startSimulation = () => {
+		removeLayers();
+		addLayers(selectedCase);
 	}
+
+	const stopSimulation = () => {
+		if (intervalRef.current) {
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
+		}
+		removeLayers();
+	};
 
 	return (
 		<div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
@@ -127,12 +179,26 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 					<SideCloseButton/>
 				</div>
 				<div className="content--wrapper">
-					<select className="select-bx" onChange={selectCase}>
-						<option value="">시뮬레이션 케이스 선택</option>
-						<option value="case1">경상북도 영주시 풍기읍 삼가리 산 22-1임 일대</option>
-						<option value="case2">두번째</option>
-						<option value="case3">세번째</option>
-					</select>
+					<label>대상지역으로 이동
+						<select id="simulationAreaSelectBox" value={selectedCase} onChange={selectCase}>
+							<option value="">시뮬레이션 케이스 선택</option>
+							<option value="case1">경상북도 영주시 풍기읍 삼가리 산 22-1임 일대</option>
+							<option value="case2">두번째</option>
+							<option value="case3">세번째</option>
+						</select>
+					</label>
+					<label>시뮬레이션 간격
+						<select id="simulationIntervalSelectBox" value={selectedInterval} onChange={selectInterval}>
+							<option value="500">0.5초</option>
+							<option value="1000">1초</option>
+							<option value="3000">3초</option>
+							<option value="5000">5초</option>
+						</select>
+					</label>
+					<div>
+						<button type="button" onClick={startSimulation}>시작</button>
+						<button type="button" onClick={stopSimulation}>종료</button>
+					</div>
 				</div>
 			</div>
 		</div>
