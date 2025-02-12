@@ -14,6 +14,7 @@ import {PersonView} from "@/components/tool/actions/PersonView.tsx";
 import {LocationView} from "@/components/tool/actions/LocationView.tsx";
 import {AxisView} from "@/components/tool/actions/AxisView.tsx";
 import CameraInfo from "@/components/tool/actions/CameraInfo.tsx";
+import LayerInfo from "@/components/tool/actions/LayerInfo.tsx";
 
 export interface ToolConfig {
     id: string;
@@ -102,6 +103,11 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "zoom-out",
                 type: "default",
                 onSelect: () => zoomOut(globeController),
+            },
+            {
+                id: "layer-info",
+                type: "exclusive",
+                component: <LayerInfo globeController={globeController} />,
             },
         ];
     }, [globeController, initialized]);
