@@ -61,7 +61,6 @@ const SideToolContainer: React.FC = () => {
             });
         }
     };
-    console.log("selectedTools", selectedTools);
 
     return (
         <div className="side-tool-container">

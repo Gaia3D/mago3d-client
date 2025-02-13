@@ -1,8 +1,6 @@
 import { GlobeController } from "@/api/GlobeController.ts";
 import * as Cesium from "cesium";
-import { useEffect, useRef, useCallback } from "react";
-import { useRecoilState } from "recoil";
-import { TerrainUrlState } from "@/recoils/Terrain.ts";
+import { useCallback } from "react";
 
 interface ConfigureTerrainProps {
     globeController: GlobeController;
@@ -14,22 +12,11 @@ function isEllipsoidTerrainProvider(provider: Cesium.TerrainProvider){
 
 export const useTerrainController = ({ globeController }: ConfigureTerrainProps) => {
     const { viewer } = globeController;
-    const [terrainUrl] = useRecoilState(TerrainUrlState);
-    const terrainUrlRef = useRef<string | null>(terrainUrl);
-
-    // 최신 terrainUrl을 유지
-    useEffect(() => {
-        terrainUrlRef.current = terrainUrl;
-    }, [terrainUrl]);
 
     const enableTerrain = useCallback(async () => {
-        if (!viewer || !terrainUrlRef.current) return;
-
-        const terrainUrl = terrainUrlRef.current;
+        if (!viewer) return;
         try {
-            viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(
-                `${import.meta.env.VITE_API_URL}${terrainUrl}`
-            );
+            viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
         } catch (error) {
             console.error("Failed to enable terrain:", error);
         }
