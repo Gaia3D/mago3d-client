@@ -22,6 +22,7 @@ export interface ToolConfig {
     onSelect?: () => void;
     onDeselect?: () => void;
     component?: React.ReactNode;
+    helper?: string;
 }
 
 export const useToolConfig = (): ToolConfig[] => {
@@ -37,6 +38,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 title: "카메라 고정",
                 type: "toggle",
                 component: <PersonView globeController={globeController} />,
+                helper: "카메라가 고정됩니다.",
             },
             // {
             //     id: "indoor-view",

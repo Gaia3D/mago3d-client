@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {ToolConfig, useToolConfig} from "@/components/utils/toolConfig.tsx";
+import ToolHelper from "@/components/tool/ToolHelper.tsx";
 
 const SideToolContainer: React.FC = () => {
     const TOOLS = useToolConfig();
@@ -59,11 +60,15 @@ const SideToolContainer: React.FC = () => {
             });
         }
     };
+    console.log("selectedTools", selectedTools);
 
     return (
         <div className="side-tool-container">
             {TOOLS.map((button) => (
-                <div className={`tool-container ${selectedTools[button.id] && "selected"}`} key={button.id}>
+                <div
+                    className={`tool-container ${selectedTools[button.id] ? "selected" : ""}`}
+                    key={button.id}
+                >
                     <button
                         className={`tool-button icon ${button.id}`}
                         onClick={() => handleClick(button)}
@@ -71,9 +76,11 @@ const SideToolContainer: React.FC = () => {
                     >
                     </button>
                     {selectedTools[button.id] && button.component}
+                    {selectedTools[button.id] && button.helper ? <ToolHelper helper={button.helper}/> : null}
                 </div>
             ))}
         </div>
+
     );
 };
 

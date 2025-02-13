@@ -1,3 +1,37 @@
+.bg-gray {
+  background-color: #f1f1f1;
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
+}
+
+.ol-gray-container {
+  outline: 1px solid #cccccc;
+
+  div {
+    outline: 1px solid #cccccc;
+    outline-offset: -1px;
+  }
+}
+
+.tool-helper {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  background-color: var(--nav-color);
+  font-size: 12px;
+  padding: 4px;
+}
+
 .side-tool-container {
   position: fixed;
   top: 180px;
@@ -117,29 +151,4 @@
     transform: rotate(180deg);
   }
 
-}
-
-.bg-gray {
-  background-color: #f1f1f1;
-}
-
-.fw-bold {
-  font-weight: bold;
-}
-
-.ellipsis {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  display: block;
-  max-width: 100%;
-}
-
-.ol-gray-container {
-  outline: 1px solid #cccccc;
-
-  div {
-    outline: 1px solid #cccccc;
-    outline-offset: -1px;
-  }
 }
