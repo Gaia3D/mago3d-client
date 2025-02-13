@@ -195,6 +195,14 @@
     cursor: pointer;
 }
 
+@mixin reset-direction {
+    background-image: var(--icon-compass);
+    background-repeat: no-repeat;
+    background-size:120px 120px;
+    border: none;
+    cursor: pointer;
+}
+
 // 레이아웃
 html {
     overflow: hidden;

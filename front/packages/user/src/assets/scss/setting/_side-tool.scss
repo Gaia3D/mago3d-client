@@ -150,5 +150,22 @@
   .dropdown-icon.expanded {
     transform: rotate(180deg);
   }
+}
 
+.reset-direction {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  margin:0;
+  padding:0;
+  width:120px;
+  height:120px;
+  @include reset-direction;
+  .reset-direction-tick {
+    width:116px;
+    height:116px;
+    margin-right:-2px;
+    background:url(../images/compass-direction.svg) center 0 no-repeat;
+    background-size:19px 34px;
+  }
 }

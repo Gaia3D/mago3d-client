@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {ToolConfig, useToolConfig} from "@/components/utils/toolConfig.tsx";
 import ToolHelper from "@/components/tool/ToolHelper.tsx";
+import ResetDirection from "@/components/tool/actions/ResetDirection.tsx";
 
 const SideToolContainer: React.FC = () => {
     const TOOLS = useToolConfig();
@@ -79,6 +80,7 @@ const SideToolContainer: React.FC = () => {
                     {selectedTools[button.id] && button.helper ? <ToolHelper helper={button.helper}/> : null}
                 </div>
             ))}
+            <ResetDirection />
         </div>
 
     );
