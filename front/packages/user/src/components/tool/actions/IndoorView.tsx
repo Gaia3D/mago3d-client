@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import * as Cesium from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
-import { eventManager } from "@/components/tool/actions/eventManager.ts";
+import { eventManager } from "@/components/tool/eventManager.ts";
 
 interface IndoorViewProps {
     globeController: GlobeController;

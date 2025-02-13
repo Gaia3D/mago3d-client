@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import * as Cesium from "cesium";
-import { eventManager } from "@/components/tool/actions/eventManager.ts";
+import { eventManager } from "@/components/tool/eventManager.ts";
 import { GlobeController } from "@/api/GlobeController.ts";
 import { useRecoilValue } from "recoil";
 import { UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
@@ -31,7 +31,6 @@ const processPickedFeatures = (
     layers: UserLayerAsset[]
 ): Cesium.ImageryLayerFeatureInfo[] => {
     return pickedFeatures.map((feature) => {
-        console.log(feature.imageryLayer.imageryProvider._layers)
 
         if (!feature?.imageryLayer?.imageryProvider?._layers || typeof feature.imageryLayer.imageryProvider._layers !== "string") {
             console.warn("Feature ID가 없거나 잘못된 형식입니다.", feature);
@@ -52,7 +51,6 @@ const LayerInfo = ({ globeController }: LayerInfoProps) => {
     const { viewer, toolDataSource } = globeController;
     const [selectedFeatures, setSelectedFeatures] = useState<Cesium.ImageryLayerFeatureInfo[]>([]);
     const layers = useRecoilValue<UserLayerAsset[]>(layersState);
-    console.log("layers", layers);
     const handleClickEvent = useCallback(async (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
         if (!event.position) {
             console.error("event.position이 정의되지 않았습니다.");
@@ -81,7 +79,6 @@ const LayerInfo = ({ globeController }: LayerInfoProps) => {
                 setSelectedFeatures([]);
                 return;
             }
-            console.log(pickedFeatures);
             setSelectedFeatures(processPickedFeatures(pickedFeatures, layers));
         } catch (error) {
             console.error("레이어 정보를 가져오는 중 문제가 발생했습니다.", error);

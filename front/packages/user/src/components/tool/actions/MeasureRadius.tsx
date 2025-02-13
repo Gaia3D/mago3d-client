@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as Cesium from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
-import { eventManager } from "@/components/tool/actions/eventManager.ts";
+import { eventManager } from "@/components/tool/eventManager.ts";
 import { getLengthUnitFactor } from "@/components/utils/unit.ts";
 
 interface MeasureRadiusProps {
