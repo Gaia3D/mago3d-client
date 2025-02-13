@@ -13,20 +13,18 @@ export const processFeatures = (
         const usedFields = new Set(
             featureGroups.flatMap((group) => group.properties.map((p) => p.field))
         );
-
         // 기존 그룹에 속하는 속성 필터링
         const updatedFeatureGroups = featureGroups
             .map((group) => {
-                const validProperties = group.properties
-                    .map((property) => ({
-                        ...property,
-                        value: featureProps[property.field] ?? "",
-                    }))
-                    .filter((property) => property.value !== "");
+                const validProperties = group.properties.map((property) => ({
+                    ...property,
+                    value: featureProps[property.field] ?? "",
+                }));
 
-                return validProperties.length > 0
-                    ? { ...group, properties: validProperties }
-                    : null;
+                // 모든 value가 ""이면 null을 반환
+                const allValuesEmpty = validProperties.every(prop => prop.value === "");
+
+                return allValuesEmpty ? null : { ...group, properties: validProperties };
             })
             .filter(Boolean) as Array<{
             featureName: string;

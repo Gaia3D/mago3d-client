@@ -30,9 +30,13 @@
   top: 100px;
   right: 100px;
   color: black;
-  background-color: white;
   font-family: Arial, sans-serif;
   font-size: 12px;
+  max-height: calc(100vh - 200px);
+  overflow: auto;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: var(--nav-color);
 
   .feature-container {
     display: flex;
@@ -66,6 +70,7 @@
         .properties-value {
           text-align: center;
           padding: 2px;
+          background-color: white;
         }
 
       }
@@ -91,6 +96,31 @@
       }
     }
   }
+
+  .feature-name-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--nav-color);
+    color: white;
+    padding: 5px 10px;
+    user-select: none;
+  }
+
+  .feature-name-toggle:hover {
+    background-color: #353535;
+  }
+
+  .dropdown-icon {
+    margin-left: 10px;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .dropdown-icon.expanded {
+    transform: rotate(180deg);
+  }
+
 }
 
 .bg-gray {
