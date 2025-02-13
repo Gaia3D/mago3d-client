@@ -22,11 +22,7 @@ export const processFeatures = (
                         ...property,
                         value: featureProps[property.field] ?? "",
                     }))
-                    .filter((property) =>
-                        typeof property.value === "string"
-                            ? property.value.trim() !== ""
-                            : property.value !== undefined && property.value !== null
-                    );
+                    .filter((property) => property.value !== "");
 
                 return validProperties.length > 0
                     ? { ...group, properties: validProperties }
@@ -45,7 +41,8 @@ export const processFeatures = (
                 field: key,
                 value: featureProps[key] ?? "",
                 weight: 1,
-            }));
+            }))
+            .filter((property) => property.value !== "");
 
         // "기타" 그룹 추가 (필요한 경우)
         if (otherProperties.length > 0) {

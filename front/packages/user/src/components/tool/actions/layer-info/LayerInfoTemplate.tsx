@@ -22,13 +22,13 @@ const LayerInfoTemplate = ({ selectedFeatures }: LayerInfoTemplateProps) => {
                 <div key={feature.id} className="feature-container">
                     <h3>{feature.name}</h3>
                     {feature.featureGroups.map((group) => (
-                        <div className="feature-group">
-                            <div className="feature-name">{group.featureName}</div>
+                        <div className="feature-group ol-gray-container">
+                            <div className="feature-name bg-gray fw-bold">{group.featureName}</div>
                             <div className="properties-container">
                                 {group.properties.map((item, idx) => (
                                     <div className="properties-item" data-weight={item.weight}>
-                                        <div className="properties-label">{item.label}</div>
-                                        <div className="properties-value">{item.value}</div>
+                                        <div className="properties-label bg-gray fw-bold">{item.label}</div>
+                                        <div className="properties-value ellipsis">{item.value || "-"}</div>
                                     </div>
                                 ))}
                             </div>

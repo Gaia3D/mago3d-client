@@ -31,6 +31,8 @@
   right: 100px;
   color: black;
   background-color: white;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
 
   .feature-container {
     display: flex;
@@ -38,10 +40,12 @@
 
     .feature-group {
       display: flex;
-      margin-bottom: 10px;
 
       .feature-name {
         width: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       .properties-container {
@@ -53,14 +57,17 @@
       .properties-item {
         flex-grow: 1;
         width: 25%;
-      }
 
-      .properties-value {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        display: block;
-        max-width: 100%;
+        .properties-label {
+          text-align: center;
+          padding: 2px;
+        }
+
+        .properties-value {
+          text-align: center;
+          padding: 2px;
+        }
+
       }
 
       .properties-item[data-weight="4"] {
@@ -83,5 +90,30 @@
         width: 25%;
       }
     }
+  }
+}
+
+.bg-gray {
+  background-color: #f1f1f1;
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
+}
+
+.ol-gray-container {
+  outline: 1px solid #cccccc;
+
+  div {
+    outline: 1px solid #cccccc;
+    outline-offset: -1px;
   }
 }
