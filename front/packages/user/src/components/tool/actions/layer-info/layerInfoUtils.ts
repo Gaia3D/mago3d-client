@@ -34,7 +34,7 @@ export const processFeatures = (
             })
             .filter(Boolean) as Array<{
             featureName: string;
-            properties: Array<{ label: string; field: string; value: string }>;
+            properties: Array<{ label: string; field: string; value: string; weight: number }>;
         }>;
 
         // 기타 그룹에 속할 속성들 필터링
@@ -44,6 +44,7 @@ export const processFeatures = (
                 label: key,
                 field: key,
                 value: featureProps[key] ?? "",
+                weight: 1,
             }));
 
         // "기타" 그룹 추가 (필요한 경우)

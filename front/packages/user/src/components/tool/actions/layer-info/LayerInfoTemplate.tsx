@@ -19,21 +19,19 @@ const LayerInfoTemplate = ({ selectedFeatures }: LayerInfoTemplateProps) => {
     return (
         <div className="layer-info-container">
             {processedFeatures.map((feature) => (
-                <div key={feature.id} className="layer-info-table">
+                <div key={feature.id} className="feature-container">
                     <h3>{feature.name}</h3>
                     {feature.featureGroups.map((group) => (
-                        <div key={group.featureName} className="feature-group">
-                            <h4>{group.featureName}</h4>
-                            <table>
-                                <tbody>
+                        <div className="feature-group">
+                            <div className="feature-name">{group.featureName}</div>
+                            <div className="properties-container">
                                 {group.properties.map((item, idx) => (
-                                    <tr key={idx}>
-                                        <th>{item.label}</th>
-                                        <td>{item.value}</td>
-                                    </tr>
+                                    <div className="properties-item" data-weight={item.weight}>
+                                        <div className="properties-label">{item.label}</div>
+                                        <div className="properties-value">{item.value}</div>
+                                    </div>
                                 ))}
-                                </tbody>
-                            </table>
+                            </div>
                         </div>
                     ))}
                 </div>

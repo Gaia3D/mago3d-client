@@ -32,7 +32,56 @@
   color: black;
   background-color: white;
 
-  .layer-info-table {
-    paddin: 10px;
+  .feature-container {
+    display: flex;
+    flex-direction: column;
+
+    .feature-group {
+      display: flex;
+      margin-bottom: 10px;
+
+      .feature-name {
+        width: 100px;
+      }
+
+      .properties-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 400px;
+      }
+
+      .properties-item {
+        flex-grow: 1;
+        width: 25%;
+      }
+
+      .properties-value {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+        max-width: 100%;
+      }
+
+      .properties-item[data-weight="4"] {
+        flex-grow: 4;
+        width: 100%;
+      }
+
+      .properties-item[data-weight="3"] {
+        flex-grow: 3;
+        width: 75%;
+      }
+
+      .properties-item[data-weight="2"] {
+        flex-grow: 2;
+        width: 50%;
+      }
+
+      .properties-item[data-weight="1"] {
+        flex-grow: 1;
+        width: 25%;
+      }
+    }
   }
 }
