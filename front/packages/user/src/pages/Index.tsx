@@ -63,7 +63,7 @@ const MainPage = () => {
                   <AsidePanel/>
                   <BoundarySearchWrapper/>
                   <SideToolContainer />
-                  <MapToolbox onToolClick={handleToolClick}/>
+                  {/*<MapToolbox onToolClick={handleToolClick}/>*/}
                   <NewAssetModal />
                   <LogModal />
                   <Footer/>

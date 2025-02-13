@@ -8,7 +8,7 @@ interface LocationViewProps {
 }
 
 const eventGroupId = "LocationView";
-const MAN_HEIGHT = 2;
+const CONST_HEIGHT = 50;
 
 let pickedObject: any | undefined = undefined;
 
@@ -51,7 +51,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ globeController }) =
             const startDestination = Cesium.Cartesian3.fromRadians(
                 cartographic.longitude,
                 cartographic.latitude,
-                centerHeight + MAN_HEIGHT
+                centerHeight + CONST_HEIGHT
             );
 
             const camera = viewer.camera;

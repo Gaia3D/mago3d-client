@@ -1,0 +1,50 @@
+.icon{
+  &.person-view {
+    @include icon-button(-181px, -780px);
+  }
+  &.rotation {
+    @include icon-button(-246px, -780px);
+  }
+  &.indoor-view {
+    @include icon-button(-238px, -641px);
+  }
+  &.location-view {
+    @include icon-button(-300px, -642px);
+  }
+  &.axis-view {
+    @include icon-button(-356px, -641px);
+  }
+  &.camera-info {
+    @include icon-button(-410px, -643px);
+  }
+  &.measure-location {
+    @include icon-button(-177px, -708px);
+  }
+  &.measure-length {
+    @include icon-button(-238px, -708px);
+  }
+  &.measure-area {
+    @include icon-button(-368px, -708px);
+  }
+  &.measure-angle {
+    @include icon-button(-559px, -708px);
+  }
+  &.measure-radius {
+    @include icon-button(-624px, -708px);
+  }
+  &.terrain-controller {
+    @include icon-button(-105px, -889px);
+  }
+  &.terrain-trans {
+    @include icon-button(-246px, -889px);
+  }
+  &.full-screen{
+    @include icon-button(-106px, -844px);
+  }
+  &.zoom-in {
+    @include icon-button(-105px, -993px);
+  }
+  &.zoom-out {
+    @include icon-button(-105px, -1058px);
+  }
+}

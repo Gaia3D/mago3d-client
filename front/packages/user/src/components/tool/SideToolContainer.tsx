@@ -61,16 +61,14 @@ const SideToolContainer: React.FC = () => {
     };
 
     return (
-        <div className="temp-tool-container">
+        <div className="side-tool-container">
             {TOOLS.map((button) => (
-                <div key={button.id}>
+                <div className={`tool-container ${selectedTools[button.id] && "selected"}`} key={button.id}>
                     <button
+                        className={`tool-button icon ${button.id}`}
                         onClick={() => handleClick(button)}
-                        style={{
-                            backgroundColor: selectedTools[button.id] ? "lightblue" : "white",
-                        }}
+                        title={button.title}
                     >
-                        {button.id}
                     </button>
                     {selectedTools[button.id] && button.component}
                 </div>
