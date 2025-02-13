@@ -4,7 +4,7 @@ import { zoomOut } from "@/components/tool/actions/zoomOut";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import MeasureLocation from "@/components/tool/actions/MeasureLocation.tsx";
 import { enterFullScreen, exitFullScreen } from "@/components/tool/actions/fullScreen.ts";
-import { useTerrainController } from "@/components/tool/actions/useTerrainController.ts";
+import { useTerrainSetting } from "@/components/tool/actions/useTerrainSetting.ts";
 import {MeasureLength} from "@/components/tool/actions/MeasureLength.tsx";
 import {MeasureArea} from "@/components/tool/actions/MeasureArea.tsx";
 import {MeasureAngle} from "@/components/tool/actions/MeasureAngle.tsx";
@@ -14,6 +14,7 @@ import {LocationView} from "@/components/tool/actions/LocationView.tsx";
 import {AxisView} from "@/components/tool/actions/AxisView.tsx";
 import CameraInfo from "@/components/tool/actions/CameraInfo.tsx";
 import LayerInfo from "@/components/tool/actions/LayerInfo.tsx";
+import {useTerrainTrans} from "@/components/tool/actions/useTerrainTrans.ts";
 
 export interface ToolConfig {
     id: string;
@@ -27,7 +28,8 @@ export interface ToolConfig {
 
 export const useToolConfig = (): ToolConfig[] => {
     const { globeController, initialized } = useGlobeController();
-    const { enableTerrain, disableTerrain } = useTerrainController({ globeController });
+    const { enableTerrain, disableTerrain } = useTerrainSetting({ globeController });
+    const { enableTerrainTrans, disableTerrainTrans } = useTerrainTrans({ globeController });
 
     return useMemo(() => {
         if (!initialized) return [];
@@ -100,11 +102,18 @@ export const useToolConfig = (): ToolConfig[] => {
                 component: <MeasureRadius globeController={globeController} unit={"m"} />,
             },
             {
-                id: "terrain-controller",
+                id: "terrain-setting",
                 type: "toggle",
                 title: "지형 설정",
                 onSelect: enableTerrain,
                 onDeselect: disableTerrain,
+            },
+            {
+                id: "terrain-trans",
+                type: "toggle",
+                title: "지형 불투명",
+                onSelect: enableTerrainTrans,
+                onDeselect: disableTerrainTrans,
             },
             {
                 id: "full-screen",

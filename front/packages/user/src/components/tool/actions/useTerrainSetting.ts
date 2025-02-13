@@ -2,7 +2,7 @@ import { GlobeController } from "@/api/GlobeController.ts";
 import * as Cesium from "cesium";
 import { useCallback } from "react";
 
-interface ConfigureTerrainProps {
+interface TerrainSettingProps {
     globeController: GlobeController;
 }
 
@@ -10,7 +10,7 @@ function isEllipsoidTerrainProvider(provider: Cesium.TerrainProvider){
     return provider?.constructor?.name === "EllipsoidTerrainProvider";
 }
 
-export const useTerrainController = ({ globeController }: ConfigureTerrainProps) => {
+export const useTerrainSetting = ({ globeController }: TerrainSettingProps) => {
     const { viewer } = globeController;
 
     const enableTerrain = useCallback(async () => {
