@@ -43,9 +43,9 @@ export const useToolConfig = (): ToolConfig[] => {
                 component: <Watercourse />,
                 helper: "물줄기가 표시됩니다.",
             },            {
-                id: "person-view",
+                id: "view-point",
                 title: "카메라 고정",
-                type: "toggle",
+                type: "exclusive",
                 component: <PersonView globeController={globeController} />,
                 helper: "카메라가 고정됩니다.",
             },
@@ -104,11 +104,11 @@ export const useToolConfig = (): ToolConfig[] => {
                 component: <MeasureRadius globeController={globeController} unit={"m"} />,
             },
             {
-                id: "terrain-setting",
+                id: "terrain-delete",
                 type: "toggle",
-                title: "지형 설정",
-                onSelect: enableTerrain,
-                onDeselect: disableTerrain,
+                title: "지형 제거",
+                onSelect: disableTerrain,
+                onDeselect: enableTerrain,
             },
             {
                 id: "terrain-trans",
@@ -119,10 +119,9 @@ export const useToolConfig = (): ToolConfig[] => {
             },
             {
                 id: "full-screen",
-                type: "toggle",
+                type: "default",
                 title: "전체 화면",
                 onSelect: enterFullScreen,
-                onDeselect: exitFullScreen,
             },
             {
                 id: "zoom-in",

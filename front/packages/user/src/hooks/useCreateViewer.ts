@@ -28,18 +28,11 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
       }
       const initializeViewer = async () => {
 
-          let terrainProvider;
-          if (terrainUrl) {
-              // localstorage 저장된 url이 있다면 해당 terrain 호출
-              terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_API_URL + terrainUrl);
-              setOptions((prevOptions) => ({
-                  ...prevOptions,
-                  isTerrain: true,
-              }));
-          } else {
-              // localstorage에 저장된 url이 없다면 민둥 terrain 호출
-              terrainProvider = await new Cesium.EllipsoidTerrainProvider();
-          }
+          const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
+          setOptions((prevOptions) => ({
+              ...prevOptions,
+              isTerrain: true,
+          }));
 
           const baseLayer = initBackground(nowMap.type, nowMap.url);
 
