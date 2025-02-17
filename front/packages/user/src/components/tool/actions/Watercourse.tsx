@@ -1,16 +1,17 @@
-import React, { useEffect } from "react";
-import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
+import React, {useEffect, useMemo} from "react";
+import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
 import * as Cesium from "cesium";
-import { FeatureCollection, Geometry } from "@turf/turf";
+import {ClassificationType} from "cesium";
+import {FeatureCollection, Geometry} from "@turf/turf";
 
 const Watercourse = () => {
     const { globeController } = useGlobeController();
 
-    const waterMaterial = new Cesium.Material({
+    const waterMaterial = useMemo(() => new Cesium.Material({
         fabric: {
             type: "Water",
             uniforms: {
-                baseWaterColor: new Cesium.Color(0.5, 0.8, 1.0, 0.5),
+                baseWaterColor: new Cesium.Color(0, 0.1, 0.2, 1),
                 normalMap: Cesium.buildModuleUrl("/images/waterNormals.jpg"),
                 frequency: 500.0,
                 animationSpeed: 0.01,
@@ -18,10 +19,10 @@ const Watercourse = () => {
                 specularIntensity: 1.0,
             },
         },
-    });
+    }), []);
 
     useEffect(() => {
-        if (!globeController?.viewer?.scene) return;
+        if (!globeController?.viewer) return;
 
         const scene = globeController.viewer.scene;
         const primitives = scene.primitives;
@@ -32,7 +33,7 @@ const Watercourse = () => {
 
         const loadGeojson = async () => {
             try {
-                const response = await fetch("./geojson/water_3.geojson");
+                const response = await fetch("./geojson/water.geojson");
                 if (!response.ok) throw new Error("Failed to load geojson data");
                 const geojsonData = await response.json();
                 renderWaterPrimitives(geojsonData);
@@ -58,7 +59,7 @@ const Watercourse = () => {
                     const feature = vectorData.features[batchIndex];
                     const geometry = feature.geometry as Geometry;
                     const properties = feature.properties as { hack_ord: number };
-                    const width = (5 - properties.hack_ord) * 10 + 1;
+                    const width = (10 - properties.hack_ord) * 3;
 
                     if (geometry.type === "MultiLineString") {
                         for (const line of geometry.coordinates as number[][][]) {
@@ -75,8 +76,9 @@ const Watercourse = () => {
                                     }),
                                     attributes: {
                                         color: new Cesium.ColorGeometryInstanceAttribute(
-                                            0.5, 0.8, 1.0, 0.7
+                                            0, 0.1, 0.2, 1
                                         ),
+                                        distanceDisplayCondition : new Cesium.DistanceDisplayConditionGeometryInstanceAttribute(0, 5000.0)
                                     },
                                 })
                             );
@@ -92,12 +94,14 @@ const Watercourse = () => {
                             translucent: true,
                         }),
                         asynchronous: true,
+                        classificationType: ClassificationType.TERRAIN
                     });
 
                     waterPrimitiveCollection.add(waterPrimitive);
                 }
 
-                requestIdleCallback(addNextBatch);
+                // requestIdleCallback(addNextBatch);
+                setTimeout(addNextBatch, 100);
             };
 
             addNextBatch();
