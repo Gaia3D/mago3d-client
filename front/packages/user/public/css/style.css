@@ -3126,20 +3126,30 @@ select option {
 .top-panel {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   display: flex;
+  margin: 0;
+  padding: 0;
+  gap: 0;
   justify-content: space-between;
-  align-items: center;
   z-index: 99;
-  width: 310px;
-  padding: 12px;
+  width: 100%;
 }
-.top-panel .mago3d-logo {
-  width: 115px;
-  height: 24px;
-  background-size: 100px;
-  background-image: url("../images/mago3d-logo.svg");
-  background-size: 115px 24px;
+.top-panel h1.logo {
+  width: 306px;
+  height: 43px;
+  background-image: url("../images/logo.svg");
+  background-size: 306px 43px;
+  background-position: -5px 0;
+}
+.top-panel .header-wrapper {
+  width: 190px;
+  display: flex;
+  position: relative;
+  flex-direction: rows;
+  margin-top: 10px;
+  gap: 12px;
+  align-items: center;
 }
 .top-panel .docs-selector-container {
   position: relative;
@@ -3275,6 +3285,7 @@ select option {
 
 #container nav {
   z-index: 3;
+  top: 52px;
 }
 #container nav .menu {
   user-select: none;
@@ -3754,6 +3765,7 @@ select option {
 }
 #map .side-bar-wrapper {
   z-index: 2;
+  top: 48px;
 }
 #map .side-bar-wrapper.on .side-bar {
   transform: translateX(0);

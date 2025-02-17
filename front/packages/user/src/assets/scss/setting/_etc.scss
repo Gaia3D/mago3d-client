@@ -6,26 +6,37 @@
 .top-panel {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   display: flex;
+  margin:0;
+  padding:0;
+  gap:0;
   justify-content: space-between;
-  align-items: center;
   z-index: 99;
-  width: 310px;
-  padding: 12px;
-
-  .mago3d-logo {
-    //width: 80px;
+  width: 100%;
+  //.mago3d-logo {
+    //width: 115px;
     //height: 24px;
-    //background-size: 80px;
-    //background-image: url("../images/mago3d-logo.png");
-    width: 115px;
-    height: 24px;
-    background-size: 100px;
-    background-image: url("../images/mago3d-logo.svg");
-    background-size:115px 24px;
-  }
+    //background-image: url("../images/mago3d-logo.svg");
+    //background-size:115px 24px;
+  //}
+  h1.logo {
+    width:306px;
+    height:43px;
+    background-image: url("../images/logo.svg") ;
+    background-size:306px 43px;
+    background-position:-5px 0;
 
+  }
+  .header-wrapper {
+    width:190px;
+    display: flex;
+    position: relative;
+    flex-direction: rows;
+    margin-top:10px;
+    gap:12px;
+    align-items: center;
+  }
   .docs-selector-container {
     position: relative;
     display: flex;
@@ -164,6 +175,7 @@
 #container {
   nav{
     z-index: 3;
+    top:52px;
     .menu {
       user-select: none;
       .layer-number {
@@ -694,6 +706,7 @@
 
   .side-bar-wrapper {
     z-index: 2;
+    top:48px;
     &.on {
       .side-bar {
         transform: translateX(0);
