@@ -39,12 +39,24 @@
     @include icon-button(-247px, -889px);
   }
   &.full-screen{
-    @include icon-button(-107px, -844px);
+    @include icon-button(-106px, -843px);
   }
   &.zoom-in {
     @include icon-button(-105px, -993px);
   }
   &.zoom-out {
     @include icon-button(-105px, -1058px);
+  }
+  &.water {
+    @include icon-button(-554px, -889px);
+  }
+  &.layer-info {
+    @include icon-button(-612px, -889px);
+  }
+  &.terrain-delete {
+    @include icon-button(-497px, -889px);
+  }
+  &.view-point  {
+    @include icon-button(-666px, -889px);
   }
 }
