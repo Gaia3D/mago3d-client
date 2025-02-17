@@ -15,6 +15,7 @@ import {AxisView} from "@/components/tool/actions/AxisView.tsx";
 import CameraInfo from "@/components/tool/actions/CameraInfo.tsx";
 import LayerInfo from "@/components/tool/actions/LayerInfo.tsx";
 import {useTerrainTrans} from "@/components/tool/actions/useTerrainTrans.ts";
+import Watercourse from "@/components/tool/actions/Watercourse.tsx";
 
 export interface ToolConfig {
     id: string;
@@ -36,17 +37,18 @@ export const useToolConfig = (): ToolConfig[] => {
 
         return [
             {
+                id: "water",
+                title: "물줄기",
+                type: "toggle",
+                component: <Watercourse />,
+                helper: "물줄기가 표시됩니다.",
+            },            {
                 id: "person-view",
                 title: "카메라 고정",
                 type: "toggle",
                 component: <PersonView globeController={globeController} />,
                 helper: "카메라가 고정됩니다.",
             },
-            // {
-            //     id: "indoor-view",
-            //     type: "exclusive",
-            //     component: <IndoorView globeController={globeController} />
-            // },
             {
                 id: "location-view",
                 type: "exclusive",

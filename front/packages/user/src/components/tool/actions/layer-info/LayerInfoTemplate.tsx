@@ -14,7 +14,6 @@ const LayerInfoTemplate = ({ selectedFeatures }: LayerInfoTemplateProps) => {
 
     // 확장된 feature를 관리하는 상태
     const [expandedFeatures, setExpandedFeatures] = useState<Set<string>>(new Set());
-    console.log("expandedFeatures",expandedFeatures);
     // 중복 방지를 위해 featureId를 특정할 수 있도록 설정
     const generateFeatureKey = (feature: { id: string; name: string }, idx: number) => {
         const baseId = feature.id.split(".")[0];
