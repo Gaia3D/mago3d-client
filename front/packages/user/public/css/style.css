@@ -1028,7 +1028,7 @@ table {
   display: none;
   position: absolute;
   border-radius: 10px;
-  border: 1px white solid;
+  border: 1px rgba(97, 97, 97, 0.7) solid;
   background-color: var(--background-color-silver);
   z-index: 9;
   box-shadow: var(--box-shadow);
@@ -1049,7 +1049,7 @@ table {
 }
 .pop-layer.user ul li.graphic {
   background-image: var(--icon-current);
-  background-position: -96px -334px;
+  background-position: -96px -326px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -3337,7 +3337,7 @@ select option {
   height: 100%;
   object-fit: cover;
   border-radius: 50px;
-  border: 1px solid rgb(250, 250, 250);
+  border: 1px solid gray;
 }
 #map .background-map .span-img.osm_white {
   background-image: url("../images/osm_white.png");
