@@ -1028,7 +1028,7 @@ table {
   display: none;
   position: absolute;
   border-radius: 10px;
-  border: 1px white solid;
+  border: 1px rgba(97, 97, 97, 0.7) solid;
   background-color: var(--background-color-silver);
   z-index: 9;
   box-shadow: var(--box-shadow);
@@ -1049,7 +1049,7 @@ table {
 }
 .pop-layer.user ul li.graphic {
   background-image: var(--icon-current);
-  background-position: -96px -334px;
+  background-position: -96px -326px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -3126,20 +3126,30 @@ select option {
 .top-panel {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   display: flex;
+  margin: 0;
+  padding: 0;
+  gap: 0;
   justify-content: space-between;
-  align-items: center;
   z-index: 99;
-  width: 310px;
-  padding: 12px;
+  width: 100%;
 }
-.top-panel .mago3d-logo {
-  width: 115px;
-  height: 24px;
-  background-size: 100px;
-  background-image: url("../images/mago3d-logo.svg");
-  background-size: 115px 24px;
+.top-panel h1.logo {
+  width: 306px;
+  height: 43px;
+  background-image: url("../images/logo.svg");
+  background-size: 306px 43px;
+  background-position: -5px 0;
+}
+.top-panel .header-wrapper {
+  width: 190px;
+  display: flex;
+  position: relative;
+  flex-direction: rows;
+  margin-top: 10px;
+  gap: 12px;
+  align-items: center;
 }
 .top-panel .docs-selector-container {
   position: relative;
@@ -3275,6 +3285,7 @@ select option {
 
 #container nav {
   z-index: 3;
+  top: 52px;
 }
 #container nav .menu {
   user-select: none;
@@ -3326,7 +3337,7 @@ select option {
   height: 100%;
   object-fit: cover;
   border-radius: 50px;
-  border: 1px solid rgb(250, 250, 250);
+  border: 1px solid gray;
 }
 #map .background-map .span-img.osm_white {
   background-image: url("../images/osm_white.png");
@@ -3754,6 +3765,7 @@ select option {
 }
 #map .side-bar-wrapper {
   z-index: 2;
+  top: 48px;
 }
 #map .side-bar-wrapper.on .side-bar {
   transform: translateX(0);
@@ -4313,7 +4325,7 @@ select option {
 }
 .icon.full-screen {
   background-image: var(--icon-current);
-  background-position: -107px -844px;
+  background-position: -106px -843px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -4330,6 +4342,38 @@ select option {
 .icon.zoom-out {
   background-image: var(--icon-current);
   background-position: -105px -1058px;
+  background-size: 777px 1076px;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+}
+.icon.water {
+  background-image: var(--icon-current);
+  background-position: -554px -889px;
+  background-size: 777px 1076px;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+}
+.icon.layer-info {
+  background-image: var(--icon-current);
+  background-position: -612px -889px;
+  background-size: 777px 1076px;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+}
+.icon.terrain-delete {
+  background-image: var(--icon-current);
+  background-position: -497px -889px;
+  background-size: 777px 1076px;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+}
+.icon.view-point {
+  background-image: var(--icon-current);
+  background-position: -666px -889px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;

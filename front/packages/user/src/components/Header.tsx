@@ -7,11 +7,13 @@ import DocsSelector from "@/components/header/DocsSelector.tsx";
 const Header = () => {
     return (
         <div className="top-panel">
-            <div className="mago3d-logo"/>
-            <DocsSelector />
-            <MapSelector/>
-            <LanguageSelector/>
-            <SignInfo/>
+            <h1 className="logo"></h1>
+            <div className="header-wrapper">
+                <DocsSelector />
+                <MapSelector/>
+                <LanguageSelector/>
+                <SignInfo/>
+            </div>            
         </div>
     );
 };

@@ -415,7 +415,6 @@ main {
         height:34px;
         border-radius:30px !important;
         img {
-
             border-radius:30px !important;
         }
     }
@@ -611,7 +610,7 @@ table {
     display: none;
     position: absolute;
     border-radius:10px;
-    border: 1px white solid;
+    border: 1px rgba(97, 97, 97, 0.7) solid;
     background-color: var( --background-color-silver);
     z-index:9;
     box-shadow: var(--box-shadow);
@@ -630,7 +629,7 @@ table {
                 font-size: var(--font-size-regular);
                 line-height:25px;
                 &.graphic {
-                    @include icon-button(-96px, -334px);
+                    @include icon-button(-96px, -326px);
                 }
                 &.time {
                     @include icon-button(-96px, -392px);

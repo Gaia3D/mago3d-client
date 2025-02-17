@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="123.386" height="123.386" viewBox="0 0 123.386 123.386">
   <defs>
     <linearGradient id="linear-gradient" x1="0.21" y1="0.185" x2="0.616" y2="0.681" gradientUnits="objectBoundingBox">
-      <stop offset="0" stop-color="#9a9a9a"/>
-      <stop offset="1" stop-color="#4b4b4b"/>
+      <stop offset="0" stop-color="#6b6a6a"/>
+      <stop offset="1" stop-color="#1e1e1e"/>
     </linearGradient>
     <filter id="패스_216" x="0" y="0" width="123.386" height="123.386" filterUnits="userSpaceOnUse">
       <feOffset input="SourceAlpha"/>
@@ -21,18 +21,18 @@
       <circle cx="41" cy="41" r="40" fill="none"/>
     </g>
     <g id="그룹_369" data-name="그룹 369" transform="translate(1868.874 1004.554)">
-      <path id="패스_92" data-name="패스 92" d="M1863.313,1007.978l1.1-23.144,1.1,23.144Z" transform="translate(-1863.313 -984.833)" fill="#fff"/>
-      <path id="패스_93" data-name="패스 93" d="M0,24.66,1.1,0l1.1,24.66Z" transform="translate(2.209 63.97) rotate(180)" fill="#fff"/>
+      <path id="패스_92" data-name="패스 92" d="M1863.31,1007.98l1.1-23.144,1.1,23.144Z" transform="translate(-1863.313 -984.833)" fill="#fff"/>
+      <path id="패스_93" data-name="패스 93" d="M0,24.66,1.1,0,2.2,24.66Z" transform="translate(2.209 63.97) rotate(180)" fill="#fff"/>
     </g>
     <g id="그룹_133" data-name="그룹 133" transform="translate(1838.554 1034.874)">
-      <g id="그룹_368" data-name="그룹 368" transform="translate(0)">
-        <path id="패스_94" data-name="패스 94" d="M0,24.64,1.1,0l1.1,24.64Z" transform="translate(63.971) rotate(90)" fill="#fff"/>
-        <path id="패스_95" data-name="패스 95" d="M0,23.145,1.1,0l1.1,23.145Z" transform="translate(0 2.209) rotate(-90)" fill="#fff"/>
+      <g id="그룹_368" data-name="그룹 368">
+        <path id="패스_94" data-name="패스 94" d="M0,24.64,1.1,0,2.2,24.64Z" transform="translate(63.971) rotate(90)" fill="#fff"/>
+        <path id="패스_95" data-name="패스 95" d="M0,23.145,1.1,0,2.2,23.145Z" transform="translate(0 2.209) rotate(-90)" fill="#fff"/>
       </g>
     </g>
     <g id="그룹_370" data-name="그룹 370" transform="translate(1861.142 1027.142)">
-      <circle id="타원_13" data-name="타원 13" cx="8.5" cy="8.5" r="8.5" transform="translate(-0.142 -0.142)" fill="#fff"/>
-      <circle id="타원_32" data-name="타원 32" cx="6.5" cy="6.5" r="6.5" transform="translate(1.858 1.858)" fill="#d6d6d6"/>
+      <circle id="타원_13" data-name="타원 13" cx="8.5" cy="8.5" r="8.5" transform="translate(-0.142 -0.142)" fill="#bcbcbc"/>
+      <circle id="타원_32" data-name="타원 32" cx="6.5" cy="6.5" r="6.5" transform="translate(1.858 1.858)" fill="#363636"/>
     </g>
   </g>
 </svg>
