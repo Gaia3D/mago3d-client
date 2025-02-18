@@ -16,6 +16,14 @@ export default defineConfig({
     port: 3002,
     open: true,
     https: true,
+    proxy: {
+      "/api/vworld": {
+        target: "https://api.vworld.kr",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/vworld/, "/req/wms"),
+        secure: false,
+      },
+    },
   },
   resolve: {
     conditions: [],
