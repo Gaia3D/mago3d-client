@@ -77,12 +77,15 @@
   .tool-group-container {
     display: flex;
     .tool-group {
-      &.hide {
-        display: none;
-      }
       display: flex;
+      &.hide {
+        .tool-container:not(.selected) {
+          display: none;
+        }
+      }
     }
   }
+
 }
 
 .layer-info-container {
