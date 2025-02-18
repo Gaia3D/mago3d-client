@@ -43,15 +43,22 @@ export const featureGroups = [
             { field: "유효토심", value: "", label: "유효토심", weight: 1 },
             { field: "twi", value: "", label: "지형습윤지수", weight: 1 },
         ],
+    },{
+        featureName: "토지이용",
+        properties: [
+            { field: "건조지비율", value: "", label: "건조지비율", weight: 1 },
+            { field: "농지비율", value: "", label: "농지비율", weight: 1 },
+            { field: "산림비율", value: "", label: "산림비율", weight: 1 },
+            { field: "나지비율", value: "", label: "", weight: 1 },
+        ],
     },
     {
         featureName: "산사태정보",
         properties: [
-            { field: "토지이용", value: "", label: "토지이용", weight: 1 },
-            { field: "산사태발생", value: "", label: "산사태발생", weight: 1 },
-            { field: "사방댐", value: "", label: "사방댐", weight: 2 },
-            { field: "산사태위험", value: "", label: "산사태위험지역 1등급지 중첩비", weight: 2 },
-            { field: "산사태취약", value: "", label: "산사태취약지역유역 중첩비", weight: 2 },
+            { field: "산사태빈도", value: "", label: "산사태빈도", weight: 1 },
+            { field: "사방댐개수", value: "", label: "사방댐개수", weight: 1 },
+            { field: "산사태1등급비", value: "", label: "산사태1등급비", weight: 1 },
+            { field: "취약지역 비율", value: "", label: "취약지역 비율", weight: 1 },
         ],
     },
 ];
