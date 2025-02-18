@@ -59,4 +59,13 @@
   &.view-point  {
     @include icon-button(-666px, -889px);
   }
+  &.measure  {
+    @include icon-button(-104px, -708px);
+  }
+  &.terrain  {
+    @include icon-button(-106px, -890px);
+  }
+  &.view {
+    @include icon-button(-109px, -4px);
+  }
 }

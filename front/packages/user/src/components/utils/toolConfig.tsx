@@ -21,6 +21,7 @@ export interface ToolConfig {
     id: string;
     type: "default" | "toggle" | "exclusive";
     title: string;
+    group?: string;
     onSelect?: () => void;
     onDeselect?: () => void;
     component?: React.ReactNode;
@@ -40,6 +41,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "view-point",
                 title: "카메라 고정",
                 type: "exclusive",
+                group: "view",
                 component: <PersonView globeController={globeController} />,
                 helper: "카메라가 고정됩니다.",
             },
@@ -47,6 +49,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "location-view",
                 type: "exclusive",
                 title: "지점 이동",
+                group: "view",
                 component: <LocationView globeController={globeController} />,
                 helper: "클릭한 위치로 이동합니다."
             },
@@ -54,6 +57,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "axis-view",
                 type: "exclusive",
                 title: "축 이동",
+                group: "view",
                 component: <AxisView globeController={globeController} />,
                 helper: "클릭한 방향을 바라봅니다.\n첫번째 클릭: 위치 선택\n두번째 클릭: 방향 선택"
             },
@@ -75,6 +79,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "measure-location",
                 type: "exclusive",
                 title: "위치 측정",
+                group: "measure",
                 component: <MeasureLocation globeController={globeController} unit={"m"} />,
                 helper: "클릭한 위치의 위도, 경도, 고도 값을 표시합니다."
             },
@@ -82,6 +87,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "measure-length",
                 type: "exclusive",
                 title: "길이 측정",
+                group: "measure",
                 component: <MeasureLength globeController={globeController} unit={"m"} />,
                 helper: "길이를 측정합니다.\n클릭: 길이 측정 지점 선택\nESC: 초기화"
             },
@@ -89,6 +95,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "measure-area",
                 type: "exclusive",
                 title: "면적 측정",
+                group: "measure",
                 component: <MeasureArea globeController={globeController} unit={"m²"} />,
                 helper: "면적을 측정합니다.\n클릭: 면적 측정 지점 선택\nESC: 초기화"
             },
@@ -96,6 +103,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "measure-angle",
                 type: "exclusive",
                 title: "각도 측정",
+                group: "measure",
                 component: <MeasureAngle globeController={globeController} />,
                 helper: "각도를 측정합니다.\n클릭: 각도 측정 지점 선택\nESC: 초기화"
             },
@@ -103,6 +111,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "measure-radius",
                 type: "exclusive",
                 title: "반지름 측정",
+                group: "measure",
                 component: <MeasureRadius globeController={globeController} unit={"m"} />,
                 helper: "반지름을 측정하고 구 범위를 표시합니다.\n클릭: 반지름 측정 지점 선택\nESC: 초기화"
             },
@@ -110,6 +119,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "terrain-delete",
                 type: "toggle",
                 title: "지형 제거",
+                group: "terrain",
                 onSelect: disableTerrain,
                 onDeselect: enableTerrain,
                 helper: "지형을 제거합니다."
@@ -118,6 +128,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "terrain-trans",
                 type: "toggle",
                 title: "지형 불투명",
+                group: "terrain",
                 onSelect: enableTerrainTrans,
                 onDeselect: disableTerrainTrans,
                 helper: "지형을 불투명하게 설정합니다."
@@ -125,6 +136,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "water",
                 title: "물줄기 표시",
                 type: "toggle",
+                group: "terrain",
                 component: <Watercourse />,
                 helper: "물줄기가 표시됩니다.",
             }, {

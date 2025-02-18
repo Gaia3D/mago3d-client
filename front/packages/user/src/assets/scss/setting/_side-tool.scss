@@ -48,13 +48,20 @@
   right: 12px;
   display: flex;
   flex-direction: column;
+  align-items: end;
   gap:0;
 
-  .tool-container {  
-    height:34px;  
+  .tool-container {
+    height:32px;
+    margin-left: 4px;
+    margin-bottom: 4px;
+
     &.selected {
       .tool-button {
         background-color: var(--toolbox-select-color);
+        &:hover {
+          background-color: var(--toolbox-select-color);
+        }
       }
     }
     .tool-button {
@@ -62,8 +69,19 @@
       height: 32px;
       border-radius: 10px;      
       background-color: var(--background-color-silver);
+      &:hover {
+        background-color: #0f2f75;
+      }
     }
-
+  }
+  .tool-group-container {
+    display: flex;
+    .tool-group {
+      &.hide {
+        display: none;
+      }
+      display: flex;
+    }
   }
 }
 
