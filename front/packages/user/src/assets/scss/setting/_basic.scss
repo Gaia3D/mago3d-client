@@ -754,7 +754,7 @@ ul.layer {
 .layer-scroll {
     overflow-y: scroll !important;
     position: relative;
-    height:calc(100% - 180px);
+    height:calc(100% - 160px);
     margin:10px 0 0 0;
 }
 
@@ -953,13 +953,13 @@ ul.prop {
         @include icon-button(-118px, -507px);
     }
     &.save {
-        @include icon-button(-263px, -464px);
+        @include icon-button(-264px, -465px);
     }
     &.visible {
-        @include icon-button(-113px, -7px);
+        @include icon-button(-114px, -9px);
     }
     &.not-visible {
-        @include icon-button(-113px, -55px);
+        @include icon-button(-114px, -57px);
     }
     &.map-view {
         @include icon-button(-114px, -181px);
