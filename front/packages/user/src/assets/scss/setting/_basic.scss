@@ -300,12 +300,16 @@ main {
         left: 80px;
         top: 5px;
         width:380px;
-        height:92vh;
+        height:88vh;
         z-index:99;
         background-color: var(--slide-bar-color);
         box-shadow: var(--box-shadow);
         border-radius:10px;
         padding:0;
+        &.simulation {            
+            height:auto;
+            padding-bottom:50px;
+        }
         .side-bar-header {
             margin:0;
             padding:0;
@@ -398,6 +402,44 @@ main {
     margin-left:5%;
     margin-right:5%;
     height:calc(100% - 47px);
+    margin-top:10px;
+    .button-simulation {
+        margin-top:10px;
+        border-radius:8px;
+        padding:7px 65px 9px 30px;
+        font-size:14px;
+        color:white;
+        &.play {
+            width:auto;
+            height:auto;
+            background:#3382EC url(../images/icon-simulation.svg) 135px 8px no-repeat;
+            background-size:21px auto;
+            &:hover {
+                background:#2672d6 url(../images/icon-simulation.svg) 135px 8px no-repeat;
+                background-size:21px auto;
+            }
+        }   
+        &.end {
+            width:auto;
+            height:auto;
+            background:#f73232 url(../images/icon-simulation.svg) 135px -36px no-repeat;
+            background-size:21px auto;
+            &:hover {
+                background:#dd2424 url(../images/icon-simulation.svg) 135px -36px no-repeat;
+                background-size:21px auto;
+            }
+        } 
+    }
+    .simulation-list {
+        display:flex;
+        justify-content: flex-start;
+        margin-bottom:10px;
+        label {
+            display: block;
+            width:60px;
+            font-size:13px;
+        }
+    }
 }
 
 //background-map-select
@@ -411,8 +453,8 @@ main {
     box-shadow: var(--small-box-shadow) !important;
     .map-type-current  {
         border:0;
-        width:32px;
-        height:34px;
+        width:30px;
+        height:30px;
         border-radius:30px !important;
         img {
             border-radius:30px !important;
@@ -2227,6 +2269,28 @@ select {
         padding-left:5px !important;
     }
 }
+
+//select
+.custom-select {
+    width:auto;
+    color:white !important;
+    display: inline-block;
+    position: relative;
+    appearance: none;
+    background:#41413F;
+    background-image: url('../images/select-button.svg');
+    background-position: calc(100% - 7px) center;
+    background-repeat: no-repeat;
+    border-radius: 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+    height:30px;
+    padding-top:1px;
+    border:1px solid #41413F;
+    padding-left:3px;
+    padding-right:23px !important;
+    font-size:13px;
+} 
 
 //search
 .hidden {

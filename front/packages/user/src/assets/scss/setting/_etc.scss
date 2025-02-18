@@ -34,7 +34,7 @@
     position: relative;
     flex-direction: rows;
     margin-top:10px;
-    gap:12px;
+    gap:10px;
     align-items: center;
   }
   .docs-selector-container {
@@ -83,12 +83,9 @@
   }
 
   .language-selector-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
     .lang-icon {
-      width:32px;
-      height:32px;
+      width:30px;
+      height:30px;
       border-radius:30px;
       background:white;
       box-shadow: var(--small-box-shadow);
@@ -98,7 +95,7 @@
       }
       &.ko, &.ko-KR {
         //border:1px solid var(--border-light-color) !important;
-        @include icon-button(-745px, -1px);
+        @include icon-button(-746px, -3px);
       }
     }
     .pop-layer {
