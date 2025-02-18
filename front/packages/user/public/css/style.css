@@ -3202,9 +3202,9 @@ select option {
 .top-panel h1.logo {
   width: 306px;
   height: 43px;
+  margin-top: -5px;
   background-image: url("../images/logo.svg");
   background-size: 306px 43px;
-  background-position: -5px 0;
 }
 .top-panel .header-wrapper {
   width: 190px;
