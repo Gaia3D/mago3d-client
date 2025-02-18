@@ -645,7 +645,7 @@ nav .menu:hover, nav .menu.on {
 }
 nav .menu.assets {
   background-image: var(--icon-current);
-  background-position: 17px -11px;
+  background-position: 14px -11px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -653,7 +653,7 @@ nav .menu.assets {
 }
 nav .menu.layers {
   background-image: var(--icon-current);
-  background-position: 16px -86px;
+  background-position: 13px -86px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -669,7 +669,7 @@ nav .menu.terrains {
 }
 nav .menu.simulation {
   background-image: var(--icon-current);
-  background-position: 13px -166px;
+  background-position: 9px -166px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -854,6 +854,7 @@ main .side-bar .side-bar-header .button.search {
 .content--wrapper .simulation-list label {
   display: block;
   width: 60px;
+  line-height: 2.2;
   font-size: 13px;
 }
 
