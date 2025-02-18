@@ -3,7 +3,7 @@ import { zoomIn } from "@/components/tool/actions/zoomIn";
 import { zoomOut } from "@/components/tool/actions/zoomOut";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import MeasureLocation from "@/components/tool/actions/MeasureLocation.tsx";
-import { enterFullScreen, exitFullScreen } from "@/components/tool/actions/fullScreen.ts";
+import { enterFullScreen } from "@/components/tool/actions/fullScreen.ts";
 import { useTerrainSetting } from "@/components/tool/actions/useTerrainSetting.ts";
 import {MeasureLength} from "@/components/tool/actions/MeasureLength.tsx";
 import {MeasureArea} from "@/components/tool/actions/MeasureArea.tsx";
@@ -37,12 +37,6 @@ export const useToolConfig = (): ToolConfig[] => {
 
         return [
             {
-                id: "water",
-                title: "물줄기",
-                type: "toggle",
-                component: <Watercourse />,
-                helper: "물줄기가 표시됩니다.",
-            },            {
                 id: "view-point",
                 title: "카메라 고정",
                 type: "exclusive",
@@ -54,54 +48,63 @@ export const useToolConfig = (): ToolConfig[] => {
                 type: "exclusive",
                 title: "지점 이동",
                 component: <LocationView globeController={globeController} />,
+                helper: "클릭한 위치로 이동합니다."
             },
             {
                 id: "axis-view",
                 type: "exclusive",
                 title: "축 이동",
                 component: <AxisView globeController={globeController} />,
+                helper: "클릭한 방향을 바라봅니다.\n첫번째 클릭: 위치 선택\n두번째 클릭: 방향 선택"
             },
             {
                 id: "camera-info",
                 type: "toggle",
                 title: "카메라 정보",
                 component: <CameraInfo globeController={globeController} unit={"m"} />,
+                helper: "카메라 정보를 표시합니다."
             },
             {
                 id: "layer-info",
                 type: "exclusive",
                 title: "레이어 정보",
                 component: <LayerInfo globeController={globeController} />,
+                helper: "클릭한 위치의 레이어 정보를 표시합니다."
             },
             {
                 id: "measure-location",
                 type: "exclusive",
                 title: "위치 측정",
                 component: <MeasureLocation globeController={globeController} unit={"m"} />,
+                helper: "클릭한 위치의 위도, 경도, 고도 값을 표시합니다."
             },
             {
                 id: "measure-length",
                 type: "exclusive",
                 title: "길이 측정",
                 component: <MeasureLength globeController={globeController} unit={"m"} />,
+                helper: "길이를 측정합니다.\n클릭: 길이 측정 지점 선택\nESC: 초기화"
             },
             {
                 id: "measure-area",
                 type: "exclusive",
                 title: "면적 측정",
                 component: <MeasureArea globeController={globeController} unit={"m²"} />,
+                helper: "면적을 측정합니다.\n클릭: 면적 측정 지점 선택\nESC: 초기화"
             },
             {
                 id: "measure-angle",
                 type: "exclusive",
                 title: "각도 측정",
                 component: <MeasureAngle globeController={globeController} />,
+                helper: "각도를 측정합니다.\n클릭: 각도 측정 지점 선택\nESC: 초기화"
             },
             {
                 id: "measure-radius",
                 type: "exclusive",
                 title: "반지름 측정",
                 component: <MeasureRadius globeController={globeController} unit={"m"} />,
+                helper: "반지름을 측정하고 구 범위를 표시합니다.\n클릭: 반지름 측정 지점 선택\nESC: 초기화"
             },
             {
                 id: "terrain-delete",
@@ -109,6 +112,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 title: "지형 제거",
                 onSelect: disableTerrain,
                 onDeselect: enableTerrain,
+                helper: "지형을 제거합니다."
             },
             {
                 id: "terrain-trans",
@@ -116,24 +120,33 @@ export const useToolConfig = (): ToolConfig[] => {
                 title: "지형 불투명",
                 onSelect: enableTerrainTrans,
                 onDeselect: disableTerrainTrans,
-            },
-            {
+                helper: "지형을 불투명하게 설정합니다."
+            },{
+                id: "water",
+                title: "물줄기 표시",
+                type: "toggle",
+                component: <Watercourse />,
+                helper: "물줄기가 표시됩니다.",
+            }, {
                 id: "full-screen",
                 type: "default",
                 title: "전체 화면",
                 onSelect: enterFullScreen,
+                helper: "전체화면을 표시합니다."
             },
             {
                 id: "zoom-in",
                 type: "default",
                 title: "줌인",
                 onSelect: () => zoomIn(globeController),
+                helper: "줌 인 합니다."
             },
             {
                 id: "zoom-out",
                 type: "default",
                 title: "줌아웃",
                 onSelect: () => zoomOut(globeController),
+                helper: "줌 아웃 합니다."
             },
         ];
     }, [globeController, initialized]);

@@ -64,23 +64,34 @@ const SideToolContainer: React.FC = () => {
 
     return (
         <div className="side-tool-container">
-            {TOOLS.map((button) => (
-                <div
-                    className={`tool-container ${selectedTools[button.id] ? "selected" : ""}`}
-                    key={button.id}
-                >
-                    <button
-                        className={`tool-button icon ${button.id}`}
-                        onClick={() => handleClick(button)}
-                        title={button.title}
+            {TOOLS.map((config) => {
+                const isSelected = selectedTools[config.id];
+
+                return (
+                    <div
+                        className={`tool-container ${isSelected ? "selected" : ""}`}
+                        key={config.id}
                     >
-                    </button>
-                    {selectedTools[button.id] && button.component}
-                    {selectedTools[button.id] && button.helper ? <ToolHelper helper={button.helper}/> : null}
-                </div>
-            ))}
-            <ResetDirection />
+                        <button
+                            className={`tool-button icon ${config.id}`}
+                            onClick={() => handleClick(config)}
+                            title={config.title}
+                        />
+                        {isSelected && config.component}
+                    </div>
+                );
+            })}
+
+            <div className="tool-helper-container">
+                {TOOLS.filter((config) => selectedTools[config.id] && config.helper)
+                    .map((config) => (
+                        <ToolHelper key={config.id} helper={config.helper}/>
+                    ))}
+            </div>
+
+            <ResetDirection/>
         </div>
+
 
     );
 };

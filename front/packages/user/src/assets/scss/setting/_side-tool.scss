@@ -23,13 +23,23 @@
   }
 }
 
-.tool-helper {
+.tool-helper-container {
   position: fixed;
-  top: 0;
+  top: 20px;
   left: 50%;
-  background-color: var(--nav-color);
-  font-size: 12px;
-  padding: 4px;
+  transform: translateX(-50%);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  .tool-helper {
+    padding: 8px;
+    background-color: rgba(34, 34, 34, 0.59);
+    transition: opacity 1s ease-out;
+    white-space: pre-wrap;
+    &.hide {
+      animation: fadeOut 1s forwards;
+    }
+  }
 }
 
 .side-tool-container {
@@ -169,5 +179,14 @@
     margin-right:-2px;
     background:url(../images/compass-direction.svg) center 0 no-repeat;
     background-size:19px 34px;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
