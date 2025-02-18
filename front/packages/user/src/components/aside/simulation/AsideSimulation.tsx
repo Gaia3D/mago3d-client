@@ -174,30 +174,32 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 	return (
 		<div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
 			<input type="checkbox" id="toggleButton"/>
-			<div className="side-bar">
+			<div className="side-bar simulation">
 				<div className="side-bar-header">
 					<SideCloseButton/>
 				</div>
 				<div className="content--wrapper">
-					<label>대상지역으로 이동
-						<select id="simulationAreaSelectBox" value={selectedCase} onChange={selectCase}>
-							<option value="">시뮬레이션 케이스 선택</option>
+					<div className="simulation-list">
+						<label>대상지역</label>
+						<select className="custom-select" id="simulationAreaSelectBox" value={selectedCase} onChange={selectCase}>
+							<option value="">시뮬레이션 지역 선택</option>
 							<option value="case1">경상북도 영주시 풍기읍 삼가리 산 22-1임 일대</option>
 							<option value="case2">두번째</option>
 							<option value="case3">세번째</option>
 						</select>
-					</label>
-					<label>시뮬레이션 간격
-						<select id="simulationIntervalSelectBox" value={selectedInterval} onChange={selectInterval}>
+					</div>
+					<div className="simulation-list">
+						<label>간격</label>
+						<select className="custom-select" id="simulationIntervalSelectBox" value={selectedInterval} onChange={selectInterval}>
 							<option value="500">0.5초</option>
 							<option value="1000">1초</option>
 							<option value="3000">3초</option>
 							<option value="5000">5초</option>
-						</select>
-					</label>
+						</select>	
+					</div>				
 					<div>
-						<button type="button" onClick={startSimulation}>시작</button>
-						<button type="button" onClick={stopSimulation}>종료</button>
+						<button type="button" className="button-simulation play" onClick={startSimulation}>시뮬레이션 시작</button>		
+						<button type="button" className="button-simulation end" onClick={stopSimulation}>시뮬레이션 종료</button>				
 					</div>
 				</div>
 			</div>
