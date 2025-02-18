@@ -645,7 +645,7 @@ nav .menu:hover, nav .menu.on {
 }
 nav .menu.assets {
   background-image: var(--icon-current);
-  background-position: 17px -11px;
+  background-position: 14px -11px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -653,7 +653,7 @@ nav .menu.assets {
 }
 nav .menu.layers {
   background-image: var(--icon-current);
-  background-position: 16px -86px;
+  background-position: 13px -86px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -669,7 +669,7 @@ nav .menu.terrains {
 }
 nav .menu.simulation {
   background-image: var(--icon-current);
-  background-position: 13px -166px;
+  background-position: 9px -166px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -854,6 +854,7 @@ main .side-bar .side-bar-header .button.search {
 .content--wrapper .simulation-list label {
   display: block;
   width: 60px;
+  line-height: 2.2;
   font-size: 13px;
 }
 
@@ -1187,7 +1188,7 @@ ul.layer li.button-area {
 .layer-scroll {
   overflow-y: scroll !important;
   position: relative;
-  height: calc(100% - 180px);
+  height: calc(100% - 160px);
   margin: 10px 0 0 0;
 }
 
@@ -1456,7 +1457,7 @@ ul.prop li.selected {
 }
 .layer-funtion-button.save {
   background-image: var(--icon-current);
-  background-position: -263px -464px;
+  background-position: -264px -465px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -1464,7 +1465,7 @@ ul.prop li.selected {
 }
 .layer-funtion-button.visible {
   background-image: var(--icon-current);
-  background-position: -113px -7px;
+  background-position: -114px -9px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -1472,7 +1473,7 @@ ul.prop li.selected {
 }
 .layer-funtion-button.not-visible {
   background-image: var(--icon-current);
-  background-position: -113px -55px;
+  background-position: -114px -57px;
   background-size: 777px 1076px;
   background-repeat: no-repeat;
   border: none;
@@ -3201,9 +3202,9 @@ select option {
 .top-panel h1.logo {
   width: 306px;
   height: 43px;
+  margin-top: -5px;
   background-image: url("../images/logo.svg");
   background-size: 306px 43px;
-  background-position: -5px 0;
 }
 .top-panel .header-wrapper {
   width: 190px;
@@ -3836,7 +3837,7 @@ select option {
   opacity: 0;
 }
 #map .side-bar-wrapper .layer-wrapper {
-  margin-top: 26px;
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
 }
