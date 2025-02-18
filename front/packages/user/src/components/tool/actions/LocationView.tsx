@@ -8,7 +8,7 @@ interface LocationViewProps {
 }
 
 const eventGroupId = "LocationView";
-const CONST_HEIGHT = 50;
+const CONST_HEIGHT = 300;
 
 let pickedObject: any | undefined = undefined;
 
@@ -54,13 +54,12 @@ export const LocationView: React.FC<LocationViewProps> = ({ globeController }) =
                 centerHeight + CONST_HEIGHT
             );
 
-            const camera = viewer.camera;
-
             viewer.camera.flyTo({
                 destination: startDestination,
                 orientation: {
-                    direction: camera.direction,
-                    up: camera.up,
+                    heading: viewer.camera.heading,
+                    pitch: Cesium.Math.toRadians(-90),
+                    roll: 0
                 },
                 duration: 2.0,
             });
