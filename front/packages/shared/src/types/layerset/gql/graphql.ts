@@ -513,7 +513,6 @@ export enum LayerAssetStatus {
 export enum LayerAssetType {
   Cog = 'COG',
   F4D = 'F4D',
-  Geojson = 'GEOJSON',
   Layergroup = 'LAYERGROUP',
   Raster = 'RASTER',
   Smarttile = 'SMARTTILE',
