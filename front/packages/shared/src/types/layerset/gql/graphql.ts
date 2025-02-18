@@ -513,11 +513,14 @@ export enum LayerAssetStatus {
 export enum LayerAssetType {
   Cog = 'COG',
   F4D = 'F4D',
+  Geojson = 'GEOJSON',
   Layergroup = 'LAYERGROUP',
   Raster = 'RASTER',
   Smarttile = 'SMARTTILE',
   Tiles3D = 'TILES3D',
-  Vector = 'VECTOR'
+  Vector = 'VECTOR',
+  VworldWfs = 'VWORLD_WFS',
+  VworldWms = 'VWORLD_WMS'
 }
 
 /**
@@ -849,6 +852,8 @@ export type PublishContextValue = {
   remoteT3d?: InputMaybe<RemoteT3DInput>;
   smartTile?: InputMaybe<SmartTileInput>;
   t3d?: InputMaybe<T3DInput>;
+  vworldWFS?: InputMaybe<VWorldWfsInput>;
+  vworldWMS?: InputMaybe<VWorldWmsInput>;
 };
 
 export type Query = {
@@ -1320,6 +1325,16 @@ export type UserLayerGroup = WithAuditable & {
   published: Scalars['Boolean']['output'];
   updatedAt?: Maybe<Scalars['String']['output']>;
   updatedBy?: Maybe<Scalars['ID']['output']>;
+};
+
+export type VWorldWfsInput = {
+  layers: Scalars['String']['input'];
+  styles: Scalars['String']['input'];
+};
+
+export type VWorldWmsInput = {
+  layers: Scalars['String']['input'];
+  styles: Scalars['String']['input'];
 };
 
 export type WithAuditable = {

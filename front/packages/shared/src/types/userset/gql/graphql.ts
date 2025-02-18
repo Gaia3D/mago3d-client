@@ -159,8 +159,9 @@ export type IntFilter = {
 export type JoinUserInput = {
   cellphones?: InputMaybe<Array<Scalars['String']['input']>>;
   email: Scalars['String']['input'];
+  enabled?: Scalars['Boolean']['input'];
   firstName: Scalars['String']['input'];
-  groups: Array<Scalars['ID']['input']>;
+  groups?: InputMaybe<Array<Scalars['ID']['input']>>;
   lastName?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   properties?: InputMaybe<Scalars['JSON']['input']>;
@@ -221,9 +222,11 @@ export enum JsonPropertyPatchOperation {
 export type Mutation = {
   __typename?: 'Mutation';
   associateUserRole: Scalars['Boolean']['output'];
+  /**  사용자 */
   createUser: CreateUserResponse;
   /**  그룹 */
   createUserGroup: CreateUserGroupResponse;
+  /**  권한 */
   createUserRole: CreateUserRoleResponse;
   deleteUser: Scalars['Boolean']['output'];
   deleteUserGroup: Scalars['Boolean']['output'];
@@ -343,10 +346,12 @@ export type Query = {
   __typename?: 'Query';
   existsUser: ExistsUserResponse;
   profile: User;
+  /**  사용자 조회 */
   user?: Maybe<User>;
   /**  그룹 조회 */
   userGroup: UserGroup;
   userGroups: UserGroupPaged;
+  /**  권한 */
   userRole: UserRole;
   userRoles: UserRolePaged;
   users: UserPaged;
