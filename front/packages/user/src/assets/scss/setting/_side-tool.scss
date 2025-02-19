@@ -91,7 +91,7 @@
 .layer-info-container {
   position: fixed;
   top: 100px;
-  right: 100px;
+  right: 48px;
   color: black;
   font-family: Arial, sans-serif;
   font-size: 12px;
@@ -210,4 +210,8 @@
   100% {
     opacity: 0;
   }
+}
+
+.color-white {
+  color: white;
 }

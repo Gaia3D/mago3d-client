@@ -33,6 +33,10 @@ const LayerInfoTemplate = ({ selectedFeatures }: LayerInfoTemplateProps) => {
         });
     };
 
+    if (processedFeatures.length <= 0) return (
+        <div className="layer-info-container color-white">선택된 레이어가 없습니다.</div>
+    );
+
     return (
         <div className="layer-info-container">
             {processedFeatures.map((feature, idx) => {
