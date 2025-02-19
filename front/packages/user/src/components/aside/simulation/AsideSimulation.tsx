@@ -58,7 +58,14 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
 	const getOrCreateImageryLayer = (layerName: string, cqlFilter: string) => {
 		if (!selectedLayer) return;
+
 		const layerKey = `${layerName}-${cqlFilter}`;
+		const existingLayer = layerCache.current.get(layerKey);
+
+		if (existingLayer && existingLayer.isDestroyed?.()) {
+			layerCache.current.delete(layerKey);
+		}
+
 		if (layerCache.current.has(layerKey)) {
 			return layerCache.current.get(layerKey);
 		}
@@ -89,7 +96,7 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 	};
 
 	const startSimulation = () => {
-		if (!selectedInterval || !simulationRef.current) return;
+		if (!selectedInterval || !simulationRef) return;
 		if (!viewer || !selectedLayer) {
 			alert("대상지역을 선택해주세요.");
 			return;
@@ -146,12 +153,22 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 		setSimulationActive(false);
 		if (simulationRef.current) {
 			clearInterval(simulationRef.current);
-			if (viewer) {
-				const imageryLayers = viewer.imageryLayers;
-				imageryLayersRef.current.forEach(layer => imageryLayers.remove(layer));
-				imageryLayersRef.current = [];
-			}
+			simulationRef.current = null;
 		}
+
+		if (viewer) {
+			const imageryLayers = viewer.imageryLayers;
+
+			imageryLayersRef.current.forEach((layer) => {
+				if (imageryLayers.contains(layer)) {
+					imageryLayers.remove(layer, true);
+				}
+			});
+
+			imageryLayersRef.current = [];
+		}
+
+		cqlIndexRef.current = 0;
 	};
 
 	const zoomToExtent = (bbox: number[]) => {
