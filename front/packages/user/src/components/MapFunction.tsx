@@ -1,12 +1,11 @@
 import {useRecoilState, useRecoilValue} from "recoil";
 import {useGlobeController} from "./providers/GlobeControllerProvider";
 import {layersState, visibleToggledLayerIdState, visibleToggledLayerIdsState} from "@/recoils/Layer";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {LayerAssetType, UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql";
 import TIFFImageryProvider, {TIFFImageryProviderOptions} from 'tiff-imagery-provider';
 import * as Cesium from "cesium";
 import keycloak from "@/api/keycloak";
-import {loadGeojson, loadGridGeojson} from "@/components/utils/loadGeojson.ts";
 
 class CustomTIFFImageryProvider extends TIFFImageryProvider {
     tileDiscardPolicy: Cesium.TileDiscardPolicy = new Cesium.NeverTileDiscardPolicy();
@@ -28,47 +27,34 @@ const MapFunction = () => {
     const {initialized, globeController} = useGlobeController();
     const [visibleToggledLayerId, setVisibleToggledLayerId] = useRecoilState<string | null>(visibleToggledLayerIdState);
     const [visibleToggledLayerIds, setVisibleToggledLayerIds] = useRecoilState<{ids:string[], visible:boolean} | null>(visibleToggledLayerIdsState);
-    
+
     const layers = useRecoilValue<UserLayerAsset[]>(layersState);
     const toggle = (id:string, visible?:boolean) => {
-      const layer = layerCache[id];
-      if (!layer) return;
-      layer.show = visible === undefined ? !layer.show : visible;
+        const layer = layerCache[id];
+        if (!layer) return;
+        layer.show = visible === undefined ? !layer.show : visible;
     }
     useEffect(() => {
         if (visibleToggledLayerId === null) return;
         toggle(visibleToggledLayerId);
         setVisibleToggledLayerId(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visibleToggledLayerId]);
 
     useEffect(() => {
-      if (!initialized) return;
-      const viewer = globeController?.viewer;
-      const tempUrl = "/user/geojson/extrusion.geojson";
-      //loadGeojson(viewer, tempUrl);
-
-      //const gridUrl = "/user/geojson/grid_4326.geojson";
-      //loadGridGeojson(viewer, gridUrl).then(r => {console.log(r);});
-
-    }, [initialized]);
-
-    useEffect(() => {
-      if (visibleToggledLayerIds === null) return;
-      const {ids, visible} = visibleToggledLayerIds;
-      ids.forEach((id)=>toggle(id, visible));
-      setVisibleToggledLayerIds(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (visibleToggledLayerIds === null) return;
+        const {ids, visible} = visibleToggledLayerIds;
+        ids.forEach((id)=>toggle(id, visible));
+        setVisibleToggledLayerIds(null);
     }, [visibleToggledLayerIds]);
 
-    
+
     useEffect(() => {
         if (!initialized) return;
 
         const viewer = globeController?.viewer;
         const tilesPrimitives = globeController.tilesPrimitives;
         const imageryLayers = viewer?.scene.imageryLayers;
-        
+
         if ( layerCache ) {
             Object.keys(layerCache).forEach(key => {
                 const layer = layerCache[key];
@@ -91,19 +77,19 @@ const MapFunction = () => {
                     if(!tilesPrimitives) break;
                     const {resource} = properties;
                     Cesium.Cesium3DTileset.fromUrl(import.meta.env.VITE_API_URL + resource)
-                    .then(model => {
-                        model.show = !!visible;
-                        model.pointCloudShading.attenuation = true;
-                        model.pointCloudShading.maximumAttenuation = 5.0;
-                        model.pointCloudShading.eyeDomeLighting = true;
-                        model.pointCloudShading.eyeDomeLightingStrength = 0.1;
-                        tilesPrimitives.add(model);
-                        layerCache[assetId] = model;
-                    });
-                    
+                        .then(model => {
+                            model.show = !!visible;
+                            model.pointCloudShading.attenuation = true;
+                            model.pointCloudShading.maximumAttenuation = 5.0;
+                            model.pointCloudShading.eyeDomeLighting = true;
+                            model.pointCloudShading.eyeDomeLightingStrength = 0.1;
+                            tilesPrimitives.add(model);
+                            layerCache[assetId] = model;
+                        });
+
                     break;
                 }
-                case LayerAssetType.Vector: 
+                case LayerAssetType.Vector:
                 case LayerAssetType.Raster: {
                     if(!imageryLayers) break;
 
@@ -111,25 +97,25 @@ const MapFunction = () => {
                     const {resource} = layer;
                     const imageLayer = new Cesium.ImageryLayer(
                         new Cesium.WebMapServiceImageryProvider({
-                          url: import.meta.env.VITE_GEOSERVER_WMS_SERVICE_URL,
-                          layers: resource.name,
-                          minimumLevel: 0,
-                          parameters: {
-                            service: "WMS",
-                            version: "1.1.1",
-                            request: "GetMap",
-                            transparent: "true",
-                            format: "image/png",
-                            tiled: true,
-                          },
+                            url: import.meta.env.VITE_GEOSERVER_WMS_SERVICE_URL,
+                            layers: resource.name,
+                            minimumLevel: 0,
+                            parameters: {
+                                service: "WMS",
+                                version: "1.1.1",
+                                request: "GetMap",
+                                transparent: "true",
+                                format: "image/png",
+                                tiled: true,
+                            },
                         }),
                         {
-                          show: !!visible,
+                            show: !!visible,
                         },
-                      );
+                    );
 
-                      imageryLayers.add(imageLayer);
-                      layerCache[assetId] = imageLayer;
+                    imageryLayers.add(imageLayer);
+                    layerCache[assetId] = imageLayer;
                     break;
                 }
                 case LayerAssetType.Layergroup: {
@@ -141,58 +127,86 @@ const MapFunction = () => {
 
                     const imageLayer = new Cesium.ImageryLayer(
                         new Cesium.WebMapServiceImageryProvider({
-                          url: import.meta.env.VITE_GEOSERVER_WMS_SERVICE_URL,
-                          layers: layerName,
-                          minimumLevel: 0,
-                          parameters: {
-                            service: "WMS",
-                            version: "1.1.1",
-                            request: "GetMap",
-                            transparent: "true",
-                            format: "image/png",
-                            tiled: true,
-                          },
+                            url: import.meta.env.VITE_GEOSERVER_WMS_SERVICE_URL,
+                            layers: layerName,
+                            minimumLevel: 0,
+                            parameters: {
+                                service: "WMS",
+                                version: "1.1.1",
+                                request: "GetMap",
+                                transparent: "true",
+                                format: "image/png",
+                                tiled: true,
+                            },
                         }),
                         {
-                          show: !!visible,
-                          rectangle: Cesium.Rectangle.fromDegrees(minx, miny, maxx, maxy)
+                            show: !!visible,
+                            rectangle: Cesium.Rectangle.fromDegrees(minx, miny, maxx, maxy)
                         },
-                      );
-                      imageLayer.magnificationFilter = Cesium.TextureMagnificationFilter.NEAREST;
-                      imageLayer.minificationFilter = Cesium.TextureMinificationFilter.NEAREST;
-                      imageryLayers.add(imageLayer);
-                      layerCache[assetId] = imageLayer;
+                    );
+
+                    imageryLayers.add(imageLayer);
+                    layerCache[assetId] = imageLayer;
                     break;
                 }
                 case LayerAssetType.Cog: {
                     if(!imageryLayers) break;
 
-                    if (!token){ 
+                    if (!token){
                         throw new Error('No token, Cannot load COG layer.');
                         break;
                     }
                     const {resource} = properties;
                     TIFFImageryProvider.fromUrl(resource)
-                    .then(provider => {
-                        const imageLayer = new Cesium.ImageryLayer(
-                            provider as CustomTIFFImageryProvider,
-                            {
-                                show: !!visible,
-                            },
-                        );
-                        imageryLayers.add(imageLayer);
-                        layerCache[assetId] = imageLayer;
-                    })
-                    .catch(err => {
-                        console.error(err);
-                    });
+                        .then(provider => {
+                            const imageLayer = new Cesium.ImageryLayer(
+                                provider as CustomTIFFImageryProvider,
+                                {
+                                    show: !!visible,
+                                },
+                            );
+                            imageryLayers.add(imageLayer);
+                            layerCache[assetId] = imageLayer;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        });
                     break;
                 }
+                case LayerAssetType.VworldWms: {
+                    if(!imageryLayers) break;
+                    const imageLayer = new Cesium.ImageryLayer(
+                        new Cesium.WebMapServiceImageryProvider({
+                            url: `/api/vworld`,
+                            layers: properties.layers,
+                            minimumLevel: 0,
+                            parameters: {
+                                key: import.meta.env.VITE_GEOSERVER_WMS_SERVICE_URL,
+                                styles: properties.styles,
+                                service: "WMS",
+                                request: "GetMap",
+                                version: "1.3.0",
+                                transparent: "true",
+                                format: "image/png",
+                                crs: "EPSG:4326",
+                                domain: "localhost"
+                            },
+                        }),
+                        {
+                            show: !!visible,
+                            minimumTerrainLevel: 5
+                        }
+                    );
+
+                    imageryLayers.add(imageLayer);
+                    layerCache[assetId] = imageLayer;
+                    break;
+                }
+
             }
         });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialized, layers]);
-    
+
     return null;
 }
 

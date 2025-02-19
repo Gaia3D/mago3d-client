@@ -3,7 +3,6 @@ import { useLazyQuery } from '@apollo/client';
 import { useGlobeController } from '@/components/providers/GlobeControllerProvider.tsx';
 import { LayerAssetType, RemoteDocument, RemoteQueryVariables, UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import * as Cesium from "cesium";
-import {LOCATE_GROUP} from "@/graphql/layerset/Mutation.ts";
 
 export const useFlyToLayer = () => {
     const { initialized, globeController } = useGlobeController();
@@ -84,6 +83,15 @@ export const useFlyToLayer = () => {
                 });
                 return;
             }
+            case LayerAssetType.VworldWms: {
+                const extent = Cesium.Rectangle.fromDegrees(124, 33, 132, 39);
+                viewer.camera.flyTo({
+                    destination: extent,
+                    duration: 2,
+                });
+                return;
+            }
+
             case LayerAssetType.Cog:
             default: {
                 alert("허용되지 않는 형태입니다.");
