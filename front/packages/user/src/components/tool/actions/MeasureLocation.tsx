@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, ChangeEvent} from "react";
 import * as Cesium from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
 import {getLengthUnitFactor} from "@/components/utils/unit.ts";
 import { eventManager } from "@/components/tool/eventManager.ts";
+import {useTranslation} from "react-i18next";
+import {useRecoilState} from "recoil";
+import {DistanceUnitState, DistanceUnitType} from "@/recoils/Unit.ts";
 
 interface MeasureLocationProps {
     globeController: GlobeController;
-    unit: string;
 }
 
 const eventGroupId = "MeasureLocation";
@@ -17,8 +19,11 @@ const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
         position: cartesian,
         point: {
             show: true,
-            pixelSize: 5,
+            pixelSize: 10,
             color: Cesium.Color.WHITE,
+            outlineColor: Cesium.Color.RED,
+            outlineWidth: 2,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
         },
         label: {
@@ -28,9 +33,7 @@ const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
             verticalOrigin: Cesium.VerticalOrigin.TOP,
             pixelOffset: new Cesium.Cartesian2(-15, 0),
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            fillColor: Cesium.Color.WHITE,
             showBackground: true,
-            backgroundColor: Cesium.Color.BLACK.withAlpha(0.8),
             backgroundPadding: new Cesium.Cartesian2(16, 8),
         },
     });
@@ -40,7 +43,9 @@ const getUnitHeight = (distance: number, unit: string) => {
     return Math.round((distance / getLengthUnitFactor(unit)) * 100) / 100;
 };
 
-const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
+const MeasureLocation = ({ globeController }: MeasureLocationProps) => {
+    const {t} = useTranslation();
+    const [unit, setUnit] = useRecoilState<DistanceUnitType>(DistanceUnitState);
     const { viewer, toolDataSource } = globeController;
     const [locationData, setLocationData] = useState<{ lat: number; lon: number; height: number } | null>(null);
 
@@ -54,12 +59,12 @@ const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
             const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
             const lat = parseFloat(Cesium.Math.toDegrees(cartographic.latitude).toFixed(6));
             const lon = parseFloat(Cesium.Math.toDegrees(cartographic.longitude).toFixed(6));
-            const height = getUnitHeight(cartographic.height, unit);
+            const height = cartographic.height;
 
             setLocationData({ lat, lon, height });
 
             toolDataSource.entities.removeById("location-point");
-            const labelText = `Lat: ${lat}\nLon: ${lon}\nHeight: ${height}${unit}`;
+            const labelText = `Lat: ${lat}\nLon: ${lon}\nHeight: ${getUnitHeight(height, unit)}${unit}`;
             createPointEntity(toolDataSource, cartesian, labelText)
         };
 
@@ -71,20 +76,50 @@ const MeasureLocation = ({ globeController, unit }: MeasureLocationProps) => {
         };
     }, [viewer, toolDataSource, globeController, unit]);
 
+    const handleUnitChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const newUnit = e.target.value as DistanceUnitType;
+        if (["m", "km", "nmi", "in", "ft", "yd", "mi"].includes(newUnit)) {
+            setUnit(newUnit);
+            setLocationData(null);
+        }
+    };
+
     return (
-        <div className="measure-location">
-            <h3>Measure Location</h3>
-            {locationData ? (
-                <div>
-                    <p><strong>Latitude:</strong> {locationData.lat}</p>
-                    <p><strong>Longitude:</strong> {locationData.lon}</p>
-                    <p><strong>Height:</strong> {locationData.height}</p>
+        <div className="pop-layer-sub measure">
+            <div className="pop-layer-header">
+                <h3 className="title">{t("measure.position")}</h3>
+                {/*<div className="close-button"></div>*/}
+            </div>
+            <div className="pop-layer-content">
+                <div className="value-container">
+                    <label>{t("measure.distance-unit")}</label>
+                    <select value={unit} onChange={handleUnitChange}>
+                        <option value="m">{t("measure.m")}</option>
+                        <option value="km">{t("measure.km")}</option>
+                        <option value="nmi">{t("measure.nmi")}</option>
+                        <option value="in">{t("measure.in")}</option>
+                        <option value="ft">{t("measure.ft")}</option>
+                        <option value="yd">{t("measure.yd")}</option>
+                        <option value="mi">{t("measure.mi")}</option>
+                    </select>
                 </div>
-            ) : (
-                <p>Click on the globe to measure a location.</p>
-            )}
+                <div className="value-container">
+                    <label>{t("measure.lat")}</label>
+                    <input type="text" value={locationData?.lat || 0} readOnly/>
+                </div>
+                <div className="value-container">
+                    <label>{t("measure.lon")}</label>
+                    <input type="text" value={locationData?.lon || 0} readOnly/>
+                </div>
+                <div className="value-container">
+                    <label>{t("measure.alt")}</label>
+                    <input type="text" value={`${getUnitHeight(locationData?.height || 0, unit)} ${unit}`} readOnly/>
+                </div>
+
+            </div>
         </div>
-    );
+    )
+        ;
 };
 
 export default MeasureLocation;

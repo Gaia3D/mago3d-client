@@ -1,12 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import * as Cesium from "cesium";
 import { eventManager } from "@/components/tool/eventManager.ts";
 import { GlobeController } from "@/api/GlobeController.ts";
 import { getLengthUnitFactor } from "@/components/utils/unit.ts";
+import {useTranslation} from "react-i18next";
+import {useRecoilState} from "recoil";
+import {DistanceUnitState, DistanceUnitType} from "@/recoils/Unit.ts";
 
 interface MeasureLengthProps {
     globeController: GlobeController;
-    unit: string;
 }
 
 const eventGroupId = "MeasureLength";
@@ -43,10 +45,8 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
             text: "",
             font: "14px monospace",
             showBackground: true,
-            backgroundColor: Cesium.Color.WHITE,
             horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            fillColor: Cesium.Color.RED,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
             heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         },
@@ -71,7 +71,9 @@ const interpolateArray = (start: number, end: number, steps: number): number[] =
     return result;
 };
 
-export const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => {
+export const MeasureLength = ({ globeController }: MeasureLengthProps) => {
+    const {t} = useTranslation();
+    const [unit, setUnit] = useRecoilState<DistanceUnitType>(DistanceUnitState);
     const [totalBaseLength, setTotalBaseLength] = useState(0); // 직선 거리
     const [totalTerrainLength, setTotalTerrainLength] = useState(0); // 지형 거리
 
@@ -200,11 +202,43 @@ export const MeasureLength = ({ globeController, unit }: MeasureLengthProps) => 
         };
     }, [globeController, unit]);
 
+    const handleUnitChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const newUnit = e.target.value as DistanceUnitType;
+        if (["m", "km", "nmi", "in", "ft", "yd", "mi"].includes(newUnit)) {
+            setUnit(newUnit);
+            setTotalBaseLength(0);
+            setTotalTerrainLength(0);
+        }
+    };
+
+
     return (
-        <div className="measure-length">
-            <h3>Measure Length</h3>
-            <div>Total Base Length: {totalBaseLength.toFixed(2)} {unit}</div>
-            <div>Total Terrain Length: {totalTerrainLength.toFixed(2)} {unit}</div>
+        <div className="pop-layer-sub measure">
+            <div className="pop-layer-header">
+                <h3 className="title">{t("measure.distance")}</h3>
+            </div>
+            <div className="pop-layer-content">
+                <div className="value-container">
+                    <label>{t("measure.distance-unit")}</label>
+                    <select value={unit} onChange={handleUnitChange}>
+                        <option value="m">{t("measure.m")}</option>
+                        <option value="km">{t("measure.km")}</option>
+                        <option value="nmi">{t("measure.nmi")}</option>
+                        <option value="in">{t("measure.in")}</option>
+                        <option value="ft">{t("measure.ft")}</option>
+                        <option value="yd">{t("measure.yd")}</option>
+                        <option value="mi">{t("measure.mi")}</option>
+                    </select>
+                </div>
+                <div className="value-container">
+                    <label>{t("measure.measure-distance-base")}</label>
+                    <input type="text" value={getUnitDistance(totalBaseLength, unit)} readOnly/>
+                </div>
+                <div className="value-container">
+                    <label>{t("measure.measure-distance-terrain")}</label>
+                    <input type="text" value={getUnitDistance(totalTerrainLength, unit)} readOnly/>
+                </div>
+            </div>
         </div>
-    );
+    )
 };

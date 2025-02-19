@@ -3,10 +3,11 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import * as Cesium from "cesium";
 import {getLengthUnitFactor} from "@/components/utils/unit.ts";
+import {useRecoilValue} from "recoil";
+import {DistanceUnitState, DistanceUnitType} from "@/recoils/Unit.ts";
 
 interface CameraInfoProps {
     globeController: GlobeController;
-    unit: string;
 }
 
 const DIRECTIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
@@ -15,8 +16,9 @@ const getCardinalDirection = (angle: number) => {
     return DIRECTIONS[Math.round(angle / 45) % 8];
 };
 
-const CameraInfo = ({ globeController, unit }: CameraInfoProps) => {
+const CameraInfo = ({ globeController }: CameraInfoProps) => {
     const { t } = useTranslation();
+    const unit = useRecoilValue<DistanceUnitType>(DistanceUnitState);
     const { viewer } = globeController;
 
     const [latitude, setLatitude] = useState(0);

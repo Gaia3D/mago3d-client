@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import * as Cesium from "cesium";
 import { polygon as turfPolygon, area as turfArea, tesselate as turfTesselate } from "@turf/turf";
 import { GlobeController } from "@/api/GlobeController.ts";
 import { eventManager } from "@/components/tool/eventManager.ts";
 import { getAreaUnitFactor } from "@/components/utils/unit.ts";
+import {useTranslation} from "react-i18next";
+import {useRecoilState} from "recoil";
+import {AreaUnitState, AreaUnitType} from "@/recoils/Unit.ts";
 
 interface MeasureAreaProps {
     globeController: GlobeController;
-    unit: string;
 }
 
 const eventGroupId = "MeasureArea";
@@ -44,10 +46,8 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource) => {
             text: "",
             font: "14px monospace",
             showBackground: true,
-            backgroundColor: Cesium.Color.WHITE,
             horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            fillColor: Cesium.Color.RED,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
             heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         },
@@ -173,7 +173,9 @@ const calculateTerrainArea = async (
     return { baseArea, terrainArea };
 };
 
-export const MeasureArea = ({ globeController, unit }: MeasureAreaProps) => {
+export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
+    const {t} = useTranslation();
+    const [unit, setUnit] = useRecoilState<AreaUnitType>(AreaUnitState);
     const initResult = { baseArea: 0, terrainArea: 0 };
     const [result, setResult] = useState(initResult);
 
@@ -237,12 +239,42 @@ export const MeasureArea = ({ globeController, unit }: MeasureAreaProps) => {
         };
     }, [globeController, unit]);
 
+    const handleUnitChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const newUnit = e.target.value as AreaUnitType;
+        if (["m²", "km²", "yd²", "mi²", "acre", "ha"].includes(newUnit)) {
+            setUnit(newUnit);
+            setResult(initResult);
+        }
+    };
+
     return (
-        <div>
-            <h3>Measure Terrain Area</h3>
-            <div>Base Area: {result.baseArea.toFixed(2)} {unit}</div>
-            <div>Terrain Area: {result.terrainArea.toFixed(2)} {unit}</div>
+        <div className="pop-layer-sub measure">
+            <div className="pop-layer-header">
+                <h3 className="title">{t("measure.area")}</h3>
+            </div>
+            <div className="pop-layer-content">
+                <div className="value-container">
+                    <label>{t("measure.area-unit")}</label>
+                    <select value={unit} onChange={handleUnitChange}>
+                        <option value="m²">{t("measure.m2")}</option>
+                        <option value="km²">{t("measure.km2")}</option>
+                        <option value="yd²">{t("measure.yd2")}</option>
+                        <option value="mi²">{t("measure.mi2")}</option>
+                        <option value="acre">{t("measure.acre")}</option>
+                        <option value="ha">{t("measure.ha")}</option>
+                    </select>
+                </div>
+                <div className="value-container">
+                    <label>{t("measure.measure-area-base")}</label>
+                    <input type="text" value={`${result.baseArea.toFixed(2) + unit}`} readOnly/>
+                </div>
+                <div className="value-container">
+                    <label>{t("measure.measure-area-terrain")}</label>
+                    <input type="text" value={`${result.terrainArea.toFixed(2) + unit}`} readOnly/>
+                </div>
+            </div>
         </div>
-    );
+)
+    ;
 };
 

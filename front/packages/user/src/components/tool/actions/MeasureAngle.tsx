@@ -28,6 +28,11 @@ const createPolylineEntity = (toolDataSource: Cesium.CustomDataSource, cartesian
             positions: cartesians,
             width: 2,
             material: Cesium.Color.RED,
+            depthFailMaterial: new Cesium.PolylineOutlineMaterialProperty({
+                color: Cesium.Color.RED,
+                outlineWidth: 2,
+                outlineColor: Cesium.Color.BLACK,
+            }),
         },
     });
 };
@@ -39,10 +44,9 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource, position: Ce
             text,
             font: "14px monospace",
             showBackground: true,
-            backgroundColor: Cesium.Color.WHITE,
-            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            fillColor: Cesium.Color.RED,
+            horizontalOrigin: Cesium.HorizontalOrigin.RIGHT,
+            verticalOrigin: Cesium.VerticalOrigin.TOP,
+            pixelOffset: new Cesium.Cartesian2(-15, 0),
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
         }
     });
@@ -104,9 +108,5 @@ export const MeasureAngle = ({ globeController }: MeasureAngleProps) => {
         };
     }, [globeController]);
 
-    return (
-        <div>
-            <h3>Measure Angle</h3>
-        </div>
-    );
+    return null;
 };

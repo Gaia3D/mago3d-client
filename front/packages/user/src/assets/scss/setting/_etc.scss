@@ -83,6 +83,9 @@
   }
 
   .language-selector-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     .lang-icon {
       width:30px;
       height:30px;
@@ -306,7 +309,7 @@
     top: 440px;
     right: 52px;
     &.measure {
-      top: 256px;
+      top: 120px;
     }
     label {
       font-size: 14px;

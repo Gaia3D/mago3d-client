@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import * as Cesium from "cesium";
 import { GlobeController } from "@/api/GlobeController.ts";
 import { eventManager } from "@/components/tool/eventManager.ts";
 import { getLengthUnitFactor } from "@/components/utils/unit.ts";
+import {useTranslation} from "react-i18next";
+import {useRecoilState} from "recoil";
+import {AreaUnitType, DistanceUnitState, DistanceUnitType} from "@/recoils/Unit.ts";
 
 interface MeasureRadiusProps {
     globeController: GlobeController;
-    unit: string;
 }
 
 const eventGroupId = "MeasureRadius";
@@ -16,8 +18,8 @@ const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
         position: cartesian,
         point: {
             pixelSize: 10,
-            color: Cesium.Color.RED,
-            outlineColor: Cesium.Color.WHITE,
+            color: Cesium.Color.WHITE,
+            outlineColor: Cesium.Color.RED,
             outlineWidth: 2,
             heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
@@ -28,12 +30,13 @@ const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
 const createDashLineEntity = (toolDataSource: Cesium.CustomDataSource, start: Cesium.Cartesian3, end: Cesium.Cartesian3) => {
     toolDataSource.entities.add({
         polyline: {
-            positions: new Cesium.CallbackProperty(() => [start, end], false),
-            width: 4,
-            material: new Cesium.PolylineDashMaterialProperty({
+            positions: new Cesium.CallbackProperty(() => [start, end], true),
+            width: 2,
+            material: Cesium.Color.RED,
+            depthFailMaterial: new Cesium.PolylineOutlineMaterialProperty({
                 color: Cesium.Color.RED,
-                dashLength: 10.0,
-                dashPattern: 255,
+                outlineWidth: 2,
+                outlineColor: Cesium.Color.BLACK,
             }),
         },
     });
@@ -46,10 +49,8 @@ const createLabelEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: C
             text: "",
             font: "14px monospace",
             showBackground: true,
-            backgroundColor: Cesium.Color.WHITE,
             horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            fillColor: Cesium.Color.RED,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
             heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         },
@@ -89,8 +90,10 @@ const createEllipsoidEntity = async (
     return ellipsoid;
 };
 
-export const MeasureRadius = ({ globeController, unit }: MeasureRadiusProps) => {
-    const [result, setResult] = useState("0 m");
+export const MeasureRadius = ({ globeController }: MeasureRadiusProps) => {
+    const {t} = useTranslation();
+    const [unit, setUnit] = useRecoilState<DistanceUnitType>(DistanceUnitState);
+    const [result, setResult] = useState(0);
     let ellipsoidEntity: Cesium.Entity | undefined;
     let clickCount = 0;
     let isCreatingEllipsoid = false;
@@ -155,8 +158,8 @@ export const MeasureRadius = ({ globeController, unit }: MeasureRadiusProps) => 
                 ellipsoidEntity = await createEllipsoidEntity(toolDataSource, cartesians.start!, cartesians.end!, viewer.scene.globe);
 
                 const distance = Cesium.Cartesian3.distance(cartesians.start!, cartesians.end!);
-                const convertedDistance = (distance / getLengthUnitFactor(unit)).toFixed(2);
-                setResult(`${convertedDistance} ${unit}`);
+                const convertedDistance = Number((distance / getLengthUnitFactor(unit)).toFixed(2));
+                setResult(convertedDistance);
 
                 if (cartesians.start && cartesians.end) {
                     const midPoint = Cesium.Cartesian3.midpoint(
@@ -197,8 +200,8 @@ export const MeasureRadius = ({ globeController, unit }: MeasureRadiusProps) => 
             }
 
             const distance = Cesium.Cartesian3.distance(cartesians.start!, cartesians.end!);
-            const convertedDistance = (distance / getLengthUnitFactor(unit)).toFixed(2);
-            setResult(`${convertedDistance} ${unit}`);
+            const convertedDistance = Number((distance / getLengthUnitFactor(unit)).toFixed(2));
+            setResult(convertedDistance);
         };
         const escKeyHandler = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -219,10 +222,37 @@ export const MeasureRadius = ({ globeController, unit }: MeasureRadiusProps) => 
         };
     }, [globeController, unit]);
 
+    const handleUnitChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const newUnit = e.target.value as DistanceUnitType;
+        if (["m", "km", "nmi", "in", "ft", "yd", "mi"].includes(newUnit)) {
+            setUnit(newUnit);
+            setResult(0);
+        }
+    };
+
     return (
-        <div>
-            <h3>Measure Radius</h3>
-            <div>Distance: {result}</div>
+        <div className="pop-layer-sub measure">
+            <div className="pop-layer-header">
+                <h3 className="title">{t("measure.radius")}</h3>
+            </div>
+            <div className="pop-layer-content">
+                <div className="value-container">
+                    <label>{t("measure.distance-unit")}</label>
+                    <select value={unit} onChange={handleUnitChange}>
+                        <option value="m">{t("measure.m")}</option>
+                        <option value="km">{t("measure.km")}</option>
+                        <option value="nmi">{t("measure.nmi")}</option>
+                        <option value="in">{t("measure.in")}</option>
+                        <option value="ft">{t("measure.ft")}</option>
+                        <option value="yd">{t("measure.yd")}</option>
+                        <option value="mi">{t("measure.mi")}</option>
+                    </select>
+                </div>
+                <div className="value-container">
+                    <label>{t("measure.measure-distance")}</label>
+                    <input type="text" value={`${result} ${unit}`} readOnly/>
+                </div>
+            </div>
         </div>
     );
 };

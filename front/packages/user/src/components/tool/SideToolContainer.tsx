@@ -51,7 +51,7 @@ const SideToolContainer: React.FC = () => {
         }
     };
 
-    const groupTypes = ["view", "measure", "terrain"];
+    const groupTypes = ["view", "terrain", "measure",];
     const groupedTools = groupTypes.reduce(
         (acc, group) => ({
             ...acc,

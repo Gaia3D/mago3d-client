@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, {useMemo, useState} from "react";
 import { zoomIn } from "@/components/tool/actions/zoomIn";
 import { zoomOut } from "@/components/tool/actions/zoomOut";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
@@ -65,7 +65,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 id: "camera-info",
                 type: "toggle",
                 title: "카메라 정보",
-                component: <CameraInfo globeController={globeController} unit={"m"} />,
+                component: <CameraInfo globeController={globeController} />,
                 helper: "카메라 정보를 표시합니다."
             },
             {
@@ -80,7 +80,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 type: "exclusive",
                 title: "위치 측정",
                 group: "measure",
-                component: <MeasureLocation globeController={globeController} unit={"m"} />,
+                component: <MeasureLocation globeController={globeController} />,
                 helper: "클릭한 위치의 위도, 경도, 고도 값을 표시합니다."
             },
             {
@@ -88,7 +88,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 type: "exclusive",
                 title: "길이 측정",
                 group: "measure",
-                component: <MeasureLength globeController={globeController} unit={"m"} />,
+                component: <MeasureLength globeController={globeController} />,
                 helper: "길이를 측정합니다.\n클릭: 길이 측정 지점 선택\nESC: 초기화"
             },
             {
@@ -96,7 +96,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 type: "exclusive",
                 title: "면적 측정",
                 group: "measure",
-                component: <MeasureArea globeController={globeController} unit={"m²"} />,
+                component: <MeasureArea globeController={globeController}/>,
                 helper: "면적을 측정합니다.\n클릭: 면적 측정 지점 선택\nESC: 초기화"
             },
             {
@@ -112,7 +112,7 @@ export const useToolConfig = (): ToolConfig[] => {
                 type: "exclusive",
                 title: "반지름 측정",
                 group: "measure",
-                component: <MeasureRadius globeController={globeController} unit={"m"} />,
+                component: <MeasureRadius globeController={globeController} />,
                 helper: "반지름을 측정하고 구 범위를 표시합니다.\n클릭: 반지름 측정 지점 선택\nESC: 초기화"
             },
             {
