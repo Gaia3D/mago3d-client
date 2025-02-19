@@ -181,7 +181,7 @@ const MapFunction = () => {
                             layers: properties.layers,
                             minimumLevel: 0,
                             parameters: {
-                                key: import.meta.env.VITE_GEOSERVER_WMS_SERVICE_URL,
+                                key: import.meta.env.VITE_VWORLD_TOKEN,
                                 styles: properties.styles,
                                 service: "WMS",
                                 request: "GetMap",

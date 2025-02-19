@@ -89,6 +89,7 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 	};
 
 	const startSimulation = () => {
+		if (!selectedInterval || !simulationRef.current) return;
 		if (!viewer || !selectedLayer) {
 			alert("대상지역을 선택해주세요.");
 			return;
