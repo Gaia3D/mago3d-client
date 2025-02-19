@@ -50,22 +50,24 @@ const CameraInfo = ({ globeController, unit }: CameraInfoProps) => {
     }, [viewer, unit]);
 
     return (
-        <div>
-            <div>
-                <span>{t("latitude")}</span>
-                <span>{latitude.toFixed(6)}</span>
-            </div>
-            <div>
-                <span>{t("longitude")}</span>
-                <span>{longitude.toFixed(6)}</span>
-            </div>
-            <div>
-                <span>{t("altitude")}</span>
-                <span>{altitude.toFixed(2)} {unit}</span>
-            </div>
-            <div>
-                <span>{t("heading")}</span>
-                <span>{direction} ({heading.toFixed(2)}°)</span>
+        <div className="pop-layer-pointer-location">
+            <div className="pop-layer-content">
+                <div className="value-container">
+                    <span className="title">{t("latitude")}</span>
+                    <span className="value">{latitude.toFixed(6)}</span>
+                </div>
+                <div className="value-container">
+                    <span className="title">{t("longitude")}</span>
+                    <span className="value">{longitude.toFixed(6)}</span>
+                </div>
+                <div className="value-container">
+                    <span className="title">{t("altitude")}</span>
+                    <span className="value">{altitude.toFixed(2)} {unit}</span>
+                </div>
+                <div className="value-container">
+                    <span className="title">{t("heading")}</span>
+                    <span className="value">{direction} ({heading.toFixed(2)}°)</span>
+                </div>
             </div>
         </div>
     );

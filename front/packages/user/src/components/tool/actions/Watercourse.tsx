@@ -115,7 +115,7 @@ const Watercourse = () => {
         };
     }, [globeController]);
 
-    return <div>물줄기 애니메이션</div>;
+    return null;
 };
 
 export default Watercourse;
