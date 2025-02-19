@@ -158,7 +158,8 @@ const MapFunction = () => {
                           rectangle: Cesium.Rectangle.fromDegrees(minx, miny, maxx, maxy)
                         },
                       );
-
+                      imageLayer.magnificationFilter = Cesium.TextureMagnificationFilter.NEAREST;
+                      imageLayer.minificationFilter = Cesium.TextureMinificationFilter.NEAREST;
                       imageryLayers.add(imageLayer);
                       layerCache[assetId] = imageLayer;
                     break;
