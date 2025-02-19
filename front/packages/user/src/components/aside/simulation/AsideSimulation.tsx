@@ -1,150 +1,74 @@
-import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
-import {useTranslation} from "react-i18next";
-import React, {useEffect, useRef, useState} from "react";
+import { AsideDisplayProps } from "@/components/aside/AsidePanel.tsx";
+import { useEffect, useRef, useState } from "react";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
 import * as Cesium from "cesium";
-import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
-
-interface Layer {
-	name: string;
-}
+import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 
 interface LayersData {
-	caseName: String,
+	caseName: string;
 	bbox: number[];
-	layers: Layer[];
+	layerName: string;
+	interval: number;
+	min: number;
+	max: number;
 }
 
-const layers: LayersData = {
-	caseName: "case1",
-	bbox: [128.50346152791604, 36.920895731886915, 128.50866714496195, 36.92837484674791],
-	layers: [
-		{ name: "mago3d:0" },
-		{ name: "mago3d:15" },
-		{ name: "mago3d:30" },
-		{ name: "mago3d:45" },
-		{ name: "mago3d:60" },
-		{ name: "mago3d:75" },
-		{ name: "mago3d:90" },
-		{ name: "mago3d:105" },
-		{ name: "mago3d:120" },
-		{ name: "mago3d:135" },
-		{ name: "mago3d:150" },
-		{ name: "mago3d:165" }
-	]
-};
+const layers: LayersData[] = [
+	{
+		caseName: "case1",
+		bbox: [128.50346152791604, 36.920895731886915, 128.50866714496195, 36.92837484674791],
+		layerName: "mago3d:landslide_15s",
+		interval: 15,
+		min: 0,
+		max: 165,
+	},
+	{
+		caseName: "case2",
+		bbox: [128.50346152790988, 36.92089576802598, 128.50866714495575, 36.92837488289546],
+		layerName: "mago3d:landslide_1s",
+		interval: 1,
+		min: 0,
+		max: 165,
+	},
+];
 
 export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
-	const {t} = useTranslation();
-	const {initialized, globeController} = useGlobeController();
+	const { globeController } = useGlobeController();
 	const viewer = globeController?.viewer;
 
-	const [selectedCase, setSelectedCase] = useState<string>("");
+	const [simulationActive, setSimulationActive] = useState(false);
+	const [selectedLayer, setSelectedLayer] = useState<LayersData | null>(null);
 	const [selectedInterval, setSelectedInterval] = useState<number>(500);
-	const [simulationLayers, setSimulationLayers] = useState<Cesium.ImageryLayer[]>([]);
 
-	const intervalRef = useRef<number | null>(null);
-
-	const selectCase = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setSelectedCase(e.target.value);
-	};
+	const simulationRef = useRef<number | null>(null);
+	const cqlIndexRef = useRef<number>(0);
+	const imageryLayersRef = useRef<Cesium.ImageryLayer[]>([]);
+	const layerCache = useRef(new Map<string, Cesium.ImageryLayer>());
 
 	useEffect(() => {
-		console.log(`Selected value changed: ${selectedCase}`);
-
-		// Reset simulation layers and reload new case
-		removeLayers();
-
-		if (!selectedCase) return;
-		zoomToExtent(selectedCase);
-		//addLayers(selectedCase);
-
-	}, [selectedCase]); // selectedValue가 변경될 때 실행됨
-
-	const selectInterval = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setSelectedInterval(parseInt(e.target.value));
-	};
-
-	useEffect(() => {
-		console.log(`Selected interval changed: ${selectedInterval}`);
 		stopSimulation();
-	},	[selectedInterval]);
+		if (selectedLayer?.bbox) {
+			zoomToExtent(selectedLayer.bbox);
+		}
+	}, [selectedLayer]);
 
-	useEffect(() => {
-		console.log("Simulation layers changed.");
-		revealLayers();
-	}, [simulationLayers]);
-
-	const addLayers = (caseName: string) => {
-		const caseLayers = layers.caseName === caseName ? layers.layers : [];
-		if (!caseLayers || !initialized) return;
-
-		const imageryLayers = viewer?.scene.imageryLayers;
-		if (!imageryLayers) return;
-
-		const newLayers = caseLayers.map(layer => {
-			const imageryLayer = createImageryLayer(layer);
-			imageryLayers.add(imageryLayer);
-			return imageryLayer;
-		});
-		setSimulationLayers(newLayers);
-		console.log("All layers loaded.");
+	const selectLayer = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setSelectedLayer(layers.find((layer) => layer.caseName === e.target.value) || null);
 	};
 
-	const removeLayers = () => {
-		if (!viewer) return;
-		const imageryLayers = viewer?.scene.imageryLayers;
-		if (!imageryLayers) return;
-
-		simulationLayers.forEach(layer => {
-			imageryLayers.remove(layer);
-		});
-		setSimulationLayers([]);
-		console.log("All layers removed.");
-	};
-
-	const revealLayers = () => {
-		if (!initialized || simulationLayers.length === 0) return;
-		let index = 0;
-
-		// 기존 인터벌이 실행 중이라면 정리
-		if (intervalRef.current !== null) {
-			clearInterval(intervalRef.current);
+	const getOrCreateImageryLayer = (layerName: string, cqlFilter: string) => {
+		if (!selectedLayer) return;
+		const layerKey = `${layerName}-${cqlFilter}`;
+		if (layerCache.current.has(layerKey)) {
+			return layerCache.current.get(layerKey);
 		}
 
-		intervalRef.current = setInterval(() => {
-			if (index > 0) {
-				simulationLayers[index - 1].show = false; // 이전 레이어 숨김
-			}
-			if (index < simulationLayers.length) {
-				simulationLayers[index].show = true; // 현재 레이어 표시
-				index++;
-			} else {
-				clearInterval(intervalRef.current!); // 모든 레이어 표시 후 종료
-				intervalRef.current = null;
-				console.log("All layers displayed.");
-			}
-			//}, 1000); // 1초 간격으로 변경
-		}, selectedInterval); // 0.5초 간격으로 변경
-	}
-
-	const zoomToExtent = (caseName: string) => {
-		const caseData = layers.caseName === caseName ? layers : undefined;
-		if (!caseData || !initialized) return;
-
-		const rectangle = Cesium.Rectangle.fromDegrees(...caseData.bbox);
-		viewer?.camera.flyTo({
-			destination: rectangle,
-			duration: 2
-		});
-	};
-
-	const createImageryLayer = (layer: Layer) => {
-		return new Cesium.ImageryLayer(
+		const newLayer = new Cesium.ImageryLayer(
 			new Cesium.WebMapServiceImageryProvider({
 				url: import.meta.env.VITE_GEOSERVER_WMS_SERVICE_URL,
-				layers: layer.name,
+				layers: layerName,
 				minimumLevel: 0,
+				rectangle: Cesium.Rectangle.fromDegrees(...selectedLayer.bbox),
 				parameters: {
 					service: "WMS",
 					version: "1.1.1",
@@ -152,54 +76,130 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 					transparent: "true",
 					format: "image/png",
 					tiled: true,
-				}
+					CQL_FILTER: cqlFilter,
+				},
 			}),
-			{ show: false }
+			{ show: true, alpha: 0 }
 		);
+
+		newLayer.magnificationFilter = Cesium.TextureMagnificationFilter.NEAREST;
+		newLayer.minificationFilter = Cesium.TextureMinificationFilter.NEAREST;
+		layerCache.current.set(layerKey, newLayer);
+		return newLayer;
 	};
 
 	const startSimulation = () => {
-		removeLayers();
-		addLayers(selectedCase);
-	}
+		if (!viewer || !selectedLayer) {
+			alert("대상지역을 선택해주세요.");
+			return;
+		}
+		stopSimulation();
+		setSimulationActive(true);
+		const imageryLayers = viewer.imageryLayers;
+		const cqlFilters: string[] = [];
+		for (let i = 0; i < selectedLayer.max; i+=selectedLayer.interval) {
+			cqlFilters.push(`location='${i}.tif'`);
+		}
+
+		simulationRef.current = window.setInterval(() => {
+			const cqlFilter = cqlFilters[cqlIndexRef.current];
+			const layer = getOrCreateImageryLayer(selectedLayer.layerName, cqlFilter);
+			if (!layer) return;
+
+			if (!imageryLayers.contains(layer)) {
+				imageryLayers.add(layer);
+				imageryLayersRef.current.push(layer);
+			}
+
+			layer.show = true;
+			fadeLayer(layer);
+			cqlIndexRef.current = (cqlIndexRef.current + 1) % cqlFilters.length;
+		}, selectedInterval);
+	};
+
+	const fadeLayer = (layer: Cesium.ImageryLayer) => {
+		let alpha = 0;
+
+		const fadeIn = () => {
+			if (alpha >= 1) {
+				setTimeout(fadeOut, selectedInterval);
+				return;
+			}
+			layer.alpha = alpha += 0.005;
+			requestAnimationFrame(fadeIn);
+		};
+
+		const fadeOut = () => {
+			if (alpha <= 0) {
+				layer.show = false;
+				return;
+			}
+			layer.alpha = alpha -= 0.005;
+			requestAnimationFrame(fadeOut);
+		};
+
+		fadeIn();
+	};
 
 	const stopSimulation = () => {
-		if (intervalRef.current) {
-			clearInterval(intervalRef.current);
-			intervalRef.current = null;
+		setSimulationActive(false);
+		if (simulationRef.current) {
+			clearInterval(simulationRef.current);
+			if (viewer) {
+				const imageryLayers = viewer.imageryLayers;
+				imageryLayersRef.current.forEach(layer => imageryLayers.remove(layer));
+				imageryLayersRef.current = [];
+			}
 		}
-		removeLayers();
 	};
+
+	const zoomToExtent = (bbox: number[]) => {
+		viewer?.camera.flyTo({ destination: Cesium.Rectangle.fromDegrees(...bbox), duration: 2 });
+	};
+
+	useEffect(() => {
+		console.log("simulationActive", simulationActive);
+	}, [simulationActive]);
 
 	return (
 		<div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
-			<input type="checkbox" id="toggleButton"/>
 			<div className="side-bar simulation">
 				<div className="side-bar-header">
-					<SideCloseButton/>
+					<SideCloseButton />
 				</div>
 				<div className="content--wrapper">
 					<div className="simulation-list">
 						<label>대상지역</label>
-						<select className="custom-select" id="simulationAreaSelectBox" value={selectedCase} onChange={selectCase}>
-							<option value="">시뮬레이션 지역 선택</option>
-							<option value="case1">경상북도 영주시 풍기읍 삼가리 산 22-1임 일대</option>
-							<option value="case2">두번째</option>
-							<option value="case3">세번째</option>
+						<select style={{width: "240px"}} className="custom-select" id="simulationAreaSelectBox"
+								value={selectedLayer?.caseName || ""}
+								onChange={selectLayer}>
+							<option value="" hidden>시뮬레이션 지역 선택</option>
+							<option value="case1">산사태 15초(경북 영주 풍기읍 삼가리 산 22-1임 일대)</option>
+							<option value="case2">산사태 1초(경북 영주 풍기읍 삼가리 산 22-1임 일대)</option>
 						</select>
 					</div>
 					<div className="simulation-list">
 						<label>간격</label>
-						<select className="custom-select" id="simulationIntervalSelectBox" value={selectedInterval} onChange={selectInterval}>
-							<option value="500">0.5초</option>
-							<option value="1000">1초</option>
-							<option value="3000">3초</option>
-							<option value="5000">5초</option>
-						</select>	
-					</div>				
+						<select className="custom-select" id="simulationIntervalSelectBox" value={selectedInterval}
+								onChange={(e) => setSelectedInterval(Number(e.target.value))}>
+							<option value={500}>0.5초</option>
+							<option value={1000}>1초</option>
+							<option value={3000}>3초</option>
+							<option value={5000}>5초</option>
+						</select>
+					</div>
 					<div>
-						<button type="button" className="button-simulation play" onClick={startSimulation}>시뮬레이션 시작</button>		
-						<button type="button" className="button-simulation end" onClick={stopSimulation}>시뮬레이션 종료</button>				
+						{
+							!simulationActive ?
+								<button type="button" className="button-simulation play" onClick={startSimulation}>시뮬레이션
+									시작
+								</button>
+								:
+								<button type="button" className="button-simulation end" onClick={stopSimulation}>시뮬레이션
+									종료
+								</button>
+						}
+
 					</div>
 				</div>
 			</div>
