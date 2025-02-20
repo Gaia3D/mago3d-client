@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="89" height="89" viewBox="0 0 89 89">
+  <defs>
+    <filter id="사각형_554" x="0" y="0" width="89" height="89" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-opacity="0.8"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="그룹_487" data-name="그룹 487" transform="translate(-1459 -197)">
+    <g transform="matrix(1, 0, 0, 1, 1459, 197)" filter="url(#사각형_554)">
+      <g id="사각형_554-2" data-name="사각형 554" transform="translate(15 15)" fill="#007d2a" stroke="#e80000" stroke-width="4">
+        <rect width="59" height="59" rx="12" stroke="none"/>
+        <rect x="2" y="2" width="55" height="55" rx="10" fill="none"/>
+      </g>
+    </g>
+    <path id="패스_427" data-name="패스 427" d="M37.857,396.489" transform="translate(1483.887 -136.968)" fill="#fff"/>
+    <g id="forest_10_" data-name="forest (10)" transform="translate(1483.612 179.732)">
+      <path id="패스_460" data-name="패스 460" d="M36.827,175.055v-5.378h6.892l-3.758-7.358h2.078l-6.5-12.726-6.391,12.514-2.177-4.264h2.661l-7.666-15.011L14.3,157.843h2.662l-2.177,4.264L8.394,149.593l-6.5,12.726H3.972L.214,169.677H7.106v5.378H0v3.2H43.933v-3.2ZM14.676,162.319l-.931,1.822-.931-1.822Zm6,12.736h-11v-5.378h6.892l-1.231-2.41h5.338Zm10.439-12.736-.931,1.822-.931-1.822Zm3.134,12.736h-11v-7.788h5.338l-1.231,2.41h6.892v5.378Z" transform="translate(-1.612 -98.859)" fill="#fff"/>
+    </g>
+  </g>
+</svg>

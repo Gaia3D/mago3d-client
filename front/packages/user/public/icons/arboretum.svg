@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="89" height="89" viewBox="0 0 89 89">
+  <defs>
+    <filter id="사각형_544" x="0" y="0" width="89" height="89" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-opacity="0.8"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <clipPath id="clip-path">
+      <path id="path984" d="M0-682.665H39.491v39.491H0Z" transform="translate(0 682.665)" fill="#fff"/>
+    </clipPath>
+  </defs>
+  <g id="그룹_461" data-name="그룹 461" transform="translate(-1346 -403)">
+    <g transform="matrix(1, 0, 0, 1, 1346, 403)" filter="url(#사각형_544)">
+      <g id="사각형_544-2" data-name="사각형 544" transform="translate(15 15)" fill="#07abf3" stroke="#fff" stroke-width="2">
+        <rect width="59" height="59" rx="12" stroke="none"/>
+        <rect x="1" y="1" width="57" height="57" rx="11" fill="none"/>
+      </g>
+    </g>
+    <g id="g978" transform="translate(1370.384 1110.791)">
+      <g id="g980" transform="translate(0 -682.665)">
+        <g id="g982" clip-path="url(#clip-path)">
+          <g id="g988" transform="translate(0.001 0)">
+            <path id="path990" d="M-87.979-255.344a1.156,1.156,0,0,1,0-1.636,1.156,1.156,0,0,1,1.636,0l2.053,2.053v-5.91a1.157,1.157,0,0,1,1.157-1.157,1.157,1.157,0,0,1,1.157,1.157v2.053l2.053-2.053a1.156,1.156,0,0,1,1.636,0,1.156,1.156,0,0,1,0,1.636l-3.689,3.69v9.95a10.525,10.525,0,0,0,8.849-8.071,11.373,11.373,0,0,0-1-7.773,23,23,0,0,0-4.546-6.1,33.423,33.423,0,0,0-3.706-3.271,1.185,1.185,0,0,0-1.447,0,33.485,33.485,0,0,0-3.706,3.271,23,23,0,0,0-4.546,6.1,11.373,11.373,0,0,0-1,7.773,10.537,10.537,0,0,0,8.8,8.066v-6.089Z" transform="translate(93.381 271.021)" fill="#fff"/>
+          </g>
+          <path id="path992" d="M34.863-279.8H22.986v-2.314H34.863Zm0,5.152H22.986v-2.838H34.863Zm3.471-7.466a1.157,1.157,0,0,0,1.157-1.157V-287.9a1.157,1.157,0,0,0-1.157-1.157H19.515a1.157,1.157,0,0,0-1.157,1.157v4.628a1.157,1.157,0,0,0,1.157,1.157h1.157v2.314H19.515a1.157,1.157,0,0,0-1.157,1.157,1.157,1.157,0,0,0,1.157,1.157h1.157v2.838H11.406v-11.715a9.787,9.787,0,0,1-2.314,0v11.72H1.157A1.157,1.157,0,0,0,0-273.491a1.157,1.157,0,0,0,1.157,1.157H38.334a1.157,1.157,0,0,0,1.157-1.157,1.157,1.157,0,0,0-1.157-1.157H37.177v-2.838h1.157a1.157,1.157,0,0,0,1.157-1.157,1.157,1.157,0,0,0-1.157-1.157H37.177v-2.314Z" transform="translate(0 311.825)" fill="#fff"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

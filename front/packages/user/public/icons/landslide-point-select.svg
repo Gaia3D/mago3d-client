@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="89" height="89" viewBox="0 0 89 89">
+  <defs>
+    <filter id="사각형_548" x="0" y="0" width="89" height="89" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-opacity="0.8"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="그룹_479" data-name="그룹 479" transform="translate(-1015 -99)">
+    <g transform="matrix(1, 0, 0, 1, 1015, 99)" filter="url(#사각형_548)">
+      <g id="사각형_548-2" data-name="사각형 548" transform="translate(15 15)" fill="#f22121" stroke="#e8a200" stroke-width="4">
+        <rect width="59" height="59" rx="16" stroke="none"/>
+        <rect x="2" y="2" width="55" height="55" rx="14" fill="none"/>
+      </g>
+    </g>
+    <g id="그룹_446" data-name="그룹 446" transform="translate(223)">
+      <g id="mountain_9_" data-name="mountain (9)" transform="translate(812.322 126.035)">
+        <path id="패스_418" data-name="패스 418" d="M23.582,30.461l2.2,1.809,3.474-4.442a.685.685,0,0,1,1.117-.019l5.713,6.819,2.333-8.333L31.391,17.83,23.582,30.46Z" transform="translate(-7.238 -17.83)" fill="#fff"/>
+        <path id="패스_419" data-name="패스 419" d="M16.069,28.786,5.284,46.614H22.951l-3-14.162Z" transform="translate(-0.273 -15.154)" fill="#fff"/>
+        <path id="패스_420" data-name="패스 420" d="M27.507,32.452l2.655,14.165H44.84l-13.5-19Z" transform="translate(-8.496 -15.154)" fill="#fff"/>
+      </g>
+      <path id="패스_425" data-name="패스 425" d="M405.328,241.963a1.046,1.046,0,0,0,.577.933l4.173,2.086a1.044,1.044,0,0,0,1.457-.6l2.086-6.259a1.046,1.046,0,0,0-.253-1.068l-2.086-2.086a1.041,1.041,0,0,0-1.2-.2l-4.173,2.086a1.046,1.046,0,0,0-.577.933Z" transform="translate(1233.418 416.083) rotate(-175)" fill="#fff"/>
+      <path id="패스_426" data-name="패스 426" d="M453.436,365.059l-1.907-2.086a.913.913,0,0,0-.674-.306h-1.907a1,1,0,0,0-.953,1.043v4.173a1.094,1.094,0,0,0,.279.738l1.907,2.086a.912.912,0,0,0,.674.306.865.865,0,0,0,.153-.013.97.97,0,0,0,.7-.563l1.907-4.173A1.115,1.115,0,0,0,453.436,365.059Z" transform="translate(400.998 -215.188)" fill="#fff"/>
+    </g>
+  </g>
+</svg>
