@@ -138,6 +138,7 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
     const [unit, setUnit] = useRecoilState<AreaUnitType>(AreaUnitState);
     const initResult = { baseArea: 0, terrainArea: 0 };
     const [result, setResult] = useState(initResult);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const { viewer, toolDataSource } = globeController;
@@ -159,6 +160,7 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
             createPointEntity(toolDataSource, cartesian);
 
             if (cartesians.length >= 3) {
+                setIsLoading(true);
                 const { baseArea, terrainArea } = await calculateTerrainArea(cartesians, viewer.scene.globe);
                 const baseAreaUnitValue = Math.round((baseArea / getAreaUnitFactor(unit)) * 100) / 100;
                 const terrainAreaUnitValue = Math.round((terrainArea / getAreaUnitFactor(unit)) * 100) / 100;
@@ -176,6 +178,7 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
                 } else {
                     createLabelEntity(toolDataSource, center, labelText, "areaLabel");
                 }
+                setIsLoading(false);
             }
         };
 
@@ -185,6 +188,7 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
                 toolDataSource.entities.removeAll();
                 setResult(initResult);
                 createPolygonEntity(toolDataSource, cartesians);
+                setIsLoading(false);
             }
         };
 
@@ -214,7 +218,7 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
             <div className="pop-layer-content">
                 <div className="value-container">
                     <label>{t("measure.area-unit")}</label>
-                    <select value={unit} onChange={handleUnitChange}>
+                    <select value={unit} onChange={(e) => setUnit(e.target.value as AreaUnitType)}>
                         <option value="m²">{t("measure.m2")}</option>
                         <option value="km²">{t("measure.km2")}</option>
                         <option value="yd²">{t("measure.yd2")}</option>
@@ -225,15 +229,13 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
                 </div>
                 <div className="value-container">
                     <label>{t("measure.measure-area-base")}</label>
-                    <input type="text" value={`${result.baseArea.toFixed(2) + unit}`} readOnly/>
+                    <input type="text" value={isLoading ? "loading..." : `${result.baseArea.toFixed(2)} ${unit}`} readOnly/>
                 </div>
                 <div className="value-container">
                     <label>{t("measure.measure-area-terrain")}</label>
-                    <input type="text" value={`${result.terrainArea.toFixed(2) + unit}`} readOnly/>
+                    <input type="text" value={isLoading ? "loading..." : `${result.terrainArea.toFixed(2)} ${unit}`} readOnly/>
                 </div>
             </div>
         </div>
-)
-    ;
+    );
 };
-
