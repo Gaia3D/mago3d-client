@@ -25,22 +25,91 @@ const layerCache: Record<string, Cesium.ImageryLayer | Cesium.Cesium3DTileset> =
 const MapFunction = () => {
     const {token} = keycloak;
     const {initialized, globeController} = useGlobeController();
-    const [userLayerAssetArr, setUserLayerAssetArr] = useRecoilState(userLayerAssetArrState);
+    const userLayerAssetArr = useRecoilValue(userLayerAssetArrState);
     const updateLayerStates = useRecoilCallback(({ set }) => () => {
         set(userLayerAssetArrState, []);
     }, []);
+    const [iconLayer, setIconLayer] = useState<UserLayerAsset | null>(null);
 
     const layers = useRecoilValue<UserLayerAsset[]>(layersState);
+
+    const mountainLayer = useMemo(() => {
+        return layers.find((layer) => layer.name === "산마루") || null;
+    }, [layers]);
+
+    useEffect(() => {
+        setIconLayer(mountainLayer);
+    }, [mountainLayer]);
+
+    useEffect(() => {
+        if (!initialized || !globeController?.viewer || !iconLayer) return;
+        const viewer = globeController.viewer;
+        const layer = iconLayer.properties?.layer;
+        if (!layer || !layer.resource) {
+            console.error("Error: layer or layer.resource is undefined", layer);
+            return;
+        }
+
+        const { resource } = layer;
+        const dataSourceId = iconLayer.assetId;
+
+        const existingDataSources = viewer.dataSources.getByName(dataSourceId);
+        if (existingDataSources.length > 0) return;
+        Cesium.GeoJsonDataSource.load(
+            `${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?service=WFS&version=1.1.1&request=GetFeature&typeName=${resource.name}&outputFormat=application/json`
+        ).then((dataSource) => {
+            const falseProperty = new Cesium.ConstantProperty(false);
+            dataSource.entities.values.forEach((entity) => {
+                if (entity.billboard) {
+                    entity.billboard.show = falseProperty;
+                }
+
+                if (!entity.point) {
+                    entity.point = new Cesium.PointGraphics({
+                        pixelSize: 10,
+                        color: Cesium.Color.WHITE,
+                        outlineColor: Cesium.Color.RED,
+                        outlineWidth: 2,
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    });
+                }
+            });
+
+            dataSource.name = dataSourceId;
+            viewer.dataSources.add(dataSource);
+        }).catch((error) => {
+            console.error("Failed to load WFS data", error);
+        });
+    }, [initialized, iconLayer]);
+
+
+    const toggleDataSourceVisibility = (layerAsset: UserLayerAsset) => {
+        if (!globeController?.viewer) return;
+        const viewer = globeController.viewer;
+        const existingDataSources = viewer.dataSources.getByName(layerAsset.assetId);
+
+        if (existingDataSources.length > 0) {
+            existingDataSources.forEach(ds => {
+                ds.show = layerAsset.visible ?? false;
+            });
+        }
+    };
+
 
     useEffect(() => {
         if (!userLayerAssetArr.length) return;
         for (const layer of userLayerAssetArr) {
-            const imageryLayer = layerCache[layer.assetId];
-            if (!imageryLayer) {
-                console.warn(`Layer not found in cache: ${layer.assetId}`);
-                continue;
+            // if (layer.type === LayerAssetType.Icon) {
+            if (layer.name === "산마루") {
+                toggleDataSourceVisibility(layer);
+            } else {
+                const imageryLayer = layerCache[layer.assetId];
+                if (!imageryLayer) {
+                    console.warn(`Layer not found in cache: ${layer.assetId}`);
+                    continue;
+                }
+                imageryLayer.show = layer.visible ?? false;
             }
-            imageryLayer.show = layer.visible ?? false;
         }
 
         updateLayerStates();
