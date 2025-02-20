@@ -107,14 +107,29 @@ const calculateTerrainArea = async (
     const ellipsoid = Cesium.Ellipsoid.WGS84;
     const cartographics = cartesians.map((cartesian) => Cesium.Cartographic.fromCartesian(cartesian));
 
-    const sampledCartographics = globe.terrainProvider instanceof Cesium.EllipsoidTerrainProvider
-        ? cartographics.map((cartographic) => ({
-            ...cartographic,
+    let sampledCartographics;
+
+    if (globe.terrainProvider instanceof Cesium.EllipsoidTerrainProvider) {
+        // Ellipsoid Terrain인 경우, 높이를 0으로 설정하여 처리
+        sampledCartographics = cartographics.map((cartographic) => ({
+            longitude: cartographic.longitude,
+            latitude: cartographic.latitude,
             height: ellipsoid.cartesianToCartographic(
                 Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0)
-            ).height,
-        }))
-        : await Cesium.sampleTerrainMostDetailed(globe.terrainProvider, cartographics);
+            ).height || 0, // 기본적으로 0 높이 사용
+        }));
+    } else {
+        try {
+            sampledCartographics = await Cesium.sampleTerrainMostDetailed(globe.terrainProvider, cartographics);
+        } catch (error) {
+            console.error("Error in sampleTerrainMostDetailed:", error);
+            sampledCartographics = cartographics.map((cartographic) => ({
+                longitude: cartographic.longitude,
+                latitude: cartographic.latitude,
+                height: 0, // fallback height
+            }));
+        }
+    }
 
     const polygonCoords = sampledCartographics.map(({ longitude, latitude, height }) => [
         Cesium.Math.toDegrees(longitude),
@@ -126,12 +141,15 @@ const calculateTerrainArea = async (
 
     const polygon2D = turfPolygon([polygonCoords.map(([lon, lat]) => [lon, lat])]);
     const tessellated = turfTesselate(polygon2D);
-    const baseArea = turfArea(polygon2D); // baseArea 계산
+    const baseArea = turfArea(polygon2D);
 
-    const terrainArea = await calculateTessellatedArea(tessellated, globe, baseArea); // baseArea를 전달
+    const terrainArea = globe.terrainProvider instanceof Cesium.EllipsoidTerrainProvider
+        ? baseArea  // 지형 데이터 없으면 baseArea 사용
+        : await calculateTessellatedArea(tessellated, globe, baseArea);
 
     return { baseArea, terrainArea };
 };
+
 
 export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
     const {t} = useTranslation();
@@ -201,14 +219,6 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
             eventManager.destroyGroup(eventGroupId);
         };
     }, [globeController, unit]);
-
-    const handleUnitChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        const newUnit = e.target.value as AreaUnitType;
-        if (["m²", "km²", "yd²", "mi²", "acre", "ha"].includes(newUnit)) {
-            setUnit(newUnit);
-            setResult(initResult);
-        }
-    };
 
     return (
         <div className="pop-layer-sub measure">
