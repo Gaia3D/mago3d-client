@@ -55,7 +55,7 @@ const MeasureLocation = ({ globeController }: MeasureLocationProps) => {
         eventManager.addGlobalHandler(eventGroupId, "keydown", escKeyHandler as EventListener);
 
         return () => {
-            toolDataSource.entities.removeById("location-point");
+            toolDataSource.entities.removeAll();
             eventManager.destroyGroup(eventGroupId);
         };
     }, [viewer, toolDataSource, globeController, unit]);
