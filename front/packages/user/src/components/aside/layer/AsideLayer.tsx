@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {
-    layerMenuState, UserLayerGroupState, visibleToggledLayerIdsState
+    layerMenuState, userLayerAssetArrState, UserLayerGroupState
 } from "@/recoils/Layer";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
@@ -14,7 +14,13 @@ import {layerGroupsToNodemodels, nodeModlesToCreateUserGroupInput} from "@/compo
 import {useTranslation} from "react-i18next";
 import {useMutation} from "@tanstack/react-query";
 import {layersetGraphqlFetcher} from "@/api/queryClient.ts";
-import {CreateUserGroupInput, Maybe, Mutation, UserLayerGroup} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import {
+    CreateUserGroupInput,
+    Maybe,
+    Mutation,
+    UserLayerAsset,
+    UserLayerGroup
+} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {RESTORE_USERLAYER, SAVE_USERLAYER} from "@/graphql/layerset/Mutation.ts";
 
 export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
@@ -23,7 +29,7 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [visibleAll, setVisibleAll] = useState<boolean>(true);
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
-    const setVisibleToggledLayerIds = useSetRecoilState<{ids:string[], visible:boolean} | null>(visibleToggledLayerIdsState);
+    const setUserLayerAssetArr = useSetRecoilState(userLayerAssetArrState);
 
     const debouncedSearch = useDebounce(searchTerm, 300);
 
@@ -58,27 +64,26 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const toggleAllLayer = () => {
         const newVisibleState = !visibleAll;
         setVisibleAll(newVisibleState);
-        const toggleIds: string[] = [];
+
+        const userLayers: UserLayerAsset[] = [];
 
         setUserLayerGroups(prevGroups =>
             prevGroups.map(group => {
                 if (!group) return group;
-                return {
-                    ...group,
-                    assets: group.assets.map(asset => {
-                        toggleIds.push(asset.assetId);
-                        return { ...asset, visible: newVisibleState }
-                    })
-                };
+
+                const updatedAssets = group.assets.map(asset => {
+                    const updatedAsset = { ...asset, visible: !newVisibleState };
+                    userLayers.push(updatedAsset);
+                    return updatedAsset;
+                });
+
+                return { ...group, assets: updatedAssets };
             })
         );
 
-        setVisibleToggledLayerIds({
-            ids: toggleIds,
-            visible: newVisibleState
-        });
-
+        setUserLayerAssetArr(userLayers);
     };
+
 
 
     return (

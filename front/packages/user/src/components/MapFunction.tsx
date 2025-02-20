@@ -1,4 +1,4 @@
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilCallback, useRecoilState, useRecoilValue} from "recoil";
 import {useGlobeController} from "./providers/GlobeControllerProvider";
 import {layersState, visibleToggledLayerIdState, visibleToggledLayerIdsState} from "@/recoils/Layer";
 import {useEffect, useState} from "react";
@@ -25,27 +25,28 @@ const layerCache: Record<string, Cesium.ImageryLayer | Cesium.Cesium3DTileset> =
 const MapFunction = () => {
     const {token} = keycloak;
     const {initialized, globeController} = useGlobeController();
-    const [visibleToggledLayerId, setVisibleToggledLayerId] = useRecoilState<string | null>(visibleToggledLayerIdState);
-    const [visibleToggledLayerIds, setVisibleToggledLayerIds] = useRecoilState<{ids:string[], visible:boolean} | null>(visibleToggledLayerIdsState);
+    const [userLayerAssetArr, setUserLayerAssetArr] = useRecoilState(userLayerAssetArrState);
+    const updateLayerStates = useRecoilCallback(({ set }) => () => {
+        set(userLayerAssetArrState, []);
+    }, []);
 
     const layers = useRecoilValue<UserLayerAsset[]>(layersState);
-    const toggle = (id:string, visible?:boolean) => {
-        const layer = layerCache[id];
-        if (!layer) return;
-        layer.show = visible === undefined ? !layer.show : visible;
-    }
-    useEffect(() => {
-        if (visibleToggledLayerId === null) return;
-        toggle(visibleToggledLayerId);
-        setVisibleToggledLayerId(null);
-    }, [visibleToggledLayerId]);
 
     useEffect(() => {
-        if (visibleToggledLayerIds === null) return;
-        const {ids, visible} = visibleToggledLayerIds;
-        ids.forEach((id)=>toggle(id, visible));
-        setVisibleToggledLayerIds(null);
-    }, [visibleToggledLayerIds]);
+        if (!userLayerAssetArr.length) return;
+        for (const layer of userLayerAssetArr) {
+            const imageryLayer = layerCache[layer.assetId];
+            if (!imageryLayer) {
+                console.warn(`Layer not found in cache: ${layer.assetId}`);
+                continue;
+            }
+            imageryLayer.show = layer.visible ?? false;
+        }
+
+        updateLayerStates();
+
+    }, [userLayerAssetArr]);
+
 
 
     useEffect(() => {

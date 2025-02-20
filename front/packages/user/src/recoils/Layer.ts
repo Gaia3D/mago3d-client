@@ -22,15 +22,10 @@ export const terrainState = atom<Maybe<TerrainAsset>[]>({
   default: []
 })
 
-export const visibleToggledLayerIdState = atom<string | null>({
-  key:'visibleToggledLayerIdState',
-  default: ''
-});
-
-export const visibleToggledLayerIdsState = atom<{ids:string[], visible:boolean} | null>({
-  key:'visibleToggledLayerIdsState',
-  default: null
-});
+export const userLayerAssetArrState = atom<UserLayerAsset[]>({
+  key: "userLayerAssetArrState",
+  default: []
+})
 
 export const NodeModelsState = atom<NodeModel[]>({
   key: 'NodeModelsState',
