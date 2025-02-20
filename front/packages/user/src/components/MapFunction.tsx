@@ -177,7 +177,7 @@ const MapFunction = () => {
                     if(!imageryLayers) break;
                     const imageLayer = new Cesium.ImageryLayer(
                         new Cesium.WebMapServiceImageryProvider({
-                            url: `/api/vworld`,
+                            url: `/user/vworld`,
                             layers: properties.layers,
                             minimumLevel: 0,
                             parameters: {
@@ -189,7 +189,6 @@ const MapFunction = () => {
                                 transparent: "true",
                                 format: "image/png",
                                 crs: "EPSG:4326",
-                                domain: "localhost"
                             },
                         }),
                         {

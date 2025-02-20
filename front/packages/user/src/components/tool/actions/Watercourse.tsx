@@ -12,7 +12,7 @@ const Watercourse = () => {
             type: "Water",
             uniforms: {
                 baseWaterColor: new Cesium.Color(0, 0.1, 0.2, 1),
-                normalMap: Cesium.buildModuleUrl("/images/waterNormals.jpg"),
+                normalMap: Cesium.buildModuleUrl("/user/images/waterNormals.jpg"),
                 frequency: 500.0,
                 animationSpeed: 0.01,
                 amplitude: 5,
