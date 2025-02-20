@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import * as Cesium from "cesium";
 import { eventManager } from "@/components/tool/eventManager.ts";
 import { GlobeController } from "@/api/GlobeController.ts";
+import {createLabelEntity, createPointEntity, createPolylineEntity} from "@/components/utils/measureEntities.ts";
 
 interface MeasureAngleProps {
     globeController: GlobeController;
@@ -9,48 +10,6 @@ interface MeasureAngleProps {
 
 const eventGroupId = "MeasureAngle";
 
-const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
-    toolDataSource.entities.add({
-        position: cartesian,
-        point: {
-            pixelSize: 10,
-            color: Cesium.Color.WHITE,
-            outlineColor: Cesium.Color.RED,
-            outlineWidth: 2,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        },
-    });
-};
-
-const createPolylineEntity = (toolDataSource: Cesium.CustomDataSource, cartesians: Cesium.Cartesian3[]) => {
-    toolDataSource.entities.add({
-        polyline: {
-            positions: cartesians,
-            width: 2,
-            material: Cesium.Color.RED,
-            depthFailMaterial: new Cesium.PolylineOutlineMaterialProperty({
-                color: Cesium.Color.RED,
-                outlineWidth: 2,
-                outlineColor: Cesium.Color.BLACK,
-            }),
-        },
-    });
-};
-
-const createLabelEntity = (toolDataSource: Cesium.CustomDataSource, position: Cesium.Cartesian3, text: string) => {
-    toolDataSource.entities.add({
-        position,
-        label: {
-            text,
-            font: "14px monospace",
-            showBackground: true,
-            horizontalOrigin: Cesium.HorizontalOrigin.RIGHT,
-            verticalOrigin: Cesium.VerticalOrigin.TOP,
-            pixelOffset: new Cesium.Cartesian2(-15, 0),
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        }
-    });
-};
 
 export const MeasureAngle = ({ globeController }: MeasureAngleProps) => {
 
@@ -72,14 +31,15 @@ export const MeasureAngle = ({ globeController }: MeasureAngleProps) => {
             createPointEntity(toolDataSource, cartesian);
 
             if (cartesians.length >= 2) {
-                createPolylineEntity(toolDataSource, [
-                    cartesians[cartesians.length - 2],
-                    cartesians[cartesians.length - 1]],
+                createPolylineEntity(
+                    toolDataSource,
+                    [cartesians[cartesians.length - 2], cartesians[cartesians.length - 1]],
+                    false
                 );
             }
 
             if (cartesians.length >= 3) {
-                createPolylineEntity(toolDataSource, [cartesians[cartesians.length - 2], cartesians[cartesians.length - 1]]);
+                createPolylineEntity(toolDataSource, [cartesians[cartesians.length - 2], cartesians[cartesians.length - 1]], false);
 
                 const difference1 = Cesium.Cartesian3.subtract(cartesians[cartesians.length - 2], cartesians[cartesians.length - 3], new Cesium.Cartesian3());
                 const difference2 = Cesium.Cartesian3.subtract(cartesians[cartesians.length - 2], cartesians[cartesians.length - 1], new Cesium.Cartesian3());

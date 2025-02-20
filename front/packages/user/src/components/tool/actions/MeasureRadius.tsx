@@ -6,89 +6,18 @@ import { getLengthUnitFactor } from "@/components/utils/unit.ts";
 import {useTranslation} from "react-i18next";
 import {useRecoilState} from "recoil";
 import {AreaUnitType, DistanceUnitState, DistanceUnitType} from "@/recoils/Unit.ts";
+import {
+    createEllipsoidEntity,
+    createLabelEntity,
+    createPointEntity,
+    createPolylineEntity
+} from "@/components/utils/measureEntities.ts";
 
 interface MeasureRadiusProps {
     globeController: GlobeController;
 }
 
 const eventGroupId = "MeasureRadius";
-
-const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
-    toolDataSource.entities.add({
-        position: cartesian,
-        point: {
-            pixelSize: 10,
-            color: Cesium.Color.WHITE,
-            outlineColor: Cesium.Color.RED,
-            outlineWidth: 2,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        },
-    });
-};
-
-const createDashLineEntity = (toolDataSource: Cesium.CustomDataSource, start: Cesium.Cartesian3, end: Cesium.Cartesian3) => {
-    toolDataSource.entities.add({
-        polyline: {
-            positions: new Cesium.CallbackProperty(() => [start, end], true),
-            width: 2,
-            material: Cesium.Color.RED,
-            depthFailMaterial: new Cesium.PolylineOutlineMaterialProperty({
-                color: Cesium.Color.RED,
-                outlineWidth: 2,
-                outlineColor: Cesium.Color.BLACK,
-            }),
-        },
-    });
-};
-
-const createLabelEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
-    return toolDataSource.entities.add({
-        position: cartesian,
-        label: {
-            text: "",
-            font: "14px monospace",
-            showBackground: true,
-            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        },
-    });
-}
-
-const createEllipsoidEntity = async (
-    toolDataSource: Cesium.CustomDataSource,
-    start: Cesium.Cartesian3,
-    end: Cesium.Cartesian3,
-    globe: Cesium.Globe
-) => {
-    // 지표면 높이를 계산
-    const cartographic = Cesium.Cartographic.fromCartesian(start);
-    const sampledPositions = await Cesium.sampleTerrainMostDetailed(globe.terrainProvider, [cartographic]);
-    const heightAdjustedPosition = Cesium.Cartesian3.fromRadians(
-        sampledPositions[0].longitude,
-        sampledPositions[0].latitude,
-        sampledPositions[0].height || 0
-    );
-
-    // Ellipsoid 엔티티 생성
-    const ellipsoid = toolDataSource.entities.add({
-        position: heightAdjustedPosition,
-        ellipsoid: {
-            radii: new Cesium.CallbackProperty(() => {
-                const distance = Cesium.Cartesian3.distance(heightAdjustedPosition, end);
-                return new Cesium.Cartesian3(distance, distance, distance);
-            }, false),
-            material: Cesium.Color.RED.withAlpha(0.3),
-            outline: true,
-            outlineColor: Cesium.Color.RED,
-            outlineWidth: 2,
-        },
-    });
-
-    return ellipsoid;
-};
 
 export const MeasureRadius = ({ globeController }: MeasureRadiusProps) => {
     const {t} = useTranslation();
@@ -152,7 +81,7 @@ export const MeasureRadius = ({ globeController }: MeasureRadiusProps) => {
 
                 cartesians.end = cartesian;
                 createPointEntity(toolDataSource, cartesian);
-                createDashLineEntity(toolDataSource, cartesians.start!, cartesians.end!);
+                createPolylineEntity(toolDataSource, [cartesians.start!, cartesians.end!], false);
 
                 // 비동기 로직으로 Ellipsoid 생성
                 ellipsoidEntity = await createEllipsoidEntity(toolDataSource, cartesians.start!, cartesians.end!, viewer.scene.globe);
@@ -169,7 +98,7 @@ export const MeasureRadius = ({ globeController }: MeasureRadiusProps) => {
                     );
 
                     // 라벨 생성 및 텍스트 설정
-                    const labelEntity = createLabelEntity(toolDataSource, midPoint);
+                    const labelEntity = createLabelEntity(toolDataSource, midPoint, "");
                     if (labelEntity?.label) {
                         labelEntity.label.text = new Cesium.ConstantProperty(`${convertedDistance} ${unit}`);
                     }

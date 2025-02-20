@@ -6,38 +6,13 @@ import { eventManager } from "@/components/tool/eventManager.ts";
 import {useTranslation} from "react-i18next";
 import {useRecoilState} from "recoil";
 import {DistanceUnitState, DistanceUnitType} from "@/recoils/Unit.ts";
+import {createPointEntity} from "@/components/utils/measureEntities.ts";
 
 interface MeasureLocationProps {
     globeController: GlobeController;
 }
 
 const eventGroupId = "MeasureLocation";
-
-const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3, labelText: string) => {
-    toolDataSource.entities.add({
-        id: "location-point",
-        position: cartesian,
-        point: {
-            show: true,
-            pixelSize: 10,
-            color: Cesium.Color.WHITE,
-            outlineColor: Cesium.Color.RED,
-            outlineWidth: 2,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        },
-        label: {
-            text: labelText,
-            font: "14px monospace",
-            horizontalOrigin: Cesium.HorizontalOrigin.RIGHT,
-            verticalOrigin: Cesium.VerticalOrigin.TOP,
-            pixelOffset: new Cesium.Cartesian2(-15, 0),
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            showBackground: true,
-            backgroundPadding: new Cesium.Cartesian2(16, 8),
-        },
-    });
-}
 
 const getUnitHeight = (distance: number, unit: string) => {
     return Math.round((distance / getLengthUnitFactor(unit)) * 100) / 100;
@@ -65,16 +40,26 @@ const MeasureLocation = ({ globeController }: MeasureLocationProps) => {
 
             toolDataSource.entities.removeById("location-point");
             const labelText = `Lat: ${lat}\nLon: ${lon}\nHeight: ${getUnitHeight(height, unit)}${unit}`;
-            createPointEntity(toolDataSource, cartesian, labelText)
+            createPointEntity(toolDataSource, cartesian, labelText);
+        };
+
+        const escKeyHandler = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setLocationData(null);
+                toolDataSource.entities.removeAll();
+            }
         };
 
         eventManager.init(viewer);
         eventManager.addHandler(eventGroupId, Cesium.ScreenSpaceEventType.LEFT_CLICK, leftClickHandler);
+        eventManager.addGlobalHandler(eventGroupId, "keydown", escKeyHandler as EventListener);
+
         return () => {
             toolDataSource.entities.removeById("location-point");
             eventManager.destroyGroup(eventGroupId);
         };
     }, [viewer, toolDataSource, globeController, unit]);
+
 
     const handleUnitChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const newUnit = e.target.value as DistanceUnitType;

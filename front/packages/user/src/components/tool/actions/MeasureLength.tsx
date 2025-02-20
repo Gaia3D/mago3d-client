@@ -6,52 +6,13 @@ import { getLengthUnitFactor } from "@/components/utils/unit.ts";
 import {useTranslation} from "react-i18next";
 import {useRecoilState} from "recoil";
 import {DistanceUnitState, DistanceUnitType} from "@/recoils/Unit.ts";
+import {createLabelEntity, createPointEntity, createPolylineEntity} from "@/components/utils/measureEntities.ts";
 
 interface MeasureLengthProps {
     globeController: GlobeController;
 }
 
 const eventGroupId = "MeasureLength";
-
-const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
-    toolDataSource.entities.add({
-        position: cartesian,
-        point: {
-            pixelSize: 10,
-            color: Cesium.Color.WHITE,
-            outlineColor: Cesium.Color.RED,
-            outlineWidth: 2,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        },
-    });
-}
-
-const createPolylineEntity = (toolDataSource: Cesium.CustomDataSource, cartesians: Cesium.Cartesian3[]) => {
-    toolDataSource.entities.add({
-        polyline: {
-            positions: cartesians,
-            width: 2,
-            material: Cesium.Color.RED,
-            clampToGround: true,
-        },
-    });
-}
-
-const createLabelEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
-    return toolDataSource.entities.add({
-        position: cartesian,
-        label: {
-            text: "",
-            font: "14px monospace",
-            showBackground: true,
-            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        },
-    });
-}
 
 const getUnitDistance = (distance: number, unit: string): string => {
     return `${Math.round((distance / getLengthUnitFactor(unit)) * 100) / 100} ${unit}`;
@@ -157,7 +118,7 @@ export const MeasureLength = ({ globeController }: MeasureLengthProps) => {
                 const start = Cesium.Cartographic.fromCartesian(cartesians[cartesians.length - 2]);
                 const end = cartographic;
 
-                createPolylineEntity(toolDataSource, cartesians);
+                createPolylineEntity(toolDataSource, cartesians, true);
 
                 const { baseDistance, terrainDistance } = await calculateDistances(start, end, viewer.scene.globe);
 
@@ -173,11 +134,8 @@ export const MeasureLength = ({ globeController }: MeasureLengthProps) => {
                     new Cesium.Cartesian3()
                 );
 
-                const labelEntity = createLabelEntity(toolDataSource, midPoint);
-                if (!labelEntity?.label) return;
-                labelEntity.label.text = new Cesium.ConstantProperty(
-                    `Base: ${getUnitDistance(baseDistance, unit)}\nTerrain: ${getUnitDistance(terrainDistance, unit)}`
-                );
+                const labelText = `Base: ${getUnitDistance(baseDistance, unit)}\nTerrain: ${getUnitDistance(terrainDistance, unit)}`
+                createLabelEntity(toolDataSource, midPoint, labelText);
             }
         };
 

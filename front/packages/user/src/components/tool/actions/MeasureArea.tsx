@@ -7,53 +7,13 @@ import { getAreaUnitFactor } from "@/components/utils/unit.ts";
 import {useTranslation} from "react-i18next";
 import {useRecoilState} from "recoil";
 import {AreaUnitState, AreaUnitType} from "@/recoils/Unit.ts";
+import {createLabelEntity, createPointEntity, createPolygonEntity} from "@/components/utils/measureEntities.ts";
 
 interface MeasureAreaProps {
     globeController: GlobeController;
 }
 
 const eventGroupId = "MeasureArea";
-
-const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
-    toolDataSource.entities.add({
-        position: cartesian,
-        point: {
-            pixelSize: 10,
-            color: Cesium.Color.WHITE,
-            outlineColor: Cesium.Color.RED,
-            outlineWidth: 2,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        },
-    });
-}
-
-const createPolygonEntity = (toolDataSource: Cesium.CustomDataSource, cartesians: Cesium.Cartesian3[]) => {
-    toolDataSource.entities.add({
-        polygon: {
-            hierarchy: new Cesium.CallbackProperty(() => new Cesium.PolygonHierarchy(cartesians), false),
-            material: Cesium.Color.RED.withAlpha(0.5),
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        },
-        id: "areaPolygon",
-    });
-};
-
-const createLabelEntity = (toolDataSource: Cesium.CustomDataSource) => {
-    toolDataSource.entities.add({
-        position: Cesium.Cartesian3.fromDegrees(0, 0),
-        label: {
-            text: "",
-            font: "14px monospace",
-            showBackground: true,
-            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        },
-        id: "areaLabel",
-    });
-};
 
 // 삼각형을 분할하는 함수
 const subdivideTriangle = (
@@ -186,7 +146,6 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
         const cartesians: Cesium.Cartesian3[] = [];
 
         createPolygonEntity(toolDataSource, cartesians);
-        createLabelEntity(toolDataSource);
 
         const leftClickHandler = async (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
             const scene = viewer.scene;
@@ -210,11 +169,12 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
 
                 const center = Cesium.BoundingSphere.fromPoints(cartesians).center;
                 const labelEntity = toolDataSource.entities.getById("areaLabel");
+                const labelText = `Base: ${baseAreaUnitValue.toFixed(2)} ${unit}\nTerrain: ${terrainAreaUnitValue.toFixed(2)} ${unit}`;
                 if (labelEntity?.label) {
                     labelEntity.position = new Cesium.ConstantPositionProperty(center);
-                    labelEntity.label.text = new Cesium.ConstantProperty(
-                        `Base: ${baseAreaUnitValue.toFixed(2)} ${unit}\nTerrain: ${terrainAreaUnitValue.toFixed(2)} ${unit}`
-                    );
+                    labelEntity.label.text = new Cesium.ConstantProperty(labelText);
+                } else {
+                    createLabelEntity(toolDataSource, center, labelText, "areaLabel");
                 }
             }
         };
@@ -225,7 +185,6 @@ export const MeasureArea = ({ globeController }: MeasureAreaProps) => {
                 toolDataSource.entities.removeAll();
                 setResult(initResult);
                 createPolygonEntity(toolDataSource, cartesians);
-                createLabelEntity(toolDataSource);
             }
         };
 
