@@ -10,6 +10,17 @@ interface Place {
     y: number | undefined;
 }
 
+interface ResponsePlace {
+    title: string;
+    address: {
+        road: string;
+    };
+    point: {
+        x: number;
+        y: number;
+    };
+}
+
 interface ErrorResponse {
     response: {
         data: any;
@@ -75,7 +86,7 @@ export const SearchPlaceList = () => {
                 setHasMore(false);
             } else {
                 const extractedPlaces: Place[] = items
-                    .filter((item) => {
+                    .filter((item: ResponsePlace) => {
                         const roadAddress = item?.address?.road;
                         if (!roadAddress || addressSet.has(roadAddress)) {
                             return false; // 중복 주소는 제외
@@ -83,7 +94,7 @@ export const SearchPlaceList = () => {
                         addressSet.add(roadAddress);
                         return true;
                     })
-                    .map((item) => ({
+                    .map((item: ResponsePlace) => ({
                         title: item.title ?? '제목 없음',
                         address: item.address?.road?.trim() !== '' ? item.address.road : '주소 없음',
                         x: item.point?.x,
@@ -95,8 +106,7 @@ export const SearchPlaceList = () => {
                 setHasMore(items.length === size);
             }
         } catch (error) {
-            error = error as ErrorResponse;
-            if (error.response && error.response.data) {
+            if ((error as ErrorResponse).response && (error as ErrorResponse).response.data) {
                 setErrorMessage('검색결과가 없습니다.');
             } else {
                 setErrorMessage('검색결과가 없습니다.');
@@ -116,7 +126,7 @@ export const SearchPlaceList = () => {
         }
     }, [query]);
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             const trimmedQuery = query.trim();
             if (trimmedQuery === '') {
@@ -152,9 +162,12 @@ export const SearchPlaceList = () => {
         // 카메라 이동 완료 후 상태 업데이트
         const handler = viewer?.camera.changed.addEventListener(() => {
             setShowResults(false);
-            handler(); // 이벤트 핸들러 제거
         });
 
+        // Remove event listener once it's done
+        if (handler) {
+            viewer?.camera.changed.removeEventListener(handler);
+        }
     };
 
     // Input 클릭 시 검색 결과를 다시 보여줌
@@ -162,7 +175,7 @@ export const SearchPlaceList = () => {
         setShowResults(true);  // 검색 결과를 다시 보여줌
     };
 
-    const lastItemRef = useRef();
+    const lastItemRef = useRef<HTMLLIElement | null>(null);
     useEffect(() => {
         const observerCallback: IntersectionObserverCallback = (entries) => {
             if (entries[0].isIntersecting && !loading && hasMore) {
@@ -183,9 +196,9 @@ export const SearchPlaceList = () => {
     }, [lastItemRef, loading, page, hasMore]);
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
+        const handleClickOutside = (event: MouseEvent) => {
             const searchContainer = document.querySelector('.location-search');
-            if (searchContainer && !searchContainer.contains(event.target)) {
+            if (searchContainer && !(searchContainer.contains(event.target as Node))) {
                 setShowResults(false);
             }
         };
@@ -218,11 +231,17 @@ export const SearchPlaceList = () => {
                 <div className="location-search-result">
                     <ul className="location-search-result-list">
                         {places.length > 0 ? (
-                            places.map((place, index) => (
+                            places.map((place: Place, index: number | undefined) => (
                                 <li
                                     key={index}
                                     ref={index === places.length - 1 ? lastItemRef : null}
-                                    onClick={() => handlePlaceClick(place.x, place.y, place.title)}
+                                    onClick={() => {
+                                        if (place.x !== undefined && place.y !== undefined) {
+                                            handlePlaceClick(place.x, place.y, place.title)
+                                        } else {
+                                            console.error('No x, y coordinates found for this place:', place);
+                                        }
+                                    }}
                                 >
                                     <div className={"result"}>
                                         <div className="title">
