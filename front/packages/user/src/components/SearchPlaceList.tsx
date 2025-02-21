@@ -1,18 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import {useGlobeController} from "./providers/GlobeControllerProvider.js";
-import * as Cesium from "cesium";
+import { useGlobeController } from './providers/GlobeControllerProvider';
+import * as Cesium from 'cesium';
+
+interface Place {
+    title: string;
+    address: string;
+    x: number | undefined;
+    y: number | undefined;
+}
+
+interface ErrorResponse {
+    response: {
+        data: any;
+    };
+}
 
 export const SearchPlaceList = () => {
     const {initialized, globeController} = useGlobeController();
 
-    const [query, setQuery] = useState('');
-    const [places, setPlaces] = useState([]);
-    const [page, setPage] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
-    const [errorMessage, setErrorMessage] = useState(null);
-    const [showResults, setShowResults] = useState(false);  // 검색 결과를 숨기거나 보여주는 상태 (false로 초기값 설정)
+    const [query, setQuery] = useState<string>('');
+    const [places, setPlaces] = useState<Place[]>([]);
+    const [page, setPage] = useState<number>(1);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [showResults, setShowResults] = useState<boolean>(false);
     const observer = useRef<IntersectionObserver | null>(null);
 
     // 초기화 함수: 데이터 로딩 전 상태 설정
@@ -23,7 +36,7 @@ export const SearchPlaceList = () => {
         setShowResults(true);  // 검색 결과를 다시 보여줌
     };
 
-    const fetchPlaces = async (currentPage) => {
+    const fetchPlaces = async (currentPage: number) => {
         if (loading || !hasMore) return;
         setLoading(true);
         setErrorMessage(null);
@@ -53,7 +66,7 @@ export const SearchPlaceList = () => {
             const responseMap = responseData.response;
             const resultMap = responseMap.result;
             const items = resultMap.items || [];
-            const addressSet = new Set(); // 주소 중복 체크를 위한 Set
+            const addressSet = new Set<string>(); // 주소 중복 체크를 위한 Set
 
             if (items.length === 0) {
                 if (currentPage === 1) {
@@ -61,7 +74,7 @@ export const SearchPlaceList = () => {
                 }
                 setHasMore(false);
             } else {
-                const extractedPlaces = items
+                const extractedPlaces: Place[] = items
                     .filter((item) => {
                         const roadAddress = item?.address?.road;
                         if (!roadAddress || addressSet.has(roadAddress)) {
@@ -82,6 +95,7 @@ export const SearchPlaceList = () => {
                 setHasMore(items.length === size);
             }
         } catch (error) {
+            error = error as ErrorResponse;
             if (error.response && error.response.data) {
                 setErrorMessage('검색결과가 없습니다.');
             } else {
@@ -127,12 +141,12 @@ export const SearchPlaceList = () => {
     };
 
     // 리스트 항목 클릭 핸들러: x, y 좌표 출력 및 검색창에 타이틀 입력
-    const handlePlaceClick = (x, y, title) => {
+    const handlePlaceClick = (x: number, y: number, title: string) => {
         setQuery(title);  // 입력창에 제목 설정
         // 검색 결과를 숨김
         let viewer = globeController?.viewer;
         viewer?.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(parseFloat(x), parseFloat(y), 700.0)
+            destination: Cesium.Cartesian3.fromDegrees(parseFloat(x.toString()), parseFloat(y.toString()), 700.0)
         });
 
         // 카메라 이동 완료 후 상태 업데이트
