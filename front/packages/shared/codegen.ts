@@ -5,19 +5,19 @@ const config: CodegenConfig = {
   ignoreNoDocuments: true,
   generates: {
     "src/types/dataset/gql/": {
-      schema: "https://mdtp.gaia3d.com/app/api/dataset/graphql",
+      schema: "https://map.gaia3d.com/app/api/dataset/graphql",
       documents: "src/types/dataset/doc/*.graphql",
       plugins: [],
       preset: "client",
     },
     "src/types/layerset/gql/": {
-      schema: "https://mdtp.gaia3d.com/app/api/layerset/graphql",
+      schema: "https://map.gaia3d.com/app/api/layerset/graphql",
       documents: "src/types/layerset/*.{ts,tsx,graphql}",
       plugins: [],
       preset: "client",
     },
     "src/types/userset/gql/": {
-      schema: "https://mdtp.gaia3d.com/app/api/userset/graphql",
+      schema: "https://map.gaia3d.com/app/api/userset/graphql",
       documents: "src/types/userset/doc/*.{ts,tsx,graphql}",
       plugins: [],
       preset: "client",

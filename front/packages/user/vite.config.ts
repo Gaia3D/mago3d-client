@@ -17,10 +17,16 @@ export default defineConfig({
     open: true,
     https: true,
     proxy: {
-      "/user/vworld": {
+      "/user/vworld/wms": {
         target: "https://api.vworld.kr",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/user\/vworld/, "/req/wms"),
+        rewrite: (path) => path.replace(/^\/user\/vworld\/wms/, "/req/wms"),
+        secure: false,
+      },
+      "/user/vworld/search": {
+        target: "https://api.vworld.kr",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/user\/vworld\/search/, "/req/search"),
         secure: false,
       },
     },

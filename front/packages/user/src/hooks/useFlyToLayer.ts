@@ -53,6 +53,7 @@ export const useFlyToLayer = () => {
                 viewer.flyTo(model, { duration: 2 });
                 return;
             }
+            case LayerAssetType.Icon:
             case LayerAssetType.Raster:
             case LayerAssetType.Vector: {
                 const { properties } = asset;

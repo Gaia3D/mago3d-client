@@ -89,6 +89,7 @@ const MapFunction = () => {
 
                     break;
                 }
+                case LayerAssetType.Icon:
                 case LayerAssetType.Vector:
                 case LayerAssetType.Raster: {
                     if(!imageryLayers) break;
@@ -177,7 +178,7 @@ const MapFunction = () => {
                     if(!imageryLayers) break;
                     const imageLayer = new Cesium.ImageryLayer(
                         new Cesium.WebMapServiceImageryProvider({
-                            url: `/user/vworld`,
+                            url: `/user/vworld/wms`,
                             layers: properties.layers,
                             minimumLevel: 0,
                             parameters: {
