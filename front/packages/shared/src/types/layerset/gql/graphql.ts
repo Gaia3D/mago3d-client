@@ -345,6 +345,13 @@ export type F4DInput = {
   dataAssetId?: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type FeatureIconInput = {
+  dataAssetId?: InputMaybe<Scalars['ID']['input']>;
+  iconPath: Scalars['String']['input'];
+  store?: Scalars['String']['input'];
+  workspace?: Scalars['String']['input'];
+};
+
 export type FeatureInput = {
   dataAssetId?: InputMaybe<Scalars['ID']['input']>;
   store?: Scalars['String']['input'];
@@ -514,6 +521,7 @@ export enum LayerAssetType {
   Cog = 'COG',
   F4D = 'F4D',
   Geojson = 'GEOJSON',
+  Icon = 'ICON',
   Layergroup = 'LAYERGROUP',
   Raster = 'RASTER',
   Smarttile = 'SMARTTILE',
@@ -848,6 +856,7 @@ export type PublishContextValue = {
   coverage?: InputMaybe<CoverageInput>;
   f4d?: InputMaybe<F4DInput>;
   feature?: InputMaybe<FeatureInput>;
+  featureIcon?: InputMaybe<FeatureIconInput>;
   remote?: InputMaybe<RemoteInput>;
   remoteT3d?: InputMaybe<RemoteT3DInput>;
   smartTile?: InputMaybe<SmartTileInput>;
