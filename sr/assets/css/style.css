@@ -4138,7 +4138,7 @@ select option {
   width: 360px;
   height: 40px;
   border-radius: 30px;
-  background: rgba(0, 0, 0, 0.62);
+  background: rgba(0, 0, 0, 0.79);
   z-index: 9999;
 }
 .location-search #location-searchInput {
@@ -4270,11 +4270,11 @@ select option {
   position: absolute;
   width: 360px;
   border-radius: 16px;
-  background: rgba(0, 0, 0, 0.76);
+  background: rgba(0, 0, 0, 0.79);
   height: auto;
   margin-top: 3px;
   animation: slideDown 0.5s forwards;
-  padding: 20px 10px 20px 20px;
+  padding: 10px 10px 10px 15px;
   z-index: 9999;
 }
 
@@ -4305,7 +4305,7 @@ select option {
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  padding: 8px 0;
+  padding: 6px 0;
 }
 .location-search-result ul.location-search-result-list li .result .address {
   color: rgb(167, 167, 167);
