@@ -212,9 +212,8 @@ export const SearchPlaceList = () => {
     return (
         <div className="location-search">
             <input
-                className="search-place-input"
                 type="text"
-                id="searchInput"
+                id="location-searchInput"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
