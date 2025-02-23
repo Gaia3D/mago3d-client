@@ -1,6 +1,5 @@
 import { useCreateViewer } from "@/hooks/useCreateViewer";
 import React, { useRef } from "react";
-import MapFunction from "./MapFunction";
 import RasterProfileChart from "./RasterProfileChart";
 import { PrintPortal } from "./maptool/PrintPortal";
 import { MeasureDistance } from "./maptool/MeasureDistance";
@@ -16,13 +15,14 @@ import {CameraInfoDisplay} from "@/components/maptool/CameraInfoDisplay.tsx";
 import {ObjectToolbox} from "./ObjectToolbox.tsx";
 import {MeasurePosition} from "@/components/maptool/MeasurePosition.tsx";
 import {MeasureRadius} from "@/components/maptool/MeasureRadius.tsx";
+import {useLayerManagement} from "@/hooks/useLayerManagement.ts";
 
 const Globe = () => {
     const cesiumContainer = useRef<HTMLDivElement>(null);
     useCreateViewer(cesiumContainer);
+    useLayerManagement();
     return (
         <div id="globe" className={"globe"} ref={cesiumContainer}>
-            <MapFunction />
             <RasterProfileChart />
             <PrintPortal />
             <MeasurePosition />
