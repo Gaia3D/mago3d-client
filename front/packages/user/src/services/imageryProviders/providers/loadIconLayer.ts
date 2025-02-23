@@ -2,44 +2,45 @@ import * as Cesium from "cesium";
 import {UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 
 export const loadIconLayer = async (layer: UserLayerAsset, viewer: Cesium.Viewer) => {
-
     if (!viewer || !layer?.properties?.layer?.name) {
-        console.error("Error: layer or layer.resource is undefined", layer);
+        console.error("viewer or layer, layer.properties.layer.name is undefined.", layer);
         return;
     }
+
     const layerId = layer?.assetId;
     const layerName = layer?.properties?.layer?.name;
-    if (viewer.dataSources.getByName(layerName).length > 0) return;
-    Cesium.GeoJsonDataSource.load(
-        // TODO Bbox 주기
-        `${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?service=WFS&version=1.1.1&request=GetFeature&typeName=${layerName}&outputFormat=application/json`
-    ).then((dataSource) => {
-        const entities = dataSource.entities.values;
-        const falseProperty = new Cesium.ConstantProperty(false);
+    const iconUrl = layer?.properties?.icon;
 
-        for (let i = 0; i < entities.length; i++) {
-            const entity = entities[i];
+    const primitiveMap = new Map();
 
-            // Billboard 숨기기
-            if (entity.billboard) {
-                entity.billboard.show = falseProperty;
-            }
+    if (primitiveMap.has(layerId)) return;
 
-            // PointGraphics 추가 (없는 경우에만)
-            if (!entity.point) {
-                entity.point = new Cesium.PointGraphics({
-                    pixelSize: 10,
-                    color: Cesium.Color.WHITE,
-                    outlineColor: Cesium.Color.RED,
-                    outlineWidth: 2,
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+    const billboardCollection = new Cesium.BillboardCollection({
+        id: layerId,
+        scene: viewer.scene,
+    });
+
+    fetch(`${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?service=WFS&version=1.1.1&request=GetFeature&typeName=${layerName}&outputFormat=application/json`)
+        .then(response => response.json())
+        .then((geojson) => {
+            // ✅ primitives에 미리 추가해야 CLAMP_TO_GROUND 가능
+            viewer.scene.primitives.add(billboardCollection);
+
+            geojson.features.forEach(feature => {
+                if (!feature.geometry || feature.geometry.type !== 'MultiPoint') return;
+
+                feature.geometry.coordinates.forEach(([longitude, latitude]) => {
+                    billboardCollection.add({
+                        position: Cesium.Cartesian3.fromDegrees(Number(longitude), Number(latitude)),
+                        image: iconUrl,
+                        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY
+                    });
                 });
-            }
-        }
+            });
 
-
-        dataSource.name = layerId;
-        dataSource.show = !!layer.visible;
-        viewer.dataSources.add(dataSource);
-    }).catch(error => console.error("Failed to load WFS data", error));
+            primitiveMap.set(layerId, billboardCollection);
+            billboardCollection.show = !!layer.visible;
+        })
+        .catch(error => console.error("Failed to load WFS data", error));
 }
