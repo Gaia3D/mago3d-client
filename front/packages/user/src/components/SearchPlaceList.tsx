@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
 import { useGlobeController } from './providers/GlobeControllerProvider';
 import * as Cesium from 'cesium';
+import {useDebounce} from "use-debounce";
 
 interface Place {
     title: string;
@@ -28,23 +29,26 @@ interface ErrorResponse {
 }
 
 export const SearchPlaceList = () => {
-    const {initialized, globeController} = useGlobeController();
+    const {globeController} = useGlobeController();
 
-    const [query, setQuery] = useState<string>('');
+    const [visibleQuery, setVisibleQuery] = useState('');
     const [places, setPlaces] = useState<Place[]>([]);
     const [page, setPage] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [showResults, setShowResults] = useState<boolean>(false);
+
     const observer = useRef<IntersectionObserver | null>(null);
+    const lastItemRef = useRef<HTMLLIElement | null>(null);
+
+    const [debouncedValue] = useDebounce(visibleQuery, 500);
 
     // 초기화 함수: 데이터 로딩 전 상태 설정
     const resetState = () => {
         setPage(1);
         setHasMore(true);
         setErrorMessage(null);
-        setShowResults(true);  // 검색 결과를 다시 보여줌
     };
 
     const fetchPlaces = async (currentPage: number) => {
@@ -66,17 +70,17 @@ export const SearchPlaceList = () => {
                     bbox: bbox,
                     size: size,
                     page: currentPage,
-                    query: query.trim(),
+                    query: debouncedValue.trim(),
                     type: 'place',
                     format: 'json',
                     key: API_KEY,
                 },
             });
 
-            const responseData = response.data;
-            const responseMap = responseData.response;
-            const resultMap = responseMap.result;
-            const items = resultMap.items || [];
+            const responseData = response?.data;
+            const responseMap = responseData?.response;
+            const resultMap = responseMap?.result;
+            const items = resultMap?.items || [];
             const addressSet = new Set<string>(); // 주소 중복 체크를 위한 Set
 
             if (items.length === 0) {
@@ -106,53 +110,53 @@ export const SearchPlaceList = () => {
                 setHasMore(items.length === size);
             }
         } catch (error) {
-            if ((error as ErrorResponse).response && (error as ErrorResponse).response.data) {
+            if ((error as ErrorResponse).response?.data) {
                 setErrorMessage('검색결과가 없습니다.');
             } else {
                 setErrorMessage('검색결과가 없습니다.');
+                //setErrorMessage(error instanceof Error ? error.message : 'Unknown error occurred');
             }
             setPlaces([]);
             console.error('Error fetching data:', error);
         } finally {
+            console.log('fetchPlaces done');
             setLoading(false);
         }
-
     };
 
     useEffect(() => {
-        if (query.trim() !== '') {
-            resetState();
-            fetchPlaces(1);
+        if (debouncedValue === '') {
+            setPlaces([]);
+            setErrorMessage(null);
+            return;
         }
-    }, [query]);
+        fetchPlaces(1);
+    }, [debouncedValue]);
+
+    const searchPlace = () => {
+        resetState();
+        if (debouncedValue === '') {
+            setPlaces([]);
+            setErrorMessage(null);
+            return;
+        }
+        fetchPlaces(1);
+    }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        resetState();
+        setVisibleQuery(e.target.value);
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            const trimmedQuery = query.trim();
-            if (trimmedQuery === '') {
-                setPlaces([]);
-                setErrorMessage(null);
-            } else {
-                setQuery(trimmedQuery);
-                setShowResults(true);  // 검색 결과를 다시 보여줌
-            }
-        }
-    };
-
-    const handleSearchClick = () => {
-        const trimmedQuery = query.trim();
-        if (trimmedQuery === '') {
-            setPlaces([]);
-            setErrorMessage(null);
-        } else {
-            setQuery(trimmedQuery);
-            setShowResults(true);  // 검색 결과를 다시 보여줌
+            searchPlace();
         }
     };
 
     // 리스트 항목 클릭 핸들러: x, y 좌표 출력 및 검색창에 타이틀 입력
     const handlePlaceClick = (x: number, y: number, title: string) => {
-        setQuery(title);  // 입력창에 제목 설정
+        setVisibleQuery(title);  // 입력창에 제목 설정
         // 검색 결과를 숨김
         let viewer = globeController?.viewer;
         viewer?.camera.flyTo({
@@ -175,7 +179,6 @@ export const SearchPlaceList = () => {
         setShowResults(true);  // 검색 결과를 다시 보여줌
     };
 
-    const lastItemRef = useRef<HTMLLIElement | null>(null);
     useEffect(() => {
         const observerCallback: IntersectionObserverCallback = (entries) => {
             if (entries[0].isIntersecting && !loading && hasMore) {
@@ -198,7 +201,7 @@ export const SearchPlaceList = () => {
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             const searchContainer = document.querySelector('.location-search');
-            if (searchContainer && !(searchContainer.contains(event.target as Node))) {
+            if (searchContainer && !searchContainer.contains(event.target as Node)) {
                 setShowResults(false);
             }
         };
@@ -214,14 +217,14 @@ export const SearchPlaceList = () => {
             <input
                 type="text"
                 id="location-searchInput"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                value={visibleQuery}
+                onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 onClick={handleInputClick}  // Input 클릭 시 검색 결과 다시 보여줌
                 autoComplete="off"
                 placeholder="입력해주세요"
             />
-            <button type="button" className="button common-search" onClick={handleSearchClick}></button>
+            <button type="button" className="button common-search" onClick={searchPlace}></button>
             {/*<button type="button" className="button detail-search"></button>*/}
             {/*<button type="button" className="button bookmarks"></button>*/}
 
