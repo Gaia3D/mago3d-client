@@ -16,6 +16,8 @@ import {ObjectToolbox} from "./ObjectToolbox.tsx";
 import {MeasurePosition} from "@/components/maptool/MeasurePosition.tsx";
 import {MeasureRadius} from "@/components/maptool/MeasureRadius.tsx";
 import {useLayerManagement} from "@/hooks/useLayerManagement.ts";
+import {SearchPlaceList} from "@/components/SearchPlaceList.tsx";
+
 
 const Globe = () => {
     const cesiumContainer = useRef<HTMLDivElement>(null);
@@ -23,6 +25,7 @@ const Globe = () => {
     useLayerManagement();
     return (
         <div id="globe" className={"globe"} ref={cesiumContainer}>
+            <SearchPlaceList />
             <RasterProfileChart />
             <PrintPortal />
             <MeasurePosition />

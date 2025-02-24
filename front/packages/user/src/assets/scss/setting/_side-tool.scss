@@ -57,6 +57,8 @@
     margin-bottom: 4px;
 
     &.selected {
+      outline:1px solid white;      
+      border-radius: 10px;   
       .tool-button {
         background-color: var(--toolbox-select-color);
         &:hover {
@@ -67,10 +69,11 @@
     .tool-button {
       width: 32px;
       height: 32px;
-      border-radius: 10px;      
+      border-radius: 10px;   
+      box-shadow:2px 2px 10px rgba(0, 0, 0, 0.2);
       background-color: var(--background-color-silver);
       &:hover {
-        background-color: #0f2f75;
+        background-color: var(--toolbox-select-color);
       }
     }
   }
