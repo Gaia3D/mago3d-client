@@ -1,9 +1,20 @@
 import * as Cesium from "cesium";
-import { UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
-import {getInstance} from "@/api/GlobeController.ts";
-import { SetterOrUpdater } from "recoil";
-import { LoadingStateType} from "@/recoils/Spinner.ts";
-import {hexToCesiumColor} from "@/utils/common.ts";
+import { getInstance } from "@/api/GlobeController.ts";
+import {UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import {SetterOrUpdater} from "recoil";
+import {LoadingStateType} from "@/recoils/Spinner.ts";
+import {
+    addBillboard,
+    addLabel, addPoint,
+    createBillboardCollection, createLabelCollection,
+    createPointCollection
+} from "@/services/imageryProviders/providers/loadIconManager.ts";
+import {setupMouseHoverHandler} from "@/services/imageryProviders/providers/loadIconInteraction.ts";
+
+const fetchGeoJson = async (layerName: string): Promise<GeoJSON.FeatureCollection> => {
+    const response = await fetch(`${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?service=WFS&version=1.1.1&request=GetFeature&typeName=${layerName}&outputFormat=application/json`);
+    return response.json();
+}
 
 
 export const loadIconLayer = async (
@@ -11,82 +22,60 @@ export const loadIconLayer = async (
     viewer: Cesium.Viewer,
     setLoadingState: SetterOrUpdater<LoadingStateType>
 ): Promise<void> => {
-    if (!viewer || !layer?.properties?.layer?.name) {
-        console.error("viewer or layer, layer.properties.layer.name is undefined.", layer);
-        return;
-    }
-    if (!layer.visible) return;
+    if (!viewer || !layer?.properties?.layer?.name || !layer.visible) return;
 
-    const globeController = getInstance(); // GlobeController 싱글톤 인스턴스 활용
-
-    const layerId: string = layer.assetId;
-    const layerName: string = layer.properties.layer.name;
-    const iconUrl: string = layer.properties.icon;
+    const globeController = getInstance();
+    const { assetId: layerId, properties } = layer;
+    const { layer: { name: layerName }, icon: originalUrl, selectIcon: selectIconUrl, color } = properties;
 
     if (globeController.primitiveMap.has(layerId)) return;
 
-    const billboardCollection = new Cesium.BillboardCollection({scene: viewer.scene});
-    const pointCollection = new Cesium.PointPrimitiveCollection();
+    const [originalImage, selectedImage] = await Promise.all([
+        Cesium.Resource.fetchImage(originalUrl),
+        Cesium.Resource.fetchImage(selectIconUrl),
+    ]);
+
+    const [billboardCollection, pointCollection, labelCollection] = [
+        createBillboardCollection(viewer),
+        createPointCollection(viewer),
+        createLabelCollection(viewer)
+    ];
+
     setLoadingState({ loading: true, msg: "" });
 
-    viewer.scene.primitives.add(billboardCollection);
-    viewer.scene.primitives.add(pointCollection);
+    try {
+        const geojson = await fetchGeoJson(layerName);
+        const usePoint = geojson.features.length > 10000;
 
-    fetch(`${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?service=WFS&version=1.1.1&request=GetFeature&typeName=${layerName}&outputFormat=application/json`)
-        .then((response): Promise<GeoJSON.FeatureCollection> => response.json())
-        .then((geojson: GeoJSON.FeatureCollection) => {
-            const featureCount = geojson.features.length;
-            const usePoint = featureCount > 10000;
+        geojson.features.forEach(feature => {
+            if (feature.geometry?.type !== "MultiPoint") return;
 
-            geojson.features.forEach((feature: GeoJSON.Feature) => {
-                if (!feature.geometry || feature.geometry.type !== "MultiPoint") return;
+            feature.geometry.coordinates.forEach(([longitude, latitude]) => {
+                if (!longitude || !latitude) return;
 
-                (feature.geometry as GeoJSON.MultiPoint).coordinates.forEach(
-                    (position: GeoJSON.Position) => {
-                        if (position.length >= 2) {
-                            const [longitude, latitude] = position;
-                            if (!longitude || !latitude) return;
+                const position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
+                const labelText = feature.properties?.명칭 || "";
 
-                            const cartesianPosition = Cesium.Cartesian3.fromDegrees(longitude, latitude);
+                const labelPrimitive = addLabel(labelCollection, position, labelText);
 
-                            if (usePoint) {
-                                pointCollection.add({
-                                    position: cartesianPosition,
-                                    pixelSize: 10,
-                                    outlineColor: Cesium.Color.WHITE,
-                                    outlineWidth: 1,
-                                    color: hexToCesiumColor(layer.properties.color, 0.3),
-                                    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(20000, Number.POSITIVE_INFINITY),
-                                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                                });
-                            }
+                if (usePoint) {
+                    addPoint(pointCollection, position, color, labelPrimitive);
+                }
 
-                            billboardCollection.add({
-                                position: cartesianPosition,
-                                image: iconUrl,
-                                ...(usePoint && {
-                                    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 20000),
-                                }),
-                                disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                            });
-
-                        }
-                    }
-                );
+                addBillboard(billboardCollection, position, originalImage, selectedImage, labelPrimitive, usePoint);
             });
+        });
 
-            viewer.scene.requestRender();
-            requestAnimationFrame(() => {
-                setLoadingState({ loading: false, msg: "" });
-            });
+        globeController.primitiveMap.set(layerId, {
+            billboardCollection,
+            pointCollection: usePoint ? pointCollection : new Cesium.PointPrimitiveCollection(),
+        });
 
-            globeController.primitiveMap.set(layerId, {
-                billboardCollection,
-                pointCollection: usePoint ? pointCollection : new Cesium.PointPrimitiveCollection(),
-            });
-        })
-        .catch((error: unknown) => console.error("Failed to load WFS data", error));
+    } catch (error) {
+        console.error("Failed to load WFS data", error);
+    } finally {
+        requestAnimationFrame(() => setLoadingState({ loading: false, msg: "" }));
+    }
 
-
+    setupMouseHoverHandler(viewer);
 };
