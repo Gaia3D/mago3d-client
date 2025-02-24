@@ -3,8 +3,6 @@ import * as Cesium from "cesium";
 const layerCache: Record<string, Cesium.ImageryLayer | Cesium.Cesium3DTileset> = {};
 
 export const addLayerToCache = (id: string, layer: Cesium.ImageryLayer | Cesium.Cesium3DTileset) => {
-    console.log("id", id);
-    console.log("add", layer);
     layerCache[id] = layer;
 };
 
