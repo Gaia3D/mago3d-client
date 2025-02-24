@@ -3,8 +3,10 @@ import { UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql";
 import { getLayerFromCache } from "@/utils/layerCache";
 import { LayerAssetType } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {loadIconLayer} from "@/services/imageryProviders/providers/loadIconLayer.ts";
+import {SetterOrUpdater} from "recoil";
+import {LoadingStateType} from "@/recoils/Spinner.ts";
 
-export const useLayerToggle = () => {
+export const useLayerToggle = (setLoadingState: SetterOrUpdater<LoadingStateType>) => {
     const { globeController } = useGlobeController();
 
     return async (layerAsset: UserLayerAsset) => {
@@ -15,9 +17,10 @@ export const useLayerToggle = () => {
             const primitive = globeController.primitiveMap.get(layerAsset.assetId);
 
             if (primitive) {
-                primitive.show = !!layerAsset.visible;
+                primitive.billboardCollection.show = !!layerAsset.visible;
+                primitive.pointCollection.show = !!layerAsset.visible;
             } else {
-                await loadIconLayer(layerAsset, viewer);
+                await loadIconLayer(layerAsset, viewer, setLoadingState);
             }
         } else {
             const imageryLayer = getLayerFromCache(layerAsset.assetId);
