@@ -6,25 +6,13 @@ import { useRecoilValue } from "recoil";
 import { UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { layersState } from "@/recoils/Layer.ts";
 import LayerInfoTemplate from "@/components/tool/actions/layer-info/LayerInfoTemplate.tsx";
+import {createPointEntity} from "@/components/utils/measureEntities.ts";
 
 interface LayerInfoProps {
     globeController: GlobeController;
 }
 
 const eventGroupId = "LayerInfo";
-
-const createPointEntity = (toolDataSource: Cesium.CustomDataSource, cartesian: Cesium.Cartesian3) => {
-    toolDataSource.entities.add({
-        id: "layer-info-point",
-        position: cartesian,
-        point: {
-            show: true,
-            pixelSize: 10,
-            color: Cesium.Color.RED,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        }
-    });
-};
 
 const processPickedFeatures = (
     pickedFeatures: Cesium.ImageryLayerFeatureInfo[],
@@ -51,39 +39,55 @@ const LayerInfo = ({ globeController }: LayerInfoProps) => {
     const { viewer, toolDataSource } = globeController;
     const [selectedFeatures, setSelectedFeatures] = useState<Cesium.ImageryLayerFeatureInfo[]>([]);
     const layers = useRecoilValue<UserLayerAsset[]>(layersState);
-    const handleClickEvent = useCallback(async (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
-        if (!event.position) {
-            console.error("event.position이 정의되지 않았습니다.");
-            return;
-        }
-
-        const scene = viewer?.scene;
-        if (!scene) return;
-
-        const cartesian = globeController.pickPosition(event.position);
-        const ray = scene.camera.getPickRay(event.position);
-
-        if (!cartesian || !ray) {
-            console.error("Cartesian 좌표 또는 Ray를 찾을 수 없습니다.");
-            return;
-        }
-
-        toolDataSource.entities.removeById("layer-info-point");
-        createPointEntity(toolDataSource, cartesian);
-
-        try {
-            const pickedFeatures = await viewer.imageryLayers.pickImageryLayerFeatures(ray, scene);
-
-            if (!Array.isArray(pickedFeatures) || pickedFeatures.length === 0) {
-                console.warn("선택된 피처가 없습니다.");
-                setSelectedFeatures([]);
+    const handleClickEvent = useCallback(
+        async (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+            if (!event.position || !viewer) {
+                console.error("event.position 또는 viewer가 정의되지 않았습니다.");
                 return;
             }
-            setSelectedFeatures(processPickedFeatures(pickedFeatures, layers));
-        } catch (error) {
-            console.error("레이어 정보를 가져오는 중 문제가 발생했습니다.", error);
-        }
-    }, [viewer, globeController, toolDataSource, layers]);
+
+            const scene = viewer.scene;
+            const ray = scene.camera.getPickRay(event.position);
+            if (!ray) {
+                console.error("Ray를 찾을 수 없습니다.");
+                return;
+            }
+
+            const intersection = scene.globe.pick(ray, scene);
+            if (!intersection) {
+                console.error("지형과 교차점을 찾을 수 없습니다.");
+                return;
+            }
+
+            toolDataSource.entities.removeById("layer-info-point");
+            createPointEntity(toolDataSource, intersection, "", "layer-info-point");
+
+            try {
+                const pickedFeatures = await viewer.imageryLayers.pickImageryLayerFeatures(ray, scene);
+                const processedFeatures = Array.isArray(pickedFeatures)
+                    ? processPickedFeatures(pickedFeatures, layers)
+                    : [];
+
+                const pickedObjects = scene.drillPick(event.position);
+
+                const billboardPick = pickedObjects.find(obj => obj?.id?.properties);
+
+                if (billboardPick?.id?.properties) {
+                    const billboardToFeature = new Cesium.ImageryLayerFeatureInfo();
+                    billboardToFeature.name = billboardPick.id.properties.layerName ?? "";
+                    billboardToFeature.data = {
+                        id: billboardPick.id.properties.layerName ?? "",
+                        properties: billboardPick.id.properties};
+                    processedFeatures.push(billboardToFeature);
+                }
+
+                setSelectedFeatures(processedFeatures);
+            } catch (error) {
+                console.error("피처 정보를 가져오는 중 문제가 발생했습니다.", error);
+            }
+        },
+        [viewer, toolDataSource, layers]
+    );
 
     useEffect(() => {
         if (!viewer) return;

@@ -6,7 +6,6 @@ import {LoadingStateType} from "@/recoils/Spinner.ts";
 import {
     addBillboard, addLabel, createBillboardCollection, createLabelCollection,
 } from "@/services/imageryProviders/providers/loadIconManager.ts";
-import {setupMouseHoverHandler} from "@/services/imageryProviders/providers/loadIconInteraction.ts";
 
 const fetchGeoJson = async (layerName: string): Promise<GeoJSON.FeatureCollection> => {
     const response = await fetch(`${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?service=WFS&version=1.1.1&request=GetFeature&typeName=${layerName}&outputFormat=application/json`);
@@ -46,17 +45,25 @@ export const loadIconLayer = async (
 
             feature.geometry.coordinates.forEach(([longitude, latitude]) => {
                 if (!longitude || !latitude) return;
-
                 const position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
-                const labelText = feature.properties?.명칭 || "";
+                const properties = feature.properties;
+                const labelText = properties?.명칭 || "";
+                if (properties) properties.layerName = layer.name;
 
                 const labelPrimitive = addLabel(labelCollection, position, labelText);
 
-                addBillboard(billboardCollection, position, originalImage, selectedImage, labelPrimitive);
+                addBillboard(billboardCollection, position, originalImage, selectedImage, labelPrimitive, properties);
             });
         });
 
-        globeController.primitiveMap.set(layerId, billboardCollection);
+        globeController.primitiveMap.set(
+            layerId,
+            {
+                billboardCollection: billboardCollection,
+                labelCollection: labelCollection
+            }
+
+        );
 
     } catch (error) {
         console.error("Failed to load WFS data", error);

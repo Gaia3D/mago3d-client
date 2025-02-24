@@ -12,12 +12,12 @@ export const useLayerToggle = (setLoadingState: SetterOrUpdater<LoadingStateType
     return async (layerAsset: UserLayerAsset) => {
         const viewer = globeController?.viewer;
         if (!viewer || viewer.isDestroyed()) return;
-
         if (layerAsset.type === LayerAssetType.Icon) {
             const primitive = globeController.primitiveMap.get(layerAsset.assetId);
 
             if (primitive) {
-                primitive.show = !!layerAsset.visible;
+                primitive.billboardCollection.show = !!layerAsset.visible;
+                primitive.labelCollection.show = !!layerAsset.visible;
             } else {
                 await loadIconLayer(layerAsset, viewer, setLoadingState);
             }

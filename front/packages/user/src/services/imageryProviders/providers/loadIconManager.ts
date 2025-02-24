@@ -1,5 +1,4 @@
 import * as Cesium from "cesium";
-import {Cartesian2} from "cesium";
 
 // 공통 Primitive 생성 함수
 export function createBillboardCollection(viewer: Cesium.Viewer) {
@@ -21,11 +20,12 @@ export function addBillboard(
     originalImage: HTMLImageElement | ImageBitmap | undefined,
     selectedImage: HTMLImageElement | ImageBitmap | undefined,
     labelPrimitive: Cesium.Label,
+    properties: any
 ) {
     return collection.add({
         position,
         image: originalImage,
-        id: { originalImage, selectedImage, label: labelPrimitive },
+        id: { originalImage, selectedImage, label: labelPrimitive, properties: properties },
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         scaleByDistance: new Cesium.NearFarScalar(100000, 1.0, 200000, 0.5),

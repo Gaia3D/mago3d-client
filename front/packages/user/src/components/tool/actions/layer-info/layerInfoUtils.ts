@@ -51,7 +51,7 @@ export const processFeatures = (
         }
 
         return {
-            id: feature.data.id,
+            id: feature.data?.id ?? '',
             name: feature.name ?? '',
             featureGroups: updatedFeatureGroups,
         };
