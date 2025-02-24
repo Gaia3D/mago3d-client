@@ -4,10 +4,7 @@ import {UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {SetterOrUpdater} from "recoil";
 import {LoadingStateType} from "@/recoils/Spinner.ts";
 import {
-    addBillboard,
-    addLabel, addPoint,
-    createBillboardCollection, createLabelCollection,
-    createPointCollection
+    addBillboard, addLabel, createBillboardCollection, createLabelCollection,
 } from "@/services/imageryProviders/providers/loadIconManager.ts";
 import {setupMouseHoverHandler} from "@/services/imageryProviders/providers/loadIconInteraction.ts";
 
@@ -15,7 +12,6 @@ const fetchGeoJson = async (layerName: string): Promise<GeoJSON.FeatureCollectio
     const response = await fetch(`${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?service=WFS&version=1.1.1&request=GetFeature&typeName=${layerName}&outputFormat=application/json`);
     return response.json();
 }
-
 
 export const loadIconLayer = async (
     layer: UserLayerAsset,
@@ -35,9 +31,8 @@ export const loadIconLayer = async (
         Cesium.Resource.fetchImage(selectIconUrl),
     ]);
 
-    const [billboardCollection, pointCollection, labelCollection] = [
+    const [billboardCollection, labelCollection] = [
         createBillboardCollection(viewer),
-        createPointCollection(viewer),
         createLabelCollection(viewer)
     ];
 
@@ -45,7 +40,6 @@ export const loadIconLayer = async (
 
     try {
         const geojson = await fetchGeoJson(layerName);
-        const usePoint = geojson.features.length > 10000;
 
         geojson.features.forEach(feature => {
             if (feature.geometry?.type !== "MultiPoint") return;
@@ -58,18 +52,11 @@ export const loadIconLayer = async (
 
                 const labelPrimitive = addLabel(labelCollection, position, labelText);
 
-                if (usePoint) {
-                    addPoint(pointCollection, position, color, labelPrimitive);
-                }
-
-                addBillboard(billboardCollection, position, originalImage, selectedImage, labelPrimitive, usePoint);
+                addBillboard(billboardCollection, position, originalImage, selectedImage, labelPrimitive);
             });
         });
 
-        globeController.primitiveMap.set(layerId, {
-            billboardCollection,
-            pointCollection: usePoint ? pointCollection : new Cesium.PointPrimitiveCollection(),
-        });
+        globeController.primitiveMap.set(layerId, billboardCollection);
 
     } catch (error) {
         console.error("Failed to load WFS data", error);
@@ -77,5 +64,5 @@ export const loadIconLayer = async (
         requestAnimationFrame(() => setLoadingState({ loading: false, msg: "" }));
     }
 
-    setupMouseHoverHandler(viewer);
+    // setupMouseHoverHandler(viewer);
 };

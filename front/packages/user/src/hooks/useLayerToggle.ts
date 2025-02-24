@@ -17,8 +17,7 @@ export const useLayerToggle = (setLoadingState: SetterOrUpdater<LoadingStateType
             const primitive = globeController.primitiveMap.get(layerAsset.assetId);
 
             if (primitive) {
-                primitive.billboardCollection.show = !!layerAsset.visible;
-                primitive.pointCollection.show = !!layerAsset.visible;
+                primitive.show = !!layerAsset.visible;
             } else {
                 await loadIconLayer(layerAsset, viewer, setLoadingState);
             }

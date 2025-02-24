@@ -32,13 +32,7 @@ export class GlobeController {
   public propPrimitives: Cesium.PrimitiveCollection = new Cesium.PrimitiveCollection();
   private _tilesPrimitives: Cesium.PrimitiveCollection | undefined;
   public pointStackerLayer: Cesium.ImageryLayer | undefined = undefined;
-  public primitiveMap: Map<
-      string,
-      {
-        billboardCollection: Cesium.BillboardCollection;
-        pointCollection: Cesium.PointPrimitiveCollection;
-      }
-  > = new Map();
+  public primitiveMap: Map<string, Cesium.BillboardCollection > = new Map();
 
 
 
