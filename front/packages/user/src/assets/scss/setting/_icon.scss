@@ -68,4 +68,12 @@
   &.view {
     @include icon-button(-109px, -4px);
   }
+  &.legend {
+    background-image: url(../images/basic-icon.svg);
+    background-position: -260px -70px;
+    background-size: 435px 800px;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+  }
 }

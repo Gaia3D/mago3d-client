@@ -16,6 +16,7 @@ import CameraInfo from "@/components/tool/actions/CameraInfo.tsx";
 import LayerInfo from "@/components/tool/actions/LayerInfo.tsx";
 import {useTerrainTrans} from "@/components/tool/actions/useTerrainTrans.ts";
 import Watercourse from "@/components/tool/actions/Watercourse.tsx";
+import Legend from "@/components/Legend.tsx";
 
 export interface ToolConfig {
     id: string;
@@ -139,7 +140,15 @@ export const useToolConfig = (): ToolConfig[] => {
                 group: "terrain",
                 component: <Watercourse />,
                 helper: "물줄기가 표시됩니다.",
-            }, {
+            },
+            {
+                id: "legend",
+                type: "toggle",
+                title: "범례",
+                component: <Legend />,
+                helper: "범례를 표시합니다."
+            },
+            {
                 id: "full-screen",
                 type: "default",
                 title: "전체 화면",

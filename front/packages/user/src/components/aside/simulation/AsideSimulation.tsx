@@ -30,6 +30,22 @@ const layers: LayersData[] = [
 		min: 0,
 		max: 165,
 	},
+	{
+		caseName: "case3",
+		bbox: [128.50204047214558, 36.921778086241304, 128.50677110705257, 36.92821933386286],
+		layerName: "mago3d:install_before",
+		interval: 1,
+		min: 0,
+		max: 90,
+	},
+	{
+		caseName: "case4",
+		bbox: [128.50204047214558, 36.921778086241304, 128.50677110705257, 36.92821933386286],
+		layerName: "mago3d:install_after",
+		interval: 1,
+		min: 0,
+		max: 45,
+	},
 ];
 
 export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
@@ -133,7 +149,12 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 				setTimeout(fadeOut, selectedInterval);
 				return;
 			}
-			layer.alpha = alpha += 0.005;
+			//layer.alpha = alpha += 0.005;
+			if (!selectedLayer?.max || selectedLayer?.interval) {
+				layer.alpha = alpha += 0.005;
+			} else {
+				layer.alpha = alpha += 1 / ((selectedLayer?.max + 1) / selectedLayer?.interval);
+			}
 			requestAnimationFrame(fadeIn);
 		};
 
@@ -142,7 +163,12 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 				layer.show = false;
 				return;
 			}
-			layer.alpha = alpha -= 0.005;
+			//layer.alpha = alpha -= 0.005;
+			if (!selectedLayer?.max || selectedLayer?.interval) {
+				layer.alpha = alpha -= 0.005;
+			} else {
+				layer.alpha = alpha -= 1 / ((selectedLayer?.max + 1) / selectedLayer?.interval);
+			}
 			requestAnimationFrame(fadeOut);
 		};
 
@@ -188,18 +214,24 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 				<div className="content--wrapper">
 					<div className="simulation-list">
 						<label>대상지역</label>
+						<span>경북 영주 풍기읍 삼가리 산 22-1임 일대</span>
+					</div>
+					<div className="simulation-list">
+						<label>모의실험</label>
 						<select style={{width: "240px"}} className="custom-select" id="simulationAreaSelectBox"
-								value={selectedLayer?.caseName || ""}
-								onChange={selectLayer}>
+										value={selectedLayer?.caseName || ""}
+										onChange={selectLayer}>
 							<option value="" hidden>시뮬레이션 지역 선택</option>
-							<option value="case1">산사태 15초(경북 영주 풍기읍 삼가리 산 22-1임 일대)</option>
-							<option value="case2">산사태 1초(경북 영주 풍기읍 삼가리 산 22-1임 일대)</option>
+							<option value="case1">산사태 15초</option>
+							<option value="case2">산사태 1초</option>
+							<option value="case3">사방댐 설치 전</option>
+							<option value="case4">사방댐 설치 후</option>
 						</select>
 					</div>
 					<div className="simulation-list">
 						<label>간격</label>
 						<select className="custom-select" id="simulationIntervalSelectBox" value={selectedInterval}
-								onChange={(e) => setSelectedInterval(Number(e.target.value))}>
+										onChange={(e) => setSelectedInterval(Number(e.target.value))}>
 							<option value={500}>0.5초</option>
 							<option value={1000}>1초</option>
 							<option value={3000}>3초</option>

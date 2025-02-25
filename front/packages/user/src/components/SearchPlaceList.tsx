@@ -31,6 +31,7 @@ interface ErrorResponse {
 export const SearchPlaceList = () => {
     const {globeController} = useGlobeController();
 
+    const viewer = globeController?.viewer;
     const [visibleQuery, setVisibleQuery] = useState('');
     const [places, setPlaces] = useState<Place[]>([]);
     const [page, setPage] = useState<number>(1);
@@ -126,8 +127,7 @@ export const SearchPlaceList = () => {
 
     useEffect(() => {
         if (debouncedValue === '') {
-            setPlaces([]);
-            setErrorMessage(null);
+            emptySearchResults();
             return;
         }
         fetchPlaces(1);
@@ -136,11 +136,16 @@ export const SearchPlaceList = () => {
     const searchPlace = () => {
         resetState();
         if (debouncedValue === '') {
-            setPlaces([]);
-            setErrorMessage(null);
+            emptySearchResults();
             return;
         }
         fetchPlaces(1);
+    }
+
+    const emptySearchResults = () => {
+        setPlaces([]);
+        setErrorMessage(null);
+        removeSearchEntity();
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -158,25 +163,70 @@ export const SearchPlaceList = () => {
     const handlePlaceClick = (x: number, y: number, title: string) => {
         setVisibleQuery(title);  // 입력창에 제목 설정
         // 검색 결과를 숨김
-        let viewer = globeController?.viewer;
+        const position = Cesium.Cartesian3.fromDegrees(parseFloat(x.toString()), parseFloat(y.toString()), 2000.0);
         viewer?.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(parseFloat(x.toString()), parseFloat(y.toString()), 700.0)
+            destination: position,
+            complete: () => {
+                setShowResults(false); // 검색 결과 숨김
+                if (!viewer) return;
+                // 기존 마커 제거
+                removeSearchEntity();
+                // 새로운 마커 추가
+                viewer.entities.add({
+                    id: "selected-location",
+                    position,
+                    point: {
+                        pixelSize: 10,
+                        color: Cesium.Color.RED,
+                        outlineColor: Cesium.Color.WHITE,
+                        outlineWidth: 2,
+                        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    },
+                    label: {
+                        text: title,
+                        font: "14px NanumSquareNeo-r",
+                        fillColor: Cesium.Color.WHITE,
+                        outlineColor: Cesium.Color.BLACK,
+                        outlineWidth: 2,
+                        showBackground: true,
+                        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                        pixelOffset: new Cesium.Cartesian2(0, -10),
+                        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    },
+                });
+            },
         });
 
-        // 카메라 이동 완료 후 상태 업데이트
-        const handler = viewer?.camera.changed.addEventListener(() => {
-            setShowResults(false);
-        });
-
-        // Remove event listener once it's done
-        if (handler) {
-            viewer?.camera.changed.removeEventListener(handler);
-        }
+        // // 카메라 이동 완료 후 상태 업데이트
+        // const handler = viewer?.camera.changed.addEventListener(() => {
+        //     setShowResults(false);
+        // });
+        //
+        // // Remove event listener once it's done
+        // if (handler) {
+        //     viewer?.camera.changed.removeEventListener(handler);
+        // }
     };
 
     // Input 클릭 시 검색 결과를 다시 보여줌
     const handleInputClick = () => {
         setShowResults(true);  // 검색 결과를 다시 보여줌
+    };
+
+    const cancelSearch = () => {
+        // setShowResults(false);
+        setVisibleQuery('');
+        removeSearchEntity();
+    };
+
+    const removeSearchEntity = () => {
+        const existingEntity = viewer?.entities.getById("selected-location");
+        if (existingEntity) {
+            viewer?.entities.remove(existingEntity);
+        }
     };
 
     useEffect(() => {
@@ -213,58 +263,59 @@ export const SearchPlaceList = () => {
     }, []);
 
     return (
-        <div className="location-search">
-            <input
-                type="text"
-                id="location-searchInput"
-                value={visibleQuery}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                onClick={handleInputClick}  // Input 클릭 시 검색 결과 다시 보여줌
-                autoComplete="off"
-                placeholder="입력해주세요"
-            />
-            <button type="button" className="button common-search" onClick={searchPlace}></button>
-            {/*<button type="button" className="button detail-search"></button>*/}
-            {/*<button type="button" className="button bookmarks"></button>*/}
+      <div className="location-search">
+          <input
+            type="text"
+            id="location-searchInput"
+            value={visibleQuery}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onClick={handleInputClick}  // Input 클릭 시 검색 결과 다시 보여줌
+            autoComplete="off"
+            placeholder="입력해주세요"
+          />
+          <button type="button" className="button cancel-search" onClick={cancelSearch}></button>
+          <button type="button" className="button common-search" onClick={searchPlace}></button>
+          {/*<button type="button" className="button detail-search"></button>*/}
+          {/*<button type="button" className="button bookmarks"></button>*/}
 
-            {/* 검색 결과가 표시될 때만 UL 출력 */}
-            {showResults && (
-                <div className="location-search-result">
-                    <ul className="location-search-result-list">
-                        {places.length > 0 ? (
-                            places.map((place: Place, index: number | undefined) => (
-                                <li
-                                    key={index}
-                                    ref={index === places.length - 1 ? lastItemRef : null}
-                                    onClick={() => {
-                                        if (place.x !== undefined && place.y !== undefined) {
-                                            handlePlaceClick(place.x, place.y, place.title)
-                                        } else {
-                                            console.error('No x, y coordinates found for this place:', place);
-                                        }
-                                    }}
-                                >
-                                    <div className={"result"}>
-                                        <div className="title">
-                                            <span className={"icon-gis"}></span>
-                                            <span className="keyword">{place.title}</span>
-                                        </div>
-                                        <span className="address">{place.address}</span>
-                                    </div>
-                                </li>
-                            ))
-                        ) : (
-                            errorMessage && <li>
-                                <div className="result selected">
-                                    <span className="title">{errorMessage}</span>
+          {/* 검색 결과가 표시될 때만 UL 출력 */}
+          {showResults && (
+            <div className="location-search-result">
+                <ul className="location-search-result-list">
+                    {places.length > 0 ? (
+                      places.map((place: Place, index: number | undefined) => (
+                        <li
+                          key={index}
+                          ref={index === places.length - 1 ? lastItemRef : null}
+                          onClick={() => {
+                              if (place.x !== undefined && place.y !== undefined) {
+                                  handlePlaceClick(place.x, place.y, place.title)
+                              } else {
+                                  console.error('No x, y coordinates found for this place:', place);
+                              }
+                          }}
+                        >
+                            <div className={"result"}>
+                                <div className="title">
+                                    <span className={"icon-gis"}></span>
+                                    <span className="keyword">{place.title}</span>
                                 </div>
-                            </li>
-                        )}
-                        {loading && <li>로딩 중...</li>}
-                    </ul>
-                </div>
-            )}
-        </div>
+                                <span className="address">{place.address}</span>
+                            </div>
+                        </li>
+                      ))
+                    ) : (
+                      errorMessage && <li>
+                          <div className="result selected">
+                              <span className="title">{errorMessage}</span>
+                          </div>
+                      </li>
+                    )}
+                    {loading && <li>로딩 중...</li>}
+                </ul>
+            </div>
+          )}
+      </div>
     );
 };

@@ -42,7 +42,7 @@ export function addLabel(
     return collection.add({
         position,
         text: labelText,
-        font: "14px monospace",
+        font: "14px NanumSquareNeo-r",
         showBackground: true,
         horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
         verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
