@@ -332,13 +332,13 @@
     border-radius: 8px;
     /*background: #fff;*/
     /*background-color: var(--background-color-more-light);*/
-    background-color: rgba(87, 87, 87 ,1);
+    background-color: var(--background-color-more-light-03)
   }
   .pop-layer-legend-content p {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     /*color: #fff;*/
-    color: var(--text-color-light);
+    color: var(--text-white-color);
     margin: 5px 0;
   }
   .pop-layer-legend-img-wrap {
@@ -355,6 +355,36 @@
     /*border-radius: 5px;*/
     /*box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);*/
   }
+  .pop-layer-legend-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-width: 200px;
+  }
+  .pop-layer-legend-wrap .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pop-layer-legend-wrap .legend-item span {
+    font-size: 12px;
+    /*font-weight: bold;*/
+    /*color: #fff;*/
+    color: var(--text-white-color);
+  }
+  .pop-layer-legend-wrap .color-box {
+    width: 16px;
+    height: 16px;
+    border: 1px solid black;
+  }
+  /* 범례 색상 */
+  .red { background-color: red; }
+  .yellow { background-color: gold; }
+  .light-green { background-color: lightgreen; }
+  .sky-blue { background-color: deepskyblue; }
+  .blue { background-color: blue; }
+  .brown { background-color: brown; }
+  .bright-yellow { background-color: yellow; }
   /* 2025.02.25 정연화 추가 끝 */
 
   .pop-layer-sub{
