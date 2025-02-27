@@ -5,7 +5,7 @@ import {UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 export const loadVworldWmsLayer = async (layer: UserLayerAsset, viewer: Cesium.Viewer) => {
     const imageryLayer = new Cesium.ImageryLayer(
         new Cesium.WebMapServiceImageryProvider({
-            url: `/user/vworld`,
+            url: `/user/vworld/wms`,
             layers: layer.properties.layers,
             minimumLevel: 0,
             parameters: {
