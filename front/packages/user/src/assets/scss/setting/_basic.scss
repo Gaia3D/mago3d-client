@@ -899,7 +899,7 @@ ul.prop {
     }
     &.success {
         background-color:var(--success-color);
-        @include icon-button(-257px, -177px);
+        @include icon-button(-257px, -178px);
         color:var(--text-white-color);
     }
     &.fail {
@@ -2047,16 +2047,16 @@ ul.prop {
 
 /* 스피너 스타일 */
 .spinner-full {
-    border: 3px solid rgba(201, 231, 255, 0.2);
-    border-top: 3px solid var(--primary-color);
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    animation: spin-full 0.9s linear infinite;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+        border: 5px solid rgba(201, 231, 255, 0.2);
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        animation: spin-full 0.9s linear infinite;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);        
 }
 @keyframes spin-full {
     0% {

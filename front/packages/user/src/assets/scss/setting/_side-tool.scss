@@ -1,5 +1,7 @@
 .bg-gray {
-  background-color: #f1f1f1;
+  //background-color: #f1f1f1;
+  background:rgb(46, 46, 46);
+  color:white;  
 }
 
 .fw-bold {
@@ -15,10 +17,12 @@
 }
 
 .ol-gray-container {
-  outline: 1px solid #cccccc;
+  //outline: 1px solid #cccccc;
+  //border:1px solid rgb(78, 78, 78);
+  font-family: 'NanumSquareNeo-l';
 
   div {
-    outline: 1px solid #cccccc;
+    //outline: 1px solid #757575;
     outline-offset: -1px;
   }
 }
@@ -57,7 +61,8 @@
     margin-bottom: 4px;
 
     &.selected {
-      outline:1px solid white;      
+      outline:1px solid rgb(83, 83, 83);    
+      border:0;
       border-radius: 10px;   
       .tool-button {
         background-color: var(--toolbox-select-color);
@@ -107,36 +112,45 @@
   .feature-container {
     display: flex;
     flex-direction: column;
-
+    padding-bottom:7px;
     .feature-group {
       display: flex;
-
+      color:white;
+      padding:10px ;
       .feature-name {
         width: 100px;
         display: flex;
         justify-content: center;
         align-items: center;
+        border:1px solid rgb(83, 83, 83);
       }
 
       .properties-container {
         display: flex;
         flex-wrap: wrap;
         width: 400px;
+        border-top:1px solid rgb(83, 83, 83);
+        border-right:1px solid rgb(83, 83, 83);
+        border-bottom:1px solid rgb(83, 83, 83);
       }
 
       .properties-item {
         flex-grow: 1;
         width: 25%;
-
+        outline:none;
         .properties-label {
           text-align: center;
           padding: 2px;
+          //background:#292929;
+          border-right:1px solid rgb(83, 83, 83);
         }
-
         .properties-value {
           text-align: center;
           padding: 2px;
-          background-color: white;
+          color:white;
+          border-right:1px solid rgb(83, 83, 83);
+          //background-color: rgb(27, 27, 27);
+         // border-bottom:1px solid rgb(124, 124, 124);
         }
 
       }
@@ -169,17 +183,22 @@
     align-items: center;
     justify-content: space-between;
     background-color: var(--nav-color);
+    font-size:15px;
     color: white;
-    padding: 5px 10px;
+    padding: 5px 10px 7px 10px;
     user-select: none;
+    border-radius:5px;
+    font-family: 'NanumSquareNeo-r';
   }
 
   .feature-name-toggle:hover {
-    background-color: #353535;
+    background-color: #2c2c2c;
   }
 
   .dropdown-icon {
     margin-left: 10px;
+    font-size:12px;
+    color:silver;
     transition: transform 0.2s ease-in-out;
   }
 
