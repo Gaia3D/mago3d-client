@@ -43,6 +43,7 @@
     "immer": "^10.0.3",
     "keycloak-js": "^20.0.5",
     "lodash": "^4.17.21",
+    "mago-cesium-tools": "^0.0.20",
     "mgrs": "^2.0.0",
     "oidc-client-ts": "^2.4.0",
     "proj4": "^2.10.0",
