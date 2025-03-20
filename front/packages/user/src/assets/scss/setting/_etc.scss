@@ -178,6 +178,9 @@
     top:52px;
     .menu {
       user-select: none;
+      &:hover {
+        cursor: pointer;;
+      }
       .layer-number {
         display: flex;
         justify-content: center;

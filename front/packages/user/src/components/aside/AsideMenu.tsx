@@ -36,6 +36,7 @@ export const AsideMenu = () => {
       {className: "assets", text: "assets"},
       {className: "layers", text: "layers"},
       {className: "simulation", text: "simulation"},
+      {className: "water-simulation", text: "water-simulation"},
       /*{className: "terrains", text: "terrains"},
       {className: "props", text: "props"},*/
     ];
