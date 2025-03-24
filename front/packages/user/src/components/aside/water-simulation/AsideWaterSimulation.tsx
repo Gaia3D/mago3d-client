@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { AsideDisplayProps } from "@/components/aside/AsidePanel";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import * as Cesium from "cesium";
@@ -23,6 +23,8 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
   const waterGeojson = useLoadWaterGeojson();
 
+  const cancelSourcesRef = useRef<() => void>(() => {});
+
   const setLonLat = (lon: number, lat: number) => {
     setOptions((prev) => ({
       ...prev,
@@ -42,16 +44,27 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
     }));
   };
 
+  const resetSimulation = () => {
+    cancelSourcesRef.current();
+    waterDataSource.entities.removeAll();
+    setOptions((prev) => ({
+      ...prev,
+      lon: 0,
+      lat: 0,
+    }));
+  };
+
   useEffect(() => {
     if (!viewer) return;
 
     const { lon, lat } = waterDefaultOptions;
+    if (!lon || !lat) return;
     const cameraTarget = Cesium.Cartesian3.fromDegrees(lon, lat, 2000);
     viewer.camera.flyTo({ destination: cameraTarget, duration: 0 });
   }, [viewer]);
 
   useEffect(() => {
-    if (!viewer || !waterGeojson) return;
+    if (!viewer || !waterGeojson || !options.lon || !options.lat) return;
 
     waterDataSource.entities.removeAll();
 
@@ -79,14 +92,24 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
   useEffect(() => {
     if (!viewer || !sourceData.length) return;
-    const addSources = useAddSources(viewer, waterDataSource, sourceData, options);
-    addSources();
-  }, [sourceData]);
 
+    const { addSources, cancelSources } = useAddSources(viewer, waterDataSource, sourceData, options);
+    cancelSourcesRef.current = cancelSources;
+    addSources();
+
+    return () => cancelSources();
+  }, [sourceData]);
   return (
     <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
       <div className="side-bar water-simulation">
-        <button onClick={() => setSelectingPosition(true)}>Select Position</button>
+        <div>
+          <button onClick={() => setSelectingPosition(true)}>Select Position</button>
+        </div>
+        <div>
+          <button>start</button>
+          <button>stop</button>
+          <button onClick={resetSimulation}>reset</button>
+        </div>
         <SelectInput label={"Grid Size"} name={"gridSize"} value={options.gridSize}
                      options={[16, 32, 64, 128, 256, 512, 1024]} onChange={handleSelectChange}/>
         <SelectInput label={"Cell Size"} name={"cellSize"} value={options.cellSize} options={[1, 2, 4, 8]}

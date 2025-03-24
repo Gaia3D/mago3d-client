@@ -2,8 +2,8 @@ import * as Cesium from "cesium";
 import {waterSimulationOptionsType} from "@/components/aside/water-simulation/utils/types.ts";
 
 export const waterDefaultOptions: waterSimulationOptionsType = {
-  lon: 128.895788,
-  lat: 36.874277,
+  lon: 0,
+  lat: 0,
   gridSize: 256,
   cellSize: 4,
   waterSourceAmount: 10,

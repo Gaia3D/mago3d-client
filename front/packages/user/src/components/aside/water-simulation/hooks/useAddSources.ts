@@ -1,7 +1,7 @@
 import * as Cesium from "cesium";
 import { calcExtent } from "../utils/calcExtent";
-import {waterSimulationOptionsType} from "@/components/aside/water-simulation/utils/types.ts";
-import {BBox, Feature, Geometry, Properties} from "@turf/turf";
+import { waterSimulationOptionsType } from "@/components/aside/water-simulation/utils/types.ts";
+import { BBox, Feature, Geometry, Properties } from "@turf/turf";
 
 export const useAddSources = (
   viewer: Cesium.Viewer,
@@ -12,8 +12,14 @@ export const useAddSources = (
   const extent = calcExtent(options);
   const bbox: BBox = [extent.west, extent.south, extent.east, extent.north];
 
+  let isCancelled = false;
+
   const addSources = async () => {
+    isCancelled = false; // 초기화
+
     for (const feature of sourceData) {
+      if (isCancelled) break;
+
       const coordsArray = feature.geometry?.coordinates?.[0];
       if (!coordsArray || !Array.isArray(coordsArray)) continue;
 
@@ -28,9 +34,12 @@ export const useAddSources = (
       const [lon, lat] = coords;
       const positionCartographic = Cesium.Cartographic.fromDegrees(lon, lat);
       const positions = await Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, [positionCartographic]);
-      const height = positions[0]?.height ?? 0;
 
+      if (isCancelled) break;
+
+      const height = positions[0]?.height ?? 0;
       const position = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+
       dataSource.entities.add({
         position,
         cylinder: {
@@ -44,9 +53,12 @@ export const useAddSources = (
     }
   };
 
-  return addSources;
-};
+  const cancelSources = () => {
+    isCancelled = true;
+  };
 
+  return { addSources, cancelSources };
+};
 // import * as Cesium from "cesium";
 // import { calcExtent } from "../utils/calcExtent";
 // import { waterSimulationOptionsType } from "@/components/aside/water-simulation/utils/types";
