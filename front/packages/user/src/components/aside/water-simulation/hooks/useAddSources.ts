@@ -5,6 +5,7 @@ import {BBox, Feature, Geometry, Properties} from "@turf/turf";
 
 export const useAddSources = (
   viewer: Cesium.Viewer,
+  dataSource: Cesium.DataSource,
   sourceData: Feature<Geometry | Properties>[],
   options: waterSimulationOptionsType
 ) => {
@@ -30,7 +31,7 @@ export const useAddSources = (
       const height = positions[0]?.height ?? 0;
 
       const position = Cesium.Cartesian3.fromDegrees(lon, lat, height);
-      viewer.entities.add({
+      dataSource.entities.add({
         position,
         cylinder: {
           length: 30,
@@ -81,7 +82,7 @@ export const useAddSources = (
 //         const height = positions[0]?.height ?? 0;
 //         const position = Cesium.Cartesian3.fromDegrees(lon, lat, height);
 //
-//         viewer.entities.add({
+//         dataSource.entities.add({
 //           position,
 //           cylinder: {
 //             length: 30,

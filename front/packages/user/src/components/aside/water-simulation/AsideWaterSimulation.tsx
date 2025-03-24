@@ -10,15 +10,37 @@ import {waterSimulationOptionsType} from "@/components/aside/water-simulation/ut
 import {waterDefaultOptions} from "@/components/aside/water-simulation/utils/defaultOptions.ts";
 import {Feature, Geometry, Properties} from "@turf/turf";
 import {useLoadWaterGeojson} from "@/components/aside/water-simulation/hooks/useLoadWaterGeojson.ts";
+import SelectInput from "@/components/aside/water-simulation/components/SelectInput.tsx";
+import {useWaterSelectPosition} from "@/components/aside/water-simulation/hooks/useWaterSelectPosition.ts";
 
 const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
   const { globeController } = useGlobeController();
-  const { viewer } = globeController;
+  const { viewer, waterDataSource } = globeController;
 
   const [options, setOptions] = useState<waterSimulationOptionsType>(waterDefaultOptions);
   const [sourceData, setSourceData] = useState<Feature<Geometry | Properties>[]>([]);
+  const [selectingPosition, setSelectingPosition] = useState(false);
 
   const waterGeojson = useLoadWaterGeojson();
+
+  const setLonLat = (lon: number, lat: number) => {
+    setOptions((prev) => ({
+      ...prev,
+      lon,
+      lat,
+    }));
+    setSelectingPosition(false); // 선택 종료
+  };
+  useWaterSelectPosition(selectingPosition, setLonLat);
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    setOptions((prev) => ({
+      ...prev,
+      [name]: parseFloat(value), // gridSize, cellSize는 number 타입
+    }));
+  };
 
   useEffect(() => {
     if (!viewer) return;
@@ -30,6 +52,8 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
   useEffect(() => {
     if (!viewer || !waterGeojson) return;
+
+    waterDataSource.entities.removeAll();
 
     const extent = calcExtent(options);
     const positions = createRectanglePositions(extent);
@@ -43,7 +67,7 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
     const filteredFeatures = filterWaterFeatures(waterGeojson, bbox);
     setSourceData(filteredFeatures);
 
-    viewer.entities.add({
+    waterDataSource.entities.add({
       polyline: {
         positions,
         width: 2.0,
@@ -51,17 +75,22 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
         clampToGround: true,
       },
     });
-  }, [viewer, waterGeojson, options]);
+  }, [viewer, waterGeojson, options.lon, options.lat, options.gridSize, options.cellSize]);
 
   useEffect(() => {
     if (!viewer || !sourceData.length) return;
-    const addSources = useAddSources(viewer, sourceData, options);
+    const addSources = useAddSources(viewer, waterDataSource, sourceData, options);
     addSources();
   }, [sourceData]);
 
   return (
     <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
       <div className="side-bar water-simulation">
+        <button onClick={() => setSelectingPosition(true)}>Select Position</button>
+        <SelectInput label={"Grid Size"} name={"gridSize"} value={options.gridSize}
+                     options={[16, 32, 64, 128, 256, 512, 1024]} onChange={handleSelectChange}/>
+        <SelectInput label={"Cell Size"} name={"cellSize"} value={options.cellSize} options={[1, 2, 4, 8]}
+                     onChange={handleSelectChange}/>
       </div>
     </div>
   );

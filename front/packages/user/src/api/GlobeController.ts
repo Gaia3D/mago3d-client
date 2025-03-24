@@ -28,6 +28,7 @@ export class GlobeController {
   public mapnoteDataSource: Cesium.CustomDataSource = new Cesium.CustomDataSource("mapnoteDataSource");
   public timeseriesDataSource: Cesium.CustomDataSource = new Cesium.CustomDataSource("timeseriesDataSource");
   public toolDataSource: Cesium.CustomDataSource = new Cesium.CustomDataSource("toolDataSource");
+  public waterDataSource: Cesium.CustomDataSource = new Cesium.CustomDataSource("waterDataSource");
   public toolPrimitives: Cesium.PrimitiveCollection = new Cesium.PrimitiveCollection();
   public propPrimitives: Cesium.PrimitiveCollection = new Cesium.PrimitiveCollection();
   private _tilesPrimitives: Cesium.PrimitiveCollection | undefined;
@@ -73,6 +74,7 @@ export class GlobeController {
       this.viewer?.dataSources.add(this.mapnoteDataSource);
       this.viewer?.dataSources.add(this.timeseriesDataSource);
       this.viewer?.dataSources.add(this.toolDataSource);
+      this.viewer?.dataSources.add(this.waterDataSource);
     });
   }
 
