@@ -438,8 +438,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       mago-cesium-tools:
-        specifier: ^0.0.23
-        version: 0.0.23(cesium@1.114.0)(react@18.2.0)(vite-plugin-cesium@1.2.22(cesium@1.114.0)(rollup@3.29.4)(vite@4.5.2(@types/node@20.11.16)(sass@1.77.8)))(vue@3.5.13(typescript@5.3.3))
+        specifier: ^0.0.25
+        version: 0.0.25(cesium@1.114.0)(react@18.2.0)(vite-plugin-cesium@1.2.22(cesium@1.114.0)(rollup@3.29.4)(vite@4.5.2(@types/node@20.11.16)(sass@1.77.8)))(vue@3.5.13(typescript@5.3.3))
       mgrs:
         specifier: ^2.0.0
         version: 2.0.0
@@ -4248,8 +4248,8 @@ packages:
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
-  mago-cesium-tools@0.0.23:
-    resolution: {integrity: sha512-H6NPB1WHZ2GTXdkPVKDqx3j0y43VVt+eEp/Gv70U51AiwryZD/Q+NVgPphEVXBs82wHRQylmo3dek6nOyNiGtg==}
+  mago-cesium-tools@0.0.25:
+    resolution: {integrity: sha512-oC5JOsDH4r6cLGb736yxjr+V/2ziKum5DZ0ptlUJwb39M7sVU+aBIu98r6/ZRmxrs5kAthAeaeUzg+jwN7QhtQ==}
     peerDependencies:
       cesium: ^1.114.0
       react: ^18.0.0
@@ -10818,7 +10818,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  mago-cesium-tools@0.0.23(cesium@1.114.0)(react@18.2.0)(vite-plugin-cesium@1.2.22(cesium@1.114.0)(rollup@3.29.4)(vite@4.5.2(@types/node@20.11.16)(sass@1.77.8)))(vue@3.5.13(typescript@5.3.3)):
+  mago-cesium-tools@0.0.25(cesium@1.114.0)(react@18.2.0)(vite-plugin-cesium@1.2.22(cesium@1.114.0)(rollup@3.29.4)(vite@4.5.2(@types/node@20.11.16)(sass@1.77.8)))(vue@3.5.13(typescript@5.3.3)):
     dependencies:
       cesium: 1.114.0
       jsdom: 26.0.0
