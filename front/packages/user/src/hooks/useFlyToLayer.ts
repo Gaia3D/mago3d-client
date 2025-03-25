@@ -94,6 +94,21 @@ export const useFlyToLayer = () => {
             }
 
             case LayerAssetType.Cog:
+            // TODO: 임시 코드
+            // eslint-disable-next-line no-fallthrough
+            case LayerAssetType.F4D: {
+                const { properties } = asset;
+                const { resource } = properties;
+                const { bounds } = resource;
+                const { minx, miny, maxx, maxy } = bounds;
+                console.info(bounds);
+                const extent = Cesium.Rectangle.fromDegrees(minx, miny, maxx, maxy);
+                viewer.camera.flyTo({
+                    destination: extent,
+                    duration: 2,
+                });
+                return;
+            }
             default: {
                 alert("허용되지 않는 형태입니다.");
                 return;

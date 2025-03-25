@@ -100,6 +100,10 @@
         //border:1px solid var(--border-light-color) !important;
         @include icon-button(-746px, -3px);
       }
+      &.ur, &.ur-PK {
+        //border:1px solid var(--border-light-color) !important;
+        @include icon-button(-742px, -192px);
+      }
     }
     .pop-layer {
       position: absolute;
