@@ -96,7 +96,7 @@ export const List = () => {
                   {t("user-name")} <a className="sort"></a>
                 </th>
                 <th>{t("rank")}</th>
-                <th>{t("division-unit")}</th>
+                <th>{t("division")}</th>
                 <th>{t("state")}</th>
                 <th>{t("edit")}</th>
                 <th>{t("delete")}</th>

@@ -65,8 +65,8 @@ export const EnabledAndExcel = ({fetchFunc}:
           return {
             [t("user-id")]: user.username,
             [t("user-name")]: user.firstName,
-            [t("division-unit")]: division + "/" + unit,
-            [t("user-status")]: user.enabled,
+            [t("division")]: division + "/" + unit,
+            [t("use-status")]: user.enabled,
             [t("join-date")]: user.createdAt,
           };
         });

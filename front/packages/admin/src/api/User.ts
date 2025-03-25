@@ -9,23 +9,18 @@ import {useTranslation} from "react-i18next";
 export const useFormSchemas = () => {
   const { t } = useTranslation();
 
-  const username = z.string().trim().min(1, t('validation.id'))
-      .regex(usernameRegex, t('validation.id-regex'));
-  const groups = z.string().trim().min(1, t('required.groups'));
+  const username = z.string().trim().min(1, t('validation.id'));
+  const groups = z.string().trim().optional();
   const firstName = z.string().min(1, t('validation.first-name'));
   const email = z.string().min(1, t('validation.email')).email(t('validation.email-regex'));
   const enabled = z.boolean().optional();
   const attributes = z.object({
     phone: z.string().regex(phoneRegex, t('validation.phone')),
     unit: z.string().trim().min(1, t('validation.unit')),
-    division: z.string({
-      required_error: t('validation.division')
-    }),
     level: z.string().optional()
   }).required({
     phone: true,
-    unit: true,
-    division: true
+    unit: true
   });
 
   const updateUserForm = z.object({
@@ -84,7 +79,6 @@ export const createUserFormToUserRepresentation = (form: CreateUserForm): UserRe
     email: form.email,
     attributes: {
       'phone': form.attributes.phone,
-      'division': form.attributes.division,
       'unit': form.attributes.unit,
       'level': form.attributes.level,
     }
