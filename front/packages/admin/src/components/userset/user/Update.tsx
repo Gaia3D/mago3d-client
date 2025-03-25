@@ -32,7 +32,6 @@ export const Update = ({id}: { id: string }) => {
       enabled: user?.enabled ?? false,
       attributes: {
         phone: user?.attributes?.phone?.[0] ?? '',
-        division: user?.attributes?.division?.[0] ?? 'army',
         unit: user?.attributes?.unit?.[0] ?? '',
         level: user?.attributes?.level?.[0] ?? ''
       }
@@ -79,7 +78,7 @@ export const Update = ({id}: { id: string }) => {
         <h2>{t("update-user")}</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="register">
-            <label htmlFor="user-create-username">{t("user-id-army-number")}</label>
+            <label htmlFor="user-create-username">{t("user-id")}</label>
             <input type="text" id="user-update-username"  {...register("username")} readOnly disabled/>
 
             <label htmlFor="user-create-groups">{t("user-group")}</label>
@@ -95,7 +94,7 @@ export const Update = ({id}: { id: string }) => {
             <input type="text" id="user-update-firstName" {...register("firstName")} />
 
             {errors.email && <div className="input-error">{errors.email.message}</div>}
-            <label htmlFor="user-create-email">{t("army-email")}</label>
+            <label htmlFor="user-create-email">{t("email")}</label>
             <input type="email" id="user-update-email" {...register("email")}/>
 
             {(errors.attributes?.phone?.message && typeof errors.attributes?.phone?.message === 'string')
@@ -103,16 +102,8 @@ export const Update = ({id}: { id: string }) => {
             <label htmlFor="user-create-attributes.phone">{t("phone-number")}</label>
             <input type="text" id="user-update-attributes.phone" {...register("attributes.phone")}/>
 
-            {errors.attributes?.division && <div className="input-error">{errors.attributes.division.message}</div>}
             {errors.attributes?.unit && <div className="input-error">{errors.attributes.unit.message}</div>}
-            <label htmlFor="user-create-attributes.division">{t("division-unit")}</label>
-            <select id="user-update-attributes.division" {...register("attributes.division")}>
-              <option value="army">{t("army")}</option>
-              <option value="navy">{t("navy")}</option>
-              <option value="airforce">{t("airforce")}</option>
-              <option value="marines">{t("marines")}</option>
-              <option value="personnel">{t("division")}</option>
-            </select>
+            <label htmlFor="user-create-attributes.division">{t("division")}</label>
             <input type="text" {...register("attributes.unit")} id="user-update-attributes.unit"/>
 
             <label>{t("rank")}</label>

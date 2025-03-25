@@ -37,7 +37,7 @@ export const ListItem = (props: { key: string, user: FragmentType<typeof UserLis
       <td>{username}</td>
       <td>{firstName ?? ''}</td>
       <td>{properties?.level?.length > 0 ? t(properties.division) : ''}</td>
-      <td>{!properties ? t('division-blank') : `${t(properties.division?.length > 0 ? (properties.division[0]).toLowerCase() : 'division-blank')} ${properties.unit?.length > 0 ? properties.unit[0] : ''}`}</td>
+      <td>{!properties ? t('division-blank') : `${properties.unit?.length > 0 ? properties.unit[0] : ''}`}</td>
       <td>{enabled ? t('using') : t('stop-using')}</td>
       <td>
           <button type="button" className="btn-s-edit" onClick={updateUser}>{t('edit')}</button>

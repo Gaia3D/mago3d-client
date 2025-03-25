@@ -132,7 +132,7 @@ export const Create = () => {
                    value={duplicatedCheck?.current?.value ? duplicatedCheck.current.value : 'notyet'}/>
 
             {errors.username && <div className="input-error">{errors.username.message}</div>}
-            <label htmlFor="user-create-username">{t("user-id-army-number")}</label>
+            <label htmlFor="user-create-username">{t("user-id")}</label>
             <input type="text"
                    {...register("username")}
                    id="user-create-username"
@@ -181,7 +181,7 @@ export const Create = () => {
             />
 
             {errors.email && <div className="input-error">{errors.email.message}</div>}
-            <label htmlFor="user-create-email">{t("army-email")}</label>
+            <label htmlFor="user-create-email">{t("email")}</label>
             <input type="email"
                    {...register("email")}
                    id="user-create-email"
@@ -195,19 +195,8 @@ export const Create = () => {
                    id="user-create-attributes.phone"
             />
 
-            {errors.attributes?.division && <div className="input-error">{errors.attributes.division.message}</div>}
-            {errors.attributes?.unit && <div className="input-error">{errors.attributes.unit.message}</div>}
-            <label htmlFor="user-create-attributes.division">{t("division-unit")}</label>
-            <select
-              {...register("attributes.division")}
-              id="user-create-attributes.division"
-            >
-              <option value="army">{t("army")}</option>
-              <option value="navy">{t("navy")}</option>
-              <option value="airforce">{t("airforce")}</option>
-              <option value="marines">{t("marines")}</option>
-              <option value="personnel">{t("personnel")}</option>
-            </select>
+          {errors.attributes?.unit && <div className="input-error">{errors.attributes.unit.message}</div>}
+            <label htmlFor="user-create-attributes.division">{t("division")}</label>
             <input type="text"
                    {...register("attributes.unit")}
                    id="user-create-attributes.unit"
