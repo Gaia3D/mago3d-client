@@ -76,10 +76,10 @@ export const LayerMapArrState = atom<LayerMapType[]>({
     },
     {
       type: 'vworld',
-      url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Satellite/{TileMatrix}/{TileRow}/{TileCol}.jpeg`,
+      url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Hybrid/{TileMatrix}/{TileRow}/{TileCol}.png`,
       background : "#686b61",
-      name : "VW Satellite",
-      image : "vw_sate",
+      name : "VW Hybrid",
+      image : "vw_hybrid",
     },
     {
       type: 'vworld',
@@ -87,6 +87,13 @@ export const LayerMapArrState = atom<LayerMapType[]>({
       background : "#f0eee9",
       name : "VW Basic",
       image : "vw_basic",
+    },
+    {
+      type: 'vworld',
+      url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Satellite/{TileMatrix}/{TileRow}/{TileCol}.jpeg`,
+      background : "#686b61",
+      name : "VW Satellite",
+      image : "vw_sate",
     }
   ]
 });
@@ -94,10 +101,10 @@ export const LayerMapArrState = atom<LayerMapType[]>({
 export const CurrentLayerMapState = atom<LayerMapType>({
   key: 'CurrentLayerMapState',
   default: {
-    type: 'osm',
-    url: "https://a.tile.openstreetmap.org/",
-    background : "#edebe5",
-    name: "default",
-    image : "osm_basic",
+    type: 'vworld',
+    url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Hybrid/{TileMatrix}/{TileRow}/{TileCol}.png`,
+    background : "#686b61",
+    name : "VW Hybrid",
+    image : "vw_hybrid",
   }
 });

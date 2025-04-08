@@ -4,7 +4,7 @@ import { useGlobeController } from "@/components/providers/GlobeControllerProvid
 import { getWmsLayer } from "@/components/utils/utils.ts";
 import { TerrainUrlState } from "@/recoils/Terrain.ts";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { CurrentLayerMapState, LayerMapType } from "@/recoils/Layer.ts";
+import {CurrentLayerMapState, LayerMapArrState, LayerMapType} from "@/recoils/Layer.ts";
 import {OptionsState} from "@/recoils/Tool.ts";
 
 export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
@@ -13,8 +13,10 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
   const [terrainUrl] = useRecoilState<string>(TerrainUrlState);
   const [options, setOptions] = useRecoilState(OptionsState);
   const [currentMap, setCurrentMap] = useRecoilState<LayerMapType>(CurrentLayerMapState);
+  const [layerMapArr, setLayerMapArr] = useRecoilState(LayerMapArrState);
   const viewerRef = useRef<Cesium.Viewer | null>(null);
   const baseLayerRef = useRef<Cesium.ImageryLayer | null>(null);
+  const backgroundLayerRef = useRef<Cesium.ImageryLayer | null>(null);
 
   useEffect(() => {
       if (!containerRef.current) return;
@@ -58,6 +60,14 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
           globe.depthTestAgainstTerrain = true;
           baseLayerRef.current = baseLayer;
 
+          if (nowMap.name == 'VW Hybrid') {
+            let satellite = layerMapArr.find(map => map.name === 'VW Satellite');
+            const background = initBackground(satellite.type, satellite.url);
+            viewer.scene.imageryLayers.add(background);
+            viewer.scene.imageryLayers.lowerToBottom(background);
+            backgroundLayerRef.current = background;
+          }
+
           viewer.camera.flyTo({
               destination: Cesium.Cartesian3.fromDegrees(
                   Number(import.meta.env.VITE_START_LONGITUDE),
@@ -83,11 +93,26 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
       const viewer = viewerRef.current;
       const newLayer = initBackground(currentMap.type, currentMap.url);
 
-        viewer.scene.imageryLayers.remove(baseLayerRef.current);
-        viewer.scene.imageryLayers.add(newLayer);
-        viewer.scene.imageryLayers.lowerToBottom(newLayer);
-        baseLayerRef.current = newLayer;
-        viewer.scene.requestRender();
+      // remove
+      viewer.scene.imageryLayers.remove(baseLayerRef.current);
+      if (backgroundLayerRef.current) {
+        viewer.scene.imageryLayers.remove(backgroundLayerRef.current);
+      }
+
+      // add
+      viewer.scene.imageryLayers.add(newLayer);
+      viewer.scene.imageryLayers.lowerToBottom(newLayer);
+      baseLayerRef.current = newLayer;
+
+      if (currentMap.name == 'VW Hybrid') {
+        let satellite = layerMapArr.find(map => map.name === 'VW Satellite');
+        const background = initBackground(satellite.type, satellite.url);
+        viewer.scene.imageryLayers.add(background);
+        viewer.scene.imageryLayers.lowerToBottom(background);
+        backgroundLayerRef.current = background;
+      }
+
+      viewer.scene.requestRender();
     }
   }, [currentMap]);
 
