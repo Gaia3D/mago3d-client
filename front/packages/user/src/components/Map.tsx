@@ -17,6 +17,7 @@ import {MeasurePosition} from "@/components/maptool/MeasurePosition.tsx";
 import {MeasureRadius} from "@/components/maptool/MeasureRadius.tsx";
 import {useLayerManagement} from "@/hooks/useLayerManagement.ts";
 import {SearchPlaceList} from "@/components/SearchPlaceList.tsx";
+import CameraAltitudeLimiter from "@/components/utils/CameraAltitudeLimiter.tsx";
 
 
 const Globe = () => {
@@ -25,22 +26,23 @@ const Globe = () => {
     useLayerManagement();
     return (
         <div id="globe" className={"globe"} ref={cesiumContainer}>
-            <SearchPlaceList />
-            <RasterProfileChart />
-            <PrintPortal />
-            <MeasurePosition />
-            <MeasureDistance />
-            <MeasureArea />
-            <MeasureAngle />
-            <MeasureComplex />
-            <MeasureRadius />
-            <SearchCoordinate />
-            <AnalysisFilter />
-            <AnalResult />
-            <ClockTool />
-            <SettingTool />
-            <CameraInfoDisplay />
-            <ObjectToolbox />
+          <SearchPlaceList />
+          <RasterProfileChart />
+          <PrintPortal />
+          <MeasurePosition />
+          <MeasureDistance />
+          <MeasureArea />
+          <MeasureAngle />
+          <MeasureComplex />
+          <MeasureRadius />
+          <SearchCoordinate />
+          <AnalysisFilter />
+          <AnalResult />
+          <ClockTool />
+          <SettingTool />
+          <CameraInfoDisplay />
+          <ObjectToolbox />
+          <CameraAltitudeLimiter />
         </div>
     )
 }
