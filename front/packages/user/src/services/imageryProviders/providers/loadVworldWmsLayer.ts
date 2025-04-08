@@ -14,7 +14,7 @@ export const loadVworldWmsLayer = async (layer: UserLayerAsset, viewer: Cesium.V
                 service: "WMS",
                 request: "GetMap",
                 version: "1.3.0",
-                transparent: "true",
+                transparent: true,
                 format: "image/png",
                 crs: "EPSG:4326",
             },
