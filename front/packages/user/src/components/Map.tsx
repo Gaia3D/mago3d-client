@@ -18,6 +18,7 @@ import {MeasureRadius} from "@/components/maptool/MeasureRadius.tsx";
 import {useLayerManagement} from "@/hooks/useLayerManagement.ts";
 import {SearchPlaceList} from "@/components/SearchPlaceList.tsx";
 import CameraAltitudeLimiter from "@/components/utils/CameraAltitudeLimiter.tsx";
+import PitchVisibilityController from "@/components/utils/PitchVisibilityController.tsx";
 
 
 const Globe = () => {
@@ -43,6 +44,7 @@ const Globe = () => {
           <CameraInfoDisplay />
           <ObjectToolbox />
           <CameraAltitudeLimiter />
+          <PitchVisibilityController />
         </div>
     )
 }

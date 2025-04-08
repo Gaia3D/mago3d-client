@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import * as Cesium from "cesium";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
-import {offCameraInformation, onCameraInformation} from "@/api/camera/magoCameraInformation.ts";
+import {onCameraInformation} from "@/api/camera/magoCameraInformation.ts";
 
 const CameraAltitudeLimiter = () => {
   const { globeController, initialized } = useGlobeController();
   const viewer = globeController?.viewer;
   const [currentHeight, setCurrentHeight] = useState(0);
-  const [minHeight, setMinHeight] = useState(3000);
+  const [minHeight, setMinHeight] = useState(0);
   const lastValidPositionRef = useRef<Cesium.Cartographic | null>(null);
 
   useEffect(() => {
     if (!initialized || !viewer) return;
 
-    onCameraInformation(viewer, (lon, lat, height, heading) => {
+    const remove = onCameraInformation(viewer, (lon, lat, height, heading, pitch) => {
       setCurrentHeight(height);
 
       if (height < minHeight) {
@@ -34,14 +34,14 @@ const CameraAltitudeLimiter = () => {
     });
 
     return () => {
-      offCameraInformation(viewer);
+      remove();
     };
   }, [initialized, viewer, minHeight]);
 
   if (!initialized || !viewer) return null;
 
   return (
-    <div style={{ position: "absolute", bottom: 10, left: 10, backgroundColor: "black"}}>
+    <div style={{ position: "absolute", bottom: 40, left: 10, backgroundColor: "black"}}>
       <div>현재 고도(m): {Math.round(currentHeight)}</div>
       <div>
         최소 고도 제한 (m):
