@@ -34,9 +34,11 @@ export class GlobeController {
   private _tilesPrimitives: Cesium.PrimitiveCollection | undefined;
   public pointStackerLayer: Cesium.ImageryLayer | undefined = undefined;
   public primitiveMap: Map<string, {
-        billboardCollection: Cesium.BillboardCollection,
-        labelCollection: Cesium.LabelCollection
-      }
+    billboardCollection: Cesium.BillboardCollection,
+    labelCollection: Cesium.LabelCollection,
+    nearBillboardCollection: Cesium.BillboardCollection,
+    nearLabelCollection: Cesium.LabelCollection,
+  }
   > = new Map();
 
 

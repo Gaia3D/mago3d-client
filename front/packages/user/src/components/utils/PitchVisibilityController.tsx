@@ -28,16 +28,11 @@ const PitchVisibilityController = () => {
   }, [viewer, initialized, minPitch, maxPitch]);
 
   useEffect(() => {
-    primitiveMap.forEach((primitiveGroup, key) => {
-      const collections = [primitiveGroup.billboardCollection, primitiveGroup.labelCollection];
-      collections.forEach((collection) => {
-        if (collection && typeof collection.length === "number" && typeof collection.get === "function") {
-          for (let i = 0; i < collection.length; i++) {
-            const item = collection.get(i);
-            if (item) item.show = visible;
-          }
-        }
-      });
+    primitiveMap.forEach(({ billboardCollection, labelCollection, nearBillboardCollection, nearLabelCollection }) => {
+      billboardCollection.show = visible;
+      labelCollection.show = visible;
+      nearBillboardCollection.show = !visible;
+      nearLabelCollection.show = !visible;
     });
   }, [visible]);
 
