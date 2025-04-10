@@ -11,8 +11,10 @@ type LabeledSliderProps = {
 };
 
 const LabeledSlider = ({ label, name, min, max, step, value, onChange }: LabeledSliderProps) => (
-  <div>
-    <label>{label}:
+
+  <div className="water-setup">
+    <div className="stitle">{label}</div>
+    <div className="slider">
       <input
         type="range"
         name={name}
@@ -23,8 +25,12 @@ const LabeledSlider = ({ label, name, min, max, step, value, onChange }: Labeled
         onChange={onChange}
       />
       <span>{value}</span>
-    </label>
+    </div>
+    <div className="input-number">
+      <input onChange={onChange} type="number" value={value}/>
+    </div>
   </div>
-);
+)
+;
 
 export default LabeledSlider;

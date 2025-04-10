@@ -9,17 +9,16 @@ type SelectInputProps = {
 };
 
 const SelectInput = ({ label, name, value, options, onChange }: SelectInputProps) => (
-  <div>
-    <label>{label}:
-      <select name={name} value={value} onChange={onChange}>
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
-    </label>
-  </div>
+  <>
+    <div className="stitle">{label}</div>
+    <select name={name} value={value} onChange={onChange}>
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
+    </select>
+  </>
 );
 
 export default SelectInput;
