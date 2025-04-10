@@ -5,7 +5,6 @@ import * as Cesium from "cesium";
 import { calcExtent } from "./utils/calcExtent";
 import { createRectanglePositions } from "./utils/createRectanglePositions";
 import { filterWaterFeatures } from "./utils/filterWaterFeatures";
-import { useAddSources } from "./hooks/useAddSources";
 import {waterSimulationOptionsType} from "@/components/aside/water-simulation/utils/types.ts";
 import {waterDefaultColor, waterDefaultOptions} from "@/components/aside/water-simulation/utils/defaultOptions.ts";
 import {Feature, Geometry, Properties} from "@turf/turf";
@@ -17,6 +16,7 @@ import ColorPicker from "@/components/aside/water-simulation/components/ColorPic
 import CheckboxInput from "@/components/aside/water-simulation/components/CheckboxInput.tsx";
 // @ts-expect-error: no ts lib
 import { MagoFluid } from "mago-cesium-tools";
+import {useAddSources2} from "@/components/aside/water-simulation/hooks/useAddSources2.ts";
 
 const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
   const { globeController } = useGlobeController();
@@ -132,7 +132,7 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
   useEffect(() => {
     if (!viewer || !sourceData.length || !magoFluid) return;
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { addSources, cancelSources } = useAddSources(viewer, waterDataSource, sourceData, options, magoFluid);
+    const { addSources, cancelSources } = useAddSources2(viewer, waterDataSource, sourceData, options, magoFluid);
     cancelSourcesRef.current = cancelSources;
     addSources();
 
@@ -160,18 +160,21 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
                      options={[16, 32, 64, 128, 256, 512, 1024]} onChange={handleSelectChange}/>
         <SelectInput label={"셀 크기"} name={"cellSize"} value={options.cellSize}
                      options={[1, 2, 4, 8]} onChange={handleSelectChange}/>
-        <LabeledSlider label="발생량" name="waterSourceAmount" value={options.waterSourceAmount} min={0} max={100} step={0.01} onChange={handleChange} />
-        <LabeledSlider label="강수량" name="rainMaxPrecipitation" value={options.rainMaxPrecipitation} min={0} max={10} step={0.01} onChange={handleChange} />
-        <LabeledSlider label="간격" name="interval" value={options.interval} min={1} max={120} step={1} onChange={handleChange} />
-        <LabeledSlider label="시간 배속" name="timeStep" value={options.timeStep} min={0.0} max={0.2} step={0.001} onChange={handleChange} />
-        <LabeledSlider label="밀도" name="waterDensity" value={options.waterDensity} min={1.0} max={1000.0} step={1.0} onChange={handleChange} />
-        <LabeledSlider label="완충 계수" name="cushionFactor" value={options.cushionFactor} min={0.5} max={1.0} step={0.001} onChange={handleChange} />
-        <LabeledSlider label="증발률" name="evaporationRate" value={options.evaporationRate} min={0.0} max={1} step={0.0001} onChange={handleChange} />
-        <LabeledSlider label="색상 강도" name="colorIntensity" value={options.colorIntensity} min={0} max={2.0} step={0.1} onChange={handleChange} />
-        <LabeledSlider label="색상 밝기" name="waterBrightness" value={options.waterBrightness} min={0} max={2.0} step={0.1} onChange={handleChange} />
+        <LabeledSlider label="물줄기 두께" name="waterSourceAmount" value={options.waterSourceAmount} min={0.2} max={0.5} step={0.01} onChange={handleChange} />
+        <LabeledSlider label="강수량" name="rainMaxPrecipitation" value={options.rainMaxPrecipitation} min={0} max={5} step={0.01} onChange={handleChange} />
         <ColorPicker label="색상" value={colorHex} onChange={handleColorChange} />
-        <CheckboxInput label="배수" name="simulationConfine" checked={options.simulationConfine} onChange={handleChange} />
         <CheckboxInput label="높이 팔레트" name="heightPalette" checked={options.heightPalette} onChange={handleChange} />
+
+        {/*<LabeledSlider label="발생범위" name="waterSourceArea" value={options.waterSourceArea} min={0} max={20} step={1} onChange={handleChange} />*/}
+        {/*<LabeledSlider label="강수물양" name="rainAmount" value={options.rainAmount} min={0} max={10} step={0.01} onChange={handleChange} />*/}
+        {/*<LabeledSlider label="간격" name="interval" value={options.interval} min={1} max={120} step={1} onChange={handleChange} />*/}
+        {/*<LabeledSlider label="시간 배속" name="timeStep" value={options.timeStep} min={0.0} max={0.2} step={0.001} onChange={handleChange} />*/}
+        {/*<LabeledSlider label="밀도" name="waterDensity" value={options.waterDensity} min={0.001} max={1} step={0.001} onChange={handleChange} />*/}
+        {/*<LabeledSlider label="완충 계수" name="cushionFactor" value={options.cushionFactor} min={0.5} max={1.0} step={0.001} onChange={handleChange} />*/}
+        {/*<LabeledSlider label="증발률" name="evaporationRate" value={options.evaporationRate} min={0.0} max={1} step={0.0001} onChange={handleChange} />*/}
+        {/*<LabeledSlider label="색상 강도" name="colorIntensity" value={options.colorIntensity} min={0} max={100} step={0.1} onChange={handleChange} />*/}
+        {/*<LabeledSlider label="색상 밝기" name="waterBrightness" value={options.waterBrightness} min={0} max={10} step={0.1} onChange={handleChange} />*/}
+        {/*<CheckboxInput label="배수" name="simulationConfine" checked={options.simulationConfine} onChange={handleChange} />*/}
       </div>
     </div>
   );
