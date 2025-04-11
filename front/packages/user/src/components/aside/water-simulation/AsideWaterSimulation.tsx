@@ -37,6 +37,11 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
     () => {}
   );
 
+  const optionsRef = useRef(options);
+  useEffect(() => {
+    optionsRef.current = options;
+  }, [options]);
+
   const init = async () => {
     const fluid = new MagoFluid(viewer);
     setMagoFluid(fluid)
@@ -52,7 +57,7 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
     }));
     setSelectingPosition(false); // 선택 종료
   };
-  useWaterSelectPosition(selectingPosition, setLonLat);
+  useWaterSelectPosition(selectingPosition, setLonLat, optionsRef);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
