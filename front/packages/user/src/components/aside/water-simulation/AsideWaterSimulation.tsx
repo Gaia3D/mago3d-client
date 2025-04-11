@@ -163,11 +163,7 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
             <SideCloseButton/>
           </div>
         <div className="content--wrapper">
-          <div className="water-setup first-item">
-            <div className="stitle">위치 설정</div>
-            <button onClick={() => setSelectingPosition(true)} type="button" className="positon-select">선택</button>
-          </div>
-          <div className="water-setup mar-top-10">
+          <div className="water-setup mar-top-10 flex">
             <SelectInput label={"그리드 크기"} name={"gridSize"} value={options.gridSize}
                          options={[16, 32, 64, 128, 256, 512, 1024]} onChange={handleSelectChange}/>
             <SelectInput label={"셀 크기"} name={"cellSize"} value={options.cellSize}
@@ -175,35 +171,72 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
           </div>
           <div className="water-setup mar-top-10"></div>
 
-          <LabeledSlider label="물줄기 두께" name="waterSourceAmount" value={options.waterSourceAmount} min={0.2} max={0.5}
+          {/*<LabeledSlider label="물줄기 두께" name="waterSourceAmount" value={options.waterSourceAmount} min={0.2} max={0.5}*/}
+          {/*               step={0.01} onChange={handleChange}/>*/}
+          {/*<LabeledSlider label="강수량" name="rainMaxPrecipitation" value={options.rainMaxPrecipitation} min={0} max={5}*/}
+          {/*               step={0.01} onChange={handleChange}/>*/}
+
+
+          <LabeledSlider label="물줄기 두께" name="waterSourceAmount" value={options.waterSourceAmount} min={0.2} max={20}
                          step={0.01} onChange={handleChange}/>
           <LabeledSlider label="강수량" name="rainMaxPrecipitation" value={options.rainMaxPrecipitation} min={0} max={5}
                          step={0.01} onChange={handleChange}/>
-          {/*<LabeledSlider label="발생범위" name="waterSourceArea" value={options.waterSourceArea} min={0} max={20} step={1} onChange={handleChange} />*/}
-          {/*<LabeledSlider label="강수물양" name="rainAmount" value={options.rainAmount} min={0} max={10} step={0.01} onChange={handleChange} />*/}
-          {/*<LabeledSlider label="간격" name="interval" value={options.interval} min={1} max={120} step={1} onChange={handleChange} />*/}
-          {/*<LabeledSlider label="시간 배속" name="timeStep" value={options.timeStep} min={0.0} max={0.2} step={0.001} onChange={handleChange} />*/}
-          {/*<LabeledSlider label="밀도" name="waterDensity" value={options.waterDensity} min={0.001} max={1} step={0.001} onChange={handleChange} />*/}
-          {/*<LabeledSlider label="완충 계수" name="cushionFactor" value={options.cushionFactor} min={0.5} max={1.0} step={0.001} onChange={handleChange} />*/}
-          {/*<LabeledSlider label="증발률" name="evaporationRate" value={options.evaporationRate} min={0.0} max={1} step={0.0001} onChange={handleChange} />*/}
-          {/*<LabeledSlider label="색상 강도" name="colorIntensity" value={options.colorIntensity} min={0} max={100} step={0.1} onChange={handleChange} />*/}
-          {/*<LabeledSlider label="색상 밝기" name="waterBrightness" value={options.waterBrightness} min={0} max={10} step={0.1} onChange={handleChange} />*/}
-          <ColorPicker label="색상" value={colorHex} onChange={handleColorChange}/>
+          <LabeledSlider label="발생범위" name="waterSourceArea" value={options.waterSourceArea} min={0} max={20} step={1}
+                         onChange={handleChange}/>
+          <LabeledSlider label="강수물양" name="rainAmount" value={options.rainAmount} min={0} max={10} step={0.01}
+                         onChange={handleChange}/>
+          <LabeledSlider label="간격" name="interval" value={options.interval} min={1} max={120} step={1}
+                         onChange={handleChange}/>
+          <LabeledSlider label="시간 배속" name="timeStep" value={options.timeStep} min={0.0} max={0.2} step={0.001}
+                         onChange={handleChange}/>
+          <LabeledSlider label="밀도" name="waterDensity" value={options.waterDensity} min={0.001} max={1} step={0.001}
+                         onChange={handleChange}/>
+          <LabeledSlider label="완충 계수" name="cushionFactor" value={options.cushionFactor} min={0.5} max={1.0}
+                         step={0.001} onChange={handleChange}/>
+          <LabeledSlider label="증발률" name="evaporationRate" value={options.evaporationRate} min={0.0} max={1}
+                         step={0.0001} onChange={handleChange}/>
+          <LabeledSlider label="색상 강도" name="colorIntensity" value={options.colorIntensity} min={0} max={100} step={0.1}
+                         onChange={handleChange}/>
+          <LabeledSlider label="색상 밝기" name="waterBrightness" value={options.waterBrightness} min={0} max={10}
+                         step={0.1} onChange={handleChange}/>
 
           <div className="water-setup">
+            <ColorPicker label="색상" value={colorHex} onChange={handleColorChange}/>
             <CheckboxInput label="높이 팔레트" name="heightPalette" checked={options.heightPalette} onChange={handleChange}/>
             {/*<CheckboxInput label="배수" name="simulationConfine" checked={options.simulationConfine} onChange={handleChange} />*/}
           </div>
-          <div>
+          <div className="water-setup first-item">
+            <div className="stitle">위치 설정</div>
+            <button
+              onClick={() => setSelectingPosition(!selectingPosition)}
+              type="button"
+              className={`positon-select ${selectingPosition ? "selected" : ""}`}
+            >선택
+            </button>
+          </div>
+          <div className="water-setup first-item">
+            <div className="stitle"></div>
             {
-              !isSimulationRunning ?
-                <button type="button" className="button-simulation play" onClick={startSimulation}>
+              !options.lat ?
+                <button
+                  type="button"
+                  className="button-simulation disabled"
+                >
                   시뮬레이션 시작
                 </button>
-                :
-                <button type="button" className="button-simulation end" onClick={stopSimulation}>
-                  시뮬레이션 중지
-                </button>
+                : !isSimulationRunning ?
+                  <button
+                    type="button"
+                    className="button-simulation play"
+                    onClick={startSimulation}
+                  >
+                    시뮬레이션 시작
+                  </button>
+                  :
+                  <button type="button" className="button-simulation end" onClick={stopSimulation}>
+                    시뮬레이션 중지
+                  </button>
+
             }
             {/*  <button onClick={resetSimulation}>reset</button>*/}
             {/*  <button*/}

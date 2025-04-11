@@ -26,6 +26,7 @@ export const useAddSources2 = (
       if (feature.geometry?.type !== "MultiLineString") continue;
 
       const intensity = Number(feature.properties?.hack_ord);
+      const intensity_2 = Number(options.cellSize);
       if (isNaN(intensity) || intensity < 1 || intensity > 9) continue;
 
       const multiLineCoords = feature.geometry.coordinates as number[][][];
@@ -36,7 +37,7 @@ export const useAddSources2 = (
         lon >= bbox[0] && lon <= bbox[2] && lat >= bbox[1] && lat <= bbox[3]
       );
 
-      for (let i = 0; i < coordsInBbox.length; i += 1) {
+      for (let i = 0; i < coordsInBbox.length; i += intensity_2) {
         const [lon, lat] = coordsInBbox[i];
         const positionCartographic = Cesium.Cartographic.fromDegrees(lon, lat);
         const positions = await Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, [positionCartographic]);

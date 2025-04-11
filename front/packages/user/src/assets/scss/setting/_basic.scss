@@ -215,6 +215,11 @@ body {
     margin: 0;
     padding: 0;
 }
+
+.flex {display: flex}
+
+.justify-between {justify-content: space-between}
+
 .map {
     position: absolute;
     width: 100vw;
@@ -412,24 +417,23 @@ main {
         padding:7px 65px 9px 30px;
         font-size:14px;
         color:white;
+        width: auto;
+        height: auto;
+        background-size: 21px auto;
+
+        &.disabled {
+            background: #717171 url(../images/icon-simulation.svg) 135px 6px no-repeat;
+        }
         &.play {
-            width:auto;
-            height:auto;
-            background:#3382EC url(../images/icon-simulation.svg) 135px 8px no-repeat;
-            background-size:21px auto;
+            background:#3382EC url(../images/icon-simulation.svg) 135px 6px no-repeat;
             &:hover {
-                background:#2672d6 url(../images/icon-simulation.svg) 135px 8px no-repeat;
-                background-size:21px auto;
+                background:#2672d6 url(../images/icon-simulation.svg) 135px 6px no-repeat;
             }
         }   
         &.end {
-            width:auto;
-            height:auto;
-            background:#f73232 url(../images/icon-simulation.svg) 135px -36px no-repeat;
-            background-size:21px auto;
+            background:#f73232 url(../images/icon-simulation.svg) 135px -42px no-repeat;
             &:hover {
-                background:#dd2424 url(../images/icon-simulation.svg) 135px -36px no-repeat;
-                background-size:21px auto;
+                background:#dd2424 url(../images/icon-simulation.svg) 135px -42px no-repeat;
             }
         } 
     }
@@ -2402,8 +2406,7 @@ select {
 //water simulation 04/10
 .water-setup {
     display: flex;
-    justify-content:flex-start;
-    gap:auto;
+    justify-content: space-between;
     margin-bottom:7px;
     padding:0 6px;
     clear:both;

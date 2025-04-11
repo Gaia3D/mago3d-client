@@ -7,7 +7,7 @@ type ColorPickerProps = {
 };
 
 const ColorPicker = ({ label, value, onChange }: ColorPickerProps) => (
-  <div className="water-setup mar-top-10">
+  <div className="flex">
     <div className="stitle">{label}</div>
     <label className="color-picker">
       <span className="swatch"></span>

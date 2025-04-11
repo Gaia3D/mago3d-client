@@ -8,13 +8,13 @@ type CheckboxInputProps = {
 };
 
 const CheckboxInput = ({ label, name, checked, onChange }: CheckboxInputProps) => (
-  <>
+  <div className="flex">
     <div className="stitle">{label}</div>
     <div className="toggle-switch">
       <input type="checkbox" id={name} name={name} checked={checked} onChange={onChange}/>
       <label htmlFor={name}></label>
     </div>
-  </>
+  </div>
 );
 
 export default CheckboxInput;

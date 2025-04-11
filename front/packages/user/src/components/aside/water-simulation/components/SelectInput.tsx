@@ -9,7 +9,7 @@ type SelectInputProps = {
 };
 
 const SelectInput = ({ label, name, value, options, onChange }: SelectInputProps) => (
-  <>
+  <div className="flex">
     <div className="stitle">{label}</div>
     <select name={name} value={value} onChange={onChange}>
       {options.map((opt) => (
@@ -18,7 +18,7 @@ const SelectInput = ({ label, name, value, options, onChange }: SelectInputProps
         </option>
       ))}
     </select>
-  </>
+  </div>
 );
 
 export default SelectInput;
