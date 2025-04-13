@@ -23,5 +23,4 @@ export const waterDefaultOptions: waterSimulationOptionsType = {
   waterDensity: 998.0,
   simulationConfine: true,
   heightPalette: false,
-  waterSourcePositions: [],
 };

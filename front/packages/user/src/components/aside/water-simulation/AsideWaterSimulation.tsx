@@ -10,61 +10,122 @@ import {waterDefaultColor, waterDefaultOptions} from "@/components/aside/water-s
 import {Feature, Geometry, Properties} from "@turf/turf";
 import {useLoadWaterGeojson} from "@/components/aside/water-simulation/hooks/useLoadWaterGeojson.ts";
 import SelectInput from "@/components/aside/water-simulation/components/SelectInput.tsx";
-import {useWaterSelectPosition} from "@/components/aside/water-simulation/hooks/useWaterSelectPosition.ts";
 import LabeledSlider from "@/components/aside/water-simulation/components/LabeledSlider.tsx";
 import ColorPicker from "@/components/aside/water-simulation/components/ColorPicker.tsx";
 import CheckboxInput from "@/components/aside/water-simulation/components/CheckboxInput.tsx";
 // @ts-expect-error: no ts lib
 import { MagoFluid } from "mago-cesium-tools";
-import {useAddSources2} from "@/components/aside/water-simulation/hooks/useAddSources2.ts";
 import SideCloseButton from "@/components/SideCloseButton.tsx";
+import {useWaterSelectPosition} from "@/components/aside/water-simulation/hooks/useWaterSelectPosition.ts";
+import {useWaterSources} from "@/components/aside/water-simulation/hooks/useWaterSource.ts";
 
 const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
   const { globeController } = useGlobeController();
   const { viewer, waterDataSource } = globeController;
   const [magoFluid, setMagoFluid] = useState<MagoFluid | null>(null);
-
   const [options, setOptions] = useState<waterSimulationOptionsType>(waterDefaultOptions);
+  const [positionSelecting, setPositionSelecting] = useState(false);
   const [sourceData, setSourceData] = useState<Feature<Geometry | Properties>[]>([]);
-  const [selectingPosition, setSelectingPosition] = useState(false);
+
   const [colorHex, setColorHex] = useState(waterDefaultColor);
   const [isSimulationRunning, setIsSimulationRunning] = useState(false);
 
   const waterGeojson = useLoadWaterGeojson();
+  useWaterSelectPosition(positionSelecting, setPositionSelecting, options, setOptions);
 
-  const cancelSourcesRef = useRef<() => void>(
-    /* eslint-disable @typescript-eslint/no-empty-function */
-    () => {}
-  );
-
-  const optionsRef = useRef(options);
+  // 처음 사이드바 열때
   useEffect(() => {
-    optionsRef.current = options;
-  }, [options]);
+    if (!viewer || !display) return;
+    console.log("viewer ready");
+    if (magoFluid) return;
+    init();
+  }, [viewer, display]);
+
+  // 위치 수정시
+  useEffect(() => {
+    if (!options.lon || !options.lat) return;
+    createExtentLine();
+    findSourcesWithinExtent();
+  }, [options.lon, options.lat]);
+
+  // waterSource 데이터 얻었을때
+  useEffect(() => {
+    if (!viewer || !sourceData.length) return;
+    // initBase();
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { addSources, cancelSources } = useWaterSources(viewer, sourceData, options, magoFluid);
+    addSources();
+
+    return () => cancelSources();
+  }, [viewer, sourceData]);
+
+  // options 값 변경됐을때
+  useEffect(() => {
+    if (!magoFluid) return;
+    Object.assign(magoFluid.options, options);
+  }, [magoFluid, options]);
 
   const init = async () => {
-    const fluid = new MagoFluid(viewer);
-    setMagoFluid(fluid)
-    await fluid.initBase(options);
-
+    console.log("setMagoFluid");
+    setMagoFluid(new MagoFluid(viewer));
   }
 
-  const setLonLat = (lon: number, lat: number) => {
-    setOptions((prev) => ({
-      ...prev,
-      lon,
-      lat,
-    }));
-    setSelectingPosition(false); // 선택 종료
-  };
-  useWaterSelectPosition(selectingPosition, setLonLat, optionsRef);
+  const start = () => {
+    console.log("start, magoFluid", magoFluid);
+    setIsSimulationRunning(true);
+    magoFluid?.start();
+  }
+
+  const stop = () => {
+    setIsSimulationRunning(false);
+    magoFluid.stop();
+  }
+
+  const reload = async() => {
+    await magoFluid.init(viewer);
+    await magoFluid.initBase(options);
+    await magoFluid.clearWaterSourcePositions();
+    waterDataSource.entities.removeAll();
+  }
+
+  const reloadPositionSelecting = async () => {
+    stop();
+    await reload();
+    setPositionSelecting(!positionSelecting);
+  }
+
+  const createExtentLine = () => {
+    waterDataSource.entities.removeAll();
+    const extent = calcExtent(options);
+    const positions = createRectanglePositions(extent);
+    waterDataSource.entities.add({
+      polyline: {
+        positions,
+        width: 2.0,
+        material: Cesium.Color.RED,
+        clampToGround: true,
+      },
+    });
+  }
+  const findSourcesWithinExtent = () => {
+    if (!waterGeojson) return;
+    const extent = calcExtent(options);
+    const bbox: [number, number, number, number] = [
+      extent.west,
+      extent.south,
+      extent.east,
+      extent.north,
+    ];
+    const filtered = filterWaterFeatures(waterGeojson, bbox);
+    setSourceData(filtered);
+  }
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     setOptions((prev) => ({
       ...prev,
-      [name]: parseFloat(value), // gridSize, cellSize는 number 타입
+      [name]: parseFloat(value),
     }));
   };
 
@@ -88,79 +149,6 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
     setOptions((prev) => ({ ...prev, waterColor: color }));
   };
 
-  const startSimulation = () => {
-    setIsSimulationRunning(true);
-    magoFluid?.start()
-  }
-
-  const stopSimulation = () => {
-    setIsSimulationRunning(false);
-    magoFluid?.stop()
-  }
-
-  const resetSimulation = async () => {
-    cancelSourcesRef.current();
-    waterDataSource.entities.removeAll();
-    await magoFluid.initializeWater();
-    await magoFluid.stop();
-    setOptions((prev) => ({
-      ...prev,
-      lon: 0,
-      lat: 0,
-    }));
-  };
-
-  useEffect(() => {
-    if (!viewer) return;
-
-    const { lon, lat } = waterDefaultOptions;
-    if (!lon || !lat) return;
-    const cameraTarget = Cesium.Cartesian3.fromDegrees(lon, lat, 2000);
-    viewer.camera.flyTo({ destination: cameraTarget, duration: 0 });
-  }, [viewer]);
-
-  useEffect(() => {
-    if (!viewer || !waterGeojson || !options.lon || !options.lat) return;
-    waterDataSource.entities.removeAll();
-    init();
-
-    const extent = calcExtent(options);
-    const positions = createRectanglePositions(extent);
-    const bbox: [number, number, number, number] = [
-      extent.west,
-      extent.south,
-      extent.east,
-      extent.north,
-    ];
-
-    const filteredFeatures = filterWaterFeatures(waterGeojson, bbox);
-    setSourceData(filteredFeatures);
-
-    waterDataSource.entities.add({
-      polyline: {
-        positions,
-        width: 2.0,
-        material: Cesium.Color.fromCssColorString(waterDefaultColor),
-        clampToGround: true,
-      },
-    });
-  }, [viewer, waterGeojson, options.lon, options.lat, options.gridSize, options.cellSize]);
-
-  useEffect(() => {
-    if (!viewer || !sourceData.length || !magoFluid) return;
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { addSources, cancelSources } = useAddSources2(viewer, waterDataSource, sourceData, options, magoFluid);
-    cancelSourcesRef.current = cancelSources;
-    addSources();
-
-    return () => cancelSources();
-  }, [sourceData, magoFluid]);
-
-  useEffect(() => {
-    if (!magoFluid) return;
-
-    Object.assign(magoFluid.options, options);
-  }, [magoFluid, options]);
   return (
     <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
       <div className="side-bar water-simulation">
@@ -213,9 +201,9 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
           <div className="water-setup first-item">
             <div className="stitle">위치 설정</div>
             <button
-              onClick={() => setSelectingPosition(!selectingPosition)}
+              onClick={reloadPositionSelecting}
               type="button"
-              className={`positon-select ${selectingPosition ? "selected" : ""}`}
+              className={`positon-select ${positionSelecting ? "selected" : ""}`}
             >선택
             </button>
           </div>
@@ -233,12 +221,12 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
                   <button
                     type="button"
                     className="button-simulation play"
-                    onClick={startSimulation}
+                    onClick={start}
                   >
                     시뮬레이션 시작
                   </button>
                   :
-                  <button type="button" className="button-simulation end" onClick={stopSimulation}>
+                  <button type="button" className="button-simulation end" onClick={stop}>
                     시뮬레이션 중지
                   </button>
 

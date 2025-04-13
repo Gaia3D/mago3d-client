@@ -5,7 +5,7 @@ import { waterSimulationOptionsType } from "@/components/aside/water-simulation/
 export const createGuidePolygonEntity = (
   globeController: GlobeController,
   mousePositionRef: React.MutableRefObject<Cesium.Cartesian2 | null>,
-  optionsRef: React.MutableRefObject<waterSimulationOptionsType>
+  options: waterSimulationOptionsType,
 ): Cesium.Entity | null => {
   const { viewer } = globeController;
   if (!viewer) return null;
@@ -14,7 +14,6 @@ export const createGuidePolygonEntity = (
     polygon: {
       hierarchy: new Cesium.CallbackProperty(() => {
         const mousePosition = mousePositionRef.current;
-        const options = optionsRef.current;
         if (!mousePosition) return undefined;
 
         const centerCartesian = globeController.pickPosition(mousePosition);

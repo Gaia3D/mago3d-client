@@ -1,20 +1,30 @@
-import { useEffect, useRef } from "react";
-import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
-import * as Cesium from "cesium";
-import {createGuidePolygonEntity} from "@/utils/entityUtils.ts";
+import {Dispatch, SetStateAction, useEffect, useRef} from "react";
 import {waterSimulationOptionsType} from "@/components/aside/water-simulation/utils/types.ts";
+import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
+import {createGuidePolygonEntity} from "@/utils/entityUtils.ts";
+import * as Cesium from "cesium";
 
 export const useWaterSelectPosition = (
-  active: boolean,
-  setLonLat: (lon: number, lat: number) => void,
-  optionsRef: React.MutableRefObject<waterSimulationOptionsType>
+  positionSelecting: boolean,
+  setPositionSelecting: Dispatch<SetStateAction<boolean>>,
+  options: waterSimulationOptionsType,
+  setOptions: Dispatch<SetStateAction<waterSimulationOptionsType>>
 ) => {
   const { initialized, globeController } = useGlobeController();
   const polygonEntityRef = useRef<Cesium.Entity | null>(null);
   const mousePositionRef = useRef<Cesium.Cartesian2 | null>(null);
 
+  const setLonLat = (lon: number, lat: number) => {
+    setOptions((prev) => ({
+      ...prev,
+      lon,
+      lat,
+    }));
+    setPositionSelecting(false); // 선택 종료
+  };
+
   useEffect(() => {
-    if (!initialized || !globeController?.viewer || !globeController?.handler || !active) return;
+    if (!initialized || !globeController?.viewer || !globeController?.handler || !positionSelecting) return;
 
     const { viewer, handler } = globeController;
     const canvas = viewer.scene.canvas;
@@ -24,7 +34,7 @@ export const useWaterSelectPosition = (
       mousePositionRef.current = movement.endPosition;
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-    polygonEntityRef.current = createGuidePolygonEntity(globeController, mousePositionRef, optionsRef);
+    polygonEntityRef.current = createGuidePolygonEntity(globeController, mousePositionRef, options);
 
     handler.setInputAction((clicked: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
       const cartesian = globeController.pickPosition(clicked.position);
@@ -45,5 +55,5 @@ export const useWaterSelectPosition = (
         polygonEntityRef.current = null;
       }
     };
-  }, [initialized, active]);
-};
+  }, [initialized, positionSelecting]);
+}

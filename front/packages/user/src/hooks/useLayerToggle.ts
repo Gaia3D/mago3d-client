@@ -18,6 +18,8 @@ export const useLayerToggle = (setLoadingState: SetterOrUpdater<LoadingStateType
             if (primitive) {
                 primitive.billboardCollection.show = !!layerAsset.visible;
                 primitive.labelCollection.show = !!layerAsset.visible;
+                primitive.nearBillboardCollection.show = !!layerAsset.visible;
+                primitive.nearLabelCollection.show = !!layerAsset.visible;
             } else {
                 await loadIconLayer(layerAsset, viewer, setLoadingState);
             }
