@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import { onCameraInformation } from "@/api/camera/magoCameraInformation";
+import {useRecoilValue} from "recoil";
+import {userLayerAssetArrState} from "@/recoils/Layer.ts";
+
+type idActive = {
+  id: string;
+  active: boolean;
+}
 
 const PitchVisibilityController = () => {
   const { globeController, initialized } = useGlobeController();
@@ -10,6 +17,33 @@ const PitchVisibilityController = () => {
   const [minPitch, setMinPitch] = useState(-90);
   const [maxPitch, setMaxPitch] = useState(-20);
   const [currentPitch, setCurrentPitch] = useState(0);
+  const userLayerAssetArr = useRecoilValue(userLayerAssetArrState);
+
+  const [layerIdActive, setLayerIdActive] = useState<idActive[]>([]);
+
+  useEffect(() => {
+    setLayerIdActive((prev) => {
+      const updated = [...prev];
+
+      userLayerAssetArr.forEach((layerAsset) => {
+        const index = updated.findIndex((item) => item.id === layerAsset.assetId);
+
+        if (index === -1) {
+          updated.push({
+            id: layerAsset.assetId,
+            active: layerAsset.visible ?? false,
+          });
+        } else {
+          updated[index] = {
+            ...updated[index],
+            active: layerAsset.visible ?? false,
+          };
+        }
+      });
+
+      return updated;
+    });
+  }, [userLayerAssetArr, primitiveMap]);
 
   const [visible, setVisible] = useState(true);
 
@@ -28,13 +62,25 @@ const PitchVisibilityController = () => {
   }, [viewer, initialized, minPitch, maxPitch]);
 
   useEffect(() => {
-    primitiveMap.forEach(({ billboardCollection, labelCollection, nearBillboardCollection, nearLabelCollection }) => {
+    primitiveMap.forEach((
+      {
+        billboardCollection,
+        labelCollection,
+        nearBillboardCollection,
+        nearLabelCollection
+      },
+      primitiveId // ← Map의 key 값
+    ) => {
+      const layer = layerIdActive.find((item) => item.id === primitiveId);
+
+      if (layer && !layer.active) return;
+
       billboardCollection.show = visible;
       labelCollection.show = visible;
       nearBillboardCollection.show = !visible;
       nearLabelCollection.show = !visible;
     });
-  }, [visible]);
+  }, [visible, layerIdActive]);
 
   if (!initialized || !viewer) return null;
 
