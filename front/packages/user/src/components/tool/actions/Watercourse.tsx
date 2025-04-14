@@ -33,7 +33,7 @@ const Watercourse = () => {
 
         const loadGeojson = async () => {
             try {
-                const response = await fetch("./geojson/water.geojson");
+                const response = await fetch("/user/geojson/water.geojson");
                 if (!response.ok) throw new Error("Failed to load geojson data");
                 const geojsonData = await response.json();
                 renderWaterPrimitives(geojsonData);
