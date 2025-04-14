@@ -3,8 +3,8 @@ import * as Cesium from "cesium";
 export type waterSimulationOptionsType = {
   lon: number,
   lat: number,
-  cellSize: number;
-  gridSize: number;
+  cellSize: 1 | 2 | 4 | 8;
+  gridSize: 16 | 32 | 64 | 128 | 256 | 512 | 1024 ;
   colorIntensity?: number;
   cushionFactor?: number;
   evaporationRate?: number;

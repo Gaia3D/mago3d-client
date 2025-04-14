@@ -1,7 +1,7 @@
 import * as Cesium from "cesium";
 import {waterSimulationOptionsType} from "@/components/aside/water-simulation/utils/types.ts";
 
-export const waterDefaultColor = "#0C80C0";
+export const waterDefaultColor = "#112C46";
 
 export const waterDefaultOptions: waterSimulationOptionsType = {
   lon: 0,

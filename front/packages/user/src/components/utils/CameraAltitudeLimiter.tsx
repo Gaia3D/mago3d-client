@@ -7,7 +7,7 @@ const CameraAltitudeLimiter = () => {
   const { globeController, initialized } = useGlobeController();
   const viewer = globeController?.viewer;
   const [currentHeight, setCurrentHeight] = useState(0);
-  const [minHeight, setMinHeight] = useState(0);
+  const [minHeight, setMinHeight] = useState(1000);
   const lastValidPositionRef = useRef<Cesium.Cartographic | null>(null);
 
   useEffect(() => {
