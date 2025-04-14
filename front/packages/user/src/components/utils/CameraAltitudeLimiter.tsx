@@ -41,18 +41,19 @@ const CameraAltitudeLimiter = () => {
   if (!initialized || !viewer) return null;
 
   return (
-    <div style={{ position: "absolute", bottom: 40, left: 10, backgroundColor: "black"}}>
-      <div>현재 고도(m): {Math.round(currentHeight)}</div>
-      <div>
-        최소 고도 제한 (m):
-        <input
-          type="number"
-          value={minHeight}
-          onChange={(e) => setMinHeight(Number(e.target.value))}
-          style={{ width: 80 }}
-        />
-      </div>
-    </div>
+    <></>
+    // <div style={{ position: "absolute", bottom: 40, left: 10, backgroundColor: "black"}}>
+    //   <div>현재 고도(m): {Math.round(currentHeight)}</div>
+    //   <div>
+    //     최소 고도 제한 (m):
+    //     <input
+    //       type="number"
+    //       value={minHeight}
+    //       onChange={(e) => setMinHeight(Number(e.target.value))}
+    //       style={{ width: 80 }}
+    //     />
+    //   </div>
+    // </div>
   );
 };
 

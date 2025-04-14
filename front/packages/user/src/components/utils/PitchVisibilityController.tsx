@@ -85,33 +85,34 @@ const PitchVisibilityController = () => {
   if (!initialized || !viewer) return null;
 
   return (
-    <div style={{position: "absolute", bottom: 100, left: 10, backgroundColor: "black"}}>
-      <div>현재 Pitch: <b>{currentPitch}°</b></div>
-      <div>
-        <label>
-          최소 Pitch:
-          <input
-            type="number"
-            value={minPitch}
-            onChange={(e) => setMinPitch(Number(e.target.value))}
-            min={-90}
-            max={0}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          최대 Pitch:
-          <input
-            type="number"
-            value={maxPitch}
-            onChange={(e) => setMaxPitch(Number(e.target.value))}
-            min={-90}
-            max={0}
-          />
-        </label>
-      </div>
-    </div>
+    <></>
+    // <div style={{position: "absolute", bottom: 100, left: 10, backgroundColor: "black"}}>
+    //   <div>현재 Pitch: <b>{currentPitch}°</b></div>
+    //   <div>
+    //     <label>
+    //       최소 Pitch:
+    //       <input
+    //         type="number"
+    //         value={minPitch}
+    //         onChange={(e) => setMinPitch(Number(e.target.value))}
+    //         min={-90}
+    //         max={0}
+    //       />
+    //     </label>
+    //   </div>
+    //   <div>
+    //     <label>
+    //       최대 Pitch:
+    //       <input
+    //         type="number"
+    //         value={maxPitch}
+    //         onChange={(e) => setMaxPitch(Number(e.target.value))}
+    //         min={-90}
+    //         max={0}
+    //       />
+    //     </label>
+    //   </div>
+    // </div>
   );
 };
 
