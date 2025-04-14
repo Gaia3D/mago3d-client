@@ -48,6 +48,13 @@ const AsideWaterSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
     init();
   }, [viewer, display]);
 
+  useEffect(() => {
+    if (!magoFluid || display) return;
+    stop();
+    reload();
+    setPositionSelecting(false);
+  }, [display, magoFluid]);
+
   // 위치 수정시
   useEffect(() => {
     if (!options.lon || !options.lat) return;
