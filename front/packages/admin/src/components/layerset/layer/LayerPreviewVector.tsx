@@ -12,6 +12,7 @@ import {useLazyQuery, useMutation, useSuspenseQuery} from "@apollo/client";
 import {getWmsLayerImageProvider} from "@src/components/layerset/utils/utils";
 import {useTranslation} from "react-i18next";
 import {createCesiumViewer} from "@src/utils/createCesiumViewer";
+import {useLayerStyleMutations} from "@src/hooks/useLayerStyleMutation";
 
 function extractPath(url: string): string {
     const parsedUrl = new URL(url);
@@ -49,52 +50,15 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     const {register, handleSubmit, reset} = useForm<CreateStyleInput>();
 
-    const [ applyStyle ] = useMutation(ApplyLayerStyleDocument, {
-        refetchQueries: [LayersetAssetDocument],
-        onCompleted: (data) => {
-            //console.info(data);
-            alert(t("success.style"));
-        },
-        onError: (error) => {
-            console.error(error);
-            alert(t("error.admin"));
-        }
-    });
-
-    const [ createStyle ] = useMutation(CreateLayerStyleDocument, {
-        onCompleted: (data) => {
-            //console.info(data);
-            const {id} = asset;
-            applyStyle({ variables: { id: id, styleId: data.createStyle.id } });
-        },
-        onError: (error) => {
-            console.error(error);
-            alert(t("error.admin"));
-        }
-    });
-
-    const [ updateStyle ] = useMutation(UpdateLayerStyleDocument, {
-        refetchQueries: [LayersetAssetDocument, RemoteDocument],
-        onCompleted: (data) => {
-            //console.info(data);
-            alert(t("success.style"));
-        },
-        onError: (error) => {
-            console.error(error);
-            alert(t("error.admin"));
-        }
-    });
-
-    const [ deleteStyle ] = useMutation(DeleteLayerStyleDocument, {
-        refetchQueries: [LayersetAssetDocument, RemoteDocument],
-        onCompleted: (data) => {
-            //console.info(data);
-            alert(t("success.style-delete"));
-        },
-        onError: (error) => {
-            console.error(error);
-            alert(t("error.admin"));
-        }
+    const {
+        createStyle,
+        updateStyle,
+        deleteStyle,
+    } = useLayerStyleMutations(asset.id, {
+        applyStyle: [LayersetAssetDocument],
+        createStyle: [],
+        updateStyle: [LayersetAssetDocument, RemoteDocument],
+        deleteStyle: [LayersetAssetDocument, RemoteDocument],
     });
 
     const defaultStyles = asset.styles?.filter(style => style.defaultStatus);

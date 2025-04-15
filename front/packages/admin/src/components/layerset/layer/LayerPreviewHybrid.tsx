@@ -10,6 +10,7 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import {useMutation, useSuspenseQuery} from "@apollo/client";
 import {getWmsLayer, getWmsLayerImageProvider} from "@src/components/layerset/utils/utils";
 import {createCesiumViewer} from "@src/utils/createCesiumViewer";
+import {useLayerStyleMutations} from "@src/hooks/useLayerStyleMutation";
 
 const LayerPreviewHybrid = ({asset}:{asset:LayerAsset}) => {
 
@@ -18,52 +19,15 @@ const LayerPreviewHybrid = ({asset}:{asset:LayerAsset}) => {
 
     const {register, handleSubmit, reset} = useForm<CreateStyleInput>();
 
-    const [ applyStyle ] = useMutation(ApplyLayerStyleDocument, {
-        refetchQueries: [LayersetAssetDocument],
-        onCompleted: (data) => {
-            //console.info(data);
-            alert("스타일이 적용되었습니다.");
-        },
-        onError: (error) => {
-            console.error(error);
-            alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
-        }
-    });
-
-    const [ createStyle ] = useMutation(CreateLayerStyleDocument, {
-        onCompleted: (data) => {
-            //console.info(data);
-            const {id} = asset;
-            applyStyle({ variables: { id: id, styleId: data.createStyle.id } });
-        },
-        onError: (error) => {
-            console.error(error);
-            alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
-        }
-    });
-
-    const [ updateStyle ] = useMutation(UpdateLayerStyleDocument, {
-        refetchQueries: [LayersetAssetDocument],
-        onCompleted: (data) => {
-            //console.info(data);
-            alert("스타일이 적용되었습니다.");
-        },
-        onError: (error) => {
-            console.error(error);
-            alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
-        }
-    });
-
-    const [ deleteStyle ] = useMutation(DeleteLayerStyleDocument, {
-        refetchQueries: [LayersetAssetDocument],
-        onCompleted: (data) => {
-            //console.info(data);
-            alert("스타일이 삭제되었습니다.");
-        },
-        onError: (error) => {
-            console.error(error);
-            alert('에러가 발생하였습니다. 관리자에게 문의하시기 바랍니다.');
-        }
+    const {
+        createStyle,
+        updateStyle,
+        deleteStyle,
+    } = useLayerStyleMutations(asset.id, {
+        applyStyle: [LayersetAssetDocument],
+        createStyle: [],
+        updateStyle: [LayersetAssetDocument],
+        deleteStyle: [LayersetAssetDocument],
     });
 
     const defaultStyles = asset.styles?.filter(style => style.defaultStatus);
