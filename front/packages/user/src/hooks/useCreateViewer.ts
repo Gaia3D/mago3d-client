@@ -62,6 +62,10 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
 
           if (nowMap.name == 'VW Hybrid') {
             let satellite = layerMapArr.find(map => map.name === 'VW Satellite');
+            if (!satellite) {
+              console.error('VW Satellite layer not found');
+              return;
+            }
             const background = initBackground(satellite.type, satellite.url);
             viewer.scene.imageryLayers.add(background);
             viewer.scene.imageryLayers.lowerToBottom(background);
@@ -106,6 +110,10 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
 
       if (currentMap.name == 'VW Hybrid') {
         let satellite = layerMapArr.find(map => map.name === 'VW Satellite');
+        if (!satellite) {
+          console.error('VW Satellite layer not found');
+          return;
+        }
         const background = initBackground(satellite.type, satellite.url);
         viewer.scene.imageryLayers.add(background);
         viewer.scene.imageryLayers.lowerToBottom(background);
