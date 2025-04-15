@@ -11,6 +11,7 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import {useLazyQuery, useMutation, useSuspenseQuery} from "@apollo/client";
 import {getWmsLayerImageProvider} from "@src/components/layerset/utils/utils";
 import {useTranslation} from "react-i18next";
+import {createCesiumViewer} from "@src/utils/createCesiumViewer";
 
 function extractPath(url: string): string {
     const parsedUrl = new URL(url);
@@ -123,30 +124,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
     const [isStringStyleVisible, setIsStringStyleVisible] = useState<boolean>(false);
 
     useEffect(() => {
-        const viewer = new Cesium.Viewer('preview-layer', {
-            geocoder: false,
-            homeButton: false,
-            baseLayerPicker: false,
-            sceneModePicker: false,
-            navigationHelpButton: false,
-            animation: false,
-            timeline: false,
-            fullscreenButton: false,
-            shouldAnimate: true,
-            infoBox: false,
-            selectionIndicator: false,
-        });
-
-        viewer.imageryLayers.removeAll();
-        // 운영환경에서는 배경지도를 WMS로 설정
-        if (import.meta.env.MODE === 'production' && import.meta.env.VITE_BASE_LAYER_NAME) {
-            const baseImageryProvider = getWmsLayerImageProvider(import.meta.env.VITE_BASE_LAYER_NAME);
-            viewer.imageryLayers.addImageryProvider(baseImageryProvider);
-        } else {
-            // 개발환경에서는 OSM으로 설정
-            const osmImageryProvider = new Cesium.OpenStreetMapImageryProvider({ url: 'https://a.tile.openstreetmap.org/' });
-            viewer.imageryLayers.addImageryProvider(osmImageryProvider);
-        }
+        const viewer = createCesiumViewer("preview-layer");
         viewerRef.current = viewer;
         return () => {
             viewer.destroy();

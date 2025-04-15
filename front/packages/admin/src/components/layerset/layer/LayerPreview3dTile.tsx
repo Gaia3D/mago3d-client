@@ -2,34 +2,12 @@ import {useEffect} from "react";
 import * as Cesium from "cesium";
 import {LayerAsset} from "@src/generated/gql/layerset/graphql";
 import {getWmsLayerImageProvider} from "@src/components/layerset/utils/utils";
+import {createCesiumViewer} from "@src/utils/createCesiumViewer";
 
 const LayerPreview3dTile = ({asset}:{asset:LayerAsset}) => {
     
     useEffect(() => {
-        const viewer = new Cesium.Viewer('preview-layer', {
-            geocoder: false,
-            homeButton: false,
-            baseLayerPicker: false,
-            sceneModePicker: false,
-            navigationHelpButton: false,
-            animation: false,
-            timeline: false,
-            fullscreenButton: false,
-            shouldAnimate: true,
-            infoBox: false,
-            selectionIndicator: false,
-        });
-
-        viewer.imageryLayers.removeAll();
-        // 운영환경에서는 배경지도를 WMS로 설정
-        if (import.meta.env.MODE === 'production' && import.meta.env.VITE_BASE_LAYER_NAME) {
-            const baseImageryProvider = getWmsLayerImageProvider(import.meta.env.VITE_BASE_LAYER_NAME);
-            viewer.imageryLayers.addImageryProvider(baseImageryProvider);
-        } else {
-            // 개발환경에서는 OSM으로 설정
-            const osmImageryProvider = new Cesium.OpenStreetMapImageryProvider({ url: 'https://a.tile.openstreetmap.org/' });
-            viewer.imageryLayers.addImageryProvider(osmImageryProvider);
-        }
+        const viewer = createCesiumViewer("preview-layer");
 
         const tilesPrimitives = new Cesium.PrimitiveCollection();
         viewer?.scene.primitives.add(tilesPrimitives);

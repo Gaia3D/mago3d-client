@@ -2,12 +2,7 @@ import {Suspense} from "react";
 import {classifyAssetTypeClassNameByLayerAssetType} from "@src/api/Data";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
-import LayerPreviewCog from "./LayerPreviewCog";
-import LayerPreviewVector from "./LayerPreviewVector";
-import LayerPreview3dTile from "./LayerPreview3dTile";
 import {
-  LayerAsset,
-  LayerAssetType,
   LayersetAssetBasicFragmentDoc,
   LayersetAssetDocument,
   LayersetDeleteAssetDocument,
@@ -17,30 +12,16 @@ import {
 import {useMutation, useSuspenseQuery} from "@apollo/client";
 import {useFragment} from "@src/generated/gql/layerset";
 import {alertToast} from "@mnd/shared/src/utils/toast";
-import LayerPreviewRaster from "./LayerPreviewRaster";
-import LayerPreviewHybrid from "@src/components/layerset/layer/LayerPreviewHybrid";
 import {useTranslation} from "react-i18next";
 import LayerLogTable from "@src/components/layerset/layer/LayerLogTable";
 import LayerForm from "@src/components/layerset/layer/LayerForm";
+import LayerPreview from "@src/components/layerset/layer/LayerPreview";
 
-const getPreviewComponent = (asset: LayerAsset) => {
-  const {type} = asset;
-
-  if (type === LayerAssetType.Cog) {
-    return <LayerPreviewCog asset={asset}/>
-  } else if (type === LayerAssetType.Layergroup) {
-    return <LayerPreviewHybrid asset={asset}/>
-  } else if (type === LayerAssetType.Raster) {
-    return <LayerPreviewRaster asset={asset}/>
-  } else if (type === LayerAssetType.Vector) {
-    return <LayerPreviewVector asset={asset}/>
-  } else if (type === LayerAssetType.Tiles3D) {
-    return <LayerPreview3dTile asset={asset}/>
-  }
-  return <LayerPreviewVector asset={asset}/>
+interface LayerDetailIndexProps {
+  id: string;
 }
 
-const LayerDetailIndex = ({ id }: { id: string }) => {
+const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const form = useForm<UpdateAssetInput>();
@@ -95,11 +76,7 @@ const LayerDetailIndex = ({ id }: { id: string }) => {
             onDelete={toDelete}
             onCancel={() => navigate(-1)}
           />
-          <label>{t("layer-preview")}</label>
-          <div style={{ width: "100%", display: "inline-block" }}>
-            {getPreviewComponent(asset)}
-          </div>
-
+          <LayerPreview asset={asset} />
           <LayerLogTable logs={logs} />
         </article>
       </div>
