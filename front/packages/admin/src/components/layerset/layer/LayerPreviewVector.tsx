@@ -8,6 +8,8 @@ import {useTranslation} from "react-i18next";
 import {createCesiumViewer} from "@src/utils/createCesiumViewer";
 import {useLayerStyleMutations} from "@src/hooks/useLayerStyleMutation";
 
+type VisibleStyleType = 'point' | 'polyline' | 'polygon' | 'attribute';
+
 function extractPath(url: string): string {
     const parsedUrl = new URL(url);
     return parsedUrl.pathname + parsedUrl.search + parsedUrl.hash;
@@ -42,8 +44,6 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     const [ getData ] = useLazyQuery(ClassifyAttributeDocument);
 
-    const {register, handleSubmit, reset} = useForm<CreateStyleInput>();
-
     const {
         createStyle,
         updateStyle,
@@ -57,6 +57,14 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     const defaultStyles = asset.styles?.filter(style => style.defaultStatus);
     const defaultStyle = defaultStyles?.[0];
+
+    const {
+        register,
+        handleSubmit,
+        watch,
+        reset,
+        control,
+    } = useForm<CreateStyleInput>({defaultValues: defaultStyle});
 
     const [styleState, setStyleState] = useState<LayerStyle>(defaultStyle);
     const [count, setCount] = useState<string>("&count=1");
@@ -83,13 +91,8 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
     const viewerRef = useRef<Cesium.Viewer | null>(null);
     const dataSourceRef = useRef<Cesium.GeoJsonDataSource | null>(null);
 
-    const [isPointStyleVisible, setIsPointStyleVisible] = useState<boolean>(true);
-    const [isPolylineStyleVisible, setIsPolylineStyleVisible] = useState<boolean>(false);
-    const [isPolygonStyleVisible, setIsPolygonStyleVisible] = useState<boolean>(false);
-    const [isAttributeStyleVisible, setIsAttributeStyleVisible] = useState<boolean>(false);
-
-    const [isNumberStyleVisible, setIsNumberStyleVisible] = useState<boolean>(false);
-    const [isStringStyleVisible, setIsStringStyleVisible] = useState<boolean>(false);
+    const [visibleStyle, setVisibleStyle] = useState<VisibleStyleType>('point');
+    const [visibleAttributeType, setVisibleAttributeType] = useState<'number' | 'string' | null>(null);
 
     useEffect(() => {
         const viewer = createCesiumViewer("preview-layer");
@@ -101,7 +104,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     useEffect(() => {
         if (!viewerRef.current) return;
-        if (isAttributeStyleVisible) return;
+        if (visibleStyle === "attribute") return;
 
         viewerRef.current?.dataSources.removeAll();
 
@@ -152,7 +155,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
             dataSourceRef.current = dataSource;
         });
 
-    }, [count, isAttributeStyleVisible]);
+    }, [count, visibleStyle]);
 
     useEffect(() => {
         if (!viewerRef.current || !dataSourceRef.current) return;
@@ -187,13 +190,13 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     useEffect(() => {
         if (!viewerRef.current || !dataSourceRef.current) return;
-        if (!isAttributeStyleVisible) return;
+        if (visibleStyle !== "attribute") return;
         viewerRef.current?.dataSources.removeAll();
         rules.length > 0 && rules.forEach((r) => {
             let filter = "";
-            if (isNumberStyleVisible) {
+            if (visibleAttributeType === "number") {
                 filter = selectedAttribute + ">=" + r.min + " AND " + selectedAttribute + "<=" + r.max;
-            } else if (isStringStyleVisible) {
+            } else if (visibleAttributeType === "string") {
                 filter = selectedAttribute + "='" + r.eq + "'";
             }
             const geoJsonDataSourcePromise = Cesium.GeoJsonDataSource.load(import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL + `service=WFS&version=2.0.0&request=GetFeature&typeName=${resource.name}&outputFormat=application/json&propertyName=wkb_geometry&CQL_FILTER=${encodeURIComponent(filter)}`, {
@@ -205,7 +208,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
         viewerRef.current?.camera.flyTo({
             destination: Cesium.Rectangle.fromDegrees(latLonBoundingBox.minx, latLonBoundingBox.miny, latLonBoundingBox.maxx, latLonBoundingBox.maxy),
         });
-    }, [rules, isAttributeStyleVisible]);
+    }, [rules, visibleStyle]);
 
     useEffect(() => {
         if (!defaultStyle) return;
@@ -220,8 +223,8 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                     color: rule.style.fillColor,
                 }
             });
-            setStyleComponent('attribute');
-            setStyleComponent(defaultStyle.context.rules[0].rule.eq ? 'string' : 'number');
+            setVisibleStyle("attribute");
+            setVisibleAttributeType(defaultStyle.context.rules[0].rule.eq ? "string" : "number")
             setRules(updatedRules);
         }
     }, [defaultStyle]);
@@ -235,27 +238,9 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
         reset({
             name: defaultStyle.name,
             context: {
-                point: {
-                    shape: defaultStyle.context.shape,
-                    size: defaultStyle.context.size,
-                    strokeColor: defaultStyle.context.shape.strokeColor,
-                    strokeWidth: defaultStyle.context.shape.strokeWidth,
-                    strokeOpacity: defaultStyle.context.shape.strokeOpacity,
-                    fillColor: defaultStyle.context.shape.fillColor,
-                    fillOpacity: defaultStyle.context.shape.fillOpacity,
-                },
-                line: {
-                    strokeColor: defaultStyle.context.shape.strokeColor,
-                    strokeWidth: defaultStyle.context.shape.strokeWidth,
-                    strokeOpacity: defaultStyle.context.strokeOpacity,
-                },
-                polygon: {
-                    strokeColor: defaultStyle.context.strokeColor,
-                    strokeWidth: defaultStyle.context.strokeWidth,
-                    strokeOpacity: defaultStyle.context.strokeOpacity,
-                    fillColor: defaultStyle.context.fillColor,
-                    fillOpacity: defaultStyle.context.fillOpacity,
-                },
+                point: defaultStyle.context,
+                line: defaultStyle.context,
+                polygon: defaultStyle.context,
                 attribute: {
                     name: defaultStyle.context.name,
                     attribute: "",
@@ -310,58 +295,18 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
         setRules(updatedRules);
     }
 
-    const setStyleComponent = (styleComponent: string) => {
-        switch (styleComponent) {
-            case "point":
-                setIsPointStyleVisible(true);
-                setIsPolylineStyleVisible(false);
-                setIsPolygonStyleVisible(false);
-                setIsAttributeStyleVisible(false);
-                break;
-            case "polyline":
-                setIsPointStyleVisible(false);
-                setIsPolylineStyleVisible(true);
-                setIsPolygonStyleVisible(false);
-                setIsAttributeStyleVisible(false);
-                break;
-            case "polygon":
-                setIsPointStyleVisible(false);
-                setIsPolylineStyleVisible(false);
-                setIsPolygonStyleVisible(true);
-                setIsAttributeStyleVisible(false);
-                break;
-            case "attribute":
-                setIsPointStyleVisible(false);
-                setIsPolylineStyleVisible(false);
-                setIsPolygonStyleVisible(false);
-                setIsAttributeStyleVisible(true);
-                break;
-            case "number":
-                setIsNumberStyleVisible(true);
-                setIsStringStyleVisible(false);
-                break;
-            case "string":
-                setIsNumberStyleVisible(false);
-                setIsStringStyleVisible(true);
-                break;
-            default:
-                break;
-        }
-    }
-
     const onSubmitStyle: SubmitHandler<CreateStyleInput> = (input) => {
         if (!styleState.name) {
             alert(t("required.style-name"));
             return;
         }
-
-        if (!isPointStyleVisible) {
+        if (visibleStyle !== "point") {
             delete input.context.point;
         }
-        if (!isPolylineStyleVisible) {
+        if (visibleStyle !== "polyline") {
             delete input.context.line;
         }
-        if (!isPolygonStyleVisible) {
+        if (visibleStyle !== "polygon") {
             delete input.context.polygon;
         }
 
@@ -385,7 +330,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
             });
         });
 
-        if (isAttributeStyleVisible) {
+        if (visibleStyle === "attribute") {
             input.context.attribute = {
                 name: input.name,
                 attribute: selectedAttribute,
@@ -436,7 +381,14 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
               }
 
               const { type, rules } = response.data.classifyAttribute;
-              setStyleComponent(type.toLowerCase());
+              const component = type.toLowerCase();
+              if (component === 'point' || component === 'polyline' || component === 'polygon' || component === 'attribute') {
+                  setVisibleStyle(component);
+                  setVisibleAttributeType(null);
+              } else if (component === 'number' || component === 'string') {
+                  setVisibleStyle('attribute');
+                  setVisibleAttributeType(component);
+              }
 
               const updatedRules = rules.map((rule) => {
                   return {
@@ -459,17 +411,17 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
           <div className="preview-layer" style={{width: "50%"}}>
               <form onSubmit={handleSubmit(onSubmitStyle)}>
                   <div className="mar-b10" style={{display: "inline-block"}}>
-                      <button type="button" className={`btn-basic ${isPointStyleVisible ? 'on' : ''}`}
-                              onClick={() => setStyleComponent('point')}>{t("point")}(Point)
+                      <button type="button" className={`btn-basic ${visibleStyle === 'point' ? 'on' : ''}`}
+                              onClick={() => setVisibleStyle('point')}>Point
                       </button>
-                      <button type="button" className={`btn-basic ${isPolylineStyleVisible ? 'on' : ''}`}
-                              onClick={() => setStyleComponent('polyline')}>{t("line")}(Line)
+                      <button type="button" className={`btn-basic ${visibleStyle === 'polyline' ? 'on' : ''}`}
+                              onClick={() => setVisibleStyle('polyline')}>Line
                       </button>
-                      <button type="button" className={`btn-basic ${isPolygonStyleVisible ? 'on' : ''}`}
-                              onClick={() => setStyleComponent('polygon')}>{t("plane")}(Polygon)
+                      <button type="button" className={`btn-basic ${visibleStyle === 'polygon' ? 'on' : ''}`}
+                              onClick={() => setVisibleStyle('polygon')}>Polygon
                       </button>
-                      <button type="button" className={`btn-basic ${isAttributeStyleVisible ? 'on' : ''}`}
-                              onClick={() => setStyleComponent('attribute')}>{t("attribute")}(Attribute)
+                      <button type="button" className={`btn-basic ${visibleStyle === 'attribute' ? 'on' : ''}`}
+                              onClick={() => setVisibleStyle('attribute')}>Attribute
                       </button>
                   </div>
                   <label>{t("style-name")}</label>
@@ -482,7 +434,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                       onChange: (e) => handleStyleNameChange(e.target.value)
                   })}/>
                   {
-                    isPointStyleVisible &&
+                    visibleStyle === "point" &&
                     <div>
                         <label>{t("point-shape")}</label>
                         <select {...register("context.point.shape")}>
@@ -510,10 +462,10 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                    onChange: (e) => handleContextChange("strokeWidth", Number(e.target.value))
                                })}/>
                         <label>{t("stroke-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={styleState.context.strokeOpacity * 100}
+                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.strokeOpacity}
                                {...register("context.point.strokeOpacity", {
-                                   value: styleState.context.strokeOpacity * 100,
-                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value / 100))
+                                   value: styleState.context.strokeOpacity,
+                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value))
                                })}/>
                         <label>{t("fill-color")}</label>
                         <input type="color" defaultValue={styleState.context.fillColor}
@@ -522,15 +474,15 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                    onChange: (e) => handleContextChange("fillColor", e.target.value)
                                })}/>
                         <label>{t("fill-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={styleState.context.fillOpacity * 100}
+                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.fillOpacity}
                                {...register("context.point.fillOpacity", {
-                                   value: styleState.context.fillOpacity * 100,
-                                   onChange: (e) => handleContextChange("fillOpacity", Number(e.target.value / 100))
+                                   value: styleState.context.fillOpacity,
+                                   onChange: (e) => handleContextChange("fillOpacity", Number(e.target.value))
                                })}/>
                     </div>
                   }
                   {
-                    isPolylineStyleVisible &&
+                    visibleStyle === "polyline" &&
                     <div>
                         <label>{t("stroke-color")}</label>
                         <input type="color" defaultValue={styleState.context.strokeColor}
@@ -545,15 +497,15 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                    onChange: (e) => handleContextChange("strokeWidth", Number(e.target.value))
                                })}/>
                         <label>{t("stroke-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={styleState.context.strokeOpacity * 100}
+                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.strokeOpacity}
                                {...register("context.line.strokeOpacity", {
-                                   value: styleState.context.strokeOpacity * 100,
-                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value / 100))
+                                   value: styleState.context.strokeOpacity,
+                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value))
                                })}/>
                     </div>
                   }
                   {
-                    isPolygonStyleVisible &&
+                    visibleStyle === "polygon" &&
                     <div>
                         <label>{t("stroke-color")}</label>
                         <input type="color" defaultValue={styleState.context.strokeColor}
@@ -568,10 +520,10 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                    onChange: (e) => handleContextChange("strokeWidth", Number(e.target.value))
                                })}/>
                         <label>{t("stroke-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={styleState.context.strokeOpacity * 100}
+                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.strokeOpacity}
                                {...register("context.polygon.strokeOpacity", {
-                                   value: styleState.context.strokeOpacity * 100,
-                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value / 100))
+                                   value: styleState.context.strokeOpacity,
+                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value))
                                })}/>
                         <label>{t("fill-color")}</label>
                         <input type="color" defaultValue={styleState.context.fillColor}
@@ -580,15 +532,15 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                    onChange: (e) => handleContextChange("fillColor", e.target.value)
                                })}/>
                         <label>{t("fill-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={styleState.context.fillOpacity * 100}
+                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.fillOpacity}
                                {...register("context.polygon.fillOpacity", {
-                                   value: styleState.context.fillOpacity * 100,
-                                   onChange: (e) => handleContextChange("fillOpacity", Number(e.target.value / 100))
+                                   value: styleState.context.fillOpacity,
+                                   onChange: (e) => handleContextChange("fillOpacity", Number(e.target.value))
                                })}/>
                     </div>
                   }
                   {
-                    isAttributeStyleVisible &&
+                    visibleStyle === "attribute" &&
                     <div>
                         <label htmlFor="attribute">속성명</label>
                         <select id="attributes" defaultValue={selectedAttribute}
@@ -606,7 +558,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                         </select>
                         <button type="button" className="btn-l-apply" onClick={toClassify}>{t("classify")}</button>
                         {
-                          isNumberStyleVisible &&
+                          visibleAttributeType === "number" &&
                           rules.length > 0 &&
                           <div className="list-classify">
                               {/*<button type="button">추가</button>*/}
@@ -654,7 +606,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                           </div>
                         }
                         {
-                          isStringStyleVisible &&
+                          visibleAttributeType === "string" &&
                           rules.length > 0 &&
                           <div className="list-classify column-03">
                               {/*<button type="button">추가</button>*/}
