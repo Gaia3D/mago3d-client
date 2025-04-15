@@ -1,15 +1,9 @@
 import {useEffect, useRef, useState} from "react";
 import * as Cesium from "cesium";
-import {
-    ApplyLayerStyleDocument, ClassifyAttributeDocument,
-    CreateLayerStyleDocument, CreateStyleInput,
-    DeleteLayerStyleDocument,
-    LayerAsset, LayersetAssetDocument, RemoteDocument, RemoteQueryVariables, Rule, UpdateLayerStyleDocument
-} from "@src/generated/gql/layerset/graphql";
+import {ClassifyAttributeDocument, CreateStyleInput, LayerAsset, LayersetAssetDocument, LayerStyle, RemoteDocument, RemoteQueryVariables, Rule} from "@src/generated/gql/layerset/graphql";
 import WarningMessage from "../../dataset/asset/WarningMessage";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {useLazyQuery, useMutation, useSuspenseQuery} from "@apollo/client";
-import {getWmsLayerImageProvider} from "@src/components/layerset/utils/utils";
+import {useLazyQuery, useSuspenseQuery} from "@apollo/client";
 import {useTranslation} from "react-i18next";
 import {createCesiumViewer} from "@src/utils/createCesiumViewer";
 import {useLayerStyleMutations} from "@src/hooks/useLayerStyleMutation";
@@ -64,17 +58,27 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
     const defaultStyles = asset.styles?.filter(style => style.defaultStatus);
     const defaultStyle = defaultStyles?.[0];
 
-    const [styleName, setStyleName] = useState<string>(defaultStyle?.name ?? "");
-    const [shape, setShape] = useState<string>(defaultStyle?.context?.shape ?? "circle");
-    const [size, setSize] = useState<number>(defaultStyle?.context?.size ?? 5);
-    const [strokeColor, setStrokeColor] = useState<string>(defaultStyle?.context?.strokeColor ?? "#000000");
-    const [fillColor, setFillColor] = useState<string>(defaultStyle?.context?.fillColor ?? "#000000");
-    const [lineWidth, setLineWidth] = useState<number>(defaultStyle?.context?.strokeWidth ?? 1);
-    const [fillOpacity, setFillOpacity] = useState<number>(defaultStyle?.context?.fillOpacity ?? 0.5);
-    const [strokeOpacity, setStrokeOpacity] = useState<number>(defaultStyle?.context?.strokeOpacity ?? 0.5);
+    const [styleState, setStyleState] = useState<LayerStyle>(defaultStyle);
     const [count, setCount] = useState<string>("&count=1");
     const [selectedAttribute, setSelectedAttribute] = useState<string>(defaultStyle?.context?.attribute ?? "");
     const [rules, setRules] = useState<Rule[]>([]);
+
+    const handleContextChange = <K extends keyof NonNullable<LayerStyle["context"]>>(key: K, value: string | number) => {
+        setStyleState((prev) => ({
+            ...prev,
+            context: {
+                ...(prev.context ?? {}),
+                [key]: value,
+            },
+        }));
+    };
+
+    const handleStyleNameChange = (value: string) => {
+        setStyleState((prev) => ({
+            ...prev,
+            name: value,
+        }));
+    };
 
     const viewerRef = useRef<Cesium.Viewer | null>(null);
     const dataSourceRef = useRef<Cesium.GeoJsonDataSource | null>(null);
@@ -109,8 +113,8 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
         // WFS 레이어를 GeoJSON으로 가져와서 뷰어에 추가
         const geoJsonDataSource = Cesium.GeoJsonDataSource.load(wfsUrl, {
-            stroke: Cesium.Color.fromCssColorString(strokeColor),
-            fill: Cesium.Color.fromCssColorString(fillColor).withAlpha(fillOpacity),
+            stroke: Cesium.Color.fromCssColorString(styleState.context.strokeColor),
+            fill: Cesium.Color.fromCssColorString(styleState.context.fillColor).withAlpha(styleState.context.fillOpacity),
         });
         viewerRef.current?.dataSources.add(geoJsonDataSource);
 
@@ -122,10 +126,10 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                 if (entity.billboard) {
                     // 포인트 엔티티 생성
                     entity.point = new Cesium.PointGraphics({
-                        color: Cesium.Color.fromCssColorString(fillColor).withAlpha(fillOpacity), // 채우기 색상
-                        pixelSize: size, // 크기
-                        outlineColor: Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity), // 외곽선 색상
-                        outlineWidth: lineWidth // 외곽선 두께
+                        color: Cesium.Color.fromCssColorString(styleState.context.fillColor).withAlpha(styleState.context.fillOpacity), // 채우기 색상
+                        pixelSize: styleState.context.size, // 크기
+                        outlineColor: Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity), // 외곽선 색상
+                        outlineWidth: styleState.context.strokeWidth // 외곽선 두께
                     });
                     // 기존의 Billboard를 제거합니다.
                     entity.billboard = undefined;
@@ -140,8 +144,8 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                 dataSource.entities.add({
                     polyline: {
                         positions: positions,
-                        width: lineWidth,
-                        material: Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity),
+                        width: styleState.context.strokeWidth,
+                        material: Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity),
                     }
                 });
             });
@@ -155,23 +159,23 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
         dataSourceRef.current.entities.values.forEach(entity => {
            if (entity.polygon) {
-               entity.polygon.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(fillColor).withAlpha(fillOpacity));
-               entity.polygon.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity));
+               entity.polygon.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(styleState.context.fillColor).withAlpha(styleState.context.fillOpacity));
+               entity.polygon.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity));
            }
            if (entity.polyline) {
-               entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity));
-               entity.polyline.width = new Cesium.ConstantProperty(lineWidth);
+               entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity));
+               entity.polyline.width = new Cesium.ConstantProperty(styleState.context.strokeWidth);
            }
            if (entity.point) {
                // TODO: shape를 반영하도록..
-               entity.point.color = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(fillColor).withAlpha(fillOpacity));
-               entity.point.pixelSize = new Cesium.ConstantProperty(size);
-               entity.point.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity));
-               entity.point.outlineWidth = new Cesium.ConstantProperty(lineWidth);
+               entity.point.color = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(styleState.context.fillColor).withAlpha(styleState.context.fillOpacity));
+               entity.point.pixelSize = new Cesium.ConstantProperty(styleState.context.size);
+               entity.point.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity));
+               entity.point.outlineWidth = new Cesium.ConstantProperty(styleState.context.strokeWidth);
            }
         });
 
-    }, [shape, size, strokeColor, fillColor, lineWidth, fillOpacity, strokeOpacity]);
+    }, [styleState.context]);
 
     useEffect(() => {
         if (!viewerRef.current || !dataSourceRef.current) return;
@@ -224,84 +228,42 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     const resetStyle = () => {
 
-        setStyleName("");
-        setShape("circle");
-        setSize(5);
-        setStrokeColor("#000000");
-        setFillColor("#000000");
-        setLineWidth(1);
-        setFillOpacity(0.5);
-        setStrokeOpacity(0.5);
+        setStyleState(defaultStyle);
         setSelectedAttribute("");
         setRules([]);
 
         reset({
-            name: "",
+            name: defaultStyle.name,
             context: {
                 point: {
-                    shape: "circle",
-                    size: 5,
-                    strokeColor: "#000000",
-                    strokeWidth: 1,
-                    strokeOpacity: 0.5,
-                    fillColor: "#000000",
-                    fillOpacity: 0.5,
+                    shape: defaultStyle.context.shape,
+                    size: defaultStyle.context.size,
+                    strokeColor: defaultStyle.context.shape.strokeColor,
+                    strokeWidth: defaultStyle.context.shape.strokeWidth,
+                    strokeOpacity: defaultStyle.context.shape.strokeOpacity,
+                    fillColor: defaultStyle.context.shape.fillColor,
+                    fillOpacity: defaultStyle.context.shape.fillOpacity,
                 },
                 line: {
-                    strokeColor: "#000000",
-                    strokeWidth: 1,
-                    strokeOpacity: 0.5,
+                    strokeColor: defaultStyle.context.shape.strokeColor,
+                    strokeWidth: defaultStyle.context.shape.strokeWidth,
+                    strokeOpacity: defaultStyle.context.strokeOpacity,
                 },
                 polygon: {
-                    strokeColor: "#000000",
-                    strokeWidth: 1,
-                    strokeOpacity: 0.5,
-                    fillColor: "#000000",
-                    fillOpacity: 0.5,
+                    strokeColor: defaultStyle.context.strokeColor,
+                    strokeWidth: defaultStyle.context.strokeWidth,
+                    strokeOpacity: defaultStyle.context.strokeOpacity,
+                    fillColor: defaultStyle.context.fillColor,
+                    fillOpacity: defaultStyle.context.fillOpacity,
                 },
                 attribute: {
-                    name: "",
+                    name: defaultStyle.context.name,
                     attribute: "",
                     rules: []
                 }
             }
         });
     }
-
-    const handleShapeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        // 선택된 모양으로 shape 상태를 업데이트합니다.
-        setShape(event.target.value);
-    };
-
-    const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // 입력된 크기로 size 상태를 업데이트합니다.
-        setSize(Number(event.target.value));
-    };
-
-    const handleStrokeColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // 입력된 색상으로 strokeColor 상태를 업데이트합니다.
-        setStrokeColor(event.target.value);
-    };
-
-    const handleFillColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // 입력된 색상으로 strokeColor 상태를 업데이트합니다.
-        setFillColor(event.target.value);
-    };
-
-    const handleLineWidthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // 입력된 두께로 lineWidth 상태를 업데이트합니다.
-        setLineWidth(Number(event.target.value));
-    };
-
-    const handleFillOpacityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // 입력된 투명도로 opacity 상태를 업데이트합니다.
-        setFillOpacity(Number(event.target.value) / 100);
-    };
-
-    const handleStrokeOpacityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // 입력된 투명도로 opacity 상태를 업데이트합니다.
-        setStrokeOpacity(Number(event.target.value) / 100);
-    };
 
     const handleAttributeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedAttribute(event.target.value); // 상태 변수에 선택된 값을 설정
@@ -388,7 +350,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
     }
 
     const onSubmitStyle: SubmitHandler<CreateStyleInput> = (input) => {
-        if (!styleName) {
+        if (!styleState.name) {
             alert(t("required.style-name"));
             return;
         }
@@ -453,7 +415,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
     }
 
     const toDelete = () => {
-        if (!confirm(t("style")+ `[${styleName}]` + t("question.blank-delete") )) return;
+        if (!confirm(t("style")+ `[${styleState.name}]` + t("question.blank-delete") )) return;
         deleteStyle({ variables: { id: defaultStyle?.id } });
     }
 
@@ -494,7 +456,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
           <button type="button" className="btn-l-save" onClick={() => setCount("")}>{t("total-preview")}</button>
           <button type="button" className="btn-l-save" onClick={() => setCount("&count=1")}>{t("object-preview")}</button>
           <WarningMessage message={t("warning.object")}/>
-          <div className="preview-layer" style={{width: "30%"}}>
+          <div className="preview-layer" style={{width: "50%"}}>
               <form onSubmit={handleSubmit(onSubmitStyle)}>
                   <div className="mar-b10" style={{display: "inline-block"}}>
                       <button type="button" className={`btn-basic ${isPointStyleVisible ? 'on' : ''}`}
@@ -511,63 +473,59 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                       </button>
                   </div>
                   <label>{t("style-name")}</label>
-                  <input type="text" defaultValue={styleName} {...register("name", {
+                  <input type="text" defaultValue={styleState.name} {...register("name", {
                       required: {
                           value: true,
                           message: t("required.style-name")
                       },
-                      value: styleName,
-                      onChange: (event) => setStyleName(event.target.value)
+                      value: styleState.name,
+                      onChange: (e) => handleStyleNameChange(e.target.value)
                   })}/>
                   {
                     isPointStyleVisible &&
                     <div>
                         <label>{t("point-shape")}</label>
-                        <select defaultValue={shape}
-                                {...register("context.point.shape", {
-                                    value: shape,
-                                    onChange: handleShapeChange
-                                })}>
+                        <select {...register("context.point.shape")}>
                             <option value="circle">{t("circle")}</option>
                             <option value="square">{t("square")}</option>
                             <option value="triangle">{t("triangle")}</option>
                             <option value="cross">{t("cross")}</option>
                         </select>
                         <label>{t("point-size")}</label>
-                        <input type="number" defaultValue={size}
+                        <input type="number" defaultValue={styleState.context.size}
                                {...register("context.point.size", {
-                                   value: size,
-                                   onChange: handleSizeChange
+                                   value: styleState.context.size,
+                                   onChange: (e) => handleContextChange("size", Number(e.target.value))
                                })}/>
                         <label>{t("stroke-color")}</label>
-                        <input type="color" defaultValue={strokeColor}
+                        <input type="color" defaultValue={styleState.context.strokeColor}
                                {...register("context.point.strokeColor", {
-                                   value: strokeColor,
-                                   onChange: handleStrokeColorChange
+                                   value: styleState.context.strokeColor,
+                                   onChange: (e) => handleContextChange("strokeColor", e.target.value)
                                })}/>
                         <label>{t("stroke-width")}</label>
-                        <input type="number" defaultValue={lineWidth}
+                        <input type="number" defaultValue={styleState.context.strokeWidth}
                                {...register("context.point.strokeWidth", {
-                                   value: lineWidth,
-                                   onChange: handleLineWidthChange
+                                   value: styleState.context.strokeWidth,
+                                   onChange: (e) => handleContextChange("strokeWidth", Number(e.target.value))
                                })}/>
                         <label>{t("stroke-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={strokeOpacity * 100}
+                        <input type="range" min={0} max={100} defaultValue={styleState.context.strokeOpacity * 100}
                                {...register("context.point.strokeOpacity", {
-                                   value: strokeOpacity * 100,
-                                   onChange: handleStrokeOpacityChange
+                                   value: styleState.context.strokeOpacity * 100,
+                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value / 100))
                                })}/>
                         <label>{t("fill-color")}</label>
-                        <input type="color" defaultValue={fillColor}
+                        <input type="color" defaultValue={styleState.context.fillColor}
                                {...register("context.point.fillColor", {
-                                   value: fillColor,
-                                   onChange: handleFillColorChange
+                                   value: styleState.context.fillColor,
+                                   onChange: (e) => handleContextChange("fillColor", e.target.value)
                                })}/>
                         <label>{t("fill-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={fillOpacity * 100}
+                        <input type="range" min={0} max={100} defaultValue={styleState.context.fillOpacity * 100}
                                {...register("context.point.fillOpacity", {
-                                   value: fillOpacity * 100,
-                                   onChange: handleFillOpacityChange
+                                   value: styleState.context.fillOpacity * 100,
+                                   onChange: (e) => handleContextChange("fillOpacity", Number(e.target.value / 100))
                                })}/>
                     </div>
                   }
@@ -575,22 +533,22 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                     isPolylineStyleVisible &&
                     <div>
                         <label>{t("stroke-color")}</label>
-                        <input type="color" defaultValue={strokeColor}
+                        <input type="color" defaultValue={styleState.context.strokeColor}
                                {...register("context.line.strokeColor", {
-                                   value: strokeColor,
-                                   onChange: handleStrokeColorChange
+                                   value: styleState.context.strokeColor,
+                                   onChange: (e) => handleContextChange("strokeColor", e.target.value)
                                })}/>
                         <label>{t("stroke-width")}</label>
-                        <input type="number" defaultValue={lineWidth}
+                        <input type="number" defaultValue={styleState.context.strokeWidth}
                                {...register("context.line.strokeWidth", {
-                                   value: lineWidth,
-                                   onChange: handleLineWidthChange
+                                   value: styleState.context.strokeWidth,
+                                   onChange: (e) => handleContextChange("strokeWidth", Number(e.target.value))
                                })}/>
                         <label>{t("stroke-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={strokeOpacity * 100}
+                        <input type="range" min={0} max={100} defaultValue={styleState.context.strokeOpacity * 100}
                                {...register("context.line.strokeOpacity", {
-                                   value: strokeOpacity * 100,
-                                   onChange: handleStrokeOpacityChange,
+                                   value: styleState.context.strokeOpacity * 100,
+                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value / 100))
                                })}/>
                     </div>
                   }
@@ -598,34 +556,34 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                     isPolygonStyleVisible &&
                     <div>
                         <label>{t("stroke-color")}</label>
-                        <input type="color" defaultValue={strokeColor}
+                        <input type="color" defaultValue={styleState.context.strokeColor}
                                {...register("context.polygon.strokeColor", {
-                                   value: strokeColor,
-                                   onChange: handleStrokeColorChange,
+                                   value: styleState.context.strokeColor,
+                                   onChange: (e) => handleContextChange("strokeColor", e.target.value)
                                })}/>
                         <label>{t("stroke-width")}</label>
-                        <input type="number" defaultValue={lineWidth}
+                        <input type="number" defaultValue={styleState.context.strokeWidth}
                                {...register("context.polygon.strokeWidth", {
-                                   value: lineWidth,
-                                   onChange: handleLineWidthChange,
+                                   value: styleState.context.strokeWidth,
+                                   onChange: (e) => handleContextChange("strokeWidth", Number(e.target.value))
                                })}/>
                         <label>{t("stroke-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={strokeOpacity * 100}
+                        <input type="range" min={0} max={100} defaultValue={styleState.context.strokeOpacity * 100}
                                {...register("context.polygon.strokeOpacity", {
-                                   value: strokeOpacity * 100,
-                                   onChange: handleStrokeOpacityChange,
+                                   value: styleState.context.strokeOpacity * 100,
+                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value / 100))
                                })}/>
                         <label>{t("fill-color")}</label>
-                        <input type="color" defaultValue={fillColor}
+                        <input type="color" defaultValue={styleState.context.fillColor}
                                {...register("context.polygon.fillColor", {
-                                   value: fillColor,
-                                   onChange: handleFillColorChange,
+                                   value: styleState.context.fillColor,
+                                   onChange: (e) => handleContextChange("fillColor", e.target.value)
                                })}/>
                         <label>{t("fill-opacity")}</label>
-                        <input type="range" min={0} max={100} defaultValue={fillOpacity * 100}
+                        <input type="range" min={0} max={100} defaultValue={styleState.context.fillOpacity * 100}
                                {...register("context.polygon.fillOpacity", {
-                                   value: fillOpacity * 100,
-                                   onChange: handleFillOpacityChange,
+                                   value: styleState.context.fillOpacity * 100,
+                                   onChange: (e) => handleContextChange("fillOpacity", Number(e.target.value / 100))
                                })}/>
                     </div>
                   }
@@ -687,7 +645,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                                     deleteRule(rule.id)
                                                 }}>{t("delete")}
                                                 </button>
-                                            </td>
+                                        </td>
                                         </tr>
                                       ))
                                   }
@@ -743,7 +701,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                   </div>
               </form>
           </div>
-          <div className="preview-layer" id="preview-layer" style={{width: "70%"}}></div>
+          <div className="preview-layer" id="preview-layer" style={{width: "50%"}}></div>
           <WarningMessage message={t("warning.preview")}/>
       </>
     )
