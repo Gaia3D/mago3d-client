@@ -1,4 +1,4 @@
-import {Suspense} from "react";
+import {Suspense, useEffect, useState} from "react";
 import {classifyAssetTypeClassNameByLayerAssetType} from "@src/api/Data";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
@@ -15,11 +15,14 @@ import {alertToast} from "@mnd/shared/src/utils/toast";
 import {useTranslation} from "react-i18next";
 import LayerLogTable from "@src/components/layerset/layer/LayerLogTable";
 import LayerForm from "@src/components/layerset/layer/LayerForm";
-import LayerPreview from "@src/components/layerset/layer/preview/LayerPreview";
+import LayerAttribute from "@src/components/layerset/layer/LayerAttribute";
+import LayerStyle from "@src/components/layerset/layer/LayerStyle";
 
 interface LayerDetailIndexProps {
   id: string;
 }
+
+type CategoryType = "default" | "style" | "log" | "attribute";
 
 const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
   const {t} = useTranslation();
@@ -28,6 +31,7 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
   const { data } = useSuspenseQuery(LayersetAssetDocument, { variables: { id } });
   const asset = useFragment(LayersetAssetBasicFragmentDoc, data.asset);
   const { logs, groups } = data.asset;
+  const [category, setCategory] = useState<CategoryType>("default");
 
   const [ updateMutation ] = useMutation(LayersetUpdateAssetDocument, {
     refetchQueries: [LayersetAssetDocument],
@@ -67,17 +71,32 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
           {asset.name}
           <span className={classifyAssetTypeClassNameByLayerAssetType(asset.type)}>{asset.type}</span>
         </h2>
+        <div>
+          <button onClick={() => setCategory("default")}>기본 설정</button>
+          <button onClick={() => setCategory("style")}>스타일 설정</button>
+          <button onClick={() => setCategory("attribute")}>속성 설정</button>
+          <button onClick={() => setCategory("log")}>로그</button>
+        </div>
         <article>
-          <LayerForm
-            asset={asset}
-            groups={safeGroups}
-            form={form}
-            onSubmit={onSubmit}
-            onDelete={toDelete}
-            onCancel={() => navigate(-1)}
-          />
-          <LayerPreview asset={asset} />
-          <LayerLogTable logs={logs} />
+          <div className={category === "default" ? "block" : "none"}>
+            <LayerForm
+              asset={asset}
+              groups={safeGroups}
+              form={form}
+              onSubmit={onSubmit}
+              onDelete={toDelete}
+              onCancel={() => navigate(-1)}
+            />
+          </div>
+          <div className={category === "style" ? "block" : "none"}>
+            <LayerStyle asset={asset}/>
+          </div>
+          <div className={category === "log" ? "block" : "none"}>
+            <LayerLogTable logs={logs}/>
+          </div>
+          <div className={category === "attribute" ? "block" : "none"}>
+            <LayerAttribute/>
+          </div>
         </article>
       </div>
     </Suspense>
