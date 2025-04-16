@@ -7,6 +7,9 @@ import {useLazyQuery, useSuspenseQuery} from "@apollo/client";
 import {useTranslation} from "react-i18next";
 import {createCesiumViewer} from "@src/utils/createCesiumViewer";
 import {useLayerStyleMutations} from "@src/hooks/useLayerStyleMutation";
+import PointStyleForm from "@src/components/layerset/layer/style-form/PointStyleForm";
+import PolylineStyleForm from "@src/components/layerset/layer/style-form/PolylineStyleForm";
+import PolygonStyleForm from "@src/components/layerset/layer/style-form/PolygonStyleForm";
 
 type VisibleStyleType = 'point' | 'polyline' | 'polygon' | 'attribute';
 
@@ -58,18 +61,30 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
     const defaultStyles = asset.styles?.filter(style => style.defaultStatus);
     const defaultStyle = defaultStyles?.[0];
 
+    useEffect(() => {
+        console.log("defaultStyle", defaultStyle);
+    }, [defaultStyle]);
+
     const {
         register,
         handleSubmit,
-        watch,
         reset,
-        control,
-    } = useForm<CreateStyleInput>({defaultValues: defaultStyle});
+        setValue
+    } = useForm<CreateStyleInput>();
 
     const [styleState, setStyleState] = useState<LayerStyle>(defaultStyle);
     const [count, setCount] = useState<string>("&count=1");
     const [selectedAttribute, setSelectedAttribute] = useState<string>(defaultStyle?.context?.attribute ?? "");
     const [rules, setRules] = useState<Rule[]>([]);
+
+    useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { name, ...contextWithoutName } = styleState.context;
+
+        setValue("context.point", contextWithoutName);
+        setValue("context.line", contextWithoutName);
+        setValue("context.polygon", contextWithoutName);
+    }, [setValue, styleState.context]);
 
     const handleContextChange = <K extends keyof NonNullable<LayerStyle["context"]>>(key: K, value: string | number) => {
         setStyleState((prev) => ({
@@ -296,10 +311,15 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
     }
 
     const onSubmitStyle: SubmitHandler<CreateStyleInput> = (input) => {
+        
+        //  마지막에 point나 polyline, polygon 안에있는 name 빼주자
+        
+        
         if (!styleState.name) {
             alert(t("required.style-name"));
             return;
         }
+
         if (visibleStyle !== "point") {
             delete input.context.point;
         }
@@ -433,112 +453,9 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                       value: styleState.name,
                       onChange: (e) => handleStyleNameChange(e.target.value)
                   })}/>
-                  {
-                    visibleStyle === "point" &&
-                    <div>
-                        <label>{t("point-shape")}</label>
-                        <select {...register("context.point.shape")}>
-                            <option value="circle">{t("circle")}</option>
-                            <option value="square">{t("square")}</option>
-                            <option value="triangle">{t("triangle")}</option>
-                            <option value="cross">{t("cross")}</option>
-                        </select>
-                        <label>{t("point-size")}</label>
-                        <input type="number" defaultValue={styleState.context.size}
-                               {...register("context.point.size", {
-                                   value: styleState.context.size,
-                                   onChange: (e) => handleContextChange("size", Number(e.target.value))
-                               })}/>
-                        <label>{t("stroke-color")}</label>
-                        <input type="color" defaultValue={styleState.context.strokeColor}
-                               {...register("context.point.strokeColor", {
-                                   value: styleState.context.strokeColor,
-                                   onChange: (e) => handleContextChange("strokeColor", e.target.value)
-                               })}/>
-                        <label>{t("stroke-width")}</label>
-                        <input type="number" defaultValue={styleState.context.strokeWidth}
-                               {...register("context.point.strokeWidth", {
-                                   value: styleState.context.strokeWidth,
-                                   onChange: (e) => handleContextChange("strokeWidth", Number(e.target.value))
-                               })}/>
-                        <label>{t("stroke-opacity")}</label>
-                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.strokeOpacity}
-                               {...register("context.point.strokeOpacity", {
-                                   value: styleState.context.strokeOpacity,
-                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value))
-                               })}/>
-                        <label>{t("fill-color")}</label>
-                        <input type="color" defaultValue={styleState.context.fillColor}
-                               {...register("context.point.fillColor", {
-                                   value: styleState.context.fillColor,
-                                   onChange: (e) => handleContextChange("fillColor", e.target.value)
-                               })}/>
-                        <label>{t("fill-opacity")}</label>
-                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.fillOpacity}
-                               {...register("context.point.fillOpacity", {
-                                   value: styleState.context.fillOpacity,
-                                   onChange: (e) => handleContextChange("fillOpacity", Number(e.target.value))
-                               })}/>
-                    </div>
-                  }
-                  {
-                    visibleStyle === "polyline" &&
-                    <div>
-                        <label>{t("stroke-color")}</label>
-                        <input type="color" defaultValue={styleState.context.strokeColor}
-                               {...register("context.line.strokeColor", {
-                                   value: styleState.context.strokeColor,
-                                   onChange: (e) => handleContextChange("strokeColor", e.target.value)
-                               })}/>
-                        <label>{t("stroke-width")}</label>
-                        <input type="number" defaultValue={styleState.context.strokeWidth}
-                               {...register("context.line.strokeWidth", {
-                                   value: styleState.context.strokeWidth,
-                                   onChange: (e) => handleContextChange("strokeWidth", Number(e.target.value))
-                               })}/>
-                        <label>{t("stroke-opacity")}</label>
-                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.strokeOpacity}
-                               {...register("context.line.strokeOpacity", {
-                                   value: styleState.context.strokeOpacity,
-                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value))
-                               })}/>
-                    </div>
-                  }
-                  {
-                    visibleStyle === "polygon" &&
-                    <div>
-                        <label>{t("stroke-color")}</label>
-                        <input type="color" defaultValue={styleState.context.strokeColor}
-                               {...register("context.polygon.strokeColor", {
-                                   value: styleState.context.strokeColor,
-                                   onChange: (e) => handleContextChange("strokeColor", e.target.value)
-                               })}/>
-                        <label>{t("stroke-width")}</label>
-                        <input type="number" defaultValue={styleState.context.strokeWidth}
-                               {...register("context.polygon.strokeWidth", {
-                                   value: styleState.context.strokeWidth,
-                                   onChange: (e) => handleContextChange("strokeWidth", Number(e.target.value))
-                               })}/>
-                        <label>{t("stroke-opacity")}</label>
-                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.strokeOpacity}
-                               {...register("context.polygon.strokeOpacity", {
-                                   value: styleState.context.strokeOpacity,
-                                   onChange: (e) => handleContextChange("strokeOpacity", Number(e.target.value))
-                               })}/>
-                        <label>{t("fill-color")}</label>
-                        <input type="color" defaultValue={styleState.context.fillColor}
-                               {...register("context.polygon.fillColor", {
-                                   value: styleState.context.fillColor,
-                                   onChange: (e) => handleContextChange("fillColor", e.target.value)
-                               })}/>
-                        <label>{t("fill-opacity")}</label>
-                        <input type="range" min={0} max={1} step={0.01} defaultValue={styleState.context.fillOpacity}
-                               {...register("context.polygon.fillOpacity", {
-                                   value: styleState.context.fillOpacity,
-                                   onChange: (e) => handleContextChange("fillOpacity", Number(e.target.value))
-                               })}/>
-                    </div>
-                  }
+                  { visibleStyle === "point" && <PointStyleForm register={register} styleState={styleState} onChange={handleContextChange} /> }
+                  { visibleStyle === "polyline" && <PolylineStyleForm register={register} styleState={styleState} onChange={handleContextChange} /> }
+                  { visibleStyle === "polygon" && <PolygonStyleForm register={register} styleState={styleState} onChange={handleContextChange} /> }
                   {
                     visibleStyle === "attribute" &&
                     <div>
