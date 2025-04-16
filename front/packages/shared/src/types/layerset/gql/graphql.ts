@@ -203,6 +203,45 @@ export type CreateAssetResponse = WithAuditable & WithJsonProperty & {
  * # Create
  * ##################################################################################
  */
+export type CreateAttributeInput = {
+  categoryName: Scalars['String']['input'];
+  properties: Array<CreateAttributePropertyInput>;
+};
+
+export type CreateAttributeProperty = {
+  __typename?: 'CreateAttributeProperty';
+  field: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['String']['output']>;
+  sortOrder?: Maybe<Scalars['Int']['output']>;
+  value?: Maybe<Scalars['String']['output']>;
+  weight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type CreateAttributePropertyInput = {
+  field: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
+  value?: InputMaybe<Scalars['String']['input']>;
+  weight?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type CreateAttributeResponse = WithAuditable & {
+  __typename?: 'CreateAttributeResponse';
+  categoryName: Scalars['String']['output'];
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  properties: Array<CreateAttributeProperty>;
+  sortOrder?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+};
+
+/**
+ * ##################################################################################
+ * # Create
+ * ##################################################################################
+ */
 export type CreateGroupInput = {
   access?: LayerAccess;
   collapsed?: Scalars['Boolean']['input'];
@@ -456,6 +495,7 @@ export enum LayerAccess {
 export type LayerAsset = WithAuditable & WithJsonProperty & {
   __typename?: 'LayerAsset';
   access?: Maybe<LayerAccess>;
+  attributes?: Maybe<Array<Maybe<LayerAttribute>>>;
   createdAt?: Maybe<Scalars['String']['output']>;
   createdBy?: Maybe<Scalars['ID']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -530,6 +570,29 @@ export enum LayerAssetType {
   VworldWfs = 'VWORLD_WFS',
   VworldWms = 'VWORLD_WMS'
 }
+
+/**
+ * ##################################################################################
+ * # Query
+ * ##################################################################################
+ */
+export type LayerAttribute = {
+  __typename?: 'LayerAttribute';
+  categoryName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  properties: Array<LayerAttributeProperty>;
+  sortOrder?: Maybe<Scalars['Int']['output']>;
+};
+
+export type LayerAttributeProperty = {
+  __typename?: 'LayerAttributeProperty';
+  field: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['String']['output']>;
+  sortOrder?: Maybe<Scalars['Int']['output']>;
+  value?: Maybe<Scalars['String']['output']>;
+  weight?: Maybe<Scalars['Int']['output']>;
+};
 
 /**
  * ##################################################################################
@@ -661,6 +724,8 @@ export type Mutation = {
   applyAssetStyle: LayerAsset;
   /**  Asset */
   createAsset: CreateAssetResponse;
+  /**  Attribute */
+  createAttributes: Array<Maybe<CreateAttributeResponse>>;
   /**  Group */
   createGroup: CreateGroupResponse;
   /**  Label */
@@ -668,6 +733,8 @@ export type Mutation = {
   /**  Style */
   createStyle: CreateStyleResponse;
   deleteAsset: Scalars['Boolean']['output'];
+  deleteAttributeProperties: Scalars['Boolean']['output'];
+  deleteAttributes: Scalars['Boolean']['output'];
   deleteGroup: Scalars['Boolean']['output'];
   deleteLabel: Scalars['Boolean']['output'];
   deleteStyle: Scalars['Boolean']['output'];
@@ -678,6 +745,7 @@ export type Mutation = {
   /**  User */
   saveUserLayer: Array<Maybe<UserLayerGroup>>;
   updateAsset: UpdateAssetResponse;
+  updateAttributes: Array<Maybe<UpdateAttributeResponse>>;
   updateGroup: UpdateGroupResponse;
   updateLabel: UpdateLabelResponse;
   updateStyle: UpdateStyleResponse;
@@ -706,6 +774,12 @@ export type MutationCreateAssetArgs = {
 };
 
 
+export type MutationCreateAttributesArgs = {
+  assetId: Scalars['ID']['input'];
+  input: Array<InputMaybe<CreateAttributeInput>>;
+};
+
+
 export type MutationCreateGroupArgs = {
   input: CreateGroupInput;
 };
@@ -722,6 +796,16 @@ export type MutationCreateStyleArgs = {
 
 
 export type MutationDeleteAssetArgs = {
+  ids: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationDeleteAttributePropertiesArgs = {
+  ids: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationDeleteAttributesArgs = {
   ids: Array<Scalars['ID']['input']>;
 };
 
@@ -765,6 +849,12 @@ export type MutationSaveUserLayerArgs = {
 export type MutationUpdateAssetArgs = {
   id: Scalars['ID']['input'];
   input: UpdateAssetInput;
+};
+
+
+export type MutationUpdateAttributesArgs = {
+  assetId: Scalars['ID']['input'];
+  input: Array<InputMaybe<UpdateAttributeInput>>;
 };
 
 
@@ -870,6 +960,9 @@ export type Query = {
   asset: LayerAsset;
   /**  Asset */
   assets: Array<Maybe<LayerAsset>>;
+  /**  Attribute */
+  attribute: LayerAttribute;
+  attributeByNativeName?: Maybe<Array<Maybe<LayerAttribute>>>;
   classifyAttribute: ClassifiedAttribute;
   group: LayerGroup;
   /**  Group */
@@ -900,6 +993,16 @@ export type QueryAssetArgs = {
 
 export type QueryAssetsArgs = {
   filter?: InputMaybe<AssetFilterInput>;
+};
+
+
+export type QueryAttributeArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAttributeByNativeNameArgs = {
+  name: Scalars['String']['input'];
 };
 
 
@@ -1176,6 +1279,51 @@ export type UpdateAssetResponse = WithAuditable & WithJsonProperty & {
   updatedAt?: Maybe<Scalars['String']['output']>;
   updatedBy?: Maybe<Scalars['ID']['output']>;
   visible?: Maybe<Scalars['Boolean']['output']>;
+};
+
+/**
+ * ##################################################################################
+ * # Update
+ * ##################################################################################
+ */
+export type UpdateAttributeInput = {
+  categoryName?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  properties?: InputMaybe<Array<UpdateAttributePropertyInput>>;
+};
+
+export type UpdateAttributeProperty = WithAuditable & {
+  __typename?: 'UpdateAttributeProperty';
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
+  field: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['String']['output']>;
+  sortOrder?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+  value?: Maybe<Scalars['String']['output']>;
+  weight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type UpdateAttributePropertyInput = {
+  field?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  value?: InputMaybe<Scalars['String']['input']>;
+  weight?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type UpdateAttributeResponse = WithAuditable & {
+  __typename?: 'UpdateAttributeResponse';
+  categoryName: Scalars['String']['output'];
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  properties: Array<UpdateAttributeProperty>;
+  sortOrder?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
 };
 
 /**
