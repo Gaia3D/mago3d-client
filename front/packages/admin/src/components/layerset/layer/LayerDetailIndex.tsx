@@ -15,7 +15,7 @@ import {alertToast} from "@mnd/shared/src/utils/toast";
 import {useTranslation} from "react-i18next";
 import LayerLogTable from "@src/components/layerset/layer/LayerLogTable";
 import LayerForm from "@src/components/layerset/layer/LayerForm";
-import LayerPreview from "@src/components/layerset/layer/LayerPreview";
+import LayerPreview from "@src/components/layerset/layer/preview/LayerPreview";
 
 interface LayerDetailIndexProps {
   id: string;

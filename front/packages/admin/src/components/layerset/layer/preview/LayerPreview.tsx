@@ -1,10 +1,10 @@
 import React from 'react';
 import {LayerAsset, LayerAssetType} from "@src/generated/gql/layerset/graphql";
-import LayerPreviewCog from "@src/components/layerset/layer/LayerPreviewCog";
-import LayerPreviewHybrid from "@src/components/layerset/layer/LayerPreviewHybrid";
-import LayerPreviewRaster from "@src/components/layerset/layer/LayerPreviewRaster";
-import LayerPreviewVector from "@src/components/layerset/layer/LayerPreviewVector";
-import LayerPreview3dTile from "@src/components/layerset/layer/LayerPreview3dTile";
+import LayerPreviewCog from "@src/components/layerset/layer/preview/LayerPreviewCog";
+import LayerPreviewHybrid from "@src/components/layerset/layer/preview/LayerPreviewHybrid";
+import LayerPreviewRaster from "@src/components/layerset/layer/preview/LayerPreviewRaster";
+import LayerPreviewVector from "@src/components/layerset/layer/preview/LayerPreviewVector";
+import LayerPreview3dTile from "@src/components/layerset/layer/preview/LayerPreview3dTile";
 import {useTranslation} from "react-i18next";
 
 interface LayerPreviewProps {

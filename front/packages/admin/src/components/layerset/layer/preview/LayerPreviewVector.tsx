@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import * as Cesium from "cesium";
 import {ClassifyAttributeDocument, CreateStyleInput, LayerAsset, LayersetAssetDocument, LayerStyle, RemoteDocument, RemoteQueryVariables, Rule} from "@src/generated/gql/layerset/graphql";
-import WarningMessage from "../../dataset/asset/WarningMessage";
+import WarningMessage from "../../../dataset/asset/WarningMessage";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useLazyQuery, useSuspenseQuery} from "@apollo/client";
 import {useTranslation} from "react-i18next";
