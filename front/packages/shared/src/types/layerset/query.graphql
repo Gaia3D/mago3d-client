@@ -180,3 +180,19 @@ query classifyAttribute($nativeName: String!, $attribute: String!) @api(name: la
         }
     }
 }
+
+query AttributeByNativeName($name: String!) @api(name: layerset) {
+  attributeByNativeName(name: $name) {
+    id
+    categoryName
+    sortOrder
+    properties {
+        id
+        field
+        value
+        label
+        weight
+        sortOrder
+    }
+  }
+}
