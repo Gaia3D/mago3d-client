@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { v4 as uuidv4 } from 'uuid';
 import {LayerAsset} from "@src/generated/gql/layerset/graphql";
 import {useSuspenseQuery} from "@apollo/client";
-import {AttributeByNativeNameDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {AttributeByNativeNameDocument, PreviewColumnsDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
 import CategoryBox from "@src/components/layerset/layer/attribute/CategoryBox";
 import BasePropBox from "@src/components/layerset/layer/attribute/BasePropBox";
 import AttributeTableContainer from "@src/components/layerset/layer/attribute/AttributeTableContainer";
@@ -12,52 +12,69 @@ import AttributeTableContainer from "@src/components/layerset/layer/attribute/At
 interface LayerAttributeProps {
   asset: LayerAsset;
 }
+
 export interface attributePropertyType {
   id: string;
   field: string;
   label?: string | null;
+  value?: string | null;
   weight?: number | null;
 }
 
 export interface attributeCategoryType {
   id: string;
+  dndId: string;
   categoryName: string;
   properties: attributePropertyType[];
 }
 
-const tempBasePropArr: attributePropertyType[] = [
-  {
-    id: "bp1",
-    field: "abc123",
-    label: "유역코드",
-    weight: 1
-  },{
-    id: "bp2",
-    field: "abc234",
-    label: "유역면적",
-    weight: 1
-  },{
-    id: "bp3",
-    field: "abc345",
-    label: "유역둘레",
-    weight: 2
-  }
-]
-
 const LayerAttribute = ({asset}: LayerAttributeProps) => {
   const assetName = asset.properties.layer.name;
-  const { data } = useSuspenseQuery(AttributeByNativeNameDocument,{
+
+  const { data: basePropData } = useSuspenseQuery(PreviewColumnsDocument,{
+    variables: {
+      assetID: asset.id
+    }
+  });
+
+
+  const { data: attributeData } = useSuspenseQuery(AttributeByNativeNameDocument,{
     variables: {
       name: assetName
     }
   });
 
-  const [basePropArr] = useState<attributePropertyType[]>(tempBasePropArr);
-  const [categoryArr, setCategoryArr] = useState<attributeCategoryType[]>(data.attributeByNativeName);
+  const [basePropArr, setBasePropArr] = useState<attributePropertyType[]>([]);
+  const [categoryArr, setCategoryArr] = useState<attributeCategoryType[]>([]);
+
+
+  useEffect(() => {
+    if (!basePropData?.previewColumns)return;
+
+    const patched = basePropData.previewColumns.map((prop) => ({
+      ...prop,
+      id: uuidv4(),
+      label: prop.field,
+      value: prop.value,
+      weight: 1,
+    }))
+    setBasePropArr(patched);
+  }, [basePropData]);
+
+  useEffect(() => {
+    if (!attributeData?.attributeByNativeName) return;
+
+      const patched = attributeData.attributeByNativeName.map((cat) => ({
+        ...cat,
+        dndId: uuidv4(),
+      }));
+      setCategoryArr(patched);
+  }, [attributeData]);
 
   const createCategory = () => {
     const newGroup = {
-      id: uuidv4(),
+      id: "",
+      dndId: uuidv4(),
       categoryName: `group-${categoryArr.length + 1}`,
       properties: [],
     };
@@ -65,11 +82,25 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
   };
 
   const save = () => {
-    console.log("save", categoryArr);
+    const hasAttributes = attributeData?.attributeByNativeName.length > 0;
+
+    if (hasAttributes) {
+      console.log("update");
+      console.log("assetId", asset.id);
+      console.log("categoryArr", categoryArr);
+    } else {
+      console.log("create");
+      console.log("assetId", asset.id);
+      console.log("categoryArr", categoryArr);
+    }
   }
 
   const reset = () => {
-    setCategoryArr(data.attributeByNativeName);
+    const patched = attributeData.attributeByNativeName.map((cat) => ({
+      ...cat,
+      dndId: uuidv4(),
+    }));
+    setCategoryArr(patched);
   }
 
   return (
@@ -94,10 +125,10 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
               <button onClick={createCategory}>+</button>
             </div>
             <div className="section-body">
-              {categoryArr.map((cat, index) => (
+              {categoryArr.map((category, index) => (
                 <CategoryBox
-                  key={cat.id}
-                  category={cat}
+                  key={category.dndId}
+                  category={category}
                   index={index}
                   setCategoryArr={setCategoryArr}
                 />

@@ -8,14 +8,14 @@ interface AttributeTableContainerProps {
 const AttributeTableContainer = ({categoryArr}: AttributeTableContainerProps) => {
   return (
     <div className="attribute-category-container">
-      {categoryArr.map((attribute) => (
-        <div key={attribute.id} className="feature-group">
-          <div className="feature-name bg-gray fw-bold">{attribute.categoryName}</div>
+      {categoryArr.map((category) => (
+        <div key={category.dndId} className="feature-group">
+          <div className="feature-name bg-gray fw-bold">{category.categoryName}</div>
           <div className="properties-container">
-            {attribute.properties.map((item) => (
-              <div key={item.id} className="properties-item" data-weight={item.weight}>
-                <div className="properties-label bg-gray fw-bold">{item.label}</div>
-                <div className="properties-value bg-black ellipsis" title="-">{"-"}</div>
+            {category.properties.map((prop) => (
+              <div key={prop.id} className="properties-item" data-weight={prop.weight}>
+                <div className="properties-label bg-gray fw-bold">{prop.label}</div>
+                <div className="properties-value bg-black ellipsis" title={prop.value ? `ex) ${prop.value}` : "-"}>{prop.value ? `ex) ${prop.value}` : "-"}</div>
               </div>
             ))}
           </div>

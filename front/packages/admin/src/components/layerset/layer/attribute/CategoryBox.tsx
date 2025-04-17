@@ -77,7 +77,7 @@ const CategoryBox = ({category, index, setCategoryArr,}: CategoryBox ) => {
   drag(drop(ref));
 
   return (
-    <div ref={ref} key={category.id} className="category-box">
+    <div ref={ref} key={category.dndId} className="category-box">
       <div className="category-box-header">
         <div>
           <input
