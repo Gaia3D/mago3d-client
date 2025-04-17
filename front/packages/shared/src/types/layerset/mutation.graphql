@@ -151,7 +151,7 @@ mutation applyLayerStyle($id:ID!, $styleId: ID!) @api(name: layerset) {
     }
 }
 
-mutation CreateAttributes($assetId: ID!, $input: [CreateAttributeInput]!) {
+mutation CreateAttributes($assetId: ID!, $input: [CreateAttributeInput]!) @api(name: layerset) {
   createAttributes(assetId: $assetId, input: $input) {
         id
         categoryName
@@ -171,7 +171,7 @@ mutation CreateAttributes($assetId: ID!, $input: [CreateAttributeInput]!) {
     }
 }
 
-mutation UpdateAttributes($assetId: ID!, $input: [UpdateAttributeInput]!) {
+mutation UpdateAttributes($assetId: ID!, $input: [UpdateAttributeInput]!) @api(name: layerset) {
     updateAttributes(assetId: $assetId, input: $input) {
         id
         categoryName
