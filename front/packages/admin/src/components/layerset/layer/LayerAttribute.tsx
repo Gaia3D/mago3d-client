@@ -64,19 +64,30 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
     setCategoryArr(prev => [...prev, newGroup]);
   };
 
+  const save = () => {
+    console.log("save", categoryArr);
+  }
+
+  const reset = () => {
+    setCategoryArr(data.attributeByNativeName);
+  }
+
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="layer-attribute-container">
+    <div className="layer-attribute-container">
+      <div className="button-container">
+        <button onClick={save}>저장</button>
+        <button onClick={reset}>초기화</button>
+      </div>
+      <DndProvider backend={HTML5Backend}>
         <div className="base-prop-category-container">
           <div className="base-prop-section">
             <div className="section-header">레이어 속성 정보</div>
             <div className="section-body">
               {basePropArr.map((prop) => (
-                <BasePropBox key={prop.id} prop={prop} />
+                <BasePropBox key={prop.id} prop={prop}/>
               ))}
             </div>
           </div>
-
           <div className="category-section">
             <div className="section-header">
               테이블 정보
@@ -94,9 +105,9 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
             </div>
           </div>
         </div>
-        <AttributeTableContainer categoryArr={categoryArr} />
-      </div>
-    </DndProvider>
+        <AttributeTableContainer categoryArr={categoryArr}/>
+      </DndProvider>
+    </div>
   );
 };
 
