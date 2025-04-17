@@ -1,32 +1,58 @@
-import React, {useRef} from 'react';
+import React, {Dispatch, SetStateAction, useRef} from 'react';
 import {useDrag, useDrop} from "react-dnd";
-import {attributeCategoryType, attributePropertyType, DragItem} from "@src/components/layerset/layer/LayerAttribute";
+import {attributeCategoryType, attributePropertyType} from "@src/components/layerset/layer/LayerAttribute";
 import PropBox from "@src/components/layerset/layer/attribure/PropBox";
+import {v4 as uuidv4} from "uuid";
 
-const CategoryBox = ({
-   category,
-   index,
-   moveCategory,
-   handleAddPropToCategory,
-   moveProp,
-   handleCategoryName,
-   removeCategory,
-   handlePropWeight,
-   removeProp,
-   handlePropLabel
- }: {
+interface CategoryBox {
   category: attributeCategoryType;
   index: number;
-  moveCategory: (from: number, to: number) => void;
-  handleAddPropToCategory: (categoryId: string, prop: attributePropertyType) => void;
-  moveProp: (fromId: string, toId: string, fromIdx: number, toIdx: number, propId: string) => void;
-  handleCategoryName: (categoryId: string, categoryName: string) => void;
-  removeCategory: (categoryId: string) => void;
-  handlePropWeight: (propId: string, weight: number) => void;
-  removeProp: (categoryId: string, propId: string) => void;
-  handlePropLabel: (propId: string, label: string) => void;
-}) => {
+  setCategoryArr: Dispatch<SetStateAction<attributeCategoryType[]>>;
+}
+
+type DragItemType = 'BASE_PROP' | 'CATEGORY' | 'PROP';
+
+export interface DragItem {
+  type: DragItemType;
+  index?: number;
+  propId?: string;
+  categoryId?: string;
+  prop?: attributePropertyType;
+}
+
+const CategoryBox = ({category, index, setCategoryArr,}: CategoryBox ) => {
   const ref = useRef(null);
+
+  const handleCategoryName = (categoryId: string, categoryName: string) => {
+    setCategoryArr(prev =>
+      prev.map(category =>
+        category.id === categoryId ? { ...category, categoryName } : category
+      )
+    );
+  };
+
+  const moveCategory = (from: number, to: number) => {
+    setCategoryArr(prev => {
+      const newArr = [...prev];
+      const [moved] = newArr.splice(from, 1);
+      newArr.splice(to, 0, moved);
+      return newArr;
+    });
+  };
+
+  const handleAddPropToCategory = (categoryId: string, prop: attributePropertyType) => {
+    setCategoryArr(prev =>
+      prev.map(cat =>
+        cat.id === categoryId
+          ? { ...cat, properties: [...cat.properties, { ...prop, id: uuidv4() }] }
+          : cat
+      )
+    );
+  };
+
+  const removeCategory = (categoryId: string) => {
+    setCategoryArr(prev => prev.filter(category => category.id !== categoryId));
+  };
 
   const [, drop] = useDrop({
     accept: ['BASE_PROP', 'CATEGORY', 'PROP'],
@@ -76,10 +102,7 @@ const CategoryBox = ({
           prop={prop}
           index={i}
           categoryId={category.id}
-          moveProp={moveProp}
-          handlePropWeight={handlePropWeight}
-          removeProp={removeProp}
-          handlePropLabel={handlePropLabel}
+          setCategoryArr={setCategoryArr}
         />
       ))}
     </div>

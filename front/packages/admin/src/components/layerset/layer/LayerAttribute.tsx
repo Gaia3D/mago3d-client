@@ -25,16 +25,6 @@ export interface attributeCategoryType {
   properties: attributePropertyType[];
 }
 
-type DragItemType = 'BASE_PROP' | 'CATEGORY' | 'PROP';
-
-export interface DragItem {
-  type: DragItemType;
-  index?: number;
-  propId?: string;
-  categoryId?: string;
-  prop?: attributePropertyType;
-}
-
 const tempBasePropArr: attributePropertyType[] = [
   {
     id: "bp1",
@@ -65,36 +55,6 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
   const [basePropArr] = useState<attributePropertyType[]>(tempBasePropArr);
   const [categoryArr, setCategoryArr] = useState<attributeCategoryType[]>(data.attributeByNativeName);
 
-  const handleCategoryName = (categoryId: string, categoryName: string) => {
-    setCategoryArr(prev =>
-      prev.map(category =>
-        category.id === categoryId ? { ...category, categoryName } : category
-      )
-    );
-  };
-
-  const handlePropWeight = (propId: string, weight: number) => {
-    setCategoryArr(prev =>
-      prev.map(group => ({
-        ...group,
-        properties: group.properties.map(prop =>
-          prop.id === propId ? {...prop, weight} : prop
-        )
-      }))
-    );
-  }
-
-  const handlePropLabel = (propId: string, label: string) => {
-    setCategoryArr(prev =>
-      prev.map(group => ({
-        ...group,
-        properties: group.properties.map(prop =>
-          prop.id === propId ? {...prop, label} : prop
-        )
-      }))
-    );
-  }
-
   const createCategory = () => {
     const newGroup = {
       id: uuidv4(),
@@ -102,62 +62,6 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
       properties: [],
     };
     setCategoryArr(prev => [...prev, newGroup]);
-  };
-
-  const moveCategory = (from: number, to: number) => {
-    setCategoryArr(prev => {
-      const newArr = [...prev];
-      const [moved] = newArr.splice(from, 1);
-      newArr.splice(to, 0, moved);
-      return newArr;
-    });
-  };
-
-  const handleAddPropToCategory = (categoryId: string, prop: attributePropertyType) => {
-    setCategoryArr(prev =>
-      prev.map(cat =>
-        cat.id === categoryId
-          ? { ...cat, properties: [...cat.properties, { ...prop, id: uuidv4() }] }
-          : cat
-      )
-    );
-  };
-
-  const moveProp = (
-    fromCategoryId: string,
-    toCategoryId: string,
-    fromIndex: number,
-    toIndex: number,
-    propId: string
-  ) => {
-    setCategoryArr(prev => {
-      const newArr = prev.map(c => ({ ...c, properties: [...c.properties] }));
-      const fromCat = newArr.find(cat => cat.id === fromCategoryId)!;
-      const toCat = newArr.find(cat => cat.id === toCategoryId)!;
-
-      const prop = fromCat.properties.find(p => p.id === propId)!;
-      fromCat.properties = fromCat.properties.filter(p => p.id !== propId);
-      toCat.properties.splice(toIndex, 0, prop);
-
-      return newArr;
-    });
-  };
-
-  const removeCategory = (categoryId: string) => {
-    setCategoryArr(prev => prev.filter(category => category.id !== categoryId));
-  };
-
-  const removeProp = (categoryId: string, propId: string) => {
-    setCategoryArr(prev =>
-      prev.map(category =>
-        category.id === categoryId
-          ? {
-            ...category,
-            properties: category.properties.filter(prop => prop.id !== propId),
-          }
-          : category
-      )
-    );
   };
 
   return (
@@ -184,14 +88,7 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
                   key={cat.id}
                   category={cat}
                   index={index}
-                  moveCategory={moveCategory}
-                  handleAddPropToCategory={handleAddPropToCategory}
-                  moveProp={moveProp}
-                  handleCategoryName={handleCategoryName}
-                  removeCategory={removeCategory}
-                  handlePropWeight={handlePropWeight}
-                  removeProp={removeProp}
-                  handlePropLabel={handlePropLabel}
+                  setCategoryArr={setCategoryArr}
                 />
               ))}
             </div>
