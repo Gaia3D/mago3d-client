@@ -1,30 +1,38 @@
-import React, {useEffect, useState} from 'react';
+import React, { useRef, useState } from 'react';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { v4 as uuidv4 } from 'uuid';
 import {LayerAsset} from "@src/generated/gql/layerset/graphql";
 import {useSuspenseQuery} from "@apollo/client";
-import { AttributeByNativeNameDocument } from '@mnd/shared/src/types/layerset/gql/graphql';
-import { v4 as uuidv4 } from 'uuid';
+import {AttributeByNativeNameDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
 import AttributeCategoryContainer from "@src/components/layerset/layer/attribure/AttributeTableContainer";
+import CategoryBox from "@src/components/layerset/layer/attribure/CategoryBox";
+import BasePropBox from "@src/components/layerset/layer/attribure/BasePropBox";
 
 interface LayerAttributeProps {
   asset: LayerAsset;
 }
-
-export interface attributeCategoryType {
-  __typename?: 'LayerAttribute',
-  id: string,
-  categoryName: string,
-  sortOrder?: number | null,
-  properties: Array<attributePropertyType>
+export interface attributePropertyType {
+  id: string;
+  field: string;
+  label?: string | null;
+  weight?: number | null;
 }
 
-export interface attributePropertyType {
-  __typename?: 'LayerAttributeProperty',
-  id: string,
-  field: string,
-  value?: string | null,
-  label?: string | null,
-  weight?: number | null,
-  sortOrder?: number | null
+export interface attributeCategoryType {
+  id: string;
+  categoryName: string;
+  properties: attributePropertyType[];
+}
+
+type DragItemType = 'BASE_PROP' | 'CATEGORY' | 'PROP';
+
+export interface DragItem {
+  type: DragItemType;
+  index?: number;
+  propId?: string;
+  categoryId?: string;
+  prop?: attributePropertyType;
 }
 
 const tempBasePropArr: attributePropertyType[] = [
@@ -54,7 +62,7 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
     }
   });
 
-  const [basePropArr, setBasePropArr] = useState<attributePropertyType[]>(tempBasePropArr)
+  const [basePropArr] = useState<attributePropertyType[]>(tempBasePropArr);
   const [categoryArr, setCategoryArr] = useState<attributeCategoryType[]>(data.attributeByNativeName);
 
   const handleCategoryName = (categoryId: string, categoryName: string) => {
@@ -88,14 +96,51 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
   }
 
   const createCategory = () => {
-    const newGroupId = uuidv4();
     const newGroup = {
-      id: newGroupId,
+      id: uuidv4(),
       categoryName: `group-${categoryArr.length + 1}`,
-      properties: []
+      properties: [],
     };
-
     setCategoryArr(prev => [...prev, newGroup]);
+  };
+
+  const moveCategory = (from: number, to: number) => {
+    setCategoryArr(prev => {
+      const newArr = [...prev];
+      const [moved] = newArr.splice(from, 1);
+      newArr.splice(to, 0, moved);
+      return newArr;
+    });
+  };
+
+  const handleAddPropToCategory = (categoryId: string, prop: attributePropertyType) => {
+    setCategoryArr(prev =>
+      prev.map(cat =>
+        cat.id === categoryId
+          ? { ...cat, properties: [...cat.properties, { ...prop, id: uuidv4() }] }
+          : cat
+      )
+    );
+  };
+
+  const moveProp = (
+    fromCategoryId: string,
+    toCategoryId: string,
+    fromIndex: number,
+    toIndex: number,
+    propId: string
+  ) => {
+    setCategoryArr(prev => {
+      const newArr = prev.map(c => ({ ...c, properties: [...c.properties] }));
+      const fromCat = newArr.find(cat => cat.id === fromCategoryId)!;
+      const toCat = newArr.find(cat => cat.id === toCategoryId)!;
+
+      const prop = fromCat.properties.find(p => p.id === propId)!;
+      fromCat.properties = fromCat.properties.filter(p => p.id !== propId);
+      toCat.properties.splice(toIndex, 0, prop);
+
+      return newArr;
+    });
   };
 
   const removeCategory = (categoryId: string) => {
@@ -116,78 +161,45 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
   };
 
   return (
-    <div className="layer-attribute-container">
-      <div className="left-container">
-        <div className="attribute-section">
-          <div className="section-header">레이어 속성 정보</div>
-          <div className="section-body">
-            {basePropArr.map((prop) => (
-              <div key={prop.id} className="base-prop-box">
-              <div>{prop.field}</div>
-              </div>
-            ))}
+    <DndProvider backend={HTML5Backend}>
+      <div className="layer-attribute-container">
+        <div className="left-container">
+          <div className="attribute-section">
+            <div className="section-header">레이어 속성 정보</div>
+            <div className="section-body">
+              {basePropArr.map((prop) => (
+                <BasePropBox key={prop.id} prop={prop} />
+              ))}
+            </div>
+          </div>
+
+          <div className="category-section">
+            <div className="section-header">
+              테이블 정보
+              <button onClick={createCategory}>+</button>
+            </div>
+            <div className="section-body">
+              {categoryArr.map((cat, index) => (
+                <CategoryBox
+                  key={cat.id}
+                  category={cat}
+                  index={index}
+                  moveCategory={moveCategory}
+                  handleAddPropToCategory={handleAddPropToCategory}
+                  moveProp={moveProp}
+                  handleCategoryName={handleCategoryName}
+                  removeCategory={removeCategory}
+                  handlePropWeight={handlePropWeight}
+                  removeProp={removeProp}
+                  handlePropLabel={handlePropLabel}
+                />
+              ))}
+            </div>
           </div>
         </div>
-        <div className="category-section">
-          <div className="section-header">
-            테이블 정보
-            <button onClick={createCategory}>+</button>
-          </div>
-          <div className="section-body">
-            {categoryArr.map((category) =>
-              (<div key={category.id} className="category-box">
-                <div className="category-box-header">
-                  <div>
-                    <input
-                      type="text"
-                      value={category.categoryName}
-                      onChange={(e) => {
-                        handleCategoryName(category.id, e.target.value);
-                      }}
-                    >
-                    </input>
-                  </div>
-                  <button className="remove-category-button" onClick={() => removeCategory(category.id)}>
-                  &times;
-                </button>
-                </div>
-                {category.properties.map((prop) => (
-                  <div key={prop.id} className="prop-box">
-                    <div className="prop-box-header">
-                      <div>{prop.field}</div>
-                      <div className="header-right">
-                        <input
-                          type="number"
-                          min={1}
-                          max={3}
-                          value={prop.weight}
-                          onChange={(e) => {
-                            handlePropWeight(prop.id, Number(e.target.value));
-                          }}
-                        />
-                        <button className="remove-category-button" onClick={() => removeProp(category.id, prop.id)}>
-                          &times;
-                        </button>
-                      </div>
-                    </div>
-                    <div className="prop-box-body">
-                      <input
-                        type="text"
-                        value={prop.label}
-                        onChange={(e) => {
-                          handlePropLabel(prop.id, e.target.value)
-                        }}
-                      ></input>
-                    </div>
-                  </div>
-                ))}
-              </div>)
-            )}
-          </div>
-        </div>
+        <AttributeCategoryContainer categoryArr={categoryArr} />
       </div>
-      <AttributeCategoryContainer categoryArr={categoryArr} />
-    </div>
+    </DndProvider>
   );
 };
 

@@ -91,11 +91,11 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
           <div className={category === "style" ? "block" : "none"}>
             <LayerStyle asset={asset}/>
           </div>
+          <div className={category === "attribute" ? "block" : "none"}>
+            <LayerAttribute asset={asset} />
+          </div>
           <div className={category === "log" ? "block" : "none"}>
             <LayerLogTable logs={logs}/>
-          </div>
-          <div className={category === "attribute" ? "block" : "none"}>
-            <LayerAttribute/>
           </div>
         </article>
       </div>
