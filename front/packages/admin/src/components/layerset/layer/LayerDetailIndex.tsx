@@ -71,7 +71,7 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
           {asset.name}
           <span className={classifyAssetTypeClassNameByLayerAssetType(asset.type)}>{asset.type}</span>
         </h2>
-        <div>
+        <div className="category-button-section">
           <button onClick={() => setCategory("default")}>기본 설정</button>
           <button onClick={() => setCategory("style")}>스타일 설정</button>
           <button onClick={() => setCategory("attribute")}>속성 설정</button>
