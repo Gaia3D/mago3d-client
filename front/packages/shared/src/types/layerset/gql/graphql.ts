@@ -49,6 +49,11 @@ export type AccessCriteria = {
   ne?: InputMaybe<LayerAccess>;
 };
 
+export type AnchorInput = {
+  x?: InputMaybe<Scalars['Float']['input']>;
+  y?: InputMaybe<Scalars['Float']['input']>;
+};
+
 export type AppendUserLayerInput = {
   assetId: Scalars['ID']['input'];
   groupId: Scalars['ID']['input'];
@@ -380,6 +385,11 @@ export type DateTimeCriteria = {
   notIn?: InputMaybe<Array<InputMaybe<Scalars['DateTime']['input']>>>;
 };
 
+export type DisplacementInput = {
+  x?: InputMaybe<Scalars['Float']['input']>;
+  y?: InputMaybe<Scalars['Float']['input']>;
+};
+
 export type F4DInput = {
   dataAssetId?: InputMaybe<Scalars['ID']['input']>;
 };
@@ -413,6 +423,32 @@ export type FloatCriteria = {
   notIn?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
 };
 
+export enum FontStyle {
+  Italic = 'ITALIC',
+  Normal = 'NORMAL',
+  Oblique = 'OBLIQUE'
+}
+
+export enum FontWeight {
+  Bold = 'BOLD',
+  Normal = 'NORMAL'
+}
+
+export type GraphicStyleInput = {
+  fillColor?: InputMaybe<Scalars['String']['input']>;
+  fillOpacity?: InputMaybe<Scalars['Float']['input']>;
+  rotation?: InputMaybe<Scalars['Float']['input']>;
+  shape?: InputMaybe<ShapeType>;
+  size?: InputMaybe<Scalars['Float']['input']>;
+  strokeColor?: InputMaybe<Scalars['String']['input']>;
+  strokeDasharray?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
+  strokeDashoffset?: InputMaybe<Scalars['Float']['input']>;
+  strokeLinecap?: InputMaybe<Linecap>;
+  strokeLinejoin?: InputMaybe<Linejoin>;
+  strokeOpacity?: InputMaybe<Scalars['Float']['input']>;
+  strokeWidth?: InputMaybe<Scalars['Float']['input']>;
+};
+
 export type GroupFilterInput = {
   access?: InputMaybe<CommonCriteria>;
   and?: InputMaybe<Array<GroupFilterInput>>;
@@ -423,6 +459,21 @@ export type GroupFilterInput = {
   or?: InputMaybe<Array<GroupFilterInput>>;
   parentId?: InputMaybe<SimpleCriteria>;
   userId?: InputMaybe<SimpleCriteria>;
+};
+
+export type HaloInput = {
+  fillColor?: InputMaybe<Scalars['String']['input']>;
+  fillGraphic?: InputMaybe<GraphicStyleInput>;
+  fillOpacity?: InputMaybe<Scalars['Float']['input']>;
+  radius?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type IconStyleInput = {
+  color?: InputMaybe<Scalars['String']['input']>;
+  height?: InputMaybe<Scalars['Int']['input']>;
+  scale?: InputMaybe<Scalars['Float']['input']>;
+  symbolId: Scalars['ID']['input'];
+  width?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type IntCriteria = {
@@ -477,6 +528,20 @@ export type LabelFilter = {
   not?: InputMaybe<LabelFilter>;
   or?: InputMaybe<Array<LabelFilter>>;
   value?: InputMaybe<StringCriteria>;
+};
+
+export type LabelStyleInput = {
+  attributeName: Scalars['String']['input'];
+  fillColor?: InputMaybe<Scalars['String']['input']>;
+  fillGraphic?: InputMaybe<GraphicStyleInput>;
+  fillOpacity?: InputMaybe<Scalars['Float']['input']>;
+  fontFamily?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  fontSize?: InputMaybe<Scalars['Float']['input']>;
+  fontStyle?: InputMaybe<FontStyle>;
+  fontWeight?: InputMaybe<FontWeight>;
+  halo?: InputMaybe<HaloInput>;
+  linePlacement?: InputMaybe<LinePlacementInput>;
+  pointPlacement?: InputMaybe<PointPlacementInput>;
 };
 
 export enum LayerAccess {
@@ -659,11 +724,24 @@ export enum LayerStyleFormat {
   Sld = 'SLD'
 }
 
+export type LinePlacementInput = {
+  offset?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export enum LineStyle {
+  Dashed = 'DASHED',
+  DashDouble = 'DASH_DOUBLE',
+  DashSingle = 'DASH_SINGLE',
+  Dotted = 'DOTTED',
+  Solid = 'SOLID'
+}
+
 export type LineStyleInput = {
-  graphicFillStyle?: InputMaybe<PointStyleInput>;
-  graphicStrokeStyle?: InputMaybe<PointStyleInput>;
+  graphicFillStyle?: InputMaybe<GraphicStyleInput>;
+  graphicStrokeStyle?: InputMaybe<GraphicStyleInput>;
+  labelStyle?: InputMaybe<LabelStyleInput>;
   strokeColor?: InputMaybe<Scalars['String']['input']>;
-  strokeDasharray?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
+  strokeDasharray?: InputMaybe<LineStyle>;
   strokeDashoffset?: InputMaybe<Scalars['Float']['input']>;
   strokeLinecap?: InputMaybe<Linecap>;
   strokeLinejoin?: InputMaybe<Linejoin>;
@@ -911,9 +989,17 @@ export type PaginationInfo = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type PointPlacementInput = {
+  anchor?: InputMaybe<AnchorInput>;
+  displacement?: InputMaybe<DisplacementInput>;
+  rotation?: InputMaybe<Scalars['Float']['input']>;
+};
+
 export type PointStyleInput = {
   fillColor?: InputMaybe<Scalars['String']['input']>;
   fillOpacity?: InputMaybe<Scalars['Float']['input']>;
+  iconStyle?: InputMaybe<IconStyleInput>;
+  labelStyle?: InputMaybe<LabelStyleInput>;
   rotation?: InputMaybe<Scalars['Float']['input']>;
   shape?: InputMaybe<Scalars['String']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
@@ -928,10 +1014,11 @@ export type PointStyleInput = {
 
 export type PolygonStyleInput = {
   fillColor?: InputMaybe<Scalars['String']['input']>;
-  fillGraphic?: InputMaybe<PointStyleInput>;
+  fillGraphic?: InputMaybe<GraphicStyleInput>;
   fillOpacity?: InputMaybe<Scalars['Float']['input']>;
-  graphicFillStyle?: InputMaybe<PointStyleInput>;
-  graphicStrokeStyle?: InputMaybe<PointStyleInput>;
+  graphicFillStyle?: InputMaybe<GraphicStyleInput>;
+  graphicStrokeStyle?: InputMaybe<GraphicStyleInput>;
+  labelStyle?: InputMaybe<LabelStyleInput>;
   strokeColor?: InputMaybe<Scalars['String']['input']>;
   strokeDasharray?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   strokeDashoffset?: InputMaybe<Scalars['Float']['input']>;
@@ -939,6 +1026,12 @@ export type PolygonStyleInput = {
   strokeLinejoin?: InputMaybe<Linejoin>;
   strokeOpacity?: InputMaybe<Scalars['Float']['input']>;
   strokeWidth?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type PreviewColumn = {
+  __typename?: 'PreviewColumn';
+  field: Scalars['String']['output'];
+  value?: Maybe<Scalars['String']['output']>;
 };
 
 export type PublishContextValue = {
@@ -960,7 +1053,6 @@ export type Query = {
   asset: LayerAsset;
   /**  Asset */
   assets: Array<Maybe<LayerAsset>>;
-  /**  Attribute */
   attribute: LayerAttribute;
   attributeByNativeName?: Maybe<Array<Maybe<LayerAttribute>>>;
   classifyAttribute: ClassifiedAttribute;
@@ -969,6 +1061,8 @@ export type Query = {
   groups: Array<Maybe<LayerGroup>>;
   /**  Label */
   label: LayerLabel;
+  /**  Attribute */
+  previewColumns?: Maybe<Array<Maybe<PreviewColumn>>>;
   /**  RemoteAsset */
   remote?: Maybe<Scalars['JSON']['output']>;
   remoteAssets: Array<Maybe<RemoteLayerAsset>>;
@@ -1024,6 +1118,11 @@ export type QueryGroupsArgs = {
 
 export type QueryLabelArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryPreviewColumnsArgs = {
+  assetId: Scalars['ID']['input'];
 };
 
 
@@ -1115,6 +1214,16 @@ export type RuleStyleInput = {
   rule?: InputMaybe<RuleInput>;
   style?: InputMaybe<PolygonStyleInput>;
 };
+
+export enum ShapeType {
+  Backslash = 'BACKSLASH',
+  BoldX = 'BOLD_X',
+  Cross = 'CROSS',
+  Horizontal = 'HORIZONTAL',
+  NormalX = 'NORMAL_X',
+  Slash = 'SLASH',
+  Vertical = 'VERTICAL'
+}
 
 /**
  * #################################################################
@@ -1749,6 +1858,22 @@ export type ApplyLayerStyleMutationVariables = Exact<{
 
 export type ApplyLayerStyleMutation = { __typename?: 'Mutation', applyAssetStyle: { __typename?: 'LayerAsset', id: string, name?: string | null, styles?: Array<{ __typename?: 'LayerStyle', id?: string | null, name?: string | null } | null> | null } };
 
+export type CreateAttributesMutationVariables = Exact<{
+  assetId: Scalars['ID']['input'];
+  input: Array<InputMaybe<CreateAttributeInput>> | InputMaybe<CreateAttributeInput>;
+}>;
+
+
+export type CreateAttributesMutation = { __typename?: 'Mutation', createAttributes: Array<{ __typename?: 'CreateAttributeResponse', id: string, categoryName: string, sortOrder?: number | null, createdBy?: string | null, createdAt?: string | null, updatedBy?: string | null, updatedAt?: string | null, properties: Array<{ __typename?: 'CreateAttributeProperty', id: string, field: string, value?: string | null, label?: string | null, weight?: number | null, sortOrder?: number | null }> } | null> };
+
+export type UpdateAttributesMutationVariables = Exact<{
+  assetId: Scalars['ID']['input'];
+  input: Array<InputMaybe<UpdateAttributeInput>> | InputMaybe<UpdateAttributeInput>;
+}>;
+
+
+export type UpdateAttributesMutation = { __typename?: 'Mutation', updateAttributes: Array<{ __typename?: 'UpdateAttributeResponse', id: string, categoryName: string, sortOrder?: number | null, createdBy?: string | null, createdAt?: string | null, updatedBy?: string | null, updatedAt?: string | null, properties: Array<{ __typename?: 'UpdateAttributeProperty', id: string, field: string, value?: string | null, label?: string | null, weight?: number | null, sortOrder?: number | null, createdBy?: string | null, createdAt?: string | null, updatedBy?: string | null, updatedAt?: string | null }> } | null> };
+
 export type LayersetGroupListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1845,6 +1970,13 @@ export type AttributeByNativeNameQueryVariables = Exact<{
 
 export type AttributeByNativeNameQuery = { __typename?: 'Query', attributeByNativeName?: Array<{ __typename?: 'LayerAttribute', id: string, categoryName: string, sortOrder?: number | null, properties: Array<{ __typename?: 'LayerAttributeProperty', id: string, field: string, value?: string | null, label?: string | null, weight?: number | null, sortOrder?: number | null }> } | null> | null };
 
+export type PreviewColumnsQueryVariables = Exact<{
+  assetID: Scalars['ID']['input'];
+}>;
+
+
+export type PreviewColumnsQuery = { __typename?: 'Query', previewColumns?: Array<{ __typename?: 'PreviewColumn', field: string, value?: string | null } | null> | null };
+
 export const LayersetGroupBasicFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayersetGroupBasic"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"collapsed"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<LayersetGroupBasicFragment, unknown>;
 export const LayersetAssetBasicFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayersetAssetBasic"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerAsset"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"visible"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<LayersetAssetBasicFragment, unknown>;
 export const LayerGroupBasicFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"layerGroupBasic"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"published"}},{"kind":"Field","name":{"kind":"Name","value":"collapsed"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"order"}}]}}]} as unknown as DocumentNode<LayerGroupBasicFragment, unknown>;
@@ -1882,6 +2014,8 @@ export const CreateLayerStyleDocument = {"kind":"Document","definitions":[{"kind
 export const UpdateLayerStyleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateLayerStyle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateStyleInput"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateStyle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"format"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"defaultStatus"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}}]}}]}}]} as unknown as DocumentNode<UpdateLayerStyleMutation, UpdateLayerStyleMutationVariables>;
 export const DeleteLayerStyleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteLayerStyle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteStyle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"id"}}]}}]}]}}]} as unknown as DocumentNode<DeleteLayerStyleMutation, DeleteLayerStyleMutationVariables>;
 export const ApplyLayerStyleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"applyLayerStyle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"styleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"applyAssetStyle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"styleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"styleId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"styles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ApplyLayerStyleMutation, ApplyLayerStyleMutationVariables>;
+export const CreateAttributesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateAttributes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"assetId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateAttributeInput"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createAttributes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"assetId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"assetId"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}},{"kind":"Field","name":{"kind":"Name","value":"sortOrder"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"properties"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"weight"}},{"kind":"Field","name":{"kind":"Name","value":"sortOrder"}}]}}]}}]}}]} as unknown as DocumentNode<CreateAttributesMutation, CreateAttributesMutationVariables>;
+export const UpdateAttributesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateAttributes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"assetId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateAttributeInput"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateAttributes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"assetId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"assetId"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}},{"kind":"Field","name":{"kind":"Name","value":"sortOrder"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"properties"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"weight"}},{"kind":"Field","name":{"kind":"Name","value":"sortOrder"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateAttributesMutation, UpdateAttributesMutationVariables>;
 export const LayersetGroupListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LayersetGroupList"},"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"access"}}]}}]}}]} as unknown as DocumentNode<LayersetGroupListQuery, LayersetGroupListQueryVariables>;
 export const LayersetGroupListWithAssetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LayersetGroupListWithAsset"},"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayersetGroupBasic"}},{"kind":"Field","name":{"kind":"Name","value":"assets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayersetAssetBasic"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayersetGroupBasic"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"collapsed"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayersetAssetBasic"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerAsset"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"visible"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<LayersetGroupListWithAssetQuery, LayersetGroupListWithAssetQueryVariables>;
 export const GroupByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GroupById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"published"}},{"kind":"Field","name":{"kind":"Name","value":"collapsed"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GroupByIdQuery, GroupByIdQueryVariables>;
@@ -1892,3 +2026,4 @@ export const LayerGroupDocument = {"kind":"Document","definitions":[{"kind":"Ope
 export const RemoteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"remote"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"href"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"remote"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"href"},"value":{"kind":"Variable","name":{"kind":"Name","value":"href"}}}]}]}}]} as unknown as DocumentNode<RemoteQuery, RemoteQueryVariables>;
 export const ClassifyAttributeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"classifyAttribute"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"nativeName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attribute"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"classifyAttribute"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"nativeName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"nativeName"}}},{"kind":"Argument","name":{"kind":"Name","value":"attribute"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attribute"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"rules"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"eq"}},{"kind":"Field","name":{"kind":"Name","value":"color"}}]}}]}}]}}]} as unknown as DocumentNode<ClassifyAttributeQuery, ClassifyAttributeQueryVariables>;
 export const AttributeByNativeNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AttributeByNativeName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attributeByNativeName"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}},{"kind":"Field","name":{"kind":"Name","value":"sortOrder"}},{"kind":"Field","name":{"kind":"Name","value":"properties"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"weight"}},{"kind":"Field","name":{"kind":"Name","value":"sortOrder"}}]}}]}}]}}]} as unknown as DocumentNode<AttributeByNativeNameQuery, AttributeByNativeNameQueryVariables>;
+export const PreviewColumnsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PreviewColumns"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"assetID"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"previewColumns"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"assetId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"assetID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<PreviewColumnsQuery, PreviewColumnsQueryVariables>;

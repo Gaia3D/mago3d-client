@@ -196,3 +196,10 @@ query AttributeByNativeName($name: String!) @api(name: layerset) {
     }
   }
 }
+
+query PreviewColumns($assetID: ID!) @api(name: layerset) {
+  previewColumns(assetId: $assetID) {
+    field
+    value
+  }
+}
