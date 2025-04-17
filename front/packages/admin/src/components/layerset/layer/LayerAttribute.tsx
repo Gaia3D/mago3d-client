@@ -1,13 +1,13 @@
-import React, { useRef, useState } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import React, { useState } from 'react';
+import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { v4 as uuidv4 } from 'uuid';
 import {LayerAsset} from "@src/generated/gql/layerset/graphql";
 import {useSuspenseQuery} from "@apollo/client";
 import {AttributeByNativeNameDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
-import AttributeCategoryContainer from "@src/components/layerset/layer/attribure/AttributeTableContainer";
-import CategoryBox from "@src/components/layerset/layer/attribure/CategoryBox";
-import BasePropBox from "@src/components/layerset/layer/attribure/BasePropBox";
+import CategoryBox from "@src/components/layerset/layer/attribute/CategoryBox";
+import BasePropBox from "@src/components/layerset/layer/attribute/BasePropBox";
+import AttributeTableContainer from "@src/components/layerset/layer/attribute/AttributeTableContainer";
 
 interface LayerAttributeProps {
   asset: LayerAsset;
@@ -67,8 +67,8 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="layer-attribute-container">
-        <div className="left-container">
-          <div className="attribute-section">
+        <div className="base-prop-category-container">
+          <div className="base-prop-section">
             <div className="section-header">레이어 속성 정보</div>
             <div className="section-body">
               {basePropArr.map((prop) => (
@@ -94,7 +94,7 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
             </div>
           </div>
         </div>
-        <AttributeCategoryContainer categoryArr={categoryArr} />
+        <AttributeTableContainer categoryArr={categoryArr} />
       </div>
     </DndProvider>
   );

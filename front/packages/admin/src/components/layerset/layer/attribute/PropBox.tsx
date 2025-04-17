@@ -1,7 +1,7 @@
 import React, {Dispatch, SetStateAction, useRef} from 'react';
 import {useDrag, useDrop} from "react-dnd";
 import {attributeCategoryType, attributePropertyType} from "@src/components/layerset/layer/LayerAttribute";
-import {DragItem} from "@src/components/layerset/layer/attribure/CategoryBox";
+import {DragItem} from "@src/components/layerset/layer/attribute/CategoryBox";
 
 interface PropBoxProps {
   prop: attributePropertyType;

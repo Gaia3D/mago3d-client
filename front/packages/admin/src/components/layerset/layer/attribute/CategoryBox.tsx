@@ -1,7 +1,7 @@
 import React, {Dispatch, SetStateAction, useRef} from 'react';
 import {useDrag, useDrop} from "react-dnd";
 import {attributeCategoryType, attributePropertyType} from "@src/components/layerset/layer/LayerAttribute";
-import PropBox from "@src/components/layerset/layer/attribure/PropBox";
+import PropBox from "@src/components/layerset/layer/attribute/PropBox";
 import {v4 as uuidv4} from "uuid";
 
 interface CategoryBox {

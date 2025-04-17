@@ -33,7 +33,7 @@
     border-color: #6366f1;
     }
   }
-  .left-container {
+  .base-prop-category-container {
     display: flex;
     width: 50%;
     height: 100%;
@@ -42,7 +42,7 @@
     padding: 12px;
     box-sizing: border-box;
 
-    .attribute-section, .category-section {
+    .base-prop-section, .category-section {
       flex: 1;
       background-color: #ffffff;
       border-radius: 12px;
