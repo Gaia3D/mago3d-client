@@ -3,11 +3,17 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { v4 as uuidv4 } from 'uuid';
 import {LayerAsset} from "@src/generated/gql/layerset/graphql";
-import {useSuspenseQuery} from "@apollo/client";
-import {AttributeByNativeNameDocument, PreviewColumnsDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
+import { useSuspenseQuery, useMutation} from "@apollo/client";
+import {
+  AttributeByNativeNameDocument,
+  CreateAttributesDocument,
+  PreviewColumnsDocument, UpdateAttributesDocument,
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import CategoryBox from "@src/components/layerset/layer/attribute/CategoryBox";
 import BasePropBox from "@src/components/layerset/layer/attribute/BasePropBox";
 import AttributeTableContainer from "@src/components/layerset/layer/attribute/AttributeTableContainer";
+import {mapToCreateInput, mapToUpdateInput} from "@src/utils/variableMap";
+import {toast} from "react-toastify";
 
 interface LayerAttributeProps {
   asset: LayerAsset;
@@ -37,12 +43,14 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
     }
   });
 
-
   const { data: attributeData } = useSuspenseQuery(AttributeByNativeNameDocument,{
     variables: {
       name: assetName
     }
   });
+
+  const [createAttributes] = useMutation(CreateAttributesDocument);
+  const [updateAttributes] = useMutation(UpdateAttributesDocument);
 
   const [basePropArr, setBasePropArr] = useState<attributePropertyType[]>([]);
   const [categoryArr, setCategoryArr] = useState<attributeCategoryType[]>([]);
@@ -81,19 +89,25 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
     setCategoryArr(prev => [...prev, newGroup]);
   };
 
-  const save = () => {
+  const save = async () => {
     const hasAttributes = attributeData?.attributeByNativeName.length > 0;
 
-    if (hasAttributes) {
-      console.log("update");
-      console.log("assetId", asset.id);
-      console.log("categoryArr", categoryArr);
-    } else {
-      console.log("create");
-      console.log("assetId", asset.id);
-      console.log("categoryArr", categoryArr);
+    try {
+      if (!hasAttributes) {
+        const variables = mapToCreateInput(asset.id, categoryArr);
+        console.log("variables", variables);
+        await createAttributes({ variables });
+        toast("생성 완료");
+      } else {
+        const variables = mapToUpdateInput(asset.id, categoryArr);
+        console.log("variables", variables);
+        await updateAttributes({ variables });
+        toast("수정 완료");
+      }
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
 
   const reset = () => {
     const patched = attributeData.attributeByNativeName.map((cat) => ({
