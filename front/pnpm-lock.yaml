@@ -117,6 +117,9 @@ importers:
       react-dnd:
         specifier: ^16.0.1
         version: 16.0.1(@types/node@22.14.1)(@types/react@18.2.52)(react@18.2.0)
+      react-dnd-html5-backend:
+        specifier: ^16.0.1
+        version: 16.0.1
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
@@ -5986,7 +5989,7 @@ snapshots:
       '@babel/core': 7.23.9
       '@babel/generator': 7.23.6
       '@babel/parser': 7.23.9
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.25.6
       '@babel/traverse': 7.23.9
       '@babel/types': 7.23.9
       babel-preset-fbjs: 3.4.0(@babel/core@7.23.9)
@@ -9628,7 +9631,7 @@ snapshots:
 
   dom-helpers@3.4.0:
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.25.6
 
   dom-helpers@5.2.1:
     dependencies:
@@ -11656,7 +11659,7 @@ snapshots:
 
   redux@4.2.1:
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.25.6
 
   reflect.getprototypeof@1.0.4:
     dependencies:
@@ -11682,7 +11685,7 @@ snapshots:
 
   relay-runtime@12.0.0:
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.25.6
       fbjs: 3.0.5
       invariant: 2.2.4
     transitivePeerDependencies:
