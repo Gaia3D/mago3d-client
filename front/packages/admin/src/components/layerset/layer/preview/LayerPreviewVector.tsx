@@ -1,17 +1,16 @@
 import {useEffect, useRef, useState} from "react";
 import * as Cesium from "cesium";
-import {ClassifyAttributeDocument, CreateStyleInput, LayerAsset, LayersetAssetDocument, LayerStyle, RemoteDocument, RemoteQueryVariables, Rule} from "@src/generated/gql/layerset/graphql";
-import WarningMessage from "../../../dataset/asset/WarningMessage";
+import {
+    ApplyLayerStyleDocument, ClassifyAttributeDocument,
+    CreateLayerStyleDocument, CreateStyleInput,
+    DeleteLayerStyleDocument,
+    LayerAsset, LayersetAssetDocument, RemoteDocument, RemoteQueryVariables, Rule, UpdateLayerStyleDocument
+} from "@src/generated/gql/layerset/graphql";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {useLazyQuery, useSuspenseQuery} from "@apollo/client";
+import {useLazyQuery, useMutation, useSuspenseQuery} from "@apollo/client";
+import {getWmsLayerImageProvider} from "@src/components/layerset/utils/utils";
 import {useTranslation} from "react-i18next";
-import {createCesiumViewer} from "@src/utils/createCesiumViewer";
-import {useLayerStyleMutations} from "@src/hooks/useLayerStyleMutation";
-import PointStyleForm from "@src/components/layerset/layer/style-form/PointStyleForm";
-import PolylineStyleForm from "@src/components/layerset/layer/style-form/PolylineStyleForm";
-import PolygonStyleForm from "@src/components/layerset/layer/style-form/PolygonStyleForm";
-
-type VisibleStyleType = 'point' | 'polyline' | 'polygon' | 'attribute';
+import WarningMessage from "@src/components/dataset/asset/WarningMessage";
 
 function extractPath(url: string): string {
     const parsedUrl = new URL(url);
@@ -47,70 +46,107 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     const [ getData ] = useLazyQuery(ClassifyAttributeDocument);
 
-    const {
-        createStyle,
-        updateStyle,
-        deleteStyle,
-    } = useLayerStyleMutations(asset.id, {
-        applyStyle: [LayersetAssetDocument],
-        createStyle: [],
-        updateStyle: [LayersetAssetDocument, RemoteDocument],
-        deleteStyle: [LayersetAssetDocument, RemoteDocument],
+    const {register, handleSubmit, reset} = useForm<CreateStyleInput>();
+
+    const [ applyStyle ] = useMutation(ApplyLayerStyleDocument, {
+        refetchQueries: [LayersetAssetDocument],
+        onCompleted: (data) => {
+            //console.info(data);
+            alert(t("success.style"));
+        },
+        onError: (error) => {
+            console.error(error);
+            alert(t("error.admin"));
+        }
+    });
+
+    const [ createStyle ] = useMutation(CreateLayerStyleDocument, {
+        onCompleted: (data) => {
+            //console.info(data);
+            const {id} = asset;
+            applyStyle({ variables: { id: id, styleId: data.createStyle.id } });
+        },
+        onError: (error) => {
+            console.error(error);
+            alert(t("error.admin"));
+        }
+    });
+
+    const [ updateStyle ] = useMutation(UpdateLayerStyleDocument, {
+        refetchQueries: [LayersetAssetDocument, RemoteDocument],
+        onCompleted: (data) => {
+            //console.info(data);
+            alert(t("success.style"));
+        },
+        onError: (error) => {
+            console.error(error);
+            alert(t("error.admin"));
+        }
+    });
+
+    const [ deleteStyle ] = useMutation(DeleteLayerStyleDocument, {
+        refetchQueries: [LayersetAssetDocument, RemoteDocument],
+        onCompleted: (data) => {
+            //console.info(data);
+            alert(t("success.style-delete"));
+        },
+        onError: (error) => {
+            console.error(error);
+            alert(t("error.admin"));
+        }
     });
 
     const defaultStyles = asset.styles?.filter(style => style.defaultStatus);
     const defaultStyle = defaultStyles?.[0];
 
-    useEffect(() => {
-        console.log("defaultStyle", defaultStyle);
-    }, [defaultStyle]);
-
-    const {
-        register,
-        handleSubmit,
-        reset,
-        setValue
-    } = useForm<CreateStyleInput>();
-
-    const [styleState, setStyleState] = useState<LayerStyle>(defaultStyle);
+    const [styleName, setStyleName] = useState<string>(defaultStyle?.name ?? "");
+    const [shape, setShape] = useState<string>(defaultStyle?.context?.shape ?? "circle");
+    const [size, setSize] = useState<number>(defaultStyle?.context?.size ?? 5);
+    const [strokeColor, setStrokeColor] = useState<string>(defaultStyle?.context?.strokeColor ?? "#000000");
+    const [fillColor, setFillColor] = useState<string>(defaultStyle?.context?.fillColor ?? "#000000");
+    const [lineWidth, setLineWidth] = useState<number>(defaultStyle?.context?.strokeWidth ?? 1);
+    const [fillOpacity, setFillOpacity] = useState<number>(defaultStyle?.context?.fillOpacity ?? 0.5);
+    const [strokeOpacity, setStrokeOpacity] = useState<number>(defaultStyle?.context?.strokeOpacity ?? 0.5);
     const [count, setCount] = useState<string>("&count=1");
     const [selectedAttribute, setSelectedAttribute] = useState<string>(defaultStyle?.context?.attribute ?? "");
     const [rules, setRules] = useState<Rule[]>([]);
 
-    useEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { name, ...contextWithoutName } = styleState.context;
-
-        setValue("context.point", contextWithoutName);
-        setValue("context.line", contextWithoutName);
-        setValue("context.polygon", contextWithoutName);
-    }, [setValue, styleState.context]);
-
-    const handleContextChange = <K extends keyof NonNullable<LayerStyle["context"]>>(key: K, value: string | number) => {
-        setStyleState((prev) => ({
-            ...prev,
-            context: {
-                ...(prev.context ?? {}),
-                [key]: value,
-            },
-        }));
-    };
-
-    const handleStyleNameChange = (value: string) => {
-        setStyleState((prev) => ({
-            ...prev,
-            name: value,
-        }));
-    };
-
     const viewerRef = useRef<Cesium.Viewer | null>(null);
     const dataSourceRef = useRef<Cesium.GeoJsonDataSource | null>(null);
 
-    const [visibleStyle, setVisibleStyle] = useState<VisibleStyleType>('point');
-    const [visibleAttributeType, setVisibleAttributeType] = useState<'number' | 'string' | null>(null);
+    const [isPointStyleVisible, setIsPointStyleVisible] = useState<boolean>(true);
+    const [isPolylineStyleVisible, setIsPolylineStyleVisible] = useState<boolean>(false);
+    const [isPolygonStyleVisible, setIsPolygonStyleVisible] = useState<boolean>(false);
+    const [isAttributeStyleVisible, setIsAttributeStyleVisible] = useState<boolean>(false);
+
+    const [isNumberStyleVisible, setIsNumberStyleVisible] = useState<boolean>(false);
+    const [isStringStyleVisible, setIsStringStyleVisible] = useState<boolean>(false);
 
     useEffect(() => {
-        const viewer = createCesiumViewer("preview-layer");
+        const viewer = new Cesium.Viewer('preview-layer', {
+            geocoder: false,
+            homeButton: false,
+            baseLayerPicker: false,
+            sceneModePicker: false,
+            navigationHelpButton: false,
+            animation: false,
+            timeline: false,
+            fullscreenButton: false,
+            shouldAnimate: true,
+            infoBox: false,
+            selectionIndicator: false,
+        });
+
+        viewer.imageryLayers.removeAll();
+        // 운영환경에서는 배경지도를 WMS로 설정
+        if (import.meta.env.MODE === 'production' && import.meta.env.VITE_BASE_LAYER_NAME) {
+            const baseImageryProvider = getWmsLayerImageProvider(import.meta.env.VITE_BASE_LAYER_NAME);
+            viewer.imageryLayers.addImageryProvider(baseImageryProvider);
+        } else {
+            // 개발환경에서는 OSM으로 설정
+            const osmImageryProvider = new Cesium.OpenStreetMapImageryProvider({ url: 'https://a.tile.openstreetmap.org/' });
+            viewer.imageryLayers.addImageryProvider(osmImageryProvider);
+        }
         viewerRef.current = viewer;
         return () => {
             viewer.destroy();
@@ -119,7 +155,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     useEffect(() => {
         if (!viewerRef.current) return;
-        if (visibleStyle === "attribute") return;
+        if (isAttributeStyleVisible) return;
 
         viewerRef.current?.dataSources.removeAll();
 
@@ -131,8 +167,8 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
         // WFS 레이어를 GeoJSON으로 가져와서 뷰어에 추가
         const geoJsonDataSource = Cesium.GeoJsonDataSource.load(wfsUrl, {
-            stroke: Cesium.Color.fromCssColorString(styleState.context.strokeColor),
-            fill: Cesium.Color.fromCssColorString(styleState.context.fillColor).withAlpha(styleState.context.fillOpacity),
+            stroke: Cesium.Color.fromCssColorString(strokeColor),
+            fill: Cesium.Color.fromCssColorString(fillColor).withAlpha(fillOpacity),
         });
         viewerRef.current?.dataSources.add(geoJsonDataSource);
 
@@ -144,10 +180,10 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                 if (entity.billboard) {
                     // 포인트 엔티티 생성
                     entity.point = new Cesium.PointGraphics({
-                        color: Cesium.Color.fromCssColorString(styleState.context.fillColor).withAlpha(styleState.context.fillOpacity), // 채우기 색상
-                        pixelSize: styleState.context.size, // 크기
-                        outlineColor: Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity), // 외곽선 색상
-                        outlineWidth: styleState.context.strokeWidth // 외곽선 두께
+                        color: Cesium.Color.fromCssColorString(fillColor).withAlpha(fillOpacity), // 채우기 색상
+                        pixelSize: size, // 크기
+                        outlineColor: Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity), // 외곽선 색상
+                        outlineWidth: lineWidth // 외곽선 두께
                     });
                     // 기존의 Billboard를 제거합니다.
                     entity.billboard = undefined;
@@ -162,38 +198,38 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                 dataSource.entities.add({
                     polyline: {
                         positions: positions,
-                        width: styleState.context.strokeWidth,
-                        material: Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity),
+                        width: lineWidth,
+                        material: Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity),
                     }
                 });
             });
             dataSourceRef.current = dataSource;
         });
 
-    }, [count, visibleStyle]);
+    }, [count, isAttributeStyleVisible]);
 
     useEffect(() => {
         if (!viewerRef.current || !dataSourceRef.current) return;
 
         dataSourceRef.current.entities.values.forEach(entity => {
-           if (entity.polygon) {
-               entity.polygon.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(styleState.context.fillColor).withAlpha(styleState.context.fillOpacity));
-               entity.polygon.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity));
-           }
-           if (entity.polyline) {
-               entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity));
-               entity.polyline.width = new Cesium.ConstantProperty(styleState.context.strokeWidth);
-           }
-           if (entity.point) {
-               // TODO: shape를 반영하도록..
-               entity.point.color = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(styleState.context.fillColor).withAlpha(styleState.context.fillOpacity));
-               entity.point.pixelSize = new Cesium.ConstantProperty(styleState.context.size);
-               entity.point.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(styleState.context.strokeColor).withAlpha(styleState.context.strokeOpacity));
-               entity.point.outlineWidth = new Cesium.ConstantProperty(styleState.context.strokeWidth);
-           }
+            if (entity.polygon) {
+                entity.polygon.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(fillColor).withAlpha(fillOpacity));
+                entity.polygon.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity));
+            }
+            if (entity.polyline) {
+                entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity));
+                entity.polyline.width = new Cesium.ConstantProperty(lineWidth);
+            }
+            if (entity.point) {
+                // TODO: shape를 반영하도록..
+                entity.point.color = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(fillColor).withAlpha(fillOpacity));
+                entity.point.pixelSize = new Cesium.ConstantProperty(size);
+                entity.point.outlineColor = new Cesium.ConstantProperty(Cesium.Color.fromCssColorString(strokeColor).withAlpha(strokeOpacity));
+                entity.point.outlineWidth = new Cesium.ConstantProperty(lineWidth);
+            }
         });
 
-    }, [styleState.context]);
+    }, [shape, size, strokeColor, fillColor, lineWidth, fillOpacity, strokeOpacity]);
 
     useEffect(() => {
         if (!viewerRef.current || !dataSourceRef.current) return;
@@ -205,13 +241,13 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
 
     useEffect(() => {
         if (!viewerRef.current || !dataSourceRef.current) return;
-        if (visibleStyle !== "attribute") return;
+        if (!isAttributeStyleVisible) return;
         viewerRef.current?.dataSources.removeAll();
         rules.length > 0 && rules.forEach((r) => {
             let filter = "";
-            if (visibleAttributeType === "number") {
+            if (isNumberStyleVisible) {
                 filter = selectedAttribute + ">=" + r.min + " AND " + selectedAttribute + "<=" + r.max;
-            } else if (visibleAttributeType === "string") {
+            } else if (isStringStyleVisible) {
                 filter = selectedAttribute + "='" + r.eq + "'";
             }
             const geoJsonDataSourcePromise = Cesium.GeoJsonDataSource.load(import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL + `service=WFS&version=2.0.0&request=GetFeature&typeName=${resource.name}&outputFormat=application/json&propertyName=wkb_geometry&CQL_FILTER=${encodeURIComponent(filter)}`, {
@@ -223,7 +259,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
         viewerRef.current?.camera.flyTo({
             destination: Cesium.Rectangle.fromDegrees(latLonBoundingBox.minx, latLonBoundingBox.miny, latLonBoundingBox.maxx, latLonBoundingBox.maxy),
         });
-    }, [rules, visibleStyle]);
+    }, [rules, isAttributeStyleVisible]);
 
     useEffect(() => {
         if (!defaultStyle) return;
@@ -238,32 +274,92 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                     color: rule.style.fillColor,
                 }
             });
-            setVisibleStyle("attribute");
-            setVisibleAttributeType(defaultStyle.context.rules[0].rule.eq ? "string" : "number")
+            setStyleComponent('attribute');
+            setStyleComponent(defaultStyle.context.rules[0].rule.eq ? 'string' : 'number');
             setRules(updatedRules);
         }
     }, [defaultStyle]);
 
     const resetStyle = () => {
 
-        setStyleState(defaultStyle);
+        setStyleName("");
+        setShape("circle");
+        setSize(5);
+        setStrokeColor("#000000");
+        setFillColor("#000000");
+        setLineWidth(1);
+        setFillOpacity(0.5);
+        setStrokeOpacity(0.5);
         setSelectedAttribute("");
         setRules([]);
 
         reset({
-            name: defaultStyle.name,
+            name: "",
             context: {
-                point: defaultStyle.context,
-                line: defaultStyle.context,
-                polygon: defaultStyle.context,
+                point: {
+                    shape: "circle",
+                    size: 5,
+                    strokeColor: "#000000",
+                    strokeWidth: 1,
+                    strokeOpacity: 0.5,
+                    fillColor: "#000000",
+                    fillOpacity: 0.5,
+                },
+                line: {
+                    strokeColor: "#000000",
+                    strokeWidth: 1,
+                    strokeOpacity: 0.5,
+                },
+                polygon: {
+                    strokeColor: "#000000",
+                    strokeWidth: 1,
+                    strokeOpacity: 0.5,
+                    fillColor: "#000000",
+                    fillOpacity: 0.5,
+                },
                 attribute: {
-                    name: defaultStyle.context.name,
+                    name: "",
                     attribute: "",
                     rules: []
                 }
             }
         });
     }
+
+    const handleShapeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        // 선택된 모양으로 shape 상태를 업데이트합니다.
+        setShape(event.target.value);
+    };
+
+    const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // 입력된 크기로 size 상태를 업데이트합니다.
+        setSize(Number(event.target.value));
+    };
+
+    const handleStrokeColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // 입력된 색상으로 strokeColor 상태를 업데이트합니다.
+        setStrokeColor(event.target.value);
+    };
+
+    const handleFillColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // 입력된 색상으로 strokeColor 상태를 업데이트합니다.
+        setFillColor(event.target.value);
+    };
+
+    const handleLineWidthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // 입력된 두께로 lineWidth 상태를 업데이트합니다.
+        setLineWidth(Number(event.target.value));
+    };
+
+    const handleFillOpacityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // 입력된 투명도로 opacity 상태를 업데이트합니다.
+        setFillOpacity(Number(event.target.value) / 100);
+    };
+
+    const handleStrokeOpacityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // 입력된 투명도로 opacity 상태를 업데이트합니다.
+        setStrokeOpacity(Number(event.target.value) / 100);
+    };
 
     const handleAttributeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedAttribute(event.target.value); // 상태 변수에 선택된 값을 설정
@@ -310,23 +406,58 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
         setRules(updatedRules);
     }
 
+    const setStyleComponent = (styleComponent: string) => {
+        switch (styleComponent) {
+            case "point":
+                setIsPointStyleVisible(true);
+                setIsPolylineStyleVisible(false);
+                setIsPolygonStyleVisible(false);
+                setIsAttributeStyleVisible(false);
+                break;
+            case "polyline":
+                setIsPointStyleVisible(false);
+                setIsPolylineStyleVisible(true);
+                setIsPolygonStyleVisible(false);
+                setIsAttributeStyleVisible(false);
+                break;
+            case "polygon":
+                setIsPointStyleVisible(false);
+                setIsPolylineStyleVisible(false);
+                setIsPolygonStyleVisible(true);
+                setIsAttributeStyleVisible(false);
+                break;
+            case "attribute":
+                setIsPointStyleVisible(false);
+                setIsPolylineStyleVisible(false);
+                setIsPolygonStyleVisible(false);
+                setIsAttributeStyleVisible(true);
+                break;
+            case "number":
+                setIsNumberStyleVisible(true);
+                setIsStringStyleVisible(false);
+                break;
+            case "string":
+                setIsNumberStyleVisible(false);
+                setIsStringStyleVisible(true);
+                break;
+            default:
+                break;
+        }
+    }
+
     const onSubmitStyle: SubmitHandler<CreateStyleInput> = (input) => {
-        
-        //  마지막에 point나 polyline, polygon 안에있는 name 빼주자
-        
-        
-        if (!styleState.name) {
+        if (!styleName) {
             alert(t("required.style-name"));
             return;
         }
 
-        if (visibleStyle !== "point") {
+        if (!isPointStyleVisible) {
             delete input.context.point;
         }
-        if (visibleStyle !== "polyline") {
+        if (!isPolylineStyleVisible) {
             delete input.context.line;
         }
-        if (visibleStyle !== "polygon") {
+        if (!isPolygonStyleVisible) {
             delete input.context.polygon;
         }
 
@@ -350,7 +481,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
             });
         });
 
-        if (visibleStyle === "attribute") {
+        if (isAttributeStyleVisible) {
             input.context.attribute = {
                 name: input.name,
                 attribute: selectedAttribute,
@@ -380,7 +511,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
     }
 
     const toDelete = () => {
-        if (!confirm(t("style")+ `[${styleState.name}]` + t("question.blank-delete") )) return;
+        if (!confirm(t("style")+ `[${styleName}]` + t("question.blank-delete") )) return;
         deleteStyle({ variables: { id: defaultStyle?.id } });
     }
 
@@ -401,14 +532,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
               }
 
               const { type, rules } = response.data.classifyAttribute;
-              const component = type.toLowerCase();
-              if (component === 'point' || component === 'polyline' || component === 'polygon' || component === 'attribute') {
-                  setVisibleStyle(component);
-                  setVisibleAttributeType(null);
-              } else if (component === 'number' || component === 'string') {
-                  setVisibleStyle('attribute');
-                  setVisibleAttributeType(component);
-              }
+              setStyleComponent(type.toLowerCase());
 
               const updatedRules = rules.map((rule) => {
                   return {
@@ -428,36 +552,143 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
           <button type="button" className="btn-l-save" onClick={() => setCount("")}>{t("total-preview")}</button>
           <button type="button" className="btn-l-save" onClick={() => setCount("&count=1")}>{t("object-preview")}</button>
           <WarningMessage message={t("warning.object")}/>
-          <div className="preview-layer" style={{width: "50%"}}>
+          <div className="preview-layer" style={{width: "30%"}}>
               <form onSubmit={handleSubmit(onSubmitStyle)}>
                   <div className="mar-b10" style={{display: "inline-block"}}>
-                      <button type="button" className={`btn-basic ${visibleStyle === 'point' ? 'on' : ''}`}
-                              onClick={() => setVisibleStyle('point')}>Point
+                      <button type="button" className={`btn-basic ${isPointStyleVisible ? 'on' : ''}`}
+                              onClick={() => setStyleComponent('point')}>{t("point")}(Point)
                       </button>
-                      <button type="button" className={`btn-basic ${visibleStyle === 'polyline' ? 'on' : ''}`}
-                              onClick={() => setVisibleStyle('polyline')}>Line
+                      <button type="button" className={`btn-basic ${isPolylineStyleVisible ? 'on' : ''}`}
+                              onClick={() => setStyleComponent('polyline')}>{t("line")}(Line)
                       </button>
-                      <button type="button" className={`btn-basic ${visibleStyle === 'polygon' ? 'on' : ''}`}
-                              onClick={() => setVisibleStyle('polygon')}>Polygon
+                      <button type="button" className={`btn-basic ${isPolygonStyleVisible ? 'on' : ''}`}
+                              onClick={() => setStyleComponent('polygon')}>{t("plane")}(Polygon)
                       </button>
-                      <button type="button" className={`btn-basic ${visibleStyle === 'attribute' ? 'on' : ''}`}
-                              onClick={() => setVisibleStyle('attribute')}>Attribute
+                      <button type="button" className={`btn-basic ${isAttributeStyleVisible ? 'on' : ''}`}
+                              onClick={() => setStyleComponent('attribute')}>{t("attribute")}(Attribute)
                       </button>
                   </div>
                   <label>{t("style-name")}</label>
-                  <input type="text" defaultValue={styleState.name} {...register("name", {
+                  <input type="text" defaultValue={styleName} {...register("name", {
                       required: {
                           value: true,
                           message: t("required.style-name")
                       },
-                      value: styleState.name,
-                      onChange: (e) => handleStyleNameChange(e.target.value)
+                      value: styleName,
+                      onChange: (event) => setStyleName(event.target.value)
                   })}/>
-                  { visibleStyle === "point" && <PointStyleForm register={register} styleState={styleState} onChange={handleContextChange} /> }
-                  { visibleStyle === "polyline" && <PolylineStyleForm register={register} styleState={styleState} onChange={handleContextChange} /> }
-                  { visibleStyle === "polygon" && <PolygonStyleForm register={register} styleState={styleState} onChange={handleContextChange} /> }
                   {
-                    visibleStyle === "attribute" &&
+                    isPointStyleVisible &&
+                    <div>
+                        <label>{t("point-shape")}</label>
+                        <select defaultValue={shape}
+                                {...register("context.point.shape", {
+                                    value: shape,
+                                    onChange: handleShapeChange
+                                })}>
+                            <option value="circle">{t("circle")}</option>
+                            <option value="square">{t("square")}</option>
+                            <option value="triangle">{t("triangle")}</option>
+                            <option value="cross">{t("cross")}</option>
+                        </select>
+                        <label>{t("point-size")}</label>
+                        <input type="number" defaultValue={size}
+                               {...register("context.point.size", {
+                                   value: size,
+                                   onChange: handleSizeChange
+                               })}/>
+                        <label>{t("stroke-color")}</label>
+                        <input type="color" defaultValue={strokeColor}
+                               {...register("context.point.strokeColor", {
+                                   value: strokeColor,
+                                   onChange: handleStrokeColorChange
+                               })}/>
+                        <label>{t("stroke-width")}</label>
+                        <input type="number" defaultValue={lineWidth}
+                               {...register("context.point.strokeWidth", {
+                                   value: lineWidth,
+                                   onChange: handleLineWidthChange
+                               })}/>
+                        <label>{t("stroke-opacity")}</label>
+                        <input type="range" min={0} max={100} defaultValue={strokeOpacity * 100}
+                               {...register("context.point.strokeOpacity", {
+                                   value: strokeOpacity * 100,
+                                   onChange: handleStrokeOpacityChange
+                               })}/>
+                        <label>{t("fill-color")}</label>
+                        <input type="color" defaultValue={fillColor}
+                               {...register("context.point.fillColor", {
+                                   value: fillColor,
+                                   onChange: handleFillColorChange
+                               })}/>
+                        <label>{t("fill-opacity")}</label>
+                        <input type="range" min={0} max={100} defaultValue={fillOpacity * 100}
+                               {...register("context.point.fillOpacity", {
+                                   value: fillOpacity * 100,
+                                   onChange: handleFillOpacityChange
+                               })}/>
+                    </div>
+                  }
+                  {
+                    isPolylineStyleVisible &&
+                    <div>
+                        <label>{t("stroke-color")}</label>
+                        <input type="color" defaultValue={strokeColor}
+                               {...register("context.line.strokeColor", {
+                                   value: strokeColor,
+                                   onChange: handleStrokeColorChange
+                               })}/>
+                        <label>{t("stroke-width")}</label>
+                        <input type="number" defaultValue={lineWidth}
+                               {...register("context.line.strokeWidth", {
+                                   value: lineWidth,
+                                   onChange: handleLineWidthChange
+                               })}/>
+                        <label>{t("stroke-opacity")}</label>
+                        <input type="range" min={0} max={100} defaultValue={strokeOpacity * 100}
+                               {...register("context.line.strokeOpacity", {
+                                   value: strokeOpacity * 100,
+                                   onChange: handleStrokeOpacityChange,
+                               })}/>
+                    </div>
+                  }
+                  {
+                    isPolygonStyleVisible &&
+                    <div>
+                        <label>{t("stroke-color")}</label>
+                        <input type="color" defaultValue={strokeColor}
+                               {...register("context.polygon.strokeColor", {
+                                   value: strokeColor,
+                                   onChange: handleStrokeColorChange,
+                               })}/>
+                        <label>{t("stroke-width")}</label>
+                        <input type="number" defaultValue={lineWidth}
+                               {...register("context.polygon.strokeWidth", {
+                                   value: lineWidth,
+                                   onChange: handleLineWidthChange,
+                               })}/>
+                        <label>{t("stroke-opacity")}</label>
+                        <input type="range" min={0} max={100} defaultValue={strokeOpacity * 100}
+                               {...register("context.polygon.strokeOpacity", {
+                                   value: strokeOpacity * 100,
+                                   onChange: handleStrokeOpacityChange,
+                               })}/>
+                        <label>{t("fill-color")}</label>
+                        <input type="color" defaultValue={fillColor}
+                               {...register("context.polygon.fillColor", {
+                                   value: fillColor,
+                                   onChange: handleFillColorChange,
+                               })}/>
+                        <label>{t("fill-opacity")}</label>
+                        <input type="range" min={0} max={100} defaultValue={fillOpacity * 100}
+                               {...register("context.polygon.fillOpacity", {
+                                   value: fillOpacity * 100,
+                                   onChange: handleFillOpacityChange,
+                               })}/>
+                    </div>
+                  }
+                  {
+                    isAttributeStyleVisible &&
                     <div>
                         <label htmlFor="attribute">속성명</label>
                         <select id="attributes" defaultValue={selectedAttribute}
@@ -475,7 +706,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                         </select>
                         <button type="button" className="btn-l-apply" onClick={toClassify}>{t("classify")}</button>
                         {
-                          visibleAttributeType === "number" &&
+                          isNumberStyleVisible &&
                           rules.length > 0 &&
                           <div className="list-classify">
                               {/*<button type="button">추가</button>*/}
@@ -495,17 +726,17 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                         <tr key={rule.id}>
                                             <td>
                                                 <input type="number" defaultValue={rule.min}
-                                                       // @ts-ignore
+                                                  // @ts-ignore
                                                        onChange={(event) => handleMinChange(rule.id, event)}/>
                                             </td>
                                             <td>
                                                 <input type="number" defaultValue={rule.max}
-                                                       // @ts-ignore
+                                                  // @ts-ignore
                                                        onChange={(event) => handleMaxChange(rule.id, event)}/>
                                             </td>
                                             <td>
                                                 <input type="color" defaultValue={rule.color}
-                                                        // @ts-ignore
+                                                  // @ts-ignore
                                                        onBlur={(event) => handleColorChange(rule.id, event)}/>
                                             </td>
                                             <td>
@@ -514,7 +745,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                                     deleteRule(rule.id)
                                                 }}>{t("delete")}
                                                 </button>
-                                        </td>
+                                            </td>
                                         </tr>
                                       ))
                                   }
@@ -523,7 +754,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                           </div>
                         }
                         {
-                          visibleAttributeType === "string" &&
+                          isStringStyleVisible &&
                           rules.length > 0 &&
                           <div className="list-classify column-03">
                               {/*<button type="button">추가</button>*/}
@@ -543,7 +774,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                                             <td><input type="text" defaultValue={rule.eq} disabled/></td>
                                             <td>
                                                 <input type="color" defaultValue={rule.color}
-                                                        // @ts-ignore
+                                                  // @ts-ignore
                                                        onBlur={(event) => handleColorChange(rule.id, event)}
                                                 />
                                             </td>
@@ -570,7 +801,7 @@ const LayerPreviewVector = ({asset}: { asset: LayerAsset }) => {
                   </div>
               </form>
           </div>
-          <div className="preview-layer" id="preview-layer" style={{width: "50%"}}></div>
+          <div className="preview-layer" id="preview-layer" style={{width: "70%"}}></div>
           <WarningMessage message={t("warning.preview")}/>
       </>
     )
