@@ -20,7 +20,7 @@ interface LayerAttributeProps {
 }
 
 export interface attributePropertyType {
-  id: string;
+  dndId: string;
   field: string;
   label?: string | null;
   value?: string | null;
@@ -55,13 +55,13 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
   const [basePropArr, setBasePropArr] = useState<attributePropertyType[]>([]);
   const [categoryArr, setCategoryArr] = useState<attributeCategoryType[]>([]);
 
-
   useEffect(() => {
     if (!basePropData?.previewColumns)return;
 
     const patched = basePropData.previewColumns.map((prop) => ({
       ...prop,
-      id: uuidv4(),
+      id: "",
+      dndId: uuidv4(),
       label: prop.field,
       value: prop.value,
       weight: 1,
@@ -72,11 +72,15 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
   useEffect(() => {
     if (!attributeData?.attributeByNativeName) return;
 
-      const patched = attributeData.attributeByNativeName.map((cat) => ({
-        ...cat,
+    const patched = attributeData.attributeByNativeName.map((cat) => ({
+      ...cat,
+      dndId: uuidv4(),
+      properties: cat.properties.map((prop) => ({
+        ...prop,
         dndId: uuidv4(),
-      }));
-      setCategoryArr(patched);
+      })),
+    }));
+    setCategoryArr(patched);
   }, [attributeData]);
 
   const createCategory = () => {
@@ -113,6 +117,10 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
     const patched = attributeData.attributeByNativeName.map((cat) => ({
       ...cat,
       dndId: uuidv4(),
+      properties: cat.properties.map((prop) => ({
+        ...prop,
+        dndId: uuidv4()
+      }))
     }));
     setCategoryArr(patched);
   }
@@ -129,7 +137,7 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
             <div className="section-header">레이어 속성 정보</div>
             <div className="section-body">
               {basePropArr.map((prop) => (
-                <BasePropBox key={prop.id} prop={prop}/>
+                <BasePropBox key={prop.dndId} prop={prop}/>
               ))}
             </div>
           </div>

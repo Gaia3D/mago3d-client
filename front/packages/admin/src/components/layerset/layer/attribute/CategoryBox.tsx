@@ -15,18 +15,18 @@ type DragItemType = 'BASE_PROP' | 'CATEGORY' | 'PROP';
 export interface DragItem {
   type: DragItemType;
   index?: number;
-  propId?: string;
-  categoryId?: string;
+  propDndID?: string;
+  categoryDndId?: string;
   prop?: attributePropertyType;
 }
 
 const CategoryBox = ({category, index, setCategoryArr,}: CategoryBox ) => {
   const ref = useRef(null);
 
-  const handleCategoryName = (categoryId: string, categoryName: string) => {
+  const handleCategoryName = (categoryDndId: string, categoryName: string) => {
     setCategoryArr(prev =>
       prev.map(category =>
-        category.id === categoryId ? { ...category, categoryName } : category
+        category.dndId === categoryDndId ? { ...category, categoryName } : category
       )
     );
   };
@@ -40,25 +40,25 @@ const CategoryBox = ({category, index, setCategoryArr,}: CategoryBox ) => {
     });
   };
 
-  const handleAddPropToCategory = (categoryId: string, prop: attributePropertyType) => {
+  const handleAddPropToCategory = (categoryDndId: string, prop: attributePropertyType) => {
     setCategoryArr(prev =>
-      prev.map(cat =>
-        cat.id === categoryId
-          ? { ...cat, properties: [...cat.properties, { ...prop, id: uuidv4() }] }
-          : cat
+      prev.map(category =>
+        category.dndId === categoryDndId
+          ? { ...category, properties: [...category.properties, { ...prop, dndId: uuidv4() }] }
+          : category
       )
     );
   };
 
-  const removeCategory = (categoryId: string) => {
-    setCategoryArr(prev => prev.filter(category => category.id !== categoryId));
+  const removeCategory = (categoryDndId: string) => {
+    setCategoryArr(prev => prev.filter(category => category.dndId !== categoryDndId));
   };
 
   const [, drop] = useDrop({
     accept: ['BASE_PROP', 'CATEGORY', 'PROP'],
     drop(item: DragItem) {
       if (item.type === 'BASE_PROP' && item.prop) {
-        handleAddPropToCategory(category.id, item.prop);
+        handleAddPropToCategory(category.dndId, item.prop);
       }
     },
     hover(item: DragItem) {
@@ -84,24 +84,24 @@ const CategoryBox = ({category, index, setCategoryArr,}: CategoryBox ) => {
             type="text"
             value={category.categoryName}
             onChange={(e) => {
-              handleCategoryName(category.id, e.target.value);
+              handleCategoryName(category.dndId, e.target.value);
             }}
           >
           </input>
         </div>
         <button
           className="remove-category-button"
-          onClick={() => removeCategory(category.id)}
+          onClick={() => removeCategory(category.dndId)}
         >
           &times;
         </button>
       </div>
       {category.properties.map((prop, i) => (
         <PropBox
-          key={prop.id}
+          key={prop.dndId}
           prop={prop}
           index={i}
-          categoryId={category.id}
+          categoryDndId={category.dndId}
           setCategoryArr={setCategoryArr}
         />
       ))}

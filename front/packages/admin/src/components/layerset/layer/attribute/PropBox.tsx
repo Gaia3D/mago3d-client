@@ -6,11 +6,11 @@ import {DragItem} from "@src/components/layerset/layer/attribute/CategoryBox";
 interface PropBoxProps {
   prop: attributePropertyType;
   index: number;
-  categoryId: string;
+  categoryDndId: string;
   setCategoryArr: Dispatch<SetStateAction<attributeCategoryType[]>>;
 }
 
-const PropBox = ({prop, index, categoryId, setCategoryArr }: PropBoxProps) => {
+const PropBox = ({prop, index, categoryDndId, setCategoryArr }: PropBoxProps) => {
   const ref = useRef(null);
 
   const moveProp = (
@@ -18,50 +18,50 @@ const PropBox = ({prop, index, categoryId, setCategoryArr }: PropBoxProps) => {
     toCategoryId: string,
     fromIndex: number,
     toIndex: number,
-    propId: string
+    propDndId: string
   ) => {
     setCategoryArr(prev => {
       const newArr = prev.map(c => ({ ...c, properties: [...c.properties] }));
-      const fromCat = newArr.find(cat => cat.id === fromCategoryId)!;
-      const toCat = newArr.find(cat => cat.id === toCategoryId)!;
+      const fromCat = newArr.find(cat => cat.dndId === fromCategoryId)!;
+      const toCat = newArr.find(cat => cat.dndId === toCategoryId)!;
 
-      const prop = fromCat.properties.find(p => p.id === propId)!;
-      fromCat.properties = fromCat.properties.filter(p => p.id !== propId);
+      const prop = fromCat.properties.find(p => p.dndId === propDndId)!;
+      fromCat.properties = fromCat.properties.filter(p => p.dndId !== propDndId);
       toCat.properties.splice(toIndex, 0, prop);
 
       return newArr;
     });
   };
 
-  const handlePropWeight = (propId: string, weight: number) => {
+  const handlePropWeight = (propDndId: string, weight: number) => {
     setCategoryArr(prev =>
       prev.map(group => ({
         ...group,
         properties: group.properties.map(prop =>
-          prop.id === propId ? {...prop, weight} : prop
+          prop.dndId === propDndId ? {...prop, weight} : prop
         )
       }))
     );
   }
 
-  const handlePropLabel = (propId: string, label: string) => {
+  const handlePropLabel = (propDndId: string, label: string) => {
     setCategoryArr(prev =>
       prev.map(group => ({
         ...group,
         properties: group.properties.map(prop =>
-          prop.id === propId ? {...prop, label} : prop
+          prop.dndId === propDndId ? {...prop, label} : prop
         )
       }))
     );
   }
 
-  const removeProp = (categoryId: string, propId: string) => {
+  const removeProp = (categoryDndId: string, propDndId: string) => {
     setCategoryArr(prev =>
       prev.map(category =>
-        category.id === categoryId
+        category.dndId === categoryDndId
           ? {
             ...category,
-            properties: category.properties.filter(prop => prop.id !== propId),
+            properties: category.properties.filter(prop => prop.dndId !== propDndId),
           }
           : category
       )
@@ -71,23 +71,23 @@ const PropBox = ({prop, index, categoryId, setCategoryArr }: PropBoxProps) => {
   const [, drop] = useDrop({
     accept: 'PROP',
     hover(item: DragItem) {
-      if (item.type === 'PROP' && (item.propId !== prop.id || item.categoryId !== categoryId)) {
-        moveProp(item.categoryId!, categoryId, item.index!, index, item.propId!);
+      if (item.type === 'PROP' && (item.propDndID !== prop.dndId || item.categoryDndId !== categoryDndId)) {
+        moveProp(item.categoryDndId!, categoryDndId, item.index!, index, item.propDndID!);
         item.index = index;
-        item.categoryId = categoryId;
+        item.categoryDndId = categoryDndId;
       }
     },
   });
 
   const [, drag] = useDrag({
     type: 'PROP',
-    item: {type: 'PROP', categoryId, index, propId: prop.id},
+    item: {type: 'PROP', categoryDndId, index, propDndID: prop.dndId}
   });
 
   drag(drop(ref));
 
   return (
-    <div ref={ref} key={prop.id} className="prop-box">
+    <div ref={ref} key={prop.dndId} className="prop-box">
       <div className="prop-box-header">
         <div>{prop.field}</div>
         <div className="header-right">
@@ -97,12 +97,12 @@ const PropBox = ({prop, index, categoryId, setCategoryArr }: PropBoxProps) => {
             max={3}
             value={prop.weight}
             onChange={(e) => {
-              handlePropWeight(prop.id, Number(e.target.value));
+              handlePropWeight(prop.dndId, Number(e.target.value));
             }}
           />
           <button
             className="remove-category-button"
-            onClick={() => removeProp(categoryId, prop.id)}
+            onClick={() => removeProp(categoryDndId, prop.dndId)}
           >
             &times;
           </button>
@@ -113,7 +113,7 @@ const PropBox = ({prop, index, categoryId, setCategoryArr }: PropBoxProps) => {
           type="text"
           value={prop.label}
           onChange={(e) => {
-            handlePropLabel(prop.id, e.target.value)
+            handlePropLabel(prop.dndId, e.target.value)
           }}
         ></input>
       </div>
