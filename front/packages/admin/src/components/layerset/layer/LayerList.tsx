@@ -253,7 +253,7 @@ const LayerList = () => {
           <button type="button" className="btn-basic" onClick={toggleEnableAll}>{!enable ? t("all-available") : t("all-unavailable")}</button>
         </div>
         <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-          <div style={{maxHeight:"600px", overflowY:"auto", paddingRight:"10px", width: "100%"}}>
+          <div style={{maxHeight:"700px", overflowY:"auto", paddingRight:"10px", width: "100%"}}>
             <Tree
               ref={treeRef}
               tree={treeData}

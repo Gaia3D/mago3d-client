@@ -142,11 +142,9 @@ const LayerAttribute = ({asset}: LayerAttributeProps) => {
             </div>
           </div>
           <div className="category-section">
-            <div className="section-header">
-              테이블 정보
-              <button onClick={createCategory}>+</button>
-            </div>
+            <div className="section-header">테이블 정보 </div>
             <div className="section-body">
+              <button className="btn-category-add" onClick={createCategory}>+ 테이블 추가</button>
               {categoryArr.map((category, index) => (
                 <CategoryBox
                   key={category.dndId}

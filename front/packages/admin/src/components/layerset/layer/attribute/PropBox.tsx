@@ -87,36 +87,39 @@ const PropBox = ({prop, index, categoryDndId, setCategoryArr }: PropBoxProps) =>
   drag(drop(ref));
 
   return (
-    <div ref={ref} key={prop.dndId} className="prop-box">
-      <div className="prop-box-header">
-        <div>{prop.field}</div>
-        <div className="header-right">
-          <input
-            type="number"
-            min={1}
-            max={3}
-            value={prop.weight}
-            onChange={(e) => {
-              handlePropWeight(prop.dndId, Number(e.target.value));
-            }}
-          />
-          <button
-            className="remove-category-button"
-            onClick={() => removeProp(categoryDndId, prop.dndId)}
-          >
-            &times;
-          </button>
+    <div className='prop-box-wrapper'>
+      <div ref={ref} key={prop.dndId} className="prop-box">
+        <div className="prop-box-header">
+          <div>{prop.field}</div>
+          <div className="header-right">
+            <input
+              type="number"
+              min={1}
+              max={3}
+              value={prop.weight}
+              onChange={(e) => {
+                handlePropWeight(prop.dndId, Number(e.target.value));
+              }}
+            />
+            
+          </div>
         </div>
-      </div>
-      <div className="prop-box-body">
-        <input
-          type="text"
-          value={prop.label}
-          onChange={(e) => {
-            handlePropLabel(prop.dndId, e.target.value)
-          }}
-        ></input>
-      </div>
+        <div className="prop-box-body">
+          <input
+            type="text"
+            value={prop.label}
+            onChange={(e) => {
+              handlePropLabel(prop.dndId, e.target.value)
+            }}
+          ></input>
+        </div>
+      </div>      
+      <button
+              className="remove-category-button"
+              onClick={() => removeProp(categoryDndId, prop.dndId)}
+            >
+              &times;
+      </button>
     </div>
   )
 };

@@ -8,6 +8,10 @@ interface AttributeTableContainerProps {
 const AttributeTableContainer = ({categoryArr}: AttributeTableContainerProps) => {
   return (
     <div className="attribute-category-container">
+      <div className='attribute-title'>
+        <span>미리보기</span>
+      </div>
+      <div className='attribute-body'>
       {categoryArr.map((category) => (
         <div key={category.dndId} className="feature-group">
           <div className="feature-name bg-gray fw-bold">{category.categoryName}</div>
@@ -21,6 +25,7 @@ const AttributeTableContainer = ({categoryArr}: AttributeTableContainerProps) =>
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 };
