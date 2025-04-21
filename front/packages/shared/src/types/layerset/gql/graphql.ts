@@ -73,7 +73,7 @@ export type AssetFilterInput = {
 };
 
 export type AttributeStyleInput = {
-  attribute?: InputMaybe<Scalars['String']['input']>;
+  attribute: Scalars['String']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   rules?: InputMaybe<Array<InputMaybe<RuleStyleInput>>>;
 };
@@ -441,7 +441,7 @@ export type GraphicStyleInput = {
   shape?: InputMaybe<ShapeType>;
   size?: InputMaybe<Scalars['Float']['input']>;
   strokeColor?: InputMaybe<Scalars['String']['input']>;
-  strokeDasharray?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
+  strokeDasharray?: InputMaybe<LineStyle>;
   strokeDashoffset?: InputMaybe<Scalars['Float']['input']>;
   strokeLinecap?: InputMaybe<Linecap>;
   strokeLinejoin?: InputMaybe<Linejoin>;
@@ -740,6 +740,8 @@ export type LineStyleInput = {
   graphicFillStyle?: InputMaybe<GraphicStyleInput>;
   graphicStrokeStyle?: InputMaybe<GraphicStyleInput>;
   labelStyle?: InputMaybe<LabelStyleInput>;
+  maxScale?: InputMaybe<Scalars['Float']['input']>;
+  minScale?: InputMaybe<Scalars['Float']['input']>;
   strokeColor?: InputMaybe<Scalars['String']['input']>;
   strokeDasharray?: InputMaybe<LineStyle>;
   strokeDashoffset?: InputMaybe<Scalars['Float']['input']>;
@@ -1000,11 +1002,13 @@ export type PointStyleInput = {
   fillOpacity?: InputMaybe<Scalars['Float']['input']>;
   iconStyle?: InputMaybe<IconStyleInput>;
   labelStyle?: InputMaybe<LabelStyleInput>;
+  maxScale?: InputMaybe<Scalars['Float']['input']>;
+  minScale?: InputMaybe<Scalars['Float']['input']>;
   rotation?: InputMaybe<Scalars['Float']['input']>;
   shape?: InputMaybe<Scalars['String']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
   strokeColor?: InputMaybe<Scalars['String']['input']>;
-  strokeDasharray?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
+  strokeDasharray?: InputMaybe<LineStyle>;
   strokeDashoffset?: InputMaybe<Scalars['Float']['input']>;
   strokeLinecap?: InputMaybe<Linecap>;
   strokeLinejoin?: InputMaybe<Linejoin>;
@@ -1019,8 +1023,10 @@ export type PolygonStyleInput = {
   graphicFillStyle?: InputMaybe<GraphicStyleInput>;
   graphicStrokeStyle?: InputMaybe<GraphicStyleInput>;
   labelStyle?: InputMaybe<LabelStyleInput>;
+  maxScale?: InputMaybe<Scalars['Float']['input']>;
+  minScale?: InputMaybe<Scalars['Float']['input']>;
   strokeColor?: InputMaybe<Scalars['String']['input']>;
-  strokeDasharray?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
+  strokeDasharray?: InputMaybe<LineStyle>;
   strokeDashoffset?: InputMaybe<Scalars['Float']['input']>;
   strokeLinecap?: InputMaybe<Linecap>;
   strokeLinejoin?: InputMaybe<Linejoin>;
@@ -1164,6 +1170,8 @@ export type RasterStyleInput = {
   channels?: InputMaybe<Channels>;
   entries?: InputMaybe<Array<InputMaybe<ColorMapEntry>>>;
   gamma?: InputMaybe<Scalars['Float']['input']>;
+  maxScale?: InputMaybe<Scalars['Float']['input']>;
+  minScale?: InputMaybe<Scalars['Float']['input']>;
   mode?: InputMaybe<ContrastMethod>;
   opacity?: InputMaybe<Scalars['Float']['input']>;
   type?: InputMaybe<ColorMapType>;
@@ -1211,8 +1219,9 @@ export type RuleInput = {
 };
 
 export type RuleStyleInput = {
+  alias?: InputMaybe<Scalars['String']['input']>;
   rule?: InputMaybe<RuleInput>;
-  style?: InputMaybe<PolygonStyleInput>;
+  style?: InputMaybe<StyleContextValue>;
 };
 
 export enum ShapeType {

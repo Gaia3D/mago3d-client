@@ -3,7 +3,7 @@ import {
   CreateLayerStyleDocument,
   DeleteLayerStyleDocument,
   UpdateLayerStyleDocument,
-} from "@src/generated/gql/layerset/graphql";
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import { DocumentNode, useMutation } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 
