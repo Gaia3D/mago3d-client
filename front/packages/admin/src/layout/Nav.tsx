@@ -19,6 +19,7 @@ export function Nav() {
     user: "user",
     data: "data",
     layer: "layer",
+    symbol: "symbol",
   };
 
   return (
@@ -45,6 +46,11 @@ export function Nav() {
           <NavLink to="layerset">
             {({isActive}: { isActive: boolean }) => (
               <li className={`layer ${isActive ? "on" : ""}`}>{t(lang.layer)}</li>
+            )}
+          </NavLink>
+          <NavLink to="symbol">
+            {({ isActive }: { isActive: boolean }) => (
+              <li className={`mapnote ${isActive ? "on" : ""}`}>{t(lang.symbol)}</li>
             )}
           </NavLink>
         </ul>

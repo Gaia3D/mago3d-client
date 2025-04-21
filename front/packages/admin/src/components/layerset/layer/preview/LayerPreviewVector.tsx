@@ -1,9 +1,17 @@
 import {useEffect, useRef, useState} from "react";
 import * as Cesium from "cesium";
-import {ClassifyAttributeDocument, CreateStyleInput, LayerAsset, LayersetAssetDocument, LayerStyle, RemoteDocument, RemoteQueryVariables, Rule} from "@src/generated/gql/layerset/graphql";
+import {
+    CreateStyleInput,
+    LayerAsset,
+    LayersetAssetDocument,
+    LayerStyle,
+    RemoteDocument,
+    RemoteQueryVariables,
+    Rule
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import WarningMessage from "../../../dataset/asset/WarningMessage";
 import {useForm} from "react-hook-form";
-import {useLazyQuery, useSuspenseQuery} from "@apollo/client";
+import {useSuspenseQuery} from "@apollo/client";
 import {useTranslation} from "react-i18next";
 import {createCesiumViewer} from "@src/utils/createCesiumViewer";
 import {useLayerStyleMutations} from "@src/hooks/useLayerStyleMutation";
@@ -27,6 +35,8 @@ const fallbackContext: NonNullable<LayerStyle["context"]> = {
     strokeWidth: 1,
     fillOpacity: 0.5,
     strokeOpacity: 0.5,
+    minScale: 0,
+    maxScale: Infinity
 };
 
 function extractPath(url: string): string {
@@ -58,10 +68,7 @@ const LayerPreviewVector = ({asset}: LayerPreviewVectorProps) => {
 
     const { data } = useSuspenseQuery(RemoteDocument, { variables });
 
-    const { nativeName, attributes, latLonBoundingBox } = data.remote.featureType;
-    const { attribute } = attributes;
-
-    const [ getData ] = useLazyQuery(ClassifyAttributeDocument);
+    const { latLonBoundingBox } = data.remote.featureType;
 
     const {
         createStyle,

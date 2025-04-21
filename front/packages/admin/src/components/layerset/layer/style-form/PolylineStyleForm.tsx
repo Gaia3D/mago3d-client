@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayerStyle } from "@src/generated/gql/layerset/graphql";
+import { LayerStyle } from "@mnd/shared/src/types/layerset/gql/graphql";
 import { useTranslation } from "react-i18next";
 
 interface PolylineStyleFormProps {
@@ -34,6 +34,20 @@ const PolylineStyleForm = ({ styleState, onChange }: PolylineStyleFormProps) => 
         step={0.01}
         value={styleState.context.strokeOpacity}
         onChange={(e) => onChange("strokeOpacity", Number(e.target.value))}
+      />
+
+      <label>최소 축적</label>
+      <input
+        type="number"
+        value={styleState.context.minScale}
+        onChange={(e) => onChange("minScale", Number(e.target.value))}
+      />
+
+      <label>최대 축적</label>
+      <input
+        type="number"
+        value={styleState.context.maxScale}
+        onChange={(e) => onChange("maxScale", Number(e.target.value))}
       />
     </div>
   );
