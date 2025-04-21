@@ -12,7 +12,7 @@ import {
 import CategoryBox from "@src/components/layerset/layer/attribute/CategoryBox";
 import BasePropBox from "@src/components/layerset/layer/attribute/BasePropBox";
 import AttributeTableContainer from "@src/components/layerset/layer/attribute/AttributeTableContainer";
-import {mapToCreateInput, mapToUpdateInput} from "@src/utils/variableMap";
+import {mapToCreateInput, mapToUpdateInput} from "@src/utils/variableAttributeMap";
 import {toast} from "react-toastify";
 
 interface LayerAttributeProps {
