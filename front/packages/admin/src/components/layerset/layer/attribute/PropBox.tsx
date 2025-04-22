@@ -95,7 +95,7 @@ const PropBox = ({prop, index, categoryDndId, setCategoryArr }: PropBoxProps) =>
             <input
               type="number"
               min={1}
-              max={3}
+              max={4}
               value={prop.weight}
               onChange={(e) => {
                 handlePropWeight(prop.dndId, Number(e.target.value));
