@@ -11,7 +11,7 @@ export interface BillboardProps {
 
 const options = {
   base: {
-    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+    disableDepthTestDistance: 100000,
     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
   },
   billboard: {
@@ -19,7 +19,7 @@ const options = {
     translucencyByDistance: new Cesium.NearFarScalar(100000, 1.0, 200000, 0.5),
   },
   nearBillboard: {
-    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 50000),
+    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 20000),
   },
   label: {
     font: "14px NanumSquareNeo-r",
@@ -35,7 +35,7 @@ const options = {
     horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
     verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
     pixelOffset: new Cesium.Cartesian2(0, -24),
-    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 50000),
+    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 20000),
   },
 };
 
