@@ -22,21 +22,16 @@ export const processFeatures = async (
 
       const updatedFeatureGroups = (data.attributeByNativeName ?? [])
         .map((group) => {
-          if (!group) return;
-          const updatedProps = group.properties.map((prop) => ({
-            ...prop,
-            value: featureProps[prop.field]?.toString() ?? "",
-          }));
+          if (!group) return null;
 
-          // 모든 value가 비어있다면 해당 그룹 제거
-          const allEmpty = updatedProps.every((p) => p.value === "");
+          let hasValue = false;
+          const updatedProps = group.properties.map((prop) => {
+            const value = featureProps[prop.field]?.toString() ?? "";
+            if (value !== "") hasValue = true;
+            return { ...prop, value };
+          });
 
-          return allEmpty
-            ? null
-            : {
-              ...group,
-              properties: updatedProps,
-            };
+          return hasValue ? { ...group, properties: updatedProps } : null;
         })
         .filter(Boolean) as LayerAttribute[];
 

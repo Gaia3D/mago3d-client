@@ -1,12 +1,14 @@
 import * as Cesium from "cesium";
 import { getInstance } from "@/api/GlobeController.ts";
-import {UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
-import {SetterOrUpdater} from "recoil";
-import {LoadingStateType} from "@/recoils/Spinner.ts";
-import { addBillboard, addLabel, createCollection } from "@/utils/iconLayerUtils.ts";
+import { UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import { SetterOrUpdater } from "recoil";
+import { LoadingStateType } from "@/recoils/Spinner.ts";
+import { addBillboard, addLabel, createCollection, getOptions } from "@/utils/iconLayerUtils.ts";
 
 const fetchGeoJson = async (layerName: string): Promise<GeoJSON.FeatureCollection> => {
-    const response = await fetch(`${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?service=WFS&version=1.1.1&request=GetFeature&typeName=${layerName}&outputFormat=application/json`);
+    const response = await fetch(
+      `${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?service=WFS&version=1.1.1&request=GetFeature&typeName=${layerName}&outputFormat=application/json`
+    );
     return response.json();
 };
 
@@ -16,6 +18,12 @@ type FeatureWithPosition = {
     properties: unknown;
 }
 
+const getCameraDistanceFromScale = (scale: number): number => {
+    const visibleGround = (scale * 1000) / 100;
+    const halfFovRad = (60 * Math.PI) / 180 / 2;
+    return (visibleGround / 2) / Math.tan(halfFovRad);
+};
+
 export const loadIconLayer = async (
   layer: UserLayerAsset,
   viewer: Cesium.Viewer,
@@ -24,7 +32,12 @@ export const loadIconLayer = async (
     if (!viewer || !layer?.properties?.layer?.name || !layer.visible) return;
 
     const globeController = getInstance();
-    const { assetId: layerId, properties } = layer;
+    const { assetId: layerId, properties, styles } = layer;
+    const defaultStyle = styles?.find(style => style?.defaultStatus);
+
+    const minScale = defaultStyle?.context?.minScale;
+    const maxScale = defaultStyle?.context?.maxScale;
+
     const {
         layer: { name: layerName },
         icon: originalUrl,
@@ -47,7 +60,6 @@ export const loadIconLayer = async (
 
     try {
         const geojson = await fetchGeoJson(layerName);
-
         const featureList: FeatureWithPosition[] = [];
 
         geojson.features.forEach((feature) => {
@@ -70,30 +82,32 @@ export const loadIconLayer = async (
 
         const processBatch = () => {
             const end = Math.min(index + BATCH_SIZE, featureList.length);
+            const maxDistance = minScale ? getCameraDistanceFromScale(minScale) : Number.POSITIVE_INFINITY;
+            const minDistance = maxScale ? getCameraDistanceFromScale(maxScale) : 0;
+            const opts = getOptions(minDistance, maxDistance);
 
             for (let i = index; i < end; i++) {
                 const { position, labelText, properties } = featureList[i];
 
-                const label = addLabel(labelCollection, position, labelText, false);
-                const nearLabel = addLabel(nearLabelCollection, position, labelText, true);
+                const label = addLabel(labelCollection, position, labelText, false, opts);
+                const nearLabel = addLabel(nearLabelCollection, position, labelText, true, opts);
 
                 addBillboard(billboardCollection, position, {
                     originalImage,
                     selectedImage,
                     label,
                     properties,
-                });
+                }, false, opts);
 
                 addBillboard(nearBillboardCollection, position, {
                     originalImage,
                     selectedImage,
                     label: nearLabel,
                     properties,
-                }, true);
+                }, true, opts);
             }
 
             index = end;
-
             if (index < featureList.length) {
                 requestAnimationFrame(processBatch);
             } else {
@@ -103,12 +117,11 @@ export const loadIconLayer = async (
                     nearBillboardCollection,
                     nearLabelCollection,
                 });
-                requestAnimationFrame(() => setLoadingState({ loading: false, msg: "" }));
+                setLoadingState({ loading: false, msg: "" });
             }
         };
 
         requestAnimationFrame(processBatch);
-
     } catch (error) {
         console.error("Failed to load WFS data", error);
         setLoadingState({ loading: false, msg: "" });
