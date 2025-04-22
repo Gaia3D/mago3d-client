@@ -33,7 +33,7 @@
    * {input} : 변환할 tif 파일이 있는 폴더
    * {output} : 변환된 tif 파일을 저장할 폴더
 
-1-3. 출력 폴더에 설정 파일 추가
+1-3. 출력 폴더에 설정 파일 추가   
 indexer.properties
 ```
 # Time attribute in the dataset, using the ingestion column
