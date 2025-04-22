@@ -1,8 +1,9 @@
 ## RAMMS 데이터 처리
 ### RAMMS 데이터 전처리
 
-1-1. `convert_tiff.sh` 스크립트 작성
-    ```shell 
+1-1. `convert_tiff.sh` 스크립트 작성   
+
+```shell 
     #!/bin/bash
     
     # 입력 폴더와 출력 폴더 설정
@@ -19,16 +20,16 @@
         gdal_translate -of GTiff -a_srs EPSG:5179 "$file" "$OUTPUT_DIR/${filename}.tif";
         gdal_edit.py -unsetmd "$OUTPUT_DIR/${filename}.tif"
     done
-    ```
+```
 
-1-2. 도커를 이용하여 변환 스크립트 실행
-    ```
+1-2. 도커를 이용하여 변환 스크립트 실행   
+```
    docker run --rm ^
    -v "{input}":/input ^
    -v "{output}":/output ^
    -v "C:/workspace/convert_tiff.sh":/script/convert_tiff.sh ^
    ghcr.io/osgeo/gdal:ubuntu-full-3.9.0 bash /script/convert_tiff.sh
-    ```
+```
    * {input} : 변환할 tif 파일이 있는 폴더
    * {output} : 변환된 tif 파일을 저장할 폴더
 
