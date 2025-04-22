@@ -5,6 +5,7 @@ import * as Cesium from "cesium";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider.tsx";
 
 interface LayersData {
+	area: string;
 	caseName: string;
 	bbox: number[];
 	layerName: string;
@@ -15,6 +16,7 @@ interface LayersData {
 
 const layers: LayersData[] = [
 	{
+		area: "yeongju_old",
 		caseName: "case1",
 		bbox: [128.50346152791604, 36.920895731886915, 128.50866714496195, 36.92837484674791],
 		layerName: "mago3d:landslide_15s",
@@ -23,6 +25,7 @@ const layers: LayersData[] = [
 		max: 165,
 	},
 	{
+		area: "yeongju_old",
 		caseName: "case2",
 		bbox: [128.50346152790988, 36.92089576802598, 128.50866714495575, 36.92837488289546],
 		layerName: "mago3d:landslide_1s",
@@ -31,6 +34,7 @@ const layers: LayersData[] = [
 		max: 165,
 	},
 	{
+		area: "yeongju_old",
 		caseName: "case3",
 		bbox: [128.50204047214558, 36.921778086241304, 128.50677110705257, 36.92821933386286],
 		layerName: "mago3d:install_before",
@@ -39,6 +43,7 @@ const layers: LayersData[] = [
 		max: 90,
 	},
 	{
+		area: "yeongju_old",
 		caseName: "case4",
 		bbox: [128.50204047214558, 36.921778086241304, 128.50677110705257, 36.92821933386286],
 		layerName: "mago3d:install_after",
@@ -46,6 +51,61 @@ const layers: LayersData[] = [
 		min: 0,
 		max: 45,
 	},
+	{
+		area: "mungyeong",
+		caseName: "문경 산사태 15초",
+		bbox: [128.287785646051, 36.7357969964742, 128.300576100319, 36.7489066237452],
+		layerName: "mago3d:mungyeong_dem_debris_flow_15s",
+		interval: 15,
+		min: 0,
+		max: 345,
+	},
+	{
+		area: "mungyeong",
+		caseName: "문경 산사태 1초",
+		bbox: [128.287785646051, 36.7357969964742, 128.300576100319, 36.7489066237452],
+		layerName: "mago3d:mungyeong_dem_debris_flow_1s",
+		interval: 1,
+		min: 0,
+		max: 343,
+	},
+	{
+		area: "yecheon",
+		caseName: "예천 산사태 15초",
+		bbox: [128.333941790794, 36.7206297051795, 128.348563756861, 36.7267268190991],
+		layerName: "mago3d:yecheon_dem_debris_flow_15s",
+		interval: 15,
+		min: 0,
+		max: 265,
+	},
+	{
+		area: "yecheon",
+		caseName: "예천 산사태 1초",
+		bbox: [128.333941790794, 36.7206297051795, 128.348563756861, 36.7267268190991],
+		layerName: "mago3d:yecheon_dem_debris_flow_1s",
+		interval: 1,
+		min: 0,
+		max: 265,
+	},
+	{
+		area: "yeongju",
+		caseName: "영주 산사태 15초",
+		bbox: [128.501730336362, 36.9203508745104, 128.51042373824, 36.9284453224585],
+		layerName: "mago3d:yeongju_dem_debris_flow_15s",
+		interval: 15,
+		min: 0,
+		max: 220,
+	},
+	{
+		area: "yeongju",
+		caseName: "영주 산사태 1초",
+		bbox: [128.501730336362, 36.9203508745104, 128.51042373824, 36.9284453224585],
+		layerName: "mago3d:yeongju_dem_debris_flow_1s",
+		interval: 1,
+		min: 0,
+		max: 220,
+	},
+
 ];
 
 export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
@@ -53,6 +113,7 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 	const viewer = globeController?.viewer;
 
 	const [simulationActive, setSimulationActive] = useState(false);
+	const [selectedArea, setSelectedArea] = useState<LayersData[] | null>(null);
 	const [selectedLayer, setSelectedLayer] = useState<LayersData | null>(null);
 	const [selectedInterval, setSelectedInterval] = useState<number>(500);
 
@@ -61,16 +122,27 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 	const imageryLayersRef = useRef<Cesium.ImageryLayer[]>([]);
 	const layerCache = useRef(new Map<string, Cesium.ImageryLayer>());
 
+	const selectArea = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setSelectedArea(layers.filter((layer) => layer.area === e.target.value));
+	};
+
+	useEffect(() => {
+		stopSimulation();
+		if (selectedArea && selectedArea.length > 0) {
+			setSelectedLayer(selectedArea[0]);
+		}
+	}, [selectedArea]);
+
+	const selectLayer = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setSelectedLayer(layers.find((layer) => layer.caseName === e.target.value) || null);
+	};
+
 	useEffect(() => {
 		stopSimulation();
 		if (selectedLayer?.bbox) {
 			zoomToExtent(selectedLayer.bbox);
 		}
 	}, [selectedLayer]);
-
-	const selectLayer = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setSelectedLayer(layers.find((layer) => layer.caseName === e.target.value) || null);
-	};
 
 	const getOrCreateImageryLayer = (layerName: string, cqlFilter: string) => {
 		if (!selectedLayer) return;
@@ -214,18 +286,24 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 				<div className="content--wrapper">
 					<div className="simulation-list">
 						<label>대상지역</label>
-						<span>경북 영주 풍기읍 삼가리 산 22-1임 일대</span>
+						<select style={{width: "240px"}} className="custom-select" id="simulationAreaSelectBox"
+										onChange={selectArea}>
+							<option value="" hidden>대상지역 선택</option>
+							<option value="mungyeong">경상북도 문경시 동로면 수평리 산68임 일대</option>
+							<option value="yeongju">경상북도 영주시 풍기읍 삼가리 산22-1임 일대</option>
+							<option value="yecheon">경상북도 예천군 용문면 사부리 산100임 일대</option>
+						</select>
 					</div>
 					<div className="simulation-list">
 						<label>모의실험</label>
-						<select style={{width: "240px"}} className="custom-select" id="simulationAreaSelectBox"
+						<select style={{width: "240px"}} className="custom-select" id="simulationSelectBox"
 										value={selectedLayer?.caseName || ""}
 										onChange={selectLayer}>
-							<option value="" hidden>시뮬레이션 지역 선택</option>
-							<option value="case1">산사태 15초</option>
-							<option value="case2">산사태 1초</option>
-							<option value="case3">사방댐 설치 전</option>
-							<option value="case4">사방댐 설치 후</option>
+							{selectedArea && selectedArea.map((layer) => (
+								<option key={layer.caseName} value={layer.caseName}>
+									{layer.caseName}
+								</option>
+							))}
 						</select>
 					</div>
 					<div className="simulation-list">
@@ -241,15 +319,10 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 					<div>
 						{
 							!simulationActive ?
-								<button type="button" className="button-simulation play" onClick={startSimulation}>시뮬레이션
-									시작
-								</button>
+								<button type="button" className="button-simulation play" onClick={startSimulation}>시뮬레이션 시작</button>
 								:
-								<button type="button" className="button-simulation end" onClick={stopSimulation}>시뮬레이션
-									종료
-								</button>
+								<button type="button" className="button-simulation end" onClick={stopSimulation}>시뮬레이션 종료</button>
 						}
-
 					</div>
 				</div>
 			</div>
