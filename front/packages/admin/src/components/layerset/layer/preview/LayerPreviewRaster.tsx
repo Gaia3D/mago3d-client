@@ -3,7 +3,7 @@ import {
     CreateStyleInput, DeleteLayerStyleDocument,
     LayerAsset,
     LayersetAssetDocument, RemoteDocument, RemoteQueryVariables, UpdateLayerStyleDocument
-} from "@src/generated/gql/layerset/graphql";
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {useEffect, useRef, useState} from "react";
 import * as Cesium from "cesium";
 import {SubmitHandler, useForm} from "react-hook-form";
