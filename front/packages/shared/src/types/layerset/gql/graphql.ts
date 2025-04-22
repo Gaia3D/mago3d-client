@@ -697,6 +697,12 @@ export type LayerLabel = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
+export type LayerLegend = {
+  __typename?: 'LayerLegend';
+  legend?: Maybe<Scalars['JSON']['output']>;
+  styleId: Scalars['ID']['output'];
+};
+
 /**
  * ##################################################################################
  * # Query
@@ -1057,6 +1063,8 @@ export type PublishContextValue = {
 export type Query = {
   __typename?: 'Query';
   asset: LayerAsset;
+  /**  AssetLegend */
+  assetLegend?: Maybe<LayerLegend>;
   /**  Asset */
   assets: Array<Maybe<LayerAsset>>;
   attribute: LayerAttribute;
@@ -1087,6 +1095,11 @@ export type Query = {
 
 
 export type QueryAssetArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAssetLegendArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1218,10 +1231,16 @@ export type RuleInput = {
   min?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type RuleStyleContextValue = {
+  line?: InputMaybe<LineStyleInput>;
+  point?: InputMaybe<PointStyleInput>;
+  polygon?: InputMaybe<PolygonStyleInput>;
+};
+
 export type RuleStyleInput = {
   alias?: InputMaybe<Scalars['String']['input']>;
-  rule?: InputMaybe<RuleInput>;
-  style?: InputMaybe<StyleContextValue>;
+  rule: RuleInput;
+  style: RuleStyleContextValue;
 };
 
 export enum ShapeType {
@@ -1576,6 +1595,7 @@ export type UserLayerAsset = WithAuditable & WithJsonProperty & {
   name?: Maybe<Scalars['String']['output']>;
   order?: Maybe<Scalars['Int']['output']>;
   properties?: Maybe<Scalars['JSON']['output']>;
+  styles?: Maybe<Array<Maybe<LayerStyle>>>;
   type?: Maybe<LayerAssetType>;
   updatedAt?: Maybe<Scalars['String']['output']>;
   updatedBy?: Maybe<Scalars['ID']['output']>;

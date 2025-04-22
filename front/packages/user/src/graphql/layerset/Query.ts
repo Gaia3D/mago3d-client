@@ -39,6 +39,16 @@ export const GET_USERLAYERGROUPS = gql `
             visible
             properties
             createdBy
+              styles {
+                id
+                name
+                format
+                description
+                enabled
+                defaultStatus
+                access
+                context
+            }
         }
     }
 }
