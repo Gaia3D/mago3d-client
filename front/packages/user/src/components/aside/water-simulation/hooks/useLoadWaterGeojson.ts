@@ -6,7 +6,7 @@ export const useLoadWaterGeojson = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch("./geojson/water.geojson");
+        const res = await fetch("/user/geojson/water.geojson");
         if (!res.ok) throw new Error("Failed to fetch geojson");
         setGeojson(await res.json());
       } catch (e) {

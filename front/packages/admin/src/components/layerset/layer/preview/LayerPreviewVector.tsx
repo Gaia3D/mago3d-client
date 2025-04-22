@@ -83,15 +83,13 @@ const LayerPreviewVector = ({asset}: LayerPreviewVectorProps) => {
 
     const defaultStyle = asset.styles?.find(style => style.defaultStatus);
 
-    const mergedStyle: LayerStyle | undefined = defaultStyle
-      ? {
+    const mergedStyle: LayerStyle | undefined = {
           ...defaultStyle,
           context: {
               ...fallbackContext,
-              ...(defaultStyle.context ?? {}),
+              ...(defaultStyle?.context ?? {}),
           },
-      }
-      : undefined;
+      };
 
     const {
         register,
