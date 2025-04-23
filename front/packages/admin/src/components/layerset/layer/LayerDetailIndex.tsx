@@ -71,11 +71,13 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
           {asset.name}
           <span className={classifyAssetTypeClassNameByLayerAssetType(asset.type)}>{asset.type}</span>
         </h2>
-        <div className="category-button-section">
-          <button onClick={() => setCategory("default")}>기본 설정</button>
-          <button onClick={() => setCategory("style")}>스타일 설정</button>
-          <button onClick={() => setCategory("attribute")}>속성 설정</button>
-          <button onClick={() => setCategory("log")}>로그</button>
+        <div className="tabmenu">
+          <ul>
+            <li className={category === "default" ? "on" : ""} onClick={() => setCategory("default")}>기본 설정</li>
+            <li className={category === "style" ? "on" : ""} onClick={() => setCategory("style")}>스타일 설정</li>
+            <li className={category === "attribute" ? "on" : ""} onClick={() => setCategory("attribute")}>속성 설정</li>
+            <li className={category === "log" ? "on" : ""} onClick={() => setCategory("log")}>로그</li>
+          </ul>
         </div>
         <article>
           <div className={category === "default" ? "block" : "none"}>
@@ -92,7 +94,7 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
             <LayerStyle asset={asset}/>
           </div>
           <div className={category === "attribute" ? "block" : "none"}>
-            <LayerAttribute asset={asset} />
+            <LayerAttribute asset={asset}/>
           </div>
           <div className={category === "log" ? "block" : "none"}>
             <LayerLogTable logs={logs}/>

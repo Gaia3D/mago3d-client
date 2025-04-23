@@ -25,10 +25,7 @@ const LayerStyle = ({ asset }: LayerStyleProps) => {
 
   return (
     <>
-      <label>{t("layer-preview")}</label>
-      <div style={{ width: "100%", display: "inline-block" }}>
-        {renderPreview(asset)}
-      </div>
+      {renderPreview(asset)}
     </>
   );
 };

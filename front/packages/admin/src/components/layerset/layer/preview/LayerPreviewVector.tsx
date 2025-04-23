@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import * as Cesium from "cesium";
 import {
     CreateStyleInput,
@@ -84,12 +84,12 @@ const LayerPreviewVector = ({asset}: LayerPreviewVectorProps) => {
     const defaultStyle = asset.styles?.find(style => style.defaultStatus);
 
     const mergedStyle: LayerStyle | undefined = {
-          ...defaultStyle,
-          context: {
-              ...fallbackContext,
-              ...(defaultStyle?.context ?? {}),
-          },
-      };
+        ...defaultStyle,
+        context: {
+            ...fallbackContext,
+            ...(defaultStyle?.context ?? {}),
+        },
+    };
 
     const {
         register,
@@ -322,46 +322,85 @@ const LayerPreviewVector = ({asset}: LayerPreviewVectorProps) => {
 
     return (
       <>
-          <button type="button" className="btn-l-save" onClick={() => setCount("")}>{t("total-preview")}</button>
-          <button type="button" className="btn-l-save" onClick={() => setCount("&count=1")}>{t("object-preview")}</button>
-          <WarningMessage message={t("warning.object")}/>
-          <div className="preview-layer" style={{width: "50%"}}>
-              <form onSubmit={handleSubmit(onSubmitStyle)}>
-                  <div className="mar-b10" style={{display: "inline-block"}}>
-                      <button type="button" className={`btn-basic ${visibleStyle === 'point' ? 'on' : ''}`}
-                              onClick={() => setVisibleStyle('point')}>Point
-                      </button>
-                      <button type="button" className={`btn-basic ${visibleStyle === 'polyline' ? 'on' : ''}`}
-                              onClick={() => setVisibleStyle('polyline')}>Line
-                      </button>
-                      <button type="button" className={`btn-basic ${visibleStyle === 'polygon' ? 'on' : ''}`}
-                              onClick={() => setVisibleStyle('polygon')}>Polygon
-                      </button>
-                      <button type="button" className={`btn-basic ${visibleStyle === 'attribute' ? 'on' : ''}`}
-                              onClick={() => setVisibleStyle('attribute')}>Attribute
-                      </button>
+          <div className="style-menu">
+              <button type="button" className={visibleStyle === "point" ? "selected" : ""}
+                      onClick={() => setVisibleStyle('point')}>Point
+              </button>
+              <button type="button" className={visibleStyle === "polyline" ? "selected" : ""}
+                      onClick={() => setVisibleStyle('polyline')}>Line
+              </button>
+              <button type="button" className={visibleStyle === "polygon" ? "selected" : ""}
+                      onClick={() => setVisibleStyle('polygon')}>Polygon
+              </button>
+              <button type="button" className={visibleStyle === "attribute" ? "selected" : ""}
+                      onClick={() => setVisibleStyle('attribute')}>Attribute
+              </button>
+          </div>
+          <div className="style-wrapper">
+              <div className="style-setup">
+                  <div className="style-group">
+                      <div className="form-row">
+                          <label htmlFor="stylename">{t("style-name")}</label>
+                          <input id="stylename" type="text" defaultValue={styleState.name} {...register("name", {
+                              required: {
+                                  value: true,
+                                  message: t("required.style-name")
+                              },
+                              value: styleState.name,
+                              onChange: (e) => handleStyleNameChange(e.target.value)
+                          })}/>
+                      </div>
+                      <div className="form-row">
+                          <label htmlFor="minscale">최소 축적</label>
+                          <input
+                            id="minscale"
+                            type="number"
+                            value={styleState.context.minScale}
+                            onChange={(e) => handleContextChange("minScale", Number(e.target.value))}
+                          />
+                      </div>
+                      <div className="form-row">
+                          <label htmlFor="maxscale">최대 축적</label>
+                          <input
+                            id="maxscale"
+                            type="number"
+                            value={styleState.context.maxScale}
+                            onChange={(e) => handleContextChange("maxScale", Number(e.target.value))}
+                          />
+                      </div>
                   </div>
-                  <label>{t("style-name")}</label>
-                  <input type="text" defaultValue={styleState.name} {...register("name", {
-                      required: {
-                          value: true,
-                          message: t("required.style-name")
-                      },
-                      value: styleState.name,
-                      onChange: (e) => handleStyleNameChange(e.target.value)
-                  })}/>
                   { visibleStyle === "point" && <PointStyleForm styleState={styleState} onChange={handleContextChange} /> }
                   { visibleStyle === "polyline" && <PolylineStyleForm styleState={styleState} onChange={handleContextChange} /> }
                   { visibleStyle === "polygon" && <PolygonStyleForm styleState={styleState} onChange={handleContextChange} /> }
-                  <div className="alg-right">
-                      <button type="submit" className="btn-l-save">{t("save")}</button>
-                      <button type="button" className="btn-l-delete" onClick={toDelete}>{t("delete")}</button>
-                      <button type="button" className="btn-l-delete" onClick={resetStyle}>{t("reset")}</button>
+                  <div className="style-group">
+                      <div className="form-row">
+                          <label htmlFor="attribute-name">분류방식</label>
+                          <select id="attribute-name">
+                              <option>단일</option>
+                              <option>속성값으로 분류</option>
+                              <option>속성간격으로 분류</option>
+                          </select>
+                      </div>
                   </div>
-              </form>
+
+              </div>
+
+              <div className="style-preview">
+                  {/*<div className="preview-txt">{t("layer-preview")} | {t("warning.object")}</div>*/}
+                  <div className="previe-box" id="preview-layer"></div>
+                  {/*<div className="preview-btn">*/}
+                  {/*    <span>보기모드</span>*/}
+                  {/*    <button type="button" onClick={() => setCount("")}>{t("total-preview")}</button>*/}
+                  {/*    <button type="button" onClick={() => setCount("&count=1")}>{t("object-preview")}</button>*/}
+                  {/*    <button type="button">범례</button>*/}
+                  {/*</div>*/}
+              </div>
           </div>
-          <div className="preview-layer" id="preview-layer" style={{width: "50%"}}></div>
-          <WarningMessage message={t("warning.preview")}/>
+          <div className="alg-right">
+              <button type="submit" className="btn-l-save">{t("save")}</button>
+              <button type="button" className="btn-l-delete" onClick={toDelete}>{t("delete")}</button>
+              <button type="button" className="btn-l-delete" onClick={resetStyle}>{t("reset")}</button>
+          </div>
       </>
     )
 }

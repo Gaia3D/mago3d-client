@@ -1,3 +1,37 @@
 .none { display: none; }
 .block { display: block; }
 .flex { display: flex; }
+.width-100p {width: 100%}
+.padding-8 {padding: 8px}
+
+.tabmenu ul li:hover {
+  cursor: pointer;
+}
+
+.contents {
+  .style-wrapper {
+    .style-setup {
+      width: 400px;
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+        label, select, input[type="text"],
+        input[type="number"], input[type="color"],
+        input {
+          width: 50%;
+        }
+        .input-radio {
+          width: 25%;
+          margin: 0;
+          label {
+            width: 100%;
+          }
+        }
+
+      }
+    }
+    .style-preview {
+      width: calc(100% - 400px);
+    }
+  }
+}
