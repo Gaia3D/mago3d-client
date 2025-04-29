@@ -112,7 +112,7 @@ const layers: LayersData[] = [
 		layerName: "mago3d:mungyeong1_install_before_15s",
 		interval: 15,
 		min: 0,
-		max: 465,
+		max: 462,
 	},
 	{
 		area: "mungyeong1",
@@ -130,7 +130,7 @@ const layers: LayersData[] = [
 		layerName: "mago3d:mungyeong1_install_after_15s",
 		interval: 15,
 		min: 0,
-		max: 150,
+		max: 146,
 	},
 	{
 		area: "mungyeong1",
@@ -166,7 +166,7 @@ const layers: LayersData[] = [
 		layerName: "mago3d:mungyeong2_install_after_15s",
 		interval: 15,
 		min: 0,
-		max: 120,
+		max: 118,
 	},
 	{
 		area: "mungyeong2",
@@ -184,7 +184,7 @@ const layers: LayersData[] = [
 		layerName: "mago3d:yeongju_install_before_15s",
 		interval: 15,
 		min: 0,
-		max: 120,
+		max: 114,
 	},
 	{
 		area: "yeongju1",
@@ -202,7 +202,7 @@ const layers: LayersData[] = [
 		layerName: "mago3d:yeongju_install_after_15s",
 		interval: 15,
 		min: 0,
-		max: 90,
+		max: 80,
 	},
 	{
 		area: "yeongju1",
@@ -220,7 +220,7 @@ const layers: LayersData[] = [
 		layerName: "mago3d:yecheon1_install_before_15s",
 		interval: 15,
 		min: 0,
-		max: 295,
+		max: 294,
 	},
 	{
 		area: "yecheon1",
@@ -238,7 +238,7 @@ const layers: LayersData[] = [
 		layerName: "mago3d:yecheon1_install_after_15s",
 		interval: 15,
 		min: 0,
-		max: 450,
+		max: 441,
 	},
 	{
 		area: "yecheon1",
@@ -274,7 +274,7 @@ const layers: LayersData[] = [
 		layerName: "mago3d:yecheon1_install_after_15s",
 		interval: 15,
 		min: 0,
-		max: 150,
+		max: 147,
 	},
 	{
 		area: "yecheon2",
@@ -372,11 +372,17 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 		setSimulationActive(true);
 		const imageryLayers = viewer.imageryLayers;
 		const cqlFilters: string[] = [];
-		for (let i = 0; i < selectedLayer.max; i+=selectedLayer.interval) {
+		for (let i = 0; i < selectedLayer.max; i += selectedLayer.interval) {
 			cqlFilters.push(`location='${i}.tif'`);
 		}
+		cqlFilters.push(`location='${selectedLayer.max}.tif'`);
 
 		simulationRef.current = window.setInterval(() => {
+			if (cqlIndexRef.current >= cqlFilters.length) {
+				setTimeout(stopSimulation, 10000);
+				return;
+			}
+
 			const cqlFilter = cqlFilters[cqlIndexRef.current];
 			const layer = getOrCreateImageryLayer(selectedLayer.layerName, cqlFilter);
 			if (!layer) return;
@@ -388,8 +394,9 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
 			layer.show = true;
 			fadeLayer(layer);
-			cqlIndexRef.current = (cqlIndexRef.current + 1) % cqlFilters.length;
+			cqlIndexRef.current = (cqlIndexRef.current + 1);
 		}, selectedInterval);
+
 	};
 
 	const fadeLayer = (layer: Cesium.ImageryLayer) => {
@@ -428,6 +435,7 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
 	const stopSimulation = () => {
 		setSimulationActive(false);
+
 		if (simulationRef.current) {
 			clearInterval(simulationRef.current);
 			simulationRef.current = null;

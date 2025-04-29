@@ -11,7 +11,7 @@ const Header = () => {
             <div className="header-wrapper">
                 <DocsSelector />
                 <MapSelector/>
-                <LanguageSelector/>
+                {/*<LanguageSelector/>*/}
                 <SignInfo/>
             </div>            
         </div>
