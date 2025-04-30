@@ -105,7 +105,186 @@ const layers: LayersData[] = [
 		min: 0,
 		max: 220,
 	},
-
+	{
+		area: "mungyeong1",
+		caseName: "사방댐 설치 전 15초",
+		bbox: [128.297277926336, 36.7337326335169, 128.314279915863, 36.7478183589143],
+		layerName: "mago3d:mungyeong1_install_before_15s",
+		interval: 15,
+		min: 0,
+		max: 462,
+	},
+	{
+		area: "mungyeong1",
+		caseName: "사방댐 설치 전 1초",
+		bbox: [128.297277926336, 36.7337326335169, 128.314279915863, 36.7478183589143],
+		layerName: "mago3d:mungyeong1_install_before_1s",
+		interval: 1,
+		min: 0,
+		max: 462,
+	},
+	{
+		area: "mungyeong1",
+		caseName: "문경1 사방댐 설치 후 15초",
+		bbox: [128.297277926336, 36.7337326335169, 128.314279915863, 36.7478183589143],
+		layerName: "mago3d:mungyeong1_install_after_15s",
+		interval: 15,
+		min: 0,
+		max: 146,
+	},
+	{
+		area: "mungyeong1",
+		caseName: "문경1 사방댐 설치 후 1초",
+		bbox: [128.297277926336, 36.7337326335169, 128.314279915863, 36.7478183589143],
+		layerName: "mago3d:mungyeong1_install_after_1s",
+		interval: 1,
+		min: 0,
+		max: 146,
+	},
+	{
+		area: "mungyeong2",
+		caseName: "문경2 사방댐 설치 전 15초",
+		bbox: [128.297277926336, 36.7337326335169, 128.314279915863, 36.7478183589143],
+		layerName: "mago3d:mungyeong2_install_before_15s",
+		interval: 15,
+		min: 0,
+		max: 405,
+	},
+	{
+		area: "mungyeong2",
+		caseName: "문경2 사방댐 설치 전 1초",
+		bbox: [128.297277926336, 36.7337326335169, 128.314279915863, 36.7478183589143],
+		layerName: "mago3d:mungyeong2_install_before_1s",
+		interval: 1,
+		min: 0,
+		max: 405,
+	},
+	{
+		area: "mungyeong2",
+		caseName: "문경2 사방댐 설치 후 15초",
+		bbox: [128.297277926336, 36.7337326335169, 128.314279915863, 36.7478183589143],
+		layerName: "mago3d:mungyeong2_install_after_15s",
+		interval: 15,
+		min: 0,
+		max: 118,
+	},
+	{
+		area: "mungyeong2",
+		caseName: "문경2 사방댐 설치 후 1초",
+		bbox: [128.297277926336, 36.7337326335169, 128.314279915863, 36.7478183589143],
+		layerName: "mago3d:mungyeong2_install_after_1s",
+		interval: 1,
+		min: 0,
+		max: 118,
+	},
+	{
+		area: "yeongju1",
+		caseName: "영주 사방댐 설치 전 15초",
+		bbox: [128.501730336362, 36.9203508745104, 128.51042373824, 36.9284453224585],
+		layerName: "mago3d:yeongju_install_before_15s",
+		interval: 15,
+		min: 0,
+		max: 114,
+	},
+	{
+		area: "yeongju1",
+		caseName: "영주 사방댐 설치 전 1초",
+		bbox: [128.501730336362, 36.9203508745104, 128.51042373824, 36.9284453224585],
+		layerName: "mago3d:yeongju_install_before_1s",
+		interval: 1,
+		min: 0,
+		max: 114,
+	},
+	{
+		area: "yeongju1",
+		caseName: "영주 사방댐 설치 후 15초",
+		bbox: [128.501730336362, 36.9203508745104, 128.51042373824, 36.9284453224585],
+		layerName: "mago3d:yeongju_install_after_15s",
+		interval: 15,
+		min: 0,
+		max: 80,
+	},
+	{
+		area: "yeongju1",
+		caseName: "영주 사방댐 설치 후 1초",
+		bbox: [128.501730336362, 36.9203508745104, 128.51042373824, 36.9284453224585],
+		layerName: "mago3d:yeongju_install_after_1s",
+		interval: 1,
+		min: 0,
+		max: 80,
+	},
+	{
+		area: "yecheon1",
+		caseName: "예천1 사방댐 설치 전 15초",
+		bbox: [128.332934965207, 36.7217518043171, 128.348327542525, 36.7266375066683],
+		layerName: "mago3d:yecheon1_install_before_15s",
+		interval: 15,
+		min: 0,
+		max: 294,
+	},
+	{
+		area: "yecheon1",
+		caseName: "예천1 사방댐 설치 전 1초",
+		bbox: [128.332934965207, 36.7217518043171, 128.348327542525, 36.7266375066683],
+		layerName: "mago3d:yecheon1_install_before_1s",
+		interval: 1,
+		min: 0,
+		max: 294,
+	},
+	{
+		area: "yecheon1",
+		caseName: "예천1 사방댐 설치 후 15초",
+		bbox: [128.332934965207, 36.7217518043171, 128.348327542525, 36.7266375066683],
+		layerName: "mago3d:yecheon1_install_after_15s",
+		interval: 15,
+		min: 0,
+		max: 441,
+	},
+	{
+		area: "yecheon1",
+		caseName: "예천1 사방댐 설치 후 1초",
+		bbox: [128.332934965207, 36.7217518043171, 128.348327542525, 36.7266375066683],
+		layerName: "mago3d:yecheon1_install_after_1s",
+		interval: 1,
+		min: 0,
+		max: 441,
+	},
+	{
+		area: "yecheon2",
+		caseName: "예천2 사방댐 설치 전 15초",
+		bbox: [128.332934965207, 36.7217518043171, 128.348327542525, 36.7266375066683],
+		layerName: "mago3d:yecheon1_install_before_15s",
+		interval: 15,
+		min: 0,
+		max: 270,
+	},
+	{
+		area: "yecheon2",
+		caseName: "예천2 사방댐 설치 전 1초",
+		bbox: [128.332934965207, 36.7217518043171, 128.348327542525, 36.7266375066683],
+		layerName: "mago3d:yecheon1_install_before_1s",
+		interval: 1,
+		min: 0,
+		max: 270,
+	},
+	{
+		area: "yecheon2",
+		caseName: "예천2 사방댐 설치 후 15초",
+		bbox: [128.332934965207, 36.7217518043171, 128.348327542525, 36.7266375066683],
+		layerName: "mago3d:yecheon1_install_after_15s",
+		interval: 15,
+		min: 0,
+		max: 147,
+	},
+	{
+		area: "yecheon2",
+		caseName: "예천2 사방댐 설치 후 1초",
+		bbox: [128.332934965207, 36.7217518043171, 128.348327542525, 36.7266375066683],
+		layerName: "mago3d:yecheon1_install_after_1s",
+		interval: 1,
+		min: 0,
+		max: 147,
+	},
 ];
 
 export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
@@ -193,11 +372,17 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 		setSimulationActive(true);
 		const imageryLayers = viewer.imageryLayers;
 		const cqlFilters: string[] = [];
-		for (let i = 0; i < selectedLayer.max; i+=selectedLayer.interval) {
+		for (let i = 0; i < selectedLayer.max; i += selectedLayer.interval) {
 			cqlFilters.push(`location='${i}.tif'`);
 		}
+		cqlFilters.push(`location='${selectedLayer.max}.tif'`);
 
 		simulationRef.current = window.setInterval(() => {
+			if (cqlIndexRef.current >= cqlFilters.length) {
+				setTimeout(stopSimulation, 10000);
+				return;
+			}
+
 			const cqlFilter = cqlFilters[cqlIndexRef.current];
 			const layer = getOrCreateImageryLayer(selectedLayer.layerName, cqlFilter);
 			if (!layer) return;
@@ -209,8 +394,9 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
 			layer.show = true;
 			fadeLayer(layer);
-			cqlIndexRef.current = (cqlIndexRef.current + 1) % cqlFilters.length;
+			cqlIndexRef.current = (cqlIndexRef.current + 1);
 		}, selectedInterval);
+
 	};
 
 	const fadeLayer = (layer: Cesium.ImageryLayer) => {
@@ -249,6 +435,7 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
 	const stopSimulation = () => {
 		setSimulationActive(false);
+
 		if (simulationRef.current) {
 			clearInterval(simulationRef.current);
 			simulationRef.current = null;
@@ -289,9 +476,11 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 						<select style={{width: "240px"}} className="custom-select" id="simulationAreaSelectBox"
 										onChange={selectArea}>
 							<option value="" hidden>대상지역 선택</option>
-							<option value="mungyeong">경상북도 문경시 동로면 수평리 산68임 일대</option>
-							<option value="yeongju">경상북도 영주시 풍기읍 삼가리 산22-1임 일대</option>
-							<option value="yecheon">경상북도 예천군 용문면 사부리 산100임 일대</option>
+							<option value="mungyeong1">1 경상북도 문경시 동로면 수평리 산68임 일대</option>
+							<option value="mungyeong2">2 경상북도 문경시 동로면 수평리 산68임 일대</option>
+							<option value="yeongju1">1 경상북도 영주시 풍기읍 삼가리 산22-1임 일대</option>
+							<option value="yecheon1">1 경상북도 예천군 용문면 사부리 산100임 일대</option>
+							<option value="yecheon2">2 경상북도 예천군 용문면 사부리 산100임 일대</option>
 						</select>
 					</div>
 					<div className="simulation-list">
