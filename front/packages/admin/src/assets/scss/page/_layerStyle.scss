@@ -27,7 +27,6 @@
         padding: 6px 12px;
         font-size: 14px;
         cursor: pointer;
-        transition: background-color 0.2s ease;
 
         &:hover {
           background-color: #3a6fd8;
@@ -50,7 +49,7 @@
         border-radius: 8px;
         padding: 0 12px;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        transition: box-shadow 0.2s ease;
+        transition: all 0.2s ease;
 
         .map {
           width: 36px;
@@ -89,15 +88,108 @@
 
         &:hover {
           box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+          border-color: #aaa;
         }
       }
     }
   }
 
   .right-section {
-    min-width: 400px;
-    width: calc(100% - 400px);
+    flex: 1;
     background-color: #f1f5f9;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
     padding: 24px;
+
+    .section-header {
+      margin-bottom: 12px;
+
+      div:first-child {
+        font-weight: 600;
+        font-size: 16px;
+        color: #333;
+      }
+
+      div:last-child {
+        font-size: 13px;
+        color: #777;
+        margin-top: 4px;
+      }
+    }
+
+    .preview-container {
+      position: relative;
+      flex: 1;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+
+      .cesium-viewer {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+      }
+
+      .preview-top-button-container,
+      .preview-bottom-button-container {
+        position: absolute;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background-color: rgba(255, 255, 255, 0.85);
+        border-radius: 8px;
+        padding: 6px 12px;
+
+        button {
+          background-color: #4f86ff;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          padding: 4px 10px;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #3a6fd8;
+          }
+        }
+      }
+
+      .preview-top-button-container {
+        top: 16px;
+        right: 16px;
+      }
+
+      .preview-bottom-button-container {
+        bottom: 16px;
+        right: 16px;
+      }
+    }
+
+    .section-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 16px;
+
+      button {
+        background-color: #4f86ff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 14px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #3a6fd8;
+        }
+      }
+    }
   }
 }
