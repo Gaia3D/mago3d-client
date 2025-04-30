@@ -330,6 +330,8 @@
     padding: 15px 15px 0;
     width: 200px;
     backdrop-filter: blur(5px);
+    height: 300px;
+    overflow: auto;
   }
   .pop-layer-legend-content {
     display: flex;
@@ -352,6 +354,11 @@
     color: var(--text-white-color);
     margin: 5px 0;
   }
+  .pop-layer-legend-content p > span {
+    font-size: 0.8em;
+    color: #666; /* 선택적으로 색상도 조금 흐리게 */
+    margin-left: 4px;
+  }
   .pop-layer-legend-img-wrap {
     width: 100%;
     height: 100%;
@@ -369,7 +376,7 @@
   .pop-layer-legend-wrap {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 1px;
     max-width: 200px;
   }
   .pop-layer-legend-wrap .legend-item {
@@ -384,8 +391,8 @@
     color: var(--text-white-color);
   }
   .pop-layer-legend-wrap .color-box {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 14px;
     border: 1px solid black;
   }
   /* 범례 색상 */
