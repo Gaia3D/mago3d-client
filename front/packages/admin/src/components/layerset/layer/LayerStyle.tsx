@@ -6,6 +6,7 @@ import LayerPreviewHybrid from "@src/components/layerset/layer/preview/LayerPrev
 import LayerPreviewRaster from "@src/components/layerset/layer/preview/LayerPreviewRaster";
 import LayerPreviewVector from "@src/components/layerset/layer/preview/LayerPreviewVector";
 import LayerPreview3dTile from "@src/components/layerset/layer/preview/LayerPreview3dTile";
+import LayerVectorStyle from "@src/components/layerset/layer/style/LayerVectorStyle";
 
 interface LayerStyleProps {
   asset: LayerAsset;
@@ -15,7 +16,8 @@ const previewComponentMap: Partial<Record<LayerAssetType, (asset: LayerAsset) =>
   [LayerAssetType.Cog]: (asset) => <LayerPreviewCog asset={asset} />,
   [LayerAssetType.Layergroup]: (asset) => <LayerPreviewHybrid asset={asset} />,
   [LayerAssetType.Raster]: (asset) => <LayerPreviewRaster asset={asset} />,
-  [LayerAssetType.Vector]: (asset) => <LayerPreviewVector asset={asset} />,
+  // [LayerAssetType.Vector]: (asset) => <LayerPreviewVector asset={asset} />,
+  [LayerAssetType.Vector]: (asset) => <LayerVectorStyle asset={asset} />,
   [LayerAssetType.Tiles3D]: (asset) => <LayerPreview3dTile asset={asset} />,
 };
 
