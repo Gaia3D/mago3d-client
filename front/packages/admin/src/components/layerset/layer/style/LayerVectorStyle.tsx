@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { LayerAsset, LayerStyle } from "@mnd/shared/src/types/layerset/gql/graphql";
 import StyleRow from "@src/components/layerset/layer/style/StyleRow";
 import CesiumPreviewer from "@src/components/layerset/layer/style/CesiumPreviewer";
@@ -62,6 +62,7 @@ const LayerVectorStyle = ({ asset }: LayerVectorStyleProps) => {
             </div>
           </div>
           <CesiumPreviewer
+            resourceName={asset.properties.layer.resource.name}
             layerStyles={layerStyles}
             backgroundMap={backgroundMap}
           />
