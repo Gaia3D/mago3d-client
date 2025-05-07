@@ -4,7 +4,6 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {
   LayersetAssetBasicFragmentDoc,
-  LayersetAssetDocument,
   LayersetDeleteAssetDocument,
   LayersetGroupListWithAssetDocument, LayersetUpdateAssetDocument,
   UpdateAssetInput
@@ -17,6 +16,7 @@ import LayerLogTable from "@src/components/layerset/layer/LayerLogTable";
 import LayerForm from "@src/components/layerset/layer/LayerForm";
 import LayerAttribute from "@src/components/layerset/layer/LayerAttribute";
 import LayerStyle from "@src/components/layerset/layer/LayerStyle";
+import {LayersetAssetDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
 
 interface LayerDetailIndexProps {
   id: string;

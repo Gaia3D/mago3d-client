@@ -84,6 +84,7 @@ query LayersetAsset($id: ID!) @api(name: layerset) {
             name
             defaultStatus
             context
+            type
         }
     }
 }

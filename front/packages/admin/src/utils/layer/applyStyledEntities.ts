@@ -1,6 +1,7 @@
 import * as Cesium from "cesium";
 import { LayerStyle } from "@src/generated/gql/layerset/graphql";
 import {PreviewMode} from "@src/types/previewMode";
+import {StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
 
 export function applyStyledEntities(
   viewer: Cesium.Viewer,
@@ -23,43 +24,42 @@ export function applyStyledEntities(
     ensureEntityPosition(entity);
 
     for (const style of styles) {
-      // const { context, type } = style;
-      const { context } = style;
+      const { context, type } = style;
       const strokeColor = Cesium.Color.fromCssColorString(context.strokeColor || "#000000")
         .withAlpha(context.strokeOpacity ?? 1);
       const fillColor = Cesium.Color.fromCssColorString(context.fillColor || "#ffffff")
         .withAlpha(context.fillOpacity ?? 1);
       const strokeWidth = context.strokeWidth ?? 1;
 
-      // if (type === "point" && entity.position) {
-      //   viewer.entities.add({
-      //     position: entity.position,
-      //     point: new Cesium.PointGraphics({
-      //       pixelSize: context.size ?? 20,
-      //       color: fillColor,
-      //       outlineColor: strokeColor,
-      //       outlineWidth: strokeWidth,
-      //     }),
-      //   });
-      //   break;
-      // }
-      //
-      // if (type === "polyLine" && entity.polyline?.positions) {
-      //   const positions = entity.polyline.positions.getValue(now);
-      //   if (!positions) continue;
-      //
-      //   viewer.entities.add({
-      //     polyline: new Cesium.PolylineGraphics({
-      //       positions,
-      //       width: strokeWidth,
-      //       material: strokeColor,
-      //       clampToGround: true,
-      //     }),
-      //   });
-      //   break;
-      // }
-      //
-      // if (type === "polygon" && entity.polygon?.hierarchy) {
+      if (type === StyleType.Point && entity.position) {
+        viewer.entities.add({
+          position: entity.position,
+          point: new Cesium.PointGraphics({
+            pixelSize: context.size ?? 20,
+            color: fillColor,
+            outlineColor: strokeColor,
+            outlineWidth: strokeWidth,
+          }),
+        });
+        break;
+      }
+
+      if (type === StyleType.Line && entity.polyline?.positions) {
+        const positions = entity.polyline.positions.getValue(now);
+        if (!positions) continue;
+
+        viewer.entities.add({
+          polyline: new Cesium.PolylineGraphics({
+            positions,
+            width: strokeWidth,
+            material: strokeColor,
+            clampToGround: true,
+          }),
+        });
+        break;
+      }
+
+      if (type === StyleType.Polygon && entity.polygon?.hierarchy) {
         const hierarchy = entity.polygon.hierarchy.getValue(now);
         if (!hierarchy?.positions?.length) continue;
 
@@ -74,7 +74,7 @@ export function applyStyledEntities(
           }),
         });
         break;
-      // }
+      }
     }
   });
 }
