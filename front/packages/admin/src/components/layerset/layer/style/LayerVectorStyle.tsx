@@ -1,34 +1,37 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { LayerAsset, LayerStyle } from "@mnd/shared/src/types/layerset/gql/graphql";
-import StyleRow from "@src/components/layerset/layer/style/StyleRow";
-import CesiumPreviewer from "@src/components/layerset/layer/style/CesiumPreviewer";
-import {backgroundMaps, BackgroundMapType} from "@src/constants/backgroundMap";
-import BackgroundMapSelector from "@src/components/layerset/layer/style/BackgroundMapSelector";
+import * as Cesium from "cesium";
+import InnerLoader from "@src/components/InnerLoader";
+import StylePanel from "@src/components/layerset/layer/style/StylePanel";
+import PreviewPanel from "@src/components/layerset/layer/style/PreviewPanel";
 
 interface LayerVectorStyleProps {
   asset: LayerAsset;
 }
 
-export type previewModeType = "single" | "all" | "legend"
-
 const LayerVectorStyle = ({ asset }: LayerVectorStyleProps) => {
   const [layerStyles, setLayerStyles] = useState<LayerStyle[]>(asset.styles);
-  const [selectedStyle, setSelectedStyle] = useState<LayerStyle>(asset.styles[0]);
-  const [backgroundMap, setBackgroundMap] = useState<BackgroundMapType>(backgroundMaps[0]);
-  const [previewMode, setPreviewMode] = useState<previewModeType>("single")
+  const [dataSource, setDataSource] = useState<Cesium.GeoJsonDataSource | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const styleToggle = (styleId: string) => {
-    const selected = layerStyles.find(style => style.id === styleId);
-    if (selected) setSelectedStyle(selected);
-  };
+  useEffect(() => {
+    const resourceName = asset?.properties?.layer?.resource?.name;
+    if (!resourceName) return;
+    setLoading(true);
+    const fetchData = async () => {
+      try {
+        const url = `${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}service=WFS&version=2.0.0&request=GetFeature&typeName=${resourceName}&outputFormat=application/json`;
+        const loadedDataSource = await Cesium.GeoJsonDataSource.load(url);
+        setDataSource(loadedDataSource);
+      } catch (e) {
+        console.error("GeoJSON load error:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const styleUpdate = (styleId: string) => {
-    console.log("update", styleId);
-  };
-
-  const styleDelete = (styleId: string) => {
-    console.log("delete", styleId);
-  };
+    fetchData();
+  }, [asset]);
 
   return (
     <div className="style-container">
@@ -38,15 +41,7 @@ const LayerVectorStyle = ({ asset }: LayerVectorStyleProps) => {
           <div><button>추가</button></div>
         </div>
         <div className="section-body">
-          {layerStyles.map(style => (
-            <StyleRow
-              key={style.id}
-              style={style}
-              onToggle={styleToggle}
-              onUpdate={styleUpdate}
-              onDelete={styleDelete}
-            />
-          ))}
+          <StylePanel layerStyles={layerStyles} setLayerStyles={setLayerStyles} />
         </div>
       </div>
 
@@ -55,27 +50,10 @@ const LayerVectorStyle = ({ asset }: LayerVectorStyleProps) => {
           <div>레이어 미리보기</div>
           <div>성능상의 이유로 하나의 객체만 미리보기 됩니다.</div>
         </div>
-
-        <div className="preview-container">
-          <div className="preview-top-button-container">
-            <div>
-              <button onClick={() => setPreviewMode("single")}>단일</button>
-              <button onClick={() => setPreviewMode("all")}>전체</button>
-              <button onClick={() => setPreviewMode("legend")}>범례</button>
-            </div>
-          </div>
-          <CesiumPreviewer
-            resourceName={asset.properties.layer.resource.name}
-            layerStyles={layerStyles}
-            backgroundMap={backgroundMap}
-            previewMode={previewMode}
-          />
-          <BackgroundMapSelector
-            currentMap={backgroundMap}
-            onChange={(map) => setBackgroundMap(map)}
-          />
-        </div>
-
+        {
+          loading ? <InnerLoader /> :
+          <PreviewPanel layerStyles={layerStyles} dataSource={dataSource} />
+        }
         <div className="section-footer">
           <button>저장</button>
           <button>삭제</button>

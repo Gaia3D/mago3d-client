@@ -5,17 +5,17 @@ import { BackgroundMapType } from "@src/constants/backgroundMap";
 import { initCesiumViewer } from "@src/utils/layer/initCesiumViewer";
 import { updateImageryProvider } from "@src/utils/layer/updateImageryProvider";
 import {applyStyledEntities} from "@src/utils/layer/applyStyledEntities";
-import {previewModeType} from "@src/components/layerset/layer/style/LayerVectorStyle";
+import {PreviewMode} from "@src/types/previewMode";
 
 interface CesiumPreviewerProps {
-  resourceName: string | undefined;
+  dataSource: Cesium.GeoJsonDataSource;
   layerStyles: LayerStyle[];
   backgroundMap: BackgroundMapType;
-  previewMode: previewModeType;
+  previewMode: PreviewMode;
 }
 
-const CesiumPreviewer: React.FC<CesiumPreviewerProps> = ({
-   resourceName,
+const CesiumPreview: React.FC<CesiumPreviewerProps> = ({
+   dataSource,
    layerStyles,
    backgroundMap,
    previewMode,
@@ -23,7 +23,6 @@ const CesiumPreviewer: React.FC<CesiumPreviewerProps> = ({
   const viewerRef = useRef<HTMLDivElement>(null);
   const cesiumViewerRef = useRef<Cesium.Viewer | null>(null);
   const imageryLayerRef = useRef<Cesium.ImageryLayer | null>(null);
-  const dataSourceRef = useRef<Cesium.DataSource | null>(null);
   const entityListRef = useRef<Cesium.Entity[]>([]);
 
   useEffect(() => {
@@ -45,18 +44,10 @@ const CesiumPreviewer: React.FC<CesiumPreviewerProps> = ({
   }, [backgroundMap]);
 
   useEffect(() => {
-    if (!cesiumViewerRef.current || !resourceName) return;
-    const fetchData = async () => {
-      const url = `${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}service=WFS&version=2.0.0&request=GetFeature&typeName=${resourceName}&outputFormat=application/json`;
-      const dataSource = await Cesium.GeoJsonDataSource.load(url);
-      dataSourceRef.current = dataSource;
-      entityListRef.current = dataSource.entities.values;
-
-      applyStyledEntities(cesiumViewerRef.current!, entityListRef.current, layerStyles, previewMode);
-    };
-
-    fetchData();
-  }, [resourceName]);
+    if (!dataSource) return;
+    entityListRef.current = dataSource.entities.values;
+    applyStyledEntities(cesiumViewerRef.current!, entityListRef.current, layerStyles, previewMode);
+  }, [dataSource]);
 
   useEffect(() => {
     if (!cesiumViewerRef.current || !entityListRef.current.length || previewMode === "legend") return;
@@ -66,4 +57,4 @@ const CesiumPreviewer: React.FC<CesiumPreviewerProps> = ({
   return <div ref={viewerRef} className="cesium-viewer" />;
 };
 
-export default CesiumPreviewer;
+export default CesiumPreview;

@@ -1,21 +1,21 @@
 import * as Cesium from "cesium";
 import { LayerStyle } from "@src/generated/gql/layerset/graphql";
-import {previewModeType} from "@src/components/layerset/layer/style/LayerVectorStyle";
+import {PreviewMode} from "@src/types/previewMode";
 
 export function applyStyledEntities(
   viewer: Cesium.Viewer,
   entities: Cesium.Entity[],
   styles: LayerStyle[],
-  previewMode: previewModeType
+  previewMode: PreviewMode
 ) {
   viewer.entities.removeAll();
 
   const now = Cesium.JulianDate.now();
   let targets;
 
-  if (previewMode === "single") {
+  if (previewMode === PreviewMode.Single) {
     targets = [entities[0]];
-  } else if (previewMode === "all") {
+  } else if (previewMode === PreviewMode.All) {
     targets = entities;
   }
 
