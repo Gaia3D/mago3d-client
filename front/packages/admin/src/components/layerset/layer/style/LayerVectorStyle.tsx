@@ -9,10 +9,13 @@ interface LayerVectorStyleProps {
   asset: LayerAsset;
 }
 
+export type previewModeType = "single" | "all" | "legend"
+
 const LayerVectorStyle = ({ asset }: LayerVectorStyleProps) => {
   const [layerStyles, setLayerStyles] = useState<LayerStyle[]>(asset.styles);
   const [selectedStyle, setSelectedStyle] = useState<LayerStyle>(asset.styles[0]);
   const [backgroundMap, setBackgroundMap] = useState<BackgroundMapType>(backgroundMaps[0]);
+  const [previewMode, setPreviewMode] = useState<previewModeType>("single")
 
   const styleToggle = (styleId: string) => {
     const selected = layerStyles.find(style => style.id === styleId);
@@ -56,15 +59,16 @@ const LayerVectorStyle = ({ asset }: LayerVectorStyleProps) => {
         <div className="preview-container">
           <div className="preview-top-button-container">
             <div>
-              <button onClick={() => console.log("보기모드: 전체")}>전체</button>
-              <button onClick={() => console.log("보기모드: 단일")}>단일</button>
-              <button onClick={() => console.log("보기모드: 범례")}>범례</button>
+              <button onClick={() => setPreviewMode("single")}>단일</button>
+              <button onClick={() => setPreviewMode("all")}>전체</button>
+              <button onClick={() => setPreviewMode("legend")}>범례</button>
             </div>
           </div>
           <CesiumPreviewer
             resourceName={asset.properties.layer.resource.name}
             layerStyles={layerStyles}
             backgroundMap={backgroundMap}
+            previewMode={previewMode}
           />
           <BackgroundMapSelector
             currentMap={backgroundMap}
