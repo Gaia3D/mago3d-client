@@ -43,7 +43,6 @@
  */
   /* 스피너 스타일 */
 .modal {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -70,4 +69,13 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-  }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
