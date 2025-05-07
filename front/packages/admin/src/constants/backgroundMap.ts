@@ -8,7 +8,7 @@ export type BackgroundMapType = {
   image: string;
 }
 
-export const backgroundMaps: BackgroundMapType[] = [
+export const BackgroundMaps: BackgroundMapType[] = [
   {
     id: "1",
     type: 'osm',

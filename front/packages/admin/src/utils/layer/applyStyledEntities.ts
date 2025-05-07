@@ -21,7 +21,6 @@ export function applyStyledEntities(
 
   targets.forEach(entity => {
     ensureEntityPosition(entity);
-
     for (const style of styles) {
       const { context, type } = style;
       const strokeColor = Cesium.Color.fromCssColorString(context.strokeColor || "#000000")
@@ -29,18 +28,17 @@ export function applyStyledEntities(
       const fillColor = Cesium.Color.fromCssColorString(context.fillColor || "#ffffff")
         .withAlpha(context.fillOpacity ?? 1);
       const strokeWidth = context.strokeWidth ?? 1;
-
       if (type === StyleType.Point && entity.position) {
         viewer.entities.add({
           position: entity.position,
           point: new Cesium.PointGraphics({
-            pixelSize: context.size ?? 20,
+            pixelSize: context.size,
             color: fillColor,
             outlineColor: strokeColor,
             outlineWidth: strokeWidth,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
           }),
         });
-        break;
       }
 
       if (type === StyleType.Line && entity.polyline?.positions) {
@@ -55,7 +53,6 @@ export function applyStyledEntities(
             clampToGround: true,
           }),
         });
-        break;
       }
 
       if (type === StyleType.Polygon && entity.polygon?.hierarchy) {
@@ -72,7 +69,6 @@ export function applyStyledEntities(
             height: 0,
           }),
         });
-        break;
       }
     }
   });

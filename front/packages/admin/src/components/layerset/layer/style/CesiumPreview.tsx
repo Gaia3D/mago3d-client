@@ -9,17 +9,17 @@ import {PreviewMode} from "@src/types/Layer";
 
 interface CesiumPreviewerProps {
   dataSource: Cesium.GeoJsonDataSource;
-  layerStyles: LayerStyle[];
+  styles: LayerStyle[];
   backgroundMap: BackgroundMapType;
   previewMode: PreviewMode;
 }
 
-const CesiumPreview: React.FC<CesiumPreviewerProps> = ({
+const CesiumPreview= ({
    dataSource,
-   layerStyles,
+   styles,
    backgroundMap,
    previewMode,
- }) => {
+ }: CesiumPreviewerProps) => {
   const viewerRef = useRef<HTMLDivElement>(null);
   const cesiumViewerRef = useRef<Cesium.Viewer | null>(null);
   const imageryLayerRef = useRef<Cesium.ImageryLayer | null>(null);
@@ -46,13 +46,13 @@ const CesiumPreview: React.FC<CesiumPreviewerProps> = ({
   useEffect(() => {
     if (!dataSource) return;
     entityListRef.current = dataSource.entities.values;
-    applyStyledEntities(cesiumViewerRef.current!, entityListRef.current, layerStyles, previewMode);
+    applyStyledEntities(cesiumViewerRef.current!, entityListRef.current, styles, previewMode);
   }, [dataSource]);
 
   useEffect(() => {
     if (!cesiumViewerRef.current || !entityListRef.current.length || previewMode === "legend") return;
-    applyStyledEntities(cesiumViewerRef.current, entityListRef.current, layerStyles, previewMode);
-  }, [layerStyles, previewMode]);
+    applyStyledEntities(cesiumViewerRef.current, entityListRef.current, styles, previewMode);
+  }, [styles, previewMode]);
 
   return <div ref={viewerRef} className="cesium-viewer" />;
 };

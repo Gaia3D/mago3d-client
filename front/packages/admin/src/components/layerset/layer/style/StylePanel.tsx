@@ -1,6 +1,8 @@
-import React, {Dispatch, SetStateAction} from 'react';
-import StyleRow from "@src/components/layerset/layer/style/StyleRow";
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {LayerStyle} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {StyleMode} from "@src/types/Layer";
+import StyleList from "@src/components/layerset/layer/style/StyleList";
+import StyleForm from "@src/components/layerset/layer/style/StyleForm";
 
 interface StyleListPanelProps {
   layerStyles: LayerStyle[];
@@ -8,29 +10,21 @@ interface StyleListPanelProps {
 }
 
 const StylePanel = ({layerStyles, setLayerStyles}: StyleListPanelProps) => {
-  const styleToggle = (styleId: string) => {
-    console.log("toggle", styleId);
-  };
 
-  const styleUpdate = (styleId: string) => {
-    console.log("update", styleId);
-  };
+  const [styleMode, setStyleMode] = useState<StyleMode>(StyleMode.List);
 
-  const styleDelete = (styleId: string) => {
-    console.log("delete", styleId);
-  };
   return (
-    <div>
-      {layerStyles.map(style => (
-        <StyleRow
-          key={style.id}
-          style={style}
-          onToggle={styleToggle}
-          onUpdate={styleUpdate}
-          onDelete={styleDelete}
+    <>
+      {styleMode === StyleMode.List ?
+        <StyleList
+          layerStyles={layerStyles}
+          setLayerStyles={setLayerStyles}
+          setStyleMode={setStyleMode}
+        /> :
+        <StyleForm
         />
-      ))}
-    </div>
+      }
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { backgroundMaps, BackgroundMapType } from "@src/constants/backgroundMap";
+import { BackgroundMaps, BackgroundMapType } from "@src/constants/backgroundMap";
 
 interface BackgroundMapSelectorProps {
   currentMap: BackgroundMapType;
@@ -10,7 +10,7 @@ const BackgroundMapSelector = ({ currentMap, onClick }: BackgroundMapSelectorPro
   return (
     <div className="preview-bottom-button-container">
       <div>
-        {backgroundMaps.map((backgroundMap) => (
+        {BackgroundMaps.map((backgroundMap) => (
           <button
             key={backgroundMap.id}
             onClick={() => onClick(backgroundMap)}
