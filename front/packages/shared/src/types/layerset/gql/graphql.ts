@@ -89,6 +89,25 @@ export enum AttributeType {
   String = 'STRING'
 }
 
+/**
+ * ##################################################################################
+ * # Query
+ * ##################################################################################
+ */
+export type Background = WithAuditable & {
+  __typename?: 'Background';
+  color?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  image: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+  url: Array<Maybe<Scalars['String']['output']>>;
+};
+
 export type BooleanCriteria = {
   between?: InputMaybe<Array<InputMaybe<Scalars['Boolean']['input']>>>;
   eq?: InputMaybe<Scalars['Boolean']['input']>;
@@ -247,6 +266,33 @@ export type CreateAttributeResponse = WithAuditable & {
  * # Create
  * ##################################################################################
  */
+export type CreateBackgroundInput = {
+  color?: InputMaybe<Scalars['String']['input']>;
+  image: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+  url: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
+export type CreateBackgroundResponse = WithAuditable & {
+  __typename?: 'CreateBackgroundResponse';
+  color?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  image: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+  url: Array<Maybe<Scalars['String']['output']>>;
+};
+
+/**
+ * ##################################################################################
+ * # Create
+ * ##################################################################################
+ */
 export type CreateGroupInput = {
   access?: LayerAccess;
   collapsed?: Scalars['Boolean']['input'];
@@ -329,6 +375,7 @@ export type CreateStyleResponse = WithAuditable & {
   format?: Maybe<LayerStyleFormat>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  type?: Maybe<StyleType>;
   updatedAt?: Maybe<Scalars['String']['output']>;
   updatedBy?: Maybe<Scalars['ID']['output']>;
 };
@@ -718,6 +765,7 @@ export type LayerStyle = {
   format?: Maybe<LayerStyleFormat>;
   id?: Maybe<Scalars['ID']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<StyleType>;
 };
 
 export enum LayerStyleFormat {
@@ -812,6 +860,8 @@ export type Mutation = {
   createAsset: CreateAssetResponse;
   /**  Attribute */
   createAttributes: Array<Maybe<CreateAttributeResponse>>;
+  /**  Background */
+  createBackground: CreateBackgroundResponse;
   /**  Group */
   createGroup: CreateGroupResponse;
   /**  Label */
@@ -821,6 +871,7 @@ export type Mutation = {
   deleteAsset: Scalars['Boolean']['output'];
   deleteAttributeProperties: Scalars['Boolean']['output'];
   deleteAttributes: Scalars['Boolean']['output'];
+  deleteBackground: Scalars['Boolean']['output'];
   deleteGroup: Scalars['Boolean']['output'];
   deleteLabel: Scalars['Boolean']['output'];
   deleteStyle: Scalars['Boolean']['output'];
@@ -832,6 +883,7 @@ export type Mutation = {
   saveUserLayer: Array<Maybe<UserLayerGroup>>;
   updateAsset: UpdateAssetResponse;
   updateAttributes: Array<Maybe<UpdateAttributeResponse>>;
+  updateBackground: UpdateBackgroundResponse;
   updateGroup: UpdateGroupResponse;
   updateLabel: UpdateLabelResponse;
   updateStyle: UpdateStyleResponse;
@@ -866,6 +918,11 @@ export type MutationCreateAttributesArgs = {
 };
 
 
+export type MutationCreateBackgroundArgs = {
+  input: CreateBackgroundInput;
+};
+
+
 export type MutationCreateGroupArgs = {
   input: CreateGroupInput;
 };
@@ -892,6 +949,11 @@ export type MutationDeleteAttributePropertiesArgs = {
 
 
 export type MutationDeleteAttributesArgs = {
+  ids: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationDeleteBackgroundArgs = {
   ids: Array<Scalars['ID']['input']>;
 };
 
@@ -941,6 +1003,12 @@ export type MutationUpdateAssetArgs = {
 export type MutationUpdateAttributesArgs = {
   assetId: Scalars['ID']['input'];
   input: Array<InputMaybe<UpdateAttributeInput>>;
+};
+
+
+export type MutationUpdateBackgroundArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateBackgroundInput;
 };
 
 
@@ -1069,6 +1137,9 @@ export type Query = {
   assets: Array<Maybe<LayerAsset>>;
   attribute: LayerAttribute;
   attributeByNativeName?: Maybe<Array<Maybe<LayerAttribute>>>;
+  /** Background */
+  background: Background;
+  backgrounds: Array<Maybe<Background>>;
   classifyAttribute: ClassifiedAttribute;
   group: LayerGroup;
   /**  Group */
@@ -1116,6 +1187,11 @@ export type QueryAttributeArgs = {
 
 export type QueryAttributeByNativeNameArgs = {
   name: Scalars['String']['input'];
+};
+
+
+export type QueryBackgroundArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -1205,12 +1281,20 @@ export type RemoteLayerStyle = {
   __typename?: 'RemoteLayerStyle';
   href: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  type: StyleType;
+  type: RemoteStyleType;
 };
 
 export type RemoteStyleFilterInput = {
-  type?: InputMaybe<StyleType>;
+  type?: InputMaybe<RemoteStyleType>;
 };
+
+export enum RemoteStyleType {
+  Line = 'LINE',
+  Point = 'POINT',
+  Polygon = 'POLYGON',
+  Raster = 'RASTER',
+  Unknown = 'UNKNOWN'
+}
 
 export type RemoteT3DInput = {
   href: Scalars['String']['input'];
@@ -1347,11 +1431,11 @@ export type StyleFilter = {
 };
 
 export enum StyleType {
+  Attribute = 'ATTRIBUTE',
   Line = 'LINE',
   Point = 'POINT',
   Polygon = 'POLYGON',
-  Raster = 'RASTER',
-  Unknown = 'UNKNOWN'
+  Raster = 'RASTER'
 }
 
 export type T3DInput = {
@@ -1468,6 +1552,33 @@ export type UpdateAttributeResponse = WithAuditable & {
  * # Update
  * ##################################################################################
  */
+export type UpdateBackgroundInput = {
+  color?: InputMaybe<Scalars['String']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type UpdateBackgroundResponse = WithAuditable & {
+  __typename?: 'UpdateBackgroundResponse';
+  color?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  image: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedBy?: Maybe<Scalars['ID']['output']>;
+  url: Array<Maybe<Scalars['String']['output']>>;
+};
+
+/**
+ * ##################################################################################
+ * # Update
+ * ##################################################################################
+ */
 export type UpdateGroupInput = {
   access?: InputMaybe<LayerAccess>;
   collapsed?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1550,6 +1661,7 @@ export type UpdateStyleResponse = WithAuditable & {
   format?: Maybe<LayerStyleFormat>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  type?: Maybe<StyleType>;
   updatedAt?: Maybe<Scalars['String']['output']>;
   updatedBy?: Maybe<Scalars['ID']['output']>;
 };
