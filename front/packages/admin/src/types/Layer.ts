@@ -25,3 +25,14 @@ export type DataGroupsProps = {
 export type DataGroupPropsWithId = DataGroupsProps & {
     id: string
 } */
+
+export enum PreviewMode {
+  Single = "single",
+  All = "all",
+  Legend = "legend",
+}
+
+export enum StyleMode {
+  Edit = "edit",
+  List = "list"
+}

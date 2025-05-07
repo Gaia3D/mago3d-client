@@ -1,5 +1,5 @@
 import React from "react";
-import { PreviewMode } from "@src/types/previewMode";
+import {PreviewMode} from "@src/types/Layer";
 
 interface PreviewModeSelectorProps {
   previewMode: PreviewMode;

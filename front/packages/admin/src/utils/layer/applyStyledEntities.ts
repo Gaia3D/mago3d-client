@@ -1,7 +1,6 @@
 import * as Cesium from "cesium";
-import { LayerStyle } from "@src/generated/gql/layerset/graphql";
-import {PreviewMode} from "@src/types/previewMode";
-import {StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {LayerStyle, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {PreviewMode} from "@src/types/Layer";
 
 export function applyStyledEntities(
   viewer: Cesium.Viewer,

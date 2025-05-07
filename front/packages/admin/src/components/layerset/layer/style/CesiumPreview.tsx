@@ -5,7 +5,7 @@ import { BackgroundMapType } from "@src/constants/backgroundMap";
 import { initCesiumViewer } from "@src/utils/layer/initCesiumViewer";
 import { updateImageryProvider } from "@src/utils/layer/updateImageryProvider";
 import {applyStyledEntities} from "@src/utils/layer/applyStyledEntities";
-import {PreviewMode} from "@src/types/previewMode";
+import {PreviewMode} from "@src/types/Layer";
 
 interface CesiumPreviewerProps {
   dataSource: Cesium.GeoJsonDataSource;
