@@ -22,6 +22,9 @@ const StylePanel = ({layerStyles, setLayerStyles}: StyleListPanelProps) => {
           setStyleMode={setStyleMode}
         /> :
         <StyleForm
+          layerStyles={layerStyles}
+          setLayerStyles={setLayerStyles}
+          setStyleMode={setStyleMode}
         />
       }
     </>

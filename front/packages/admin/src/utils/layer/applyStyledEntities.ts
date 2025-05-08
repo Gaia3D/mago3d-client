@@ -21,6 +21,7 @@ export function applyStyledEntities(
 
   targets.forEach(entity => {
     ensureEntityPosition(entity);
+
     for (const style of styles) {
       const { context, type } = style;
       const strokeColor = Cesium.Color.fromCssColorString(context.strokeColor || "#000000")
@@ -32,7 +33,7 @@ export function applyStyledEntities(
         viewer.entities.add({
           position: entity.position,
           point: new Cesium.PointGraphics({
-            pixelSize: context.size,
+            pixelSize: context.pixelSize,
             color: fillColor,
             outlineColor: strokeColor,
             outlineWidth: strokeWidth,
@@ -40,10 +41,13 @@ export function applyStyledEntities(
           }),
         });
       }
-
-      if (type === StyleType.Line && entity.polyline?.positions) {
-        const positions = entity.polyline.positions.getValue(now);
-        if (!positions) continue;
+      if (type === StyleType.Line && entity.polygon?.hierarchy) {
+        const hierarchy = entity.polygon.hierarchy.getValue(now);
+        if (!hierarchy?.positions?.length) continue;
+        const positions = [...hierarchy.positions];
+        if (!Cesium.Cartesian3.equals(positions[0], positions[positions.length - 1])) {
+          positions.push(positions[0]);
+        }
 
         viewer.entities.add({
           polyline: new Cesium.PolylineGraphics({
@@ -59,14 +63,30 @@ export function applyStyledEntities(
         const hierarchy = entity.polygon.hierarchy.getValue(now);
         if (!hierarchy?.positions?.length) continue;
 
+        // polygon 본체
         viewer.entities.add({
           polygon: new Cesium.PolygonGraphics({
             hierarchy,
             material: fillColor,
-            outline: true,
-            outlineColor: strokeColor,
-            outlineWidth: strokeWidth,
+            outline: false,
             height: 0,
+          }),
+        });
+
+        // polygon 외곽선용 polyline 추가
+        const positions = [...hierarchy.positions];
+
+        // 시작점과 끝점이 다르면 polygon을 닫아줌
+        if (!Cesium.Cartesian3.equals(positions[0], positions[positions.length - 1])) {
+          positions.push(positions[0]);
+        }
+
+        viewer.entities.add({
+          polyline: new Cesium.PolylineGraphics({
+            positions,
+            width: strokeWidth,
+            material: strokeColor,
+            clampToGround: true,
           }),
         });
       }
