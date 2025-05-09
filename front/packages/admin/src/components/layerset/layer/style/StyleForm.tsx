@@ -63,49 +63,49 @@ const StyleForm = ({layerStyles, setLayerStyles, setStyleMode}: StyleFormProps) 
           <button onClick={() => handleChangeType(StyleType.Line)}>Line</button>
           <button onClick={() => handleChangeType(StyleType.Polygon)}>Polygon</button>
         </div>
-        <StyleRow
+        <StyleInputRow
           title="스타일명"
           type="text"
           value={style.name}
           onChange={val => handleChangeContext("name", val)}
         />
 
-        <StyleRow
+        <StyleInputRow
           title="최소 스케일"
           type="number"
           value={style.minScale}
           onChange={val => handleChangeContext("minScale", val)}
         />
 
-        <StyleRow
+        <StyleInputRow
           title="최대 스케일"
           type="number"
           value={style.maxScale}
           onChange={val => handleChangeContext("maxScale", val)}
         />
 
-        <StyleRow
+        <StyleInputRow
           title="점 크기"
           type="number"
           value={style.pixelSize}
           onChange={val => handleChangeContext("size", val)}
         />
 
-        <StyleRow
+        <StyleInputRow
           title="외각선 너비"
           type="number"
           value={style.strokeWidth}
           onChange={val => handleChangeContext("strokeWidth", val)}
         />
 
-        <StyleRow
+        <StyleInputRow
           title="외각선 색상"
           type="color"
           value={style.strokeColor}
           onChange={val => handleChangeContext("strokeColor", val)}
         />
 
-        <StyleRow
+        <StyleInputRow
           title="외각선 투명도"
           type="range"
           value={style.strokeOpacity}
@@ -115,14 +115,21 @@ const StyleForm = ({layerStyles, setLayerStyles, setStyleMode}: StyleFormProps) 
           onChange={val => handleChangeContext("strokeOpacity", val)}
         />
 
-        <StyleRow
+        <StyleSelectRow
+          title="외각선 종류"
+          value={style.strokeType}
+          onChange={val => handleChangeContext("strokeType", val)}
+          options={[{label: "실선", value: "outline"}, {label: "점선", value: "dash"}]}
+        />
+
+        <StyleInputRow
           title="채우기 색상"
           type="color"
           value={style.fillColor}
           onChange={val => handleChangeContext("fillColor", val)}
         />
 
-        <StyleRow
+        <StyleInputRow
           title="채우기 투명도"
           type="range"
           value={style.fillOpacity}
@@ -139,7 +146,7 @@ const StyleForm = ({layerStyles, setLayerStyles, setStyleMode}: StyleFormProps) 
 
 export default StyleForm;
 
-interface StyleRowProps {
+interface StyleInputRowProps {
   title: string;
   type: 'text' | 'number' | 'color' | 'range';
   value: string | number;
@@ -149,7 +156,7 @@ interface StyleRowProps {
   step?: number;
 }
 
-const StyleRow = ({ title, type, value, onChange, min, max, step }: StyleRowProps) => {
+const StyleInputRow = ({ title, type, value, onChange, min, max, step }: StyleInputRowProps) => {
   return (
     <div className="row">
       <div className="title">{title}</div>
@@ -168,6 +175,33 @@ const StyleRow = ({ title, type, value, onChange, min, max, step }: StyleRowProp
           }}
         />
         {type === 'range' && <span style={{ marginLeft: 8 }}>{value}</span>}
+      </div>
+    </div>
+  );
+};
+
+interface StyleSelectRowProps {
+  title: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { label: string; value: string }[];
+}
+
+const StyleSelectRow = ({ title, value, onChange, options }: StyleSelectRowProps) => {
+  return (
+    <div className="row">
+      <div className="title">{title}</div>
+      <div className="value">
+        <select
+          value={value}
+          onChange={e => onChange(e.target.value)}
+        >
+          {options.map(opt => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

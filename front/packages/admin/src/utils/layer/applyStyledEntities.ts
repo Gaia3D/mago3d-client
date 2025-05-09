@@ -41,7 +41,7 @@ export function applyStyledEntities(
           }),
         });
       }
-      if (type === StyleType.Line && entity.polygon?.hierarchy) {
+      if ((type === StyleType.Line || type === StyleType.Polygon) && entity.polygon?.hierarchy) {
         const hierarchy = entity.polygon.hierarchy.getValue(now);
         if (!hierarchy?.positions?.length) continue;
         const positions = [...hierarchy.positions];
@@ -49,11 +49,17 @@ export function applyStyledEntities(
           positions.push(positions[0]);
         }
 
+        const material = context.strokeType === "dash" ?
+          new Cesium.PolylineDashMaterialProperty({
+            color: strokeColor,
+          }) :
+          strokeColor
+
         viewer.entities.add({
           polyline: new Cesium.PolylineGraphics({
             positions,
             width: strokeWidth,
-            material: strokeColor,
+            material,
             clampToGround: true,
           }),
         });
@@ -70,23 +76,6 @@ export function applyStyledEntities(
             material: fillColor,
             outline: false,
             height: 0,
-          }),
-        });
-
-        // polygon 외곽선용 polyline 추가
-        const positions = [...hierarchy.positions];
-
-        // 시작점과 끝점이 다르면 polygon을 닫아줌
-        if (!Cesium.Cartesian3.equals(positions[0], positions[positions.length - 1])) {
-          positions.push(positions[0]);
-        }
-
-        viewer.entities.add({
-          polyline: new Cesium.PolylineGraphics({
-            positions,
-            width: strokeWidth,
-            material: strokeColor,
-            clampToGround: true,
           }),
         });
       }
