@@ -31,7 +31,7 @@ export function applyStyledEntities(
         .withAlpha(context.fillOpacity ?? 1);
       const strokeWidth = context.strokeWidth ?? 1;
 
-      if (type === StyleType.Point && entity.position && context.pointType === "point") {
+      if (type === StyleType.Point && entity.position && context.pointType !== "icon") {
         viewer.entities.add({
           position: entity.position,
           point: new Cesium.PointGraphics({
