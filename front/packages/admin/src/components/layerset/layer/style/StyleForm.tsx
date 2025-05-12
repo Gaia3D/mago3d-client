@@ -1,6 +1,8 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {LayerStyle, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {StyleMode} from "@src/types/Layer";
+import SymbolPicker from "@src/components/layerset/layer/style/SymbolPicker";
+import reactSvg from '../../../../assets/images/react.svg'
 
 interface StyleFormProps {
   layerStyles: LayerStyle[];
@@ -9,10 +11,8 @@ interface StyleFormProps {
 }
 
 const StyleForm = ({layerStyles, setLayerStyles, setStyleMode}: StyleFormProps) => {
-
+  const [isSymbolPickerVisible, setIsSymbolPickerVisible] = useState(false);
   const style = layerStyles[0].context;
-
-
   const handleChangeType = (type: StyleType) => {
     setLayerStyles(prev => {
       const next = [...prev];
@@ -66,49 +66,86 @@ const StyleForm = ({layerStyles, setLayerStyles, setStyleMode}: StyleFormProps) 
         <StyleInputRow
           title="스타일명"
           type="text"
-          value={style.name}
+          value={style.name ?? ""}
           onChange={val => handleChangeContext("name", val)}
         />
 
         <StyleInputRow
           title="최소 스케일"
           type="number"
-          value={style.minScale}
+          value={style.minScale ?? 0}
           onChange={val => handleChangeContext("minScale", val)}
         />
 
         <StyleInputRow
           title="최대 스케일"
           type="number"
-          value={style.maxScale}
+          value={style.maxScale ?? 0}
           onChange={val => handleChangeContext("maxScale", val)}
         />
+
+        <StyleSelectRow
+          title="점 모양"
+          value={style.pointType ?? "point"}
+          onChange={val => handleChangeContext("pointType", val)}
+          options={[{label: "점", value: "point"}, {label: "아이콘", value: "icon"}]}
+        />
+
+        <div className="row">
+          <div className="title">아이콘</div>
+          <div className="value">
+            <img
+              src={style.symbol ?? reactSvg}
+              alt="심볼 이미지"
+              onClick={() => setIsSymbolPickerVisible(true)}
+              style={{ width: 40, height: 40, cursor: 'pointer' }}
+            />
+          </div>
+        </div>
+
+        {isSymbolPickerVisible && (
+          <SymbolPicker
+            onSelect={(src: string) => handleChangeContext("symbol", src)}
+            onClose={() => setIsSymbolPickerVisible(false)}
+          />
+        )}
+
+        <StyleInputRow
+          title="이미지 배율"
+          type="range"
+          value={style.scale ?? 1}
+          min={0.1}
+          max={2}
+          step={0.1}
+          onChange={val => handleChangeContext("scale", val)}
+        />
+
 
         <StyleInputRow
           title="점 크기"
           type="number"
-          value={style.pixelSize}
-          onChange={val => handleChangeContext("size", val)}
+          value={style.pixelSize ?? 0}
+          onChange={val => handleChangeContext("pixelSize", val)}
         />
 
         <StyleInputRow
           title="외각선 너비"
           type="number"
-          value={style.strokeWidth}
+          value={style.strokeWidth ?? 0}
           onChange={val => handleChangeContext("strokeWidth", val)}
         />
 
         <StyleInputRow
           title="외각선 색상"
           type="color"
-          value={style.strokeColor}
+          value={style.strokeColor ?? "#000"}
           onChange={val => handleChangeContext("strokeColor", val)}
         />
 
         <StyleInputRow
           title="외각선 투명도"
           type="range"
-          value={style.strokeOpacity}
+          value={style.strokeOpacity ?? 0}
           min={0}
           max={1}
           step={0.01}
@@ -117,7 +154,7 @@ const StyleForm = ({layerStyles, setLayerStyles, setStyleMode}: StyleFormProps) 
 
         <StyleSelectRow
           title="외각선 종류"
-          value={style.strokeType}
+          value={style.strokeType ?? "outline"}
           onChange={val => handleChangeContext("strokeType", val)}
           options={[{label: "실선", value: "outline"}, {label: "점선", value: "dash"}]}
         />
@@ -125,14 +162,14 @@ const StyleForm = ({layerStyles, setLayerStyles, setStyleMode}: StyleFormProps) 
         <StyleInputRow
           title="채우기 색상"
           type="color"
-          value={style.fillColor}
+          value={style.fillColor ?? "#000"}
           onChange={val => handleChangeContext("fillColor", val)}
         />
 
         <StyleInputRow
           title="채우기 투명도"
           type="range"
-          value={style.fillOpacity}
+          value={style.fillOpacity ?? 0}
           min={0}
           max={1}
           step={0.01}

@@ -1,6 +1,7 @@
 import * as Cesium from "cesium";
 import {LayerStyle, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {PreviewMode} from "@src/types/Layer";
+import reactSvg from '../../assets/images/react.svg';
 
 export function applyStyledEntities(
   viewer: Cesium.Viewer,
@@ -29,7 +30,8 @@ export function applyStyledEntities(
       const fillColor = Cesium.Color.fromCssColorString(context.fillColor || "#ffffff")
         .withAlpha(context.fillOpacity ?? 1);
       const strokeWidth = context.strokeWidth ?? 1;
-      if (type === StyleType.Point && entity.position) {
+
+      if (type === StyleType.Point && entity.position && context.pointType === "point") {
         viewer.entities.add({
           position: entity.position,
           point: new Cesium.PointGraphics({
@@ -41,6 +43,19 @@ export function applyStyledEntities(
           }),
         });
       }
+
+      if (type === StyleType.Point && entity.position && context.pointType === "icon") {
+        viewer.entities.add({
+          position: entity.position,
+          billboard: {
+            image: context.symbol ?? reactSvg,
+            scale: context.scale,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          }
+        })
+      }
+
       if ((type === StyleType.Line || type === StyleType.Polygon) && entity.polygon?.hierarchy) {
         const hierarchy = entity.polygon.hierarchy.getValue(now);
         if (!hierarchy?.positions?.length) continue;
