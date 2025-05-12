@@ -31,31 +31,55 @@ export function applyStyledEntities(
         .withAlpha(context.fillOpacity ?? 1);
       const strokeWidth = context.strokeWidth ?? 1;
 
-      if (type === StyleType.Point && entity.position && context.pointType !== "icon") {
-        viewer.entities.add({
-          position: entity.position,
-          point: new Cesium.PointGraphics({
-            pixelSize: context.pixelSize,
-            color: fillColor,
-            outlineColor: strokeColor,
-            outlineWidth: strokeWidth,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
-          }),
-        });
-      }
+      if (type === StyleType.Point && entity.position) {
+        const labelShow = !!context.label;
+        const labelText = context.labelAttribute ?? "test"; // labelAttribute가 없으면 빈 문자열
+        const fontSize = context.labelFontSize ?? 12;
+        const fontType = context.labelFontType ?? "sans-serif";
+        const labelFontColor = Cesium.Color.fromCssColorString(context.labelFontColor || "#000000");
+        const labelBorder = context.labelBorder ?? false;
+        const labelBorderColor = Cesium.Color.fromCssColorString(context.strokeBorderColor || "#ffffff");
 
-      if (type === StyleType.Point && entity.position && context.pointType === "icon") {
-        viewer.entities.add({
-          position: entity.position,
-          billboard: {
-            image: context.symbol ?? reactSvg,
-            scale: context.scale,
+            const commonLabel = labelShow ? {
+              label: new Cesium.LabelGraphics({
+                text: labelText,
+            font: `${fontSize}px ${fontType}`,
+            fillColor: labelFontColor,
+            outlineWidth: labelBorder ? 1.5 : 0,
+            outlineColor: labelBorderColor,
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
             heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            pixelOffset: new Cesium.Cartesian2(0, -12),
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
-          }
-        })
-      }
+          })
+        } : {};
 
+        if (context.pointType !== "icon") {
+          viewer.entities.add({
+            position: entity.position,
+            point: new Cesium.PointGraphics({
+              pixelSize: context.pixelSize,
+              color: fillColor,
+              outlineColor: strokeColor,
+              outlineWidth: strokeWidth,
+              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+            }),
+            ...commonLabel
+          });
+        } else {
+          viewer.entities.add({
+            position: entity.position,
+            billboard: new Cesium.BillboardGraphics({
+              image: context.symbol ?? reactSvg,
+              scale: context.scale,
+              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            }),
+            ...commonLabel
+          });
+        }
+      }
       if ((type === StyleType.Line || type === StyleType.Polygon) && entity.polygon?.hierarchy) {
         const hierarchy = entity.polygon.hierarchy.getValue(now);
         if (!hierarchy?.positions?.length) continue;

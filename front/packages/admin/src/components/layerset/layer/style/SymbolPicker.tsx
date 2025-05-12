@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import { useSymbolGroups, useSymbolsQuery } from '@src/api/Symbol';
 import { SymbolFilterInput } from '@src/generated/gql/bbs/graphql';
-import { useRecoilState } from 'recoil';
-import { symbolPageState } from '@src/recoils/Symbol';
 import GroupSelectBox from '@src/components/symbol/symbol/GroupSelectBox';
 import { Pagination } from '@mnd/shared';
 
@@ -12,9 +10,9 @@ interface SymbolPickerProps {
 }
 
 const SymbolPicker = ({ onSelect, onClose }: SymbolPickerProps) => {
+  const [currentPage, setCurrentPage] = useState(0);
   const { data: { symbolGroups = [] } = {} } = useSymbolGroups();
-  const [currentPage, setCurrentPage] = useRecoilState(symbolPageState);
-  const [selectedGroupId, setSelectedGroupId] = useState<string>();
+  const [selectedGroupId, setSelectedGroupId] = useState<string>(symbolGroups[0].id);
 
   const filter: SymbolFilterInput = {
     groupId: { eq: selectedGroupId },
@@ -30,14 +28,12 @@ const SymbolPicker = ({ onSelect, onClose }: SymbolPickerProps) => {
       } = {}
     } = {},
     isLoading,
-  } = useSymbolsQuery({ filter, pageable });
+} = useSymbolsQuery({ filter, pageable });
 
-  const handleChangeGroup = (id: string) => {
+const handleChangeGroup = (id: string) => {
     setSelectedGroupId(id);
     setCurrentPage(0);
   };
-
-  console.log("items", items);
 
   return (
     <div className="symbol-picker-wrapper">
@@ -73,7 +69,6 @@ const SymbolPicker = ({ onSelect, onClose }: SymbolPickerProps) => {
         ) : (
           <div>심볼이 없습니다.</div>
         )}
-
         {pageInfo.totalPages > 1 && (
           <Pagination
             page={pageInfo.page}
