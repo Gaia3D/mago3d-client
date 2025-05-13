@@ -206,65 +206,65 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
-.symbol-picker-backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(2px);
-  z-index: 1;
-}
 
-.symbol-picker-container {
-  position: relative;
-  width: 50vw;
-  max-height: 80vh;
-  background: #fff;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  z-index: 2;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+  .symbol-picker-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 1;
+  }
 
-.symbol-picker-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-  gap: 12px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
+  .symbol-picker-container {
+    position: relative;
+    width: 440px;
+    height: 500px;
+    background: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
 
-.symbol-picker-item {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 8px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
+    select {
+      width: 100%;
+    }
+  }
 
-.symbol-picker-item:hover {
-  border-color: #007bff;
-  background-color: #f0f8ff;
-}
+  .symbol-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 8px;
+    min-height: 240px;
+    padding: 12px 0;
+  }
 
-.symbol-picker-item img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}
+  .symbol-picker-item {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
 
-.symbol-picker-loading {
-  text-align: center;
-  font-weight: 500;
-  color: #555;
+  .symbol-picker-item:hover {
+    border-color: #007bff;
+    background-color: #f0f8ff;
+  }
+
+  .symbol-picker-item img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
 }

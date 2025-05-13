@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
-import { useSymbolGroups, useSymbolsQuery } from '@src/api/Symbol';
-import { SymbolFilterInput } from '@src/generated/gql/bbs/graphql';
+import React, {Suspense, useState} from 'react';
+import { useSymbolGroups } from '@src/api/Symbol';
 import GroupSelectBox from '@src/components/symbol/symbol/GroupSelectBox';
-import { Pagination } from '@mnd/shared';
+import SymbolGrid from "@src/components/layerset/layer/style/SymbolGrid";
 
 interface SymbolPickerProps {
   onSelect: (src: string) => void;
@@ -13,22 +12,6 @@ const SymbolPicker = ({ onSelect, onClose }: SymbolPickerProps) => {
   const [currentPage, setCurrentPage] = useState(0);
   const { data: { symbolGroups = [] } = {} } = useSymbolGroups();
   const [selectedGroupId, setSelectedGroupId] = useState<string>(symbolGroups[0].id);
-
-  const filter: SymbolFilterInput = {
-    groupId: { eq: selectedGroupId },
-  };
-
-  const pageable = { page: currentPage, size: 10 };
-
-  const {
-    data: {
-      symbols: {
-        items = [],
-        pageInfo = { page: 0, totalPages: 0 }
-      } = {}
-    } = {},
-    isLoading,
-} = useSymbolsQuery({ filter, pageable });
 
 const handleChangeGroup = (id: string) => {
     setSelectedGroupId(id);
@@ -44,41 +27,19 @@ const handleChangeGroup = (id: string) => {
           onChangeGroup={handleChangeGroup}
           selectedGroupId={selectedGroupId}
         />
-
-        {isLoading ? (
-          <div className="symbol-picker-loading">로딩 중...</div>
-        ) : items.length > 0 ? (
-          <ul className="symbol-picker-grid">
-            {items.map((symbol) => {
-              const src = symbol.files[symbol.files.length - 1]?.download;
-              return (
-                <li key={symbol.id}>
-                  <div
-                    className="symbol-picker-item"
-                    onClick={() => {
-                      if (src) onSelect(src);
-                      onClose();
-                    }}
-                  >
-                    <img src={src} alt="symbol"/>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div>심볼이 없습니다.</div>
-        )}
-        {pageInfo.totalPages > 1 && (
-          <Pagination
-            page={pageInfo.page}
-            totalPages={pageInfo.totalPages}
-            handler={setCurrentPage}
-          />
+        {selectedGroupId && (
+          <Suspense fallback={<></>}>
+            <SymbolGrid
+              groupId={selectedGroupId}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              onSelect={onSelect}
+              onClose={onClose}
+            />
+          </Suspense>
         )}
       </div>
     </div>
-
   );
 };
 

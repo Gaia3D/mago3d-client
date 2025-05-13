@@ -40,9 +40,9 @@ export function applyStyledEntities(
         const labelBorder = context.labelBorder ?? false;
         const labelBorderColor = Cesium.Color.fromCssColorString(context.strokeBorderColor || "#ffffff");
 
-            const commonLabel = labelShow ? {
-              label: new Cesium.LabelGraphics({
-                text: labelText,
+        const commonLabel = labelShow ? {
+          label: new Cesium.LabelGraphics({
+            text: labelText,
             font: `${fontSize}px ${fontType}`,
             fillColor: labelFontColor,
             outlineWidth: labelBorder ? 1.5 : 0,
