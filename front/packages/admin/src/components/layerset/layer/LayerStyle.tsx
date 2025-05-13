@@ -7,10 +7,9 @@ import LayerPreviewRaster from "@src/components/layerset/layer/preview/LayerPrev
 import LayerPreviewVector from "@src/components/layerset/layer/preview/LayerPreviewVector";
 import LayerPreview3dTile from "@src/components/layerset/layer/preview/LayerPreview3dTile";
 import LayerVectorStyle from "@src/components/layerset/layer/style/LayerVectorStyle";
+import {useRecoilValue} from "recoil";
+import {selectedAssetState} from "@src/recoils/Asset";
 
-interface LayerStyleProps {
-  asset: LayerAsset;
-}
 
 const previewComponentMap: Partial<Record<LayerAssetType, (asset: LayerAsset) => JSX.Element>> = {
   [LayerAssetType.Cog]: (asset) => <LayerPreviewCog asset={asset} />,
@@ -21,8 +20,9 @@ const previewComponentMap: Partial<Record<LayerAssetType, (asset: LayerAsset) =>
   [LayerAssetType.Tiles3D]: (asset) => <LayerPreview3dTile asset={asset} />,
 };
 
-const LayerStyle = ({ asset }: LayerStyleProps) => {
+const LayerStyle = () => {
   const { t } = useTranslation();
+  const asset = useRecoilValue(selectedAssetState);
   const renderPreview = previewComponentMap[asset.type] || ((asset) => <LayerPreviewVector asset={asset} />);
 
   return (

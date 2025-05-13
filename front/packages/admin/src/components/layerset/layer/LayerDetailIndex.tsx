@@ -1,68 +1,80 @@
 import {Suspense, useEffect, useState} from "react";
-import {classifyAssetTypeClassNameByLayerAssetType} from "@src/api/Data";
-import {SubmitHandler, useForm} from "react-hook-form";
-import {useNavigate} from "react-router-dom";
+import { classifyAssetTypeClassNameByLayerAssetType } from "@src/api/Data";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import {
   LayersetAssetBasicFragmentDoc,
   LayersetDeleteAssetDocument,
-  LayersetGroupListWithAssetDocument, LayersetUpdateAssetDocument,
-  UpdateAssetInput
+  LayersetGroupListWithAssetDocument,
+  LayersetUpdateAssetDocument,
+  UpdateAssetInput,
 } from "@src/generated/gql/layerset/graphql";
-import {useMutation, useSuspenseQuery} from "@apollo/client";
-import {useFragment} from "@src/generated/gql/layerset";
-import {alertToast} from "@mnd/shared/src/utils/toast";
-import {useTranslation} from "react-i18next";
+import { useMutation, useSuspenseQuery } from "@apollo/client";
+import { useFragment } from "@src/generated/gql/layerset";
+import { alertToast } from "@mnd/shared/src/utils/toast";
+import { useTranslation } from "react-i18next";
 import LayerLogTable from "@src/components/layerset/layer/LayerLogTable";
 import LayerForm from "@src/components/layerset/layer/LayerForm";
 import LayerAttribute from "@src/components/layerset/layer/LayerAttribute";
 import LayerStyle from "@src/components/layerset/layer/LayerStyle";
-import {LayersetAssetDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
+import { LayersetAssetDocument } from "@mnd/shared/src/types/layerset/gql/graphql";
+import {useRecoilState} from "recoil";
+import { selectedAssetState } from "@src/recoils/Asset";
 
 interface LayerDetailIndexProps {
   id: string;
 }
 
-type CategoryType = "default" | "style" | "log" | "attribute";
+type TabType = "default" | "style" | "log" | "attribute";
 
 const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const form = useForm<UpdateAssetInput>();
   const { data } = useSuspenseQuery(LayersetAssetDocument, { variables: { id } });
+
   const asset = useFragment(LayersetAssetBasicFragmentDoc, data.asset);
   const { logs, groups } = data.asset;
-  const [category, setCategory] = useState<CategoryType>("default");
 
-  const [ updateMutation ] = useMutation(LayersetUpdateAssetDocument, {
+  const [activeTab, setActiveTab] = useState<TabType>("default");
+  const [globalAsset, setGlobalAsset] = useRecoilState(selectedAssetState);
+
+  useEffect(() => {
+    setGlobalAsset(asset);
+  }, [asset, setGlobalAsset]);
+
+  const [updateAsset] = useMutation(LayersetUpdateAssetDocument, {
     refetchQueries: [LayersetAssetDocument],
     onCompleted: () => alert(t("success.edit")),
     onError: (e) => {
       console.error(e);
       alert(t("error.admin"));
-    }
+    },
   });
 
-  const [deleteAssetMutation] = useMutation(LayersetDeleteAssetDocument, {
-    refetchQueries: [LayersetGroupListWithAssetDocument]
+  const [deleteAsset] = useMutation(LayersetDeleteAssetDocument, {
+    refetchQueries: [LayersetGroupListWithAssetDocument],
   });
 
   const onSubmit: SubmitHandler<UpdateAssetInput> = (formData) => {
     if (!confirm(t("question.edit"))) return;
-    updateMutation({ variables: { id: asset.id, input: { ...formData } } });
+    updateAsset({ variables: { id: asset.id, input: { ...formData } } });
   };
 
-  const toDelete = () => {
+  const handleDelete = () => {
     if (!confirm(`${t("layer")} ${asset.name} ${t("question.blank-delete")}`)) return;
-    deleteAssetMutation({ variables: { ids: id } }).then(() => {
+    deleteAsset({ variables: { ids: id } }).then(() => {
       alertToast(t("success.delete"));
       navigate(-1);
     });
-  }
+  };
 
-  const safeGroups = groups.map(group => ({
+  const groupOptions = groups.map((group) => ({
     id: group.id,
-    name: group.name ?? ""
+    name: group.name ?? "",
   }));
+
+  if (!globalAsset) return;
 
   return (
     <Suspense>
@@ -73,30 +85,29 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
         </h2>
         <div className="tabmenu">
           <ul>
-            <li className={category === "default" ? "on" : ""} onClick={() => setCategory("default")}>기본 설정</li>
-            <li className={category === "style" ? "on" : ""} onClick={() => setCategory("style")}>스타일 설정</li>
-            <li className={category === "attribute" ? "on" : ""} onClick={() => setCategory("attribute")}>속성 설정</li>
-            <li className={category === "log" ? "on" : ""} onClick={() => setCategory("log")}>로그</li>
+            <li className={activeTab === "default" ? "on" : ""} onClick={() => setActiveTab("default")}>기본 설정</li>
+            <li className={activeTab === "style" ? "on" : ""} onClick={() => setActiveTab("style")}>스타일 설정</li>
+            <li className={activeTab === "attribute" ? "on" : ""} onClick={() => setActiveTab("attribute")}>속성 설정</li>
+            <li className={activeTab === "log" ? "on" : ""} onClick={() => setActiveTab("log")}>로그</li>
           </ul>
         </div>
         <article>
-          <div className={category === "default" ? "block" : "none"}>
+          <div className={activeTab === "default" ? "block" : "none"}>
             <LayerForm
-              asset={asset}
-              groups={safeGroups}
+              groups={groupOptions}
               form={form}
               onSubmit={onSubmit}
-              onDelete={toDelete}
+              onDelete={handleDelete}
               onCancel={() => navigate(-1)}
             />
           </div>
-          <div className={category === "style" ? "block" : "none"}>
-            <LayerStyle asset={asset}/>
+          <div className={activeTab === "style" ? "block" : "none"}>
+            <LayerStyle />
           </div>
-          <div className={category === "attribute" ? "block" : "none"}>
-            <LayerAttribute asset={asset}/>
+          <div className={activeTab === "attribute" ? "block" : "none"}>
+            <LayerAttribute />
           </div>
-          <div className={category === "log" ? "block" : "none"}>
+          <div className={activeTab === "log" ? "block" : "none"}>
             <LayerLogTable logs={logs}/>
           </div>
         </article>

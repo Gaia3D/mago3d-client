@@ -1,11 +1,12 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { UseFormReturn } from "react-hook-form";
-import { UpdateAssetInput, LayerAsset } from "@src/generated/gql/layerset/graphql";
+import { UpdateAssetInput } from "@src/generated/gql/layerset/graphql";
 import { getPublishStatusName } from "@src/api/Data";
 import { useTranslation } from "react-i18next";
+import {useRecoilValue} from "recoil";
+import {selectedAssetState} from "@src/recoils/Asset";
 
 interface LayerFormProps {
-  asset: LayerAsset;
   groups: { id: string; name: string }[];
   form: UseFormReturn<UpdateAssetInput>;
   onSubmit: (data: UpdateAssetInput) => void;
@@ -13,9 +14,12 @@ interface LayerFormProps {
   onCancel: () => void;
 }
 
-const LayerForm = ({ asset, groups, form, onSubmit, onDelete, onCancel }: LayerFormProps) => {
+const LayerForm = ({ groups, form, onSubmit, onDelete, onCancel }: LayerFormProps) => {
+  const asset = useRecoilValue(selectedAssetState);
   const { t } = useTranslation();
   const { register, handleSubmit, formState: { errors } } = form;
+
+  if (!asset) return;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

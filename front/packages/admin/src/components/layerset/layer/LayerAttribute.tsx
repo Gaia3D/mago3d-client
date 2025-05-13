@@ -14,10 +14,8 @@ import BasePropBox from "@src/components/layerset/layer/attribute/BasePropBox";
 import AttributeTableContainer from "@src/components/layerset/layer/attribute/AttributeTableContainer";
 import {mapToCreateInput, mapToUpdateInput} from "@src/utils/variableAttributeMap";
 import {toast} from "react-toastify";
-
-interface LayerAttributeProps {
-  asset: LayerAsset;
-}
+import {useRecoilValue} from "recoil";
+import {selectedAssetState} from "@src/recoils/Asset";
 
 export interface attributePropertyType {
   dndId: string;
@@ -34,7 +32,8 @@ export interface attributeCategoryType {
   properties: attributePropertyType[];
 }
 
-const LayerAttribute = ({asset}: LayerAttributeProps) => {
+const LayerAttribute = () => {
+  const asset = useRecoilValue(selectedAssetState);
   const assetName = asset.properties.layer.name;
 
   const { data: basePropData } = useSuspenseQuery(PreviewColumnsDocument,{
