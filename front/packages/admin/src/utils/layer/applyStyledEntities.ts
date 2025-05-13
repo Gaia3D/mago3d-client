@@ -40,6 +40,17 @@ export function applyStyledEntities(
         const labelBorder = context.labelBorder ?? false;
         const labelBorderColor = Cesium.Color.fromCssColorString(context.strokeBorderColor || "#ffffff");
 
+        let labelYOffset = 0;
+
+        if (context.pointType !== "icon") {
+          const pixelSize = context.pixelSize ?? 10;
+          labelYOffset = pixelSize / 2 + fontSize + strokeWidth;
+        } else {
+          const iconSize = 20;
+          const scale = context.scale ?? 1;
+          labelYOffset = iconSize * scale * 1.5 + fontSize;
+        }
+
         const commonLabel = labelShow ? {
           label: new Cesium.LabelGraphics({
             text: labelText,
@@ -50,7 +61,7 @@ export function applyStyledEntities(
             style: Cesium.LabelStyle.FILL_AND_OUTLINE,
             heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            pixelOffset: new Cesium.Cartesian2(0, -12),
+            pixelOffset: new Cesium.Cartesian2(0, -labelYOffset),
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
           })
         } : {};
