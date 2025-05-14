@@ -1,16 +1,13 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React from 'react';
 import StyleRow from "@src/components/layerset/layer/style/StyleRow";
 import {LayerStyle} from "@mnd/shared/src/types/layerset/gql/graphql";
-import {StyleMode} from "@src/types/Layer";
 import {DefaultLayerStyle} from "@src/constants/defaultStyle";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {layerStylesState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
 
-interface StyleListProps {
-  layerStyles: LayerStyle[];
-  setLayerStyles: Dispatch<SetStateAction<LayerStyle[]>>
-  setStyleMode: Dispatch<SetStateAction<StyleMode>>
-}
-
-const StyleList = ({layerStyles, setLayerStyles, setStyleMode}: StyleListProps) => {
+const StyleList = () => {
+  const [layerStyles, setLayerStyles] = useRecoilState(layerStylesState);
+  const setSelectedLayerStyle = useSetRecoilState(selectedLayerStyleState);
 
   const styleCreate = () => {
     setLayerStyles([ ...layerStyles, DefaultLayerStyle]);
@@ -21,8 +18,7 @@ const StyleList = ({layerStyles, setLayerStyles, setStyleMode}: StyleListProps) 
   };
 
   const styleUpdate = (style: LayerStyle) => {
-    setLayerStyles([style]);
-    setStyleMode(StyleMode.Edit);
+    setSelectedLayerStyle(style);
   };
 
   const styleDelete = (styleId: string) => {

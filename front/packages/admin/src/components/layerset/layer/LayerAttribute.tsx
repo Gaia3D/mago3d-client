@@ -15,7 +15,7 @@ import AttributeTableContainer from "@src/components/layerset/layer/attribute/At
 import {mapToCreateInput, mapToUpdateInput} from "@src/utils/variableAttributeMap";
 import {toast} from "react-toastify";
 import {useRecoilValue} from "recoil";
-import {selectedAssetState} from "@src/recoils/Asset";
+import {selectedAssetState} from "@src/recoils/LayerStyle";
 
 export interface attributePropertyType {
   dndId: string;

@@ -5,15 +5,13 @@ import CesiumPreview from "@src/components/layerset/layer/style/CesiumPreview";
 import BackgroundMapSelector from "@src/components/layerset/layer/style/BackgroundMapSelector";
 import LegendPreview from "@src/components/layerset/layer/style/LegendPreview";
 import {BackgroundMaps, BackgroundMapType} from "@src/constants/backgroundMap";
-import {LayerAsset, LayerStyle} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {PreviewMode} from "@src/types/Layer";
+import {useRecoilValue} from "recoil";
+import {selectedAssetState} from "@src/recoils/LayerStyle";
 
-interface PreviewPanelProps {
-  asset: LayerAsset;
-  styles: LayerStyle[];
-}
+const PreviewPanel = () => {
+  const asset = useRecoilValue(selectedAssetState);
 
-const PreviewPanel = ({asset, styles}: PreviewPanelProps) => {
   const [dataSource, setDataSource] = useState<Cesium.GeoJsonDataSource | null>(null);
   const [backgroundMap, setBackgroundMap] = useState<BackgroundMapType>(BackgroundMaps[0]);
   const [previewMode, setPreviewMode] = useState<PreviewMode>(PreviewMode.Single);
@@ -48,7 +46,6 @@ const PreviewPanel = ({asset, styles}: PreviewPanelProps) => {
         <div className={`preview-cesium-wrapper ${previewMode === PreviewMode.Legend ? 'none' : ''}`}>
           <CesiumPreview
             dataSource={dataSource}
-            styles={styles}
             backgroundMap={backgroundMap}
             previewMode={previewMode}
           />

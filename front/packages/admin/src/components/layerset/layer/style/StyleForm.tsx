@@ -1,53 +1,42 @@
-import React, {Dispatch, SetStateAction} from 'react';
-import {LayerStyle, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
-import {StyleMode} from "@src/types/Layer";
+import React from 'react';
+import {StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
 import PointForm from "@src/components/layerset/layer/style/PointForm";
 import LineForm from "@src/components/layerset/layer/style/LineForm";
 import PolygonForm from "@src/components/layerset/layer/style/PolygonForm";
 import {ClassifyAttributeQuery} from "@src/generated/gql/layerset/graphql";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {layerStylesState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
 
-interface StyleFormProps {
-  layerStyles: LayerStyle[];
-  setLayerStyles: Dispatch<SetStateAction<LayerStyle[]>>
-  setStyleMode: Dispatch<SetStateAction<StyleMode>>
-}
+const StyleForm = () => {
+  const layerStyles = useRecoilValue(layerStylesState);
+  const [selectedLayerStyle, setSelectedLayerStyle] = useRecoilState(selectedLayerStyleState);
 
-const StyleForm = ({layerStyles, setLayerStyles, setStyleMode}: StyleFormProps) => {
-
-  const style = layerStyles[0].context;
+  const style = selectedLayerStyle.context;
   const handleChangeType = (type: StyleType) => {
-    setLayerStyles(prev => {
-      const next = [...prev];
-      next[0] = {
-        ...next[0],
-        type
-      }
-      return next;
-    })
-  }
+    setSelectedLayerStyle(prev => ({
+      ...prev,
+      type
+    }));
+  };
 
   const handleChangeContext = (key: keyof typeof style, value: string | number | boolean | ClassifyAttributeQuery) => {
-    setLayerStyles(prev => {
-      const next = [...prev];
-      next[0] = {
-        ...next[0],
-        context: {
-          ...next[0].context,
-          [key]: value,
-        },
-      };
-      return next;
-    });
+    setSelectedLayerStyle(prev => ({
+      ...prev,
+      context: {
+        ...prev.context,
+        [key]: value
+      }
+    }));
   };
 
   const save = () => {
     console.log("저장");
-    setStyleMode(StyleMode.List);
+    setSelectedLayerStyle(undefined);
   }
 
   const cancel = () => {
     console.log("취소")
-    setStyleMode(StyleMode.List);
+    setSelectedLayerStyle(undefined);
   }
 
   return (
@@ -65,9 +54,9 @@ const StyleForm = ({layerStyles, setLayerStyles, setStyleMode}: StyleFormProps) 
           <button onClick={() => handleChangeType(StyleType.Line)}>Line</button>
           <button onClick={() => handleChangeType(StyleType.Polygon)}>Polygon</button>
         </div>
-        {layerStyles[0].type === StyleType.Point && <PointForm style={style} handleChangeContext={handleChangeContext}/>}
-        {layerStyles[0].type === StyleType.Line && <LineForm style={style} handleChangeContext={handleChangeContext}/>}
-        {layerStyles[0].type === StyleType.Polygon && <PolygonForm style={style} handleChangeContext={handleChangeContext}/>}
+        {selectedLayerStyle.type === StyleType.Point && <PointForm style={style} handleChangeContext={handleChangeContext}/>}
+        {selectedLayerStyle.type === StyleType.Line && <LineForm style={style} handleChangeContext={handleChangeContext}/>}
+        {selectedLayerStyle.type === StyleType.Polygon && <PolygonForm style={style} handleChangeContext={handleChangeContext}/>}
       </div>
     </>
   );

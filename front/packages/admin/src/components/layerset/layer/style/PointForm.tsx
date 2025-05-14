@@ -9,7 +9,7 @@ import reactSvg from "@src/assets/images/react.svg";
 import SymbolPicker from "@src/components/layerset/layer/style/SymbolPicker";
 import {ToggleRow} from "@src/components/layerset/layer/style/ToggleRow";
 import {useRecoilValue} from "recoil";
-import {selectedAssetState} from "@src/recoils/Asset";
+import {selectedAssetState} from "@src/recoils/LayerStyle";
 import {useSuspenseQuery} from "@apollo/client";
 import AttributeStyleSelector from "@src/components/layerset/layer/style/AttributeStyleSelector";
 import {ClassifyAttributeQuery} from "@src/generated/gql/layerset/graphql";

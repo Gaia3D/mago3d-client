@@ -1,34 +1,14 @@
-import React, {Dispatch, SetStateAction, useState} from 'react';
-import {LayerStyle} from "@mnd/shared/src/types/layerset/gql/graphql";
-import {StyleMode} from "@src/types/Layer";
+import React from 'react';
 import StyleList from "@src/components/layerset/layer/style/StyleList";
 import StyleForm from "@src/components/layerset/layer/style/StyleForm";
+import {useRecoilValue} from "recoil";
+import {selectedLayerStyleState} from "@src/recoils/LayerStyle";
 
-interface StyleListPanelProps {
-  layerStyles: LayerStyle[];
-  setLayerStyles: Dispatch<SetStateAction<LayerStyle[]>>
-}
+const StylePanel = () => {
 
-const StylePanel = ({layerStyles, setLayerStyles}: StyleListPanelProps) => {
+  const selectedLayerStyle = useRecoilValue(selectedLayerStyleState);
 
-  const [styleMode, setStyleMode] = useState<StyleMode>(StyleMode.List);
-
-  return (
-    <>
-      {styleMode === StyleMode.List ?
-        <StyleList
-          layerStyles={layerStyles}
-          setLayerStyles={setLayerStyles}
-          setStyleMode={setStyleMode}
-        /> :
-        <StyleForm
-          layerStyles={layerStyles}
-          setLayerStyles={setLayerStyles}
-          setStyleMode={setStyleMode}
-        />
-      }
-    </>
-  );
+  return (selectedLayerStyle ? <StyleForm/> : <StyleList/>);
 };
 
 export default StylePanel;

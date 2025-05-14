@@ -5,7 +5,7 @@ import {
   ClassifyAttributeQuery
 } from '@src/generated/gql/layerset/graphql';
 import { useRecoilValue } from 'recoil';
-import { selectedAssetState } from '@src/recoils/Asset';
+import { selectedAssetState } from '@src/recoils/LayerStyle';
 import {Maybe, PreviewColumnsQuery, Scalars} from '@mnd/shared/src/types/layerset/gql/graphql';
 
 interface AttributeStyleSelectorProps {

@@ -8,7 +8,7 @@ import LayerPreviewVector from "@src/components/layerset/layer/preview/LayerPrev
 import LayerPreview3dTile from "@src/components/layerset/layer/preview/LayerPreview3dTile";
 import LayerVectorStyle from "@src/components/layerset/layer/style/LayerVectorStyle";
 import {useRecoilValue} from "recoil";
-import {selectedAssetState} from "@src/recoils/Asset";
+import {selectedAssetState} from "@src/recoils/LayerStyle";
 
 
 const previewComponentMap: Partial<Record<LayerAssetType, (asset: LayerAsset) => JSX.Element>> = {
@@ -16,7 +16,7 @@ const previewComponentMap: Partial<Record<LayerAssetType, (asset: LayerAsset) =>
   [LayerAssetType.Layergroup]: (asset) => <LayerPreviewHybrid asset={asset} />,
   [LayerAssetType.Raster]: (asset) => <LayerPreviewRaster asset={asset} />,
   // [LayerAssetType.Vector]: (asset) => <LayerPreviewVector asset={asset} />,
-  [LayerAssetType.Vector]: (asset) => <LayerVectorStyle asset={asset} />,
+  [LayerAssetType.Vector]: () => <LayerVectorStyle />,
   [LayerAssetType.Tiles3D]: (asset) => <LayerPreview3dTile asset={asset} />,
 };
 

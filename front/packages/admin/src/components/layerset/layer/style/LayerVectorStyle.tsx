@@ -1,14 +1,12 @@
-import React, {useState} from "react";
-import { LayerAsset, LayerStyle } from "@mnd/shared/src/types/layerset/gql/graphql";
+import React from "react";
 import StylePanel from "@src/components/layerset/layer/style/StylePanel";
 import PreviewPanel from "@src/components/layerset/layer/style/PreviewPanel";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {layerStylesState, selectedAssetState} from "@src/recoils/LayerStyle";
 
-interface LayerVectorStyleProps {
-  asset: LayerAsset;
-}
-
-const LayerVectorStyle = ({ asset }: LayerVectorStyleProps) => {
-  const [layerStyles, setLayerStyles] = useState<LayerStyle[]>(asset.styles);
+const LayerVectorStyle = () => {
+  const asset = useRecoilValue(selectedAssetState);
+  const [layerStyles, setLayerStyles] = useRecoilState(layerStylesState);
 
   const save = () => {
     console.log("저장", layerStyles);
@@ -21,16 +19,10 @@ const LayerVectorStyle = ({ asset }: LayerVectorStyleProps) => {
   return (
     <div className="style-container">
       <div className="left-section">
-        <StylePanel
-          layerStyles={layerStyles}
-          setLayerStyles={setLayerStyles}
-        />
+        <StylePanel />
       </div>
       <div className="right-section">
-        <PreviewPanel
-          asset={asset}
-          styles={layerStyles}
-        />
+        <PreviewPanel />
         <div className="section-footer">
           <button onClick={save}>저장</button>
           <button onClick={reset}>초기화</button>

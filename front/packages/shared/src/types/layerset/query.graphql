@@ -30,6 +30,18 @@ fragment LayersetAssetBasic on LayerAsset {
     status
     createdAt
     updatedAt
+    styles {
+        id
+        name
+        type
+        format
+        description
+        enabled
+        defaultStatus
+        access
+        context
+        backgroundId
+    }
 }
 
 query LayersetGroupListWithAsset @api(name: layerset) {
@@ -78,13 +90,6 @@ query LayersetAsset($id: ID!) @api(name: layerset) {
             content
             createdAt
             updatedAt
-        }
-        styles {
-            id
-            name
-            defaultStatus
-            context
-            type
         }
     }
 }

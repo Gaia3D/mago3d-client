@@ -2,13 +2,6 @@ import {Suspense, useEffect, useState} from "react";
 import { classifyAssetTypeClassNameByLayerAssetType } from "@src/api/Data";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import {
-  LayersetAssetBasicFragmentDoc,
-  LayersetDeleteAssetDocument,
-  LayersetGroupListWithAssetDocument,
-  LayersetUpdateAssetDocument,
-  UpdateAssetInput,
-} from "@src/generated/gql/layerset/graphql";
 import { useMutation, useSuspenseQuery } from "@apollo/client";
 import { useFragment } from "@src/generated/gql/layerset";
 import { alertToast } from "@mnd/shared/src/utils/toast";
@@ -16,10 +9,17 @@ import { useTranslation } from "react-i18next";
 import LayerLogTable from "@src/components/layerset/layer/LayerLogTable";
 import LayerForm from "@src/components/layerset/layer/LayerForm";
 import LayerAttribute from "@src/components/layerset/layer/LayerAttribute";
+import {
+  LayersetAssetBasicFragmentDoc,
+  LayersetAssetDocument,
+  LayersetDeleteAssetDocument,
+  LayersetGroupListWithAssetDocument,
+  LayersetUpdateAssetDocument,
+  UpdateAssetInput,
+} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {layerStylesState, selectedAssetState} from "@src/recoils/LayerStyle";
 import LayerStyle from "@src/components/layerset/layer/LayerStyle";
-import { LayersetAssetDocument } from "@mnd/shared/src/types/layerset/gql/graphql";
-import {useRecoilState} from "recoil";
-import { selectedAssetState } from "@src/recoils/Asset";
 
 interface LayerDetailIndexProps {
   id: string;
@@ -38,9 +38,11 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
 
   const [activeTab, setActiveTab] = useState<TabType>("default");
   const [globalAsset, setGlobalAsset] = useRecoilState(selectedAssetState);
+  const setLayerStyles = useSetRecoilState(layerStylesState);
 
   useEffect(() => {
     setGlobalAsset(asset);
+    setLayerStyles(asset.styles);
   }, [asset, setGlobalAsset]);
 
   const [updateAsset] = useMutation(LayersetUpdateAssetDocument, {
