@@ -1,20 +1,42 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleInputRow} from "@src/components/layerset/layer/style/StyleInputRow";
-import {Maybe, Scalars} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {
+  Maybe, PreviewColumnsDocument,
+  Scalars
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {StyleSelectRow} from "@src/components/layerset/layer/style/StyleSelectRow";
 import reactSvg from "@src/assets/images/react.svg";
 import SymbolPicker from "@src/components/layerset/layer/style/SymbolPicker";
 import {ToggleRow} from "@src/components/layerset/layer/style/ToggleRow";
+import {useRecoilValue} from "recoil";
+import {selectedAssetState} from "@src/recoils/Asset";
+import {useSuspenseQuery} from "@apollo/client";
+import AttributeStyleSelector from "@src/components/layerset/layer/style/AttributeStyleSelector";
+import {ClassifyAttributeQuery} from "@src/generated/gql/layerset/graphql";
 
 interface PointFormProps {
   style: Maybe<Scalars['JSON']['output']>,
-  handleChangeContext: (key: string, value: string | number | boolean) => void
+  handleChangeContext: (key: string, value: string | number | boolean | ClassifyAttributeQuery) => void;
 }
 
 const PointForm = ({style, handleChangeContext}: PointFormProps) => {
   const [isSymbolPickerVisible, setIsSymbolPickerVisible] = useState(false);
+  const asset = useRecoilValue(selectedAssetState);
+  const { data: attributeData } = useSuspenseQuery(PreviewColumnsDocument,{
+    variables: {
+      assetID: asset.id
+    }
+  });
+
   return (
     <div>
+      {attributeData?.previewColumns?.length > 0 && (
+        <AttributeStyleSelector
+          attributeData={attributeData}
+          style={style}
+          handleChangeContext={handleChangeContext}
+        />
+      )}
       <StyleInputRow
         title="스타일명"
         type="text"
@@ -125,7 +147,9 @@ const PointForm = ({style, handleChangeContext}: PointFormProps) => {
             title="속성 명"
             value={style.labelAttribute}
             onChange={val => handleChangeContext("labelAttribute", val)}
-            options={[{label: "점", value: "point"}, {label: "아이콘", value: "icon"}]}
+            options={attributeData.previewColumns.map((data) => {
+              return { label: data.field, value: data.field };
+            })}
           />
           <StyleSelectRow
             title="폰트 종류"
@@ -133,11 +157,11 @@ const PointForm = ({style, handleChangeContext}: PointFormProps) => {
             onChange={val => handleChangeContext("labelFontType", val)}
             options={[{label: "sans-serif", value: "sans-serif"}]}
           />
-          <StyleSelectRow
+          <StyleInputRow
             title="폰트 사이즈"
-            value={style.labelFontSize}
+            type="number"
+            value={style.labelFontSize ?? 8}
             onChange={val => handleChangeContext("labelFontSize", val)}
-            options={[{label: "8", value: "8"}, {label: "12", value: "12"}, {label: "16", value: "16"}, {label: "20", value: "20"}, {label: "24", value: "24"}]}
           />
           <StyleInputRow
             title="폰트 색상"

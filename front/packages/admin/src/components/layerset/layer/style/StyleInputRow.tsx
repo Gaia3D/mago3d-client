@@ -12,8 +12,9 @@ interface StyleInputRowProps {
 
 export const StyleInputRow = ({ title, type, value, onChange, min, max, step }: StyleInputRowProps) => {
   return (
-    <div className="row">
+    <div className="input-row">
       <div className="title">{title}</div>
+      {type === 'range' && <span style={{ marginLeft: 8 }}>{value}</span>}
       <div className="value">
         <input
           type={type}
@@ -28,7 +29,6 @@ export const StyleInputRow = ({ title, type, value, onChange, min, max, step }: 
             onChange(val);
           }}
         />
-        {type === 'range' && <span style={{ marginLeft: 8 }}>{value}</span>}
       </div>
     </div>
   );

@@ -33,8 +33,14 @@ export function applyStyledEntities(
 
       if (type === StyleType.Point && entity.position) {
         const labelShow = !!context.label;
-        const labelText = context.labelAttribute ?? "test"; // labelAttribute가 없으면 빈 문자열
-        const fontSize = context.labelFontSize ?? 12;
+
+        const labelKey = context.labelAttribute ?? "";
+        const labelText =
+          labelKey && entity?.properties?.[labelKey] != null
+            ? String(entity.properties[labelKey])
+            : "속성 없음";
+
+        const fontSize = context.labelFontSize ?? 8;
         const fontType = context.labelFontType ?? "sans-serif";
         const labelFontColor = Cesium.Color.fromCssColorString(context.labelFontColor || "#000000");
         const labelBorder = context.labelBorder ?? false;
@@ -43,8 +49,7 @@ export function applyStyledEntities(
         let labelYOffset = 0;
 
         if (context.pointType !== "icon") {
-          const pixelSize = context.pixelSize ?? 10;
-          labelYOffset = pixelSize / 2 + fontSize + strokeWidth;
+          labelYOffset = fontSize + strokeWidth;
         } else {
           const iconSize = 20;
           const scale = context.scale ?? 1;

@@ -9,13 +9,14 @@ interface StyleSelectRowProps {
 
 export const StyleSelectRow = ({ title, value, onChange, options }: StyleSelectRowProps) => {
   return (
-    <div className="row">
+    <div className="select-row">
       <div className="title">{title}</div>
       <div className="value">
         <select
           value={value}
           onChange={e => onChange(e.target.value)}
         >
+          <option value="" hidden>{title} 선택</option>
           {options.map(opt => (
             <option key={opt.value} value={opt.value}>
               {opt.label}

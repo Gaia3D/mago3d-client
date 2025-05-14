@@ -91,6 +91,37 @@
           border-color: #aaa;
         }
       }
+
+      .input-row {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        .title {
+          width: 100px;
+        }
+        input {
+          width: 100px;
+        }
+      }
+
+      .select-row {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        .title {
+          width: 100%;
+        }
+        select {
+          width: 100px;
+        }
+      }
+
+
+      .attribute-style-container {
+        input[type = "color"] {
+          width: 50px;
+        }
+      }
     }
   }
 
