@@ -75,7 +75,7 @@ export function applyStyledEntities(
           viewer.entities.add({
             position: entity.position,
             point: new Cesium.PointGraphics({
-              pixelSize: context.pixelSize,
+              pixelSize: context.size,
               color: fillColor,
               outlineColor: strokeColor,
               outlineWidth: strokeWidth,

@@ -67,8 +67,8 @@ const PointForm = ({style, handleChangeContext}: PointFormProps) => {
             <StyleInputRow
               title="점 크기"
               type="number"
-              value={style.pixelSize ?? 1}
-              onChange={val => handleChangeContext("pixelSize", val)}
+              value={style.size ?? 1}
+              onChange={val => handleChangeContext("size", val)}
             />
             <StyleInputRow
               title="채우기 색상"
@@ -107,6 +107,8 @@ const PointForm = ({style, handleChangeContext}: PointFormProps) => {
               onChange={val => handleChangeContext("strokeOpacity", val)}
             />
           </> :
+          // context.iconStyle
+          // symbolId, color, scale, width, height
           <>
             <div className="row">
               <div className="title">아이콘</div>
@@ -142,6 +144,12 @@ const PointForm = ({style, handleChangeContext}: PointFormProps) => {
         onToggle={(val: boolean) => handleChangeContext("label", val)}
       />
       {
+        // context.labelStyle
+        // attributeName, fillColor, fillOpacity, fillGraphic, fontFamily, fontSize, fontStyle, fontWeight
+        // pointPlacement, linePlacement, halo
+        // pointPlacement: anchor(x, y), displacement(x, y), rotation
+        // linePlacement: offset
+        // halo: radius, fillColor, fillOpacity, fillGraphic
         style.label && <>
           <StyleSelectRow
             title="속성 명"
