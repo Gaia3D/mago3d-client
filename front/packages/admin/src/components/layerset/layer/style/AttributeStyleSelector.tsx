@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { selectedAssetState } from '@src/recoils/LayerStyle';
 import { Maybe, PreviewColumnsQuery, RuleStyleInput, Scalars } from '@mnd/shared/src/types/layerset/gql/graphql';
-import { useLazyQuery } from '@apollo/client';
-import { ClassifyAttributeDocument } from '@src/generated/gql/layerset/graphql';
+import {useFetchRules} from "@src/hooks/useFetchRules";
 
 interface AttributeStyleSelectorProps {
   attributeData?: PreviewColumnsQuery;
@@ -20,89 +19,106 @@ const AttributeStyleSelector = ({ attributeData, style }: AttributeStyleSelector
   const [ruleStyles, setRuleStyles] = useState<RuleStyleInput[]>([]);
   const [comparisonType, setComparisonType] = useState<'eq' | 'ge_lt' | 'gt_le'>('ge_lt');
 
-  const [fetchAttributes] = useLazyQuery(ClassifyAttributeDocument);
+  useFetchRules(assetName, selectedAttribute, style, setComparisonType, setRuleStyles);
 
-  useEffect(() => {
-    if (style?.attribute?.attribute === selectedAttribute) {
-      setRuleStyles(style.attribute.rules ?? []);
-    } else if (assetName && selectedAttribute) {
-      fetchAttributes({
-        variables: { nativeName: assetName, attribute: selectedAttribute }
-      }).then(result => {
-        const { type, rules } = result.data.classifyAttribute;
-        setComparisonType(type === 'STRING' ? 'eq' : 'ge_lt');
-
-        if (!rules || rules.length === 0) {
-          setRuleStyles([]);
-          return;
-        }
-
-        const sortedRules = [...rules].sort((a, b) => parseFloat(a.min) - parseFloat(b.min));
-        const newRules: RuleStyleInput[] = [];
-
-        // -무한대 ~ 첫 번째 min
-        newRules.push({
-          rule: {
-            ge: String(Number.NEGATIVE_INFINITY),
-            gt: String(Number.NEGATIVE_INFINITY),
-            le: sortedRules[0].min,
-            lt: sortedRules[0].min
-          },
-          style: {
-            line: { strokeColor: '#000000' },
-            point: { fillColor: '#000000' },
-            polygon: { fillColor: '#000000' }
-          }
-        });
-
-        // 각 구간: min ~ next.min
-        for (let i = 0; i < sortedRules.length - 1; i++) {
-          const curr = sortedRules[i];
-          const next = sortedRules[i + 1];
-          newRules.push({
-            rule: {
-              eq: curr.eq,
-              ge: curr.min,
-              gt: curr.min,
-              le: next.min,
-              lt: next.min
-            },
-            style: {
-              line: { strokeColor: curr.color },
-              point: { fillColor: curr.color },
-              polygon: { fillColor: curr.color }
-            }
-          });
-        }
-
-        // 마지막 min ~ 무한대
-        const last = sortedRules[sortedRules.length - 1];
-        newRules.push({
-          rule: {
-            eq: last.eq,
-            ge: last.min,
-            gt: last.min,
-            le: String(Number.POSITIVE_INFINITY),
-            lt: String(Number.POSITIVE_INFINITY)
-          },
-          style: {
-            line: { strokeColor: last.color },
-            point: { fillColor: last.color },
-            polygon: { fillColor: last.color }
-          }
-        });
-
-        setRuleStyles(newRules);
-      });
+  const handleMinChange = (index: number, value: string) => {
+    const updated = [...ruleStyles];
+    updated[index].rule.ge = value;
+    updated[index].rule.gt = value;
+    if (index > 0) {
+      updated[index - 1].rule.le = value;
+      updated[index - 1].rule.lt = value;
     }
-  }, [selectedAttribute, assetName]);
+    setRuleStyles(updated);
+  };
 
-  useEffect(() => {
-    console.log("ruleStyles", ruleStyles);
-  }, [ruleStyles]);
+  const handleMaxChange = (index: number, value: string) => {
+    const updated = [...ruleStyles];
+    updated[index].rule.le = value;
+    updated[index].rule.lt = value;
+    if (index + 1 < updated.length) {
+      updated[index + 1].rule.ge = value;
+      updated[index + 1].rule.gt = value;
+    }
+    setRuleStyles(updated);
+  };
+
+  const handleColorChange = (index: number, color: string) => {
+    const updated = [...ruleStyles];
+    updated[index].style.point.fillColor = color;
+    updated[index].style.polygon.fillColor = color;
+    updated[index].style.line.strokeColor = color;
+    setRuleStyles(updated);
+  };
+
+  const handleDeleteRule = (index: number) => {
+    const updated = [...ruleStyles];
+    updated.splice(index, 1);
+    if (index > 0 && index < updated.length) {
+      const prev = updated[index - 1];
+      const next = updated[index];
+      const connect = prev.rule.le ?? prev.rule.lt;
+      next.rule.ge = connect;
+      next.rule.gt = connect;
+    }
+    setRuleStyles(updated);
+  };
+
+  const handleAddRule = () => {
+    if (ruleStyles.length < 2) return;
+    const last = ruleStyles.at(-1)!;
+    const newRule: RuleStyleInput = {
+      rule: {
+        ge: last.rule.ge,
+        gt: last.rule.gt,
+        le: last.rule.ge,
+        lt: last.rule.gt
+      },
+      style: {
+        point: { fillColor: '#000' },
+        polygon: { fillColor: '#000' },
+        line: { strokeColor: '#000' },
+      }
+    };
+    const updated = [...ruleStyles];
+    updated.splice(updated.length - 1, 0, newRule);
+    setRuleStyles(updated);
+  };
+
+  const renderRangeRuleRow = (ruleStyle: RuleStyleInput, index: number) => {
+    const min = ruleStyle.rule.ge ?? ruleStyle.rule.gt ?? '';
+    const max = ruleStyle.rule.le ?? ruleStyle.rule.lt ?? '';
+    const color = ruleStyle.style.point.fillColor ?? '#000000';
+
+    return (
+      <div className="rule-row" key={index}>
+        <input type="number" value={min} disabled={index === 0} step={1}
+               onChange={(e) => handleMinChange(index, e.target.value)}/>
+        ~
+        <input type="number" value={max} disabled={index === ruleStyles.length - 1} step={1}
+               onChange={(e) => handleMaxChange(index, e.target.value)}/>
+        <input type="color" value={color} onChange={(e) => handleColorChange(index, e.target.value)}/>
+        {index !== 0 && index !== ruleStyles.length - 1 && (
+          <button onClick={() => handleDeleteRule(index)}>삭제</button>
+        )}
+      </div>
+    );
+  };
+
+  const renderEqualRuleRow = (ruleStyle: RuleStyleInput, index: number) => {
+    const eq = ruleStyle.rule.eq ?? '';
+    const color = ruleStyle.style.point.fillColor ?? '#000000';
+    if (index === 0) return null;
+    return (
+      <div className="rule-row" key={index}>
+        <input type="text" value={eq} disabled/>
+        <input type="color" value={color} onChange={(e) => handleColorChange(index, e.target.value)}/>
+      </div>
+    );
+  };
 
   return (
-    <div className="attribute-style-container" style={{display: 'flex', flexDirection: 'column'}}>
+    <div className="attribute-style-container" >
       <select value={selectedAttribute} onChange={(e) => setSelectedAttribute(e.target.value)}>
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -115,97 +131,18 @@ const AttributeStyleSelector = ({ attributeData, style }: AttributeStyleSelector
             <option value="ge_lt">최소값 포함</option>
             <option value="gt_le">최대값 포함</option>
           </select>
-          <div>
-            {ruleStyles.map((ruleStyle, index) => {
-              const min = ruleStyle.rule.ge ?? ruleStyle.rule.gt ?? '';
-              const max = ruleStyle.rule.le ?? ruleStyle.rule.lt ?? '';
-              const color = ruleStyle.style.point.fillColor ?? '#000000';
-              return (
-                <div key={index} style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px'}}>
-                  <input
-                    type="number"
-                    value={min}
-                    disabled={index === 0}
-                    step={1}
-                    onChange={(e) => {
-                      const updated = [...ruleStyles];
-                      updated[index].rule.ge = e.target.value;
-                      updated[index].rule.gt = e.target.value;
-                      updated[index - 1].rule.le = e.target.value;
-                      updated[index - 1].rule.lt = e.target.value;
-                      setRuleStyles(updated);
-                    }}
-                    style={{width: '80px'}}
-                  />
-                  ~
-                  <input
-                    type="number"
-                    value={max}
-                    disabled={index === ruleStyles.length - 1}
-                    step={1}
-                    onChange={(e) => {
-                      const updated = [...ruleStyles];
-                      updated[index].rule.lt = e.target.value;
-                      updated[index].rule.le = e.target.value;
-                      updated[index + 1].rule.ge = e.target.value;
-                      updated[index + 1].rule.gt = e.target.value;
-                      setRuleStyles(updated);
-                    }}
-                    style={{width: '80px'}}
-                  />
-                  <input
-                    type="color"
-                    value={color}
-                    onChange={(e) => {
-                      const updated = [...ruleStyles];
-                      updated[index].style.point.fillColor = e.target.value;
-                      updated[index].style.polygon.fillColor = e.target.value;
-                      updated[index].style.line.strokeColor = e.target.value;
-                      setRuleStyles(updated);
-                    }}
-                  />
-                </div>
-              );
-            })}
+
+          <div className="add-rule-button">
+            <button onClick={handleAddRule}>+ Rule 추가</button>
           </div>
+
+          {ruleStyles.map(renderRangeRuleRow)}
         </>
-      ) :
-        <div>
-          {ruleStyles.map((ruleStyle, index) => {
-            if (index === 0) return null;
-            const eq = ruleStyle.rule.eq ?? '';
-            const color = ruleStyle.style.point.fillColor ?? '#000000';
-            return (
-              <div key={index} style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px'}}>
-                <input
-                  type="text"
-                  value={eq}
-                  disabled
-                  onChange={(e) => {
-                    const updated = [...ruleStyles];
-                    updated[index].rule.eq = e.target.value;
-                    setRuleStyles(updated);
-                  }}
-                  style={{width: '80px'}}
-                />
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => {
-                    const updated = [...ruleStyles];
-                    updated[index].style.point.fillColor = e.target.value;
-                    updated[index].style.polygon.fillColor = e.target.value;
-                    updated[index].style.line.strokeColor = e.target.value;
-                    setRuleStyles(updated);
-                  }}
-                />
-              </div>
-            );
-          })}
-        </div>
-      }
-
-
+      ) : (
+        <>
+        {ruleStyles.map(renderEqualRuleRow)}
+        </>
+      )}
     </div>
   );
 };
