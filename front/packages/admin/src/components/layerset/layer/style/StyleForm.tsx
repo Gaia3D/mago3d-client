@@ -1,9 +1,8 @@
 import React from 'react';
-import {StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {RuleStyleInput, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
 import PointForm from "@src/components/layerset/layer/style/PointForm";
 import LineForm from "@src/components/layerset/layer/style/LineForm";
 import PolygonForm from "@src/components/layerset/layer/style/PolygonForm";
-import {ClassifyAttributeQuery} from "@src/generated/gql/layerset/graphql";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {layerStylesState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
 
@@ -19,7 +18,7 @@ const StyleForm = () => {
     }));
   };
 
-  const handleChangeContext = (key: keyof typeof style, value: string | number | boolean | ClassifyAttributeQuery) => {
+  const handleChangeContext = (key: keyof typeof style, value: string | number | boolean | RuleStyleInput[]) => {
     setSelectedLayerStyle(prev => ({
       ...prev,
       context: {

@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleInputRow} from "@src/components/layerset/layer/style/StyleInputRow";
 import {
-  Maybe, PreviewColumnsDocument,
+  Maybe, PreviewColumnsDocument, RuleStyleInput,
   Scalars
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {StyleSelectRow} from "@src/components/layerset/layer/style/StyleSelectRow";
@@ -12,11 +12,10 @@ import {useRecoilValue} from "recoil";
 import {selectedAssetState} from "@src/recoils/LayerStyle";
 import {useSuspenseQuery} from "@apollo/client";
 import AttributeStyleSelector from "@src/components/layerset/layer/style/AttributeStyleSelector";
-import {ClassifyAttributeQuery} from "@src/generated/gql/layerset/graphql";
 
 interface PointFormProps {
   style: Maybe<Scalars['JSON']['output']>,
-  handleChangeContext: (key: string, value: string | number | boolean | ClassifyAttributeQuery) => void;
+  handleChangeContext: (key: string, value: string | number | boolean | RuleStyleInput[]) => void;
 }
 
 const PointForm = ({style, handleChangeContext}: PointFormProps) => {

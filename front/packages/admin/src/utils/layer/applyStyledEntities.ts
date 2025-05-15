@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import {LayerStyle, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {RuleStyleInput, LayerStyle, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {PreviewMode} from "@src/types/Layer";
 import reactSvg from '../../assets/images/react.svg';
 
@@ -25,21 +25,51 @@ export function applyStyledEntities(
 
     for (const style of styles) {
       const { context, type } = style;
+      const labelShow = !!context.label;
+      const labelKey = context.labelAttribute ?? "";
+      const labelText =
+        labelKey && entity?.properties?.[labelKey] != null
+          ? String(entity.properties[labelKey])
+          : "속성 없음";
       const strokeColor = Cesium.Color.fromCssColorString(context.strokeColor || "#000000")
         .withAlpha(context.strokeOpacity ?? 1);
-      const fillColor = Cesium.Color.fromCssColorString(context.fillColor || "#ffffff")
-        .withAlpha(context.fillOpacity ?? 1);
       const strokeWidth = context.strokeWidth ?? 1;
 
-      if (type === StyleType.Point && entity.position) {
-        const labelShow = !!context.label;
+      // labelText 기준 fillColor 동적 결정
+      let finalFillColor = context.fillColor ?? "#ffffff";
 
-        const labelKey = context.labelAttribute ?? "";
-        const labelText =
-          labelKey && entity?.properties?.[labelKey] != null
-            ? String(entity.properties[labelKey])
+      // rules가 존재할 경우 조건별로 매핑
+      if (Array.isArray(context.rules)) {
+        const rules = context.rules as RuleStyleInput[]; // 타입 안정화 위해 명시
+        const attributeKey = context.attribute ?? "";
+        console.log("attributeKey", attributeKey);
+        const attributeText =
+          attributeKey && entity?.properties?.[attributeKey] != null
+            ? String(entity.properties[attributeKey])
             : "속성 없음";
+        if (context.attributeType === "String") {
+          const matchedRule = rules.find(r => r.rule.eq === attributeText);
+          if (matchedRule?.style?.point?.fillColor) {
+            finalFillColor = matchedRule.style.point.fillColor;
+          }
+        }
 
+        if (context.attributeType === "Number") {
+          const numericValue = parseFloat(attributeText);
+          const matchedRule = rules.find(r => {
+            const ge = parseFloat(r.rule.ge ?? r.rule.gt ?? "-Infinity");
+            const lt = parseFloat(r.rule.lt ?? r.rule.le ?? "Infinity");
+            return !isNaN(numericValue) && numericValue >= ge && numericValue < lt;
+          });
+          if (matchedRule?.style?.point?.fillColor) {
+            finalFillColor = matchedRule.style.point.fillColor;
+          }
+        }
+      }
+
+      const fillColor = Cesium.Color.fromCssColorString(finalFillColor).withAlpha(context.fillOpacity ?? 1);
+
+      if (type === StyleType.Point && entity.position) {
         const fontSize = context.labelFontSize ?? 8;
         const fontType = context.labelFontType ?? "sans-serif";
         const labelFontColor = Cesium.Color.fromCssColorString(context.labelFontColor || "#000000");

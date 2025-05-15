@@ -7,10 +7,10 @@ import {useFetchRules} from "@src/hooks/useFetchRules";
 interface AttributeStyleSelectorProps {
   attributeData?: PreviewColumnsQuery;
   style: Maybe<Scalars['JSON']['output']>;
-  handleChangeContext: (key: string, value: string | number | boolean) => void;
+  handleChangeContext: (key: string, value: string | number | boolean | RuleStyleInput[]) => void;
 }
 
-const AttributeStyleSelector = ({ attributeData, style }: AttributeStyleSelectorProps) => {
+const AttributeStyleSelector = ({ attributeData, style, handleChangeContext }: AttributeStyleSelectorProps) => {
   const assetName = useRecoilValue(selectedAssetState)?.properties?.layer?.name;
   const options = attributeData?.previewColumns?.map(col => ({ label: col.field, value: col.field })) ?? [];
 
@@ -75,9 +75,9 @@ const AttributeStyleSelector = ({ attributeData, style }: AttributeStyleSelector
         lt: last.rule.gt
       },
       style: {
-        point: { fillColor: '#000' },
-        polygon: { fillColor: '#000' },
-        line: { strokeColor: '#000' },
+        point: { fillColor: '#000000' },
+        polygon: { fillColor: '#000000' },
+        line: { strokeColor: '#000000' },
       }
     };
     const updated = [...ruleStyles];
@@ -116,6 +116,19 @@ const AttributeStyleSelector = ({ attributeData, style }: AttributeStyleSelector
       </div>
     );
   };
+
+  useEffect(() => {
+    handleChangeContext("attribute", selectedAttribute);
+  }, [selectedAttribute]);
+
+  useEffect(() => {
+    handleChangeContext("attributeType", comparisonType === "eq" ? "String" : "Number");
+  }, [comparisonType]);
+
+  useEffect(() => {
+    // TODO 최신브라우저 아니면 에러발생하니 추후 수정
+    handleChangeContext("rules", structuredClone(ruleStyles));
+  }, [ruleStyles]);
 
   return (
     <div className="attribute-style-container" >
