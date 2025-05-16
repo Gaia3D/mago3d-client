@@ -53,7 +53,13 @@ const StyleList = () => {
   }
 
   const styleToggle = (styleId: string) => {
-    console.log("toggle", styleId);
+    setLayerStyles(prev =>
+      prev.map(style =>
+        style.id === styleId
+          ? { ...style, enabled: !style.enabled } // 해당 스타일의 enabled 토글
+          : style
+      )
+    );
   };
 
   useEffect(() => {

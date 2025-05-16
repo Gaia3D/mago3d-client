@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {useRecoilState, useRecoilValue} from "recoil";
 import {layerStylesState, selectedAssetState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
-import StyleForm from "@src/components/layerset/layer/style/StyleForm";
 import StyleList from "@src/components/layer-style/panels/StyleList";
 
 const LayerVectorStyle = () => {
