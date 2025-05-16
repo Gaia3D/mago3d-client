@@ -1,7 +1,6 @@
 import React from 'react';
 import StyleRow from "@src/components/layerset/layer/style/StyleRow";
 import {LayerStyle} from "@mnd/shared/src/types/layerset/gql/graphql";
-import {DefaultLayerStyle} from "@src/constants/defaultStyle";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {layerStylesState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
 
@@ -10,7 +9,7 @@ const StyleList = () => {
   const setSelectedLayerStyle = useSetRecoilState(selectedLayerStyleState);
 
   const styleCreate = () => {
-    setLayerStyles([ ...layerStyles, DefaultLayerStyle]);
+    // setLayerStyles([ ...layerStyles, DefaultLayerStyle]);
   }
 
   const styleToggle = (styleId: string) => {

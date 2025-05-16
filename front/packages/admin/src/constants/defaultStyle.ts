@@ -1,15 +1,16 @@
-import {LayerStyle, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {CreateStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
 
-export const DefaultLayerStyle: LayerStyle = {
+export const DefaultCreateStyleInput: CreateStyleInput = {
   context: {
-    fillColor: "#000",
-    fillOpacity: 0.5,
-    minScale: 0,
-    name: "default",
-    strokeColor: "#000",
-    strokeOpacity: 1,
-    strokeWidth: 10
+    point: {
+      fillColor: "#000000",
+      fillOpacity: 0.5,
+      minScale: 0,
+      size: 10,
+      strokeColor: "#000000",
+      strokeOpacity: 1,
+      strokeWidth: 2,
+    }
   },
-  type: StyleType.Point,
-  name: "default",
+  name: "New Style"
 }
