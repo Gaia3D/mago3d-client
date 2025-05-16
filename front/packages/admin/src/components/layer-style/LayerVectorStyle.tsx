@@ -2,16 +2,12 @@ import React, {useEffect} from 'react';
 import {useRecoilState, useRecoilValue} from "recoil";
 import {layerStylesState, selectedAssetState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
 import StyleList from "@src/components/layer-style/panels/StyleList";
+import PreviewPanel from "@src/components/layer-style/panels/PreviewPanel";
 
 const LayerVectorStyle = () => {
   const asset = useRecoilValue(selectedAssetState);
   const [layerStyles, setLayerStyles] = useRecoilState(layerStylesState);
   const selectedLayerStyle = useRecoilValue(selectedLayerStyleState);
-
-  // useEffect(() => {
-  //   console.log("asset", asset)
-  //   console.log("layerStyles", layerStyles);
-  // }, [asset, layerStyles]);
 
   useEffect(() => {
     console.log("selectedLayerStyle", selectedLayerStyle);
@@ -20,12 +16,12 @@ const LayerVectorStyle = () => {
   return (
     <div className="style-container">
       <div className="left-section">
-        <StyleList/>
+        <StyleList />
         {/*(selectedLayerStyle ? <StyleForm/> : )*/}
         {/*<StylePanel/>*/}
       </div>
       <div className="right-section">
-        {/*<PreviewPanel/>*/}
+        <PreviewPanel />
       </div>
     </div>
   );
