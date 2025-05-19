@@ -1,16 +1,16 @@
-import { LayerStyle, UpdateStyleInput, StyleType } from "@mnd/shared/src/types/layerset/gql/graphql";
+import {LayerStyle, UpdateStyleInput, StyleType, Maybe, Scalars} from "@mnd/shared/src/types/layerset/gql/graphql";
 
-const extractCommonVectorStyle = (context: any) => ({
-  labelStyle: context.labelStyle,
+const extractCommonVectorStyle = (context: Maybe<Scalars['JSON']['output']>) => ({
   maxScale: context.maxScale,
   minScale: context.minScale,
   strokeColor: context.strokeColor,
+  strokeOpacity: context.strokeOpacity,
+  strokeWidth: context.strokeWidth,
+  labelStyle: context.labelStyle,
   // strokeDasharray: context.strokeDasharray,
   // strokeDashoffset: context.strokeDashoffset,
   // strokeLinecap: context.strokeLinecap,
   // strokeLinejoin: context.strokeLinejoin,
-  strokeOpacity: context.strokeOpacity,
-  strokeWidth: context.strokeWidth,
 });
 
 export const mapToUpdateStyleInput = (
@@ -19,7 +19,7 @@ export const mapToUpdateStyleInput = (
 ): UpdateStyleInput => {
   const ctx = layerStyle.context;
 
-  const context: any = {};
+  const context: Maybe<Scalars['JSON']['output']> = {};
 
   if (type === "POINT") {
     context.point = {
@@ -68,7 +68,7 @@ export const mapToUpdateStyleInput = (
   if (type === "ATTRIBUTE") {
     context.attribute = {
       attribute: ctx.attribute,
-      name: ctx.name,
+      name: ctx.attributeName,
       rules: ctx.rules,
     };
   }

@@ -10,7 +10,7 @@ import SymbolPicker from "@src/components/layerset/layer/style/SymbolPicker";
 import {ToggleRow} from "@src/components/layerset/layer/style/ToggleRow";
 import {useRecoilValue} from "recoil";
 import {selectedAssetState} from "@src/recoils/LayerStyle";
-import {useSuspenseQuery} from "@apollo/client";
+import {useQuery} from "@apollo/client";
 import AttributeStyleSelector from "@src/components/layerset/layer/style/AttributeStyleSelector";
 
 interface PointFormProps {
@@ -21,7 +21,7 @@ interface PointFormProps {
 const PointForm = ({style, handleChangeContext}: PointFormProps) => {
   const [isSymbolPickerVisible, setIsSymbolPickerVisible] = useState(false);
   const asset = useRecoilValue(selectedAssetState);
-  const { data: attributeData } = useSuspenseQuery(PreviewColumnsDocument,{
+  const { data: attributeData } = useQuery(PreviewColumnsDocument,{
     variables: {
       assetID: asset.id
     }

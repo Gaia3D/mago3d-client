@@ -4,8 +4,13 @@ import {selectedLayerStyleState} from "@src/recoils/LayerStyle";
 import {useMutation} from "@apollo/client";
 import {toast} from "react-toastify";
 import {mapToUpdateStyleInput} from "@src/components/layer-style/panels/mapToUpdateStyleInput";
-import {StyleInputRow} from "@src/components/layerset/layer/style/StyleInputRow";
 import React from "react";
+import PointForm from "@src/components/layer-style/style-form/point/PointForm";
+import LineForm from "@src/components/layer-style/style-form/line/LineForm";
+import PolygonForm from "@src/components/layer-style/style-form/polygon/PolygonForm";
+import CommonForm from "@src/components/layer-style/style-form/CommonForm";
+import AttributeForm from "@src/components/layer-style/style-form/AttributeForm";
+import {ToggleRow} from "@src/components/layerset/layer/style/ToggleRow";
 
 const StyleForm = () => {
 
@@ -25,20 +30,6 @@ const StyleForm = () => {
     } finally {
       setSelectedLayerStyle(undefined);
     }
-  };
-
-  const handleChangeName = (name: string) => {
-    setSelectedLayerStyle(prev => ({
-      ...prev,
-      name
-    }));
-  }
-
-  const handleChangeType = (type: StyleType) => {
-    setSelectedLayerStyle(prev => ({
-      ...prev,
-      type
-    }));
   };
 
   const handleChangeContext = (key: keyof typeof selectedLayerStyle.context, value: string | number | boolean | RuleStyleInput[]) => {
@@ -69,23 +60,22 @@ const StyleForm = () => {
         </div>
       </div>
       <div className="section-body">
-        <div>
-          <button onClick={() => handleChangeType(StyleType.Point)}>Point</button>
-          <button onClick={() => handleChangeType(StyleType.Line)}>Line</button>
-          <button onClick={() => handleChangeType(StyleType.Polygon)}>Polygon</button>
-        </div>
-        <StyleInputRow
-          title="스타일명"
-          type="text"
-          value={selectedLayerStyle.name ?? ""}
-          onChange={val => handleChangeName(val.toString())}
+        <CommonForm />
+        {selectedLayerStyle.type === StyleType.Point &&
+          <PointForm ctx={selectedLayerStyle.context} handleChangeContext={handleChangeContext}/>}
+        {selectedLayerStyle.type === StyleType.Line &&
+          <LineForm ctx={selectedLayerStyle.context} handleChangeContext={handleChangeContext}/>}
+        {selectedLayerStyle.type === StyleType.Polygon &&
+          <PolygonForm ctx={selectedLayerStyle.context} handleChangeContext={handleChangeContext}/>}
+        <ToggleRow
+          title="속성 사용"
+          enabled={selectedLayerStyle.context.isAttributeEnabled ?? false}
+          onToggle={(val: boolean) => handleChangeContext("isAttributeEnabled", val)}
         />
-        {/*{selectedLayerStyle.type === StyleType.Point &&*/}
-        {/*  <PointForm style={selectedLayerStyle.context} handleChangeContext={handleChangeContext}/>}*/}
-        {/*{selectedLayerStyle.type === StyleType.Line &&*/}
-        {/*  <LineForm style={selectedLayerStyle.context} handleChangeContext={handleChangeContext}/>}*/}
-        {/*{selectedLayerStyle.type === StyleType.Polygon &&*/}
-        {/*  <PolygonForm style={selectedLayerStyle.context} handleChangeContext={handleChangeContext}/>}*/}
+        {
+          selectedLayerStyle.context.isAttributeEnabled &&
+          <AttributeForm ctx={selectedLayerStyle.context} handleChangeContext={handleChangeContext} />
+        }
       </div>
     </>
   );

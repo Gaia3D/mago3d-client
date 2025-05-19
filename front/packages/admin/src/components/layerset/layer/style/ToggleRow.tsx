@@ -6,9 +6,9 @@ interface ToggleRowProps {
 
 export const ToggleRow = ({ title, enabled, onToggle }: ToggleRowProps) => {
   return (
-    <div className="toggle-row" style={{ opacity: enabled ? 1 : 0.4 }}>
-      <div className="title">
-        {title}
+    <div className="input-row" style={{ opacity: enabled ? 1 : 0.4 }}>
+      <div className="title">{title}</div>
+      <div className="value">
         <input
           type="checkbox"
           checked={enabled}

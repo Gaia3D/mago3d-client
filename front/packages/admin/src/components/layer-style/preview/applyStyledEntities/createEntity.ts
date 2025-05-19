@@ -81,7 +81,7 @@ export const createStyledEntity = (
     }
   }
 
-  if ((type === StyleType.Line || type === StyleType.Polygon) && entity.polygon?.hierarchy) {
+  if (type === StyleType.Line && entity.polygon?.hierarchy) {
     const hierarchy = entity.polygon.hierarchy.getValue(now);
     if (!hierarchy?.positions?.length) return null;
 
@@ -106,8 +106,17 @@ export const createStyledEntity = (
   if (type === StyleType.Polygon && entity.polygon?.hierarchy) {
     const hierarchy = entity.polygon.hierarchy.getValue(now);
     if (!hierarchy?.positions?.length) return null;
-
+    const positions = [...hierarchy.positions];
     return {
+      polyline: new Cesium.PolylineGraphics({
+        positions,
+        width: strokeWidth,
+        material:
+          context.strokeType === "dash"
+            ? new Cesium.PolylineDashMaterialProperty({ color: strokeColor })
+            : strokeColor,
+        clampToGround: true,
+      }),
       polygon: new Cesium.PolygonGraphics({
         hierarchy,
         material: fillColor,
