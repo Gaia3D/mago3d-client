@@ -62,10 +62,6 @@ const StyleList = () => {
     );
   };
 
-  useEffect(() => {
-    console.log("layerStyles", layerStyles);
-  }, [layerStyles]);
-
   return (
     <div>
       <div className="section-header">

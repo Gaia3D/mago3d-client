@@ -7,6 +7,7 @@ import {PreviewMode} from "@src/types/Layer";
 import PreviewModeSelector from "@src/components/layer-style/preview/PreviewModeSelector";
 import LegendPreview from "@src/components/layer-style/preview/LegendPreview";
 import BackgroundMapSelector from "@src/components/layer-style/preview/BackgroundMapSelector";
+import CesiumPreview from "@src/components/layer-style/preview/CesiumPreview";
 
 const PreviewPanel = () => {
   const asset = useRecoilValue(selectedAssetState);
@@ -43,11 +44,11 @@ const PreviewPanel = () => {
           onClick={setPreviewMode}
         />
         <div className={`preview-cesium-wrapper ${previewMode === PreviewMode.Legend ? 'none' : ''}`}>
-          {/*<CesiumPreview*/}
-          {/*  dataSource={dataSource}*/}
-          {/*  backgroundMap={backgroundMap}*/}
-          {/*  previewMode={previewMode}*/}
-          {/*/>*/}
+          <CesiumPreview
+            dataSource={dataSource}
+            backgroundMap={backgroundMap}
+            previewMode={previewMode}
+          />
           <BackgroundMapSelector
             currentMap={backgroundMap}
             onClick={setBackgroundMap}
