@@ -19,7 +19,7 @@ import {
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {layerStylesState, selectedAssetState} from "@src/recoils/LayerStyle";
-import LayerStyle from "@src/components/layerset/layer/LayerStyle";
+import LayerStyle from "@src/components/layer-style/LayerStyle";
 
 interface LayerDetailIndexProps {
   id: string;

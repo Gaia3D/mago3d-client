@@ -1200,6 +1200,7 @@ export type QueryBackgroundArgs = {
 export type QueryClassifyAttributeArgs = {
   attribute: Scalars['String']['input'];
   nativeName: Scalars['String']['input'];
+  numberOfClasses?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
