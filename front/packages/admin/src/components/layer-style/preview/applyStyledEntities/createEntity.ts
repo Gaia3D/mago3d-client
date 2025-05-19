@@ -20,9 +20,9 @@ export const createStyledEntity = (
     ? String(entity.properties[labelKey])
     : "속성 없음";
 
-  const labelShow = !!context.label;
   const fontSize = context.labelFontSize ?? 8;
   const fontType = context.labelFontType ?? "sans-serif";
+  const size = context.size ?? 1;
   const labelFontColor = Cesium.Color.fromCssColorString(context.labelFontColor || "#000000");
   const labelBorder = context.labelBorder ?? false;
   const labelBorderColor = Cesium.Color.fromCssColorString(context.strokeBorderColor || "#ffffff");
@@ -30,14 +30,14 @@ export const createStyledEntity = (
   let labelYOffset = 0;
 
   if (context.pointType !== "icon") {
-    labelYOffset = fontSize + strokeWidth;
+    labelYOffset = strokeWidth + ( size / 2 ) + 8;
   } else {
     const iconSize = 20;
     const scale = context.scale ?? 1;
     labelYOffset = iconSize * scale * 1.5 + fontSize;
   }
 
-  const label = labelShow
+  const label = context.isLabelEnabled
     ? {
       label: new Cesium.LabelGraphics({
         text: labelText,
