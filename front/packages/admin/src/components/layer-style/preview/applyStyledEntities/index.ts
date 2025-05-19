@@ -11,8 +11,8 @@ export const applyStyledEntities = (
 ) => {
   viewer.entities.removeAll();
   const now = Cesium.JulianDate.now();
-
-  entities.forEach((entity) => {
+  const maxEntities = 50;
+  entities.slice(0, maxEntities).forEach((entity) => {
     ensureEntityPosition(entity);
     styles.forEach((style) => {
       const styled = createStyledEntity(entity, style, now, applyRules(entity, style));

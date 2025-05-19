@@ -36,7 +36,7 @@ const PreviewPanel = () => {
     <>
       <div className="section-header">
         <div>레이어 미리보기</div>
-        <div>성능상의 이유로 하나의 객체만 미리보기 됩니다.</div>
+        <div>성능상의 이유로 최대 50개의 객체만 미리보기 됩니다.</div>
       </div>
       <div className="preview-container">
         <PreviewModeSelector
