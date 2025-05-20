@@ -13,19 +13,21 @@ const PointTypeForm = ({ctx, handleChangeContext}: PointTypeFormProps) => {
       <StyleInputRow
         title="점 크기"
         type="number"
-        value={ctx.size ?? 1}
+        min={0}
+        value={ctx.size ?? 0}
         onChange={val => handleChangeContext("size", val)}
       />
       <StyleInputRow
         title="외각선 너비"
         type="number"
+        min={0}
         value={ctx.strokeWidth ?? 0}
         onChange={val => handleChangeContext("strokeWidth", val)}
       />
       <StyleInputRow
         title="외각선 색상"
         type="color"
-        value={ctx.strokeColor ?? "#000"}
+        value={ctx.strokeColor ?? "#000000"}
         onChange={val => handleChangeContext("strokeColor", val)}
       />
       <StyleInputRow
@@ -40,7 +42,7 @@ const PointTypeForm = ({ctx, handleChangeContext}: PointTypeFormProps) => {
       <StyleInputRow
         title="채우기 색상"
         type="color"
-        value={ctx.fillColor ?? "#000"}
+        value={ctx.fillColor ?? "#000000"}
         onChange={val => handleChangeContext("fillColor", val)}
       />
       <StyleInputRow

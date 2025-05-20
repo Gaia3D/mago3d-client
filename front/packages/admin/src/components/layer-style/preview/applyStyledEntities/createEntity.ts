@@ -54,7 +54,7 @@ export const createStyledEntity = (
     }
     : {};
 
-  if (type === StyleType.Point && entity.position) {
+  if ((type === StyleType.Point || ( type === StyleType.Attribute && context.innerType === StyleType.Point)) && entity.position) {
     if (context.pointType !== "icon") {
       return {
         position: entity.position,
@@ -81,7 +81,7 @@ export const createStyledEntity = (
     }
   }
 
-  if (type === StyleType.Line && entity.polygon?.hierarchy) {
+  if ((type === StyleType.Line || (type === StyleType.Attribute && context.innerType === StyleType.Line)) && entity.polygon?.hierarchy) {
     const hierarchy = entity.polygon.hierarchy.getValue(now);
     if (!hierarchy?.positions?.length) return null;
 
@@ -103,7 +103,7 @@ export const createStyledEntity = (
     };
   }
 
-  if (type === StyleType.Polygon && entity.polygon?.hierarchy) {
+  if ((type === StyleType.Polygon || (type === StyleType.Attribute && context.innerType === StyleType.Polygon)) && entity.polygon?.hierarchy) {
     const hierarchy = entity.polygon.hierarchy.getValue(now);
     if (!hierarchy?.positions?.length) return null;
     const positions = [...hierarchy.positions];

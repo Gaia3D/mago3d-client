@@ -14,8 +14,7 @@ import PointForm from "@src/components/layer-style/style-form/point/PointForm";
 import LineForm from "@src/components/layer-style/style-form/line/LineForm";
 import PolygonForm from "@src/components/layer-style/style-form/polygon/PolygonForm";
 import CommonForm from "@src/components/layer-style/style-form/CommonForm";
-import AttributeForm from "@src/components/layer-style/style-form/AttributeForm";
-import {ToggleRow} from "@src/components/layerset/layer/style/ToggleRow";
+import AttributeForm from "@src/components/layer-style/style-form/attribute/AttributeForm";
 
 const StyleForm = () => {
   const asset = useRecoilValue(selectedAssetState);
@@ -87,19 +86,12 @@ const StyleForm = () => {
             ctx={selectedLayerStyle.context}
             handleChangeContext={handleChangeContext}
           />}
-        <ToggleRow
-          title="속성 사용"
-          enabled={selectedLayerStyle.context.isAttributeEnabled ?? false}
-          onToggle={(val: boolean) => handleChangeContext("isAttributeEnabled", val)}
-        />
-        {
-          selectedLayerStyle.context.isAttributeEnabled &&
+        {selectedLayerStyle.type === StyleType.Attribute &&
           <AttributeForm
             ctx={selectedLayerStyle.context}
             handleChangeContext={handleChangeContext}
             attributeData={attributeData}
-          />
-        }
+          />}
       </div>
     </>
   );

@@ -11,7 +11,7 @@ interface AttributeFormProps {
   attributeData: PreviewColumnsQuery;
 }
 
-const AttributeForm = ({ctx, handleChangeContext, attributeData}: AttributeFormProps) => {
+const AttributeSelector = ({ctx, handleChangeContext, attributeData}: AttributeFormProps) => {
   const remoteAsset = useRecoilValue(remoteAssetDataState);
   const assetName = remoteAsset?.featureType?.nativeName;
   const previewColumns = attributeData?.previewColumns;
@@ -96,4 +96,4 @@ const AttributeForm = ({ctx, handleChangeContext, attributeData}: AttributeFormP
   );
 };
 
-export default AttributeForm;
+export default AttributeSelector;

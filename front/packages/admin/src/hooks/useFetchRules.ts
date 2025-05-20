@@ -88,6 +88,6 @@ export const useFetchRules = (
 
 const createColorStyle = (color: string) => ({
   point: { fillColor: color },
-  // polygon: { fillColor: color },
-  // line: { strokeColor: color }
+  polygon: { fillColor: color },
+  line: { strokeColor: color }
 });

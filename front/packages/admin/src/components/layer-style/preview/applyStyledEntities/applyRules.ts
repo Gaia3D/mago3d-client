@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { LayerStyle, RuleStyleInput } from "@mnd/shared/src/types/layerset/gql/graphql";
+import {LayerStyle, RuleStyleInput, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
 
 export const applyRules = (
   entity: Cesium.Entity,
@@ -14,12 +14,12 @@ export const applyRules = (
   }
 
   const attributeText = String(entity.properties[attributeKey]);
-  if (context.attributeType === "String") {
+  if (style.type === StyleType.Attribute && context.attributeType === "String") {
     const matched = rules.find(r => r.rule.eq === attributeText);
     return matched?.style?.point?.fillColor ?? context.fillColor ?? "#ffffff";
   }
 
-  if (context.attributeType === "Number") {
+  if (style.type === StyleType.Attribute && context.attributeType === "Number") {
     const numeric = parseFloat(attributeText);
     const matched = rules.find(r => {
       const ge = parseFloat(r.rule.ge ?? r.rule.gt ?? "-Infinity");

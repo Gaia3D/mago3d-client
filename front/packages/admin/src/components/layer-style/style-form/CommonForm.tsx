@@ -37,6 +37,7 @@ const CommonForm = () => {
         <button onClick={() => handleChangeType(StyleType.Point)}>Point</button>
         <button onClick={() => handleChangeType(StyleType.Line)}>Line</button>
         <button onClick={() => handleChangeType(StyleType.Polygon)}>Polygon</button>
+        <button onClick={() => handleChangeType(StyleType.Attribute)}>Attribute</button>
       </div>
       <StyleInputRow
         title="스타일명"
