@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Maybe,
   PreviewColumnsQuery,
-  RuleStyleInput,
   Scalars,
   StyleType
 } from "@mnd/shared/src/types/layerset/gql/graphql";
@@ -12,10 +11,11 @@ import {selectedLayerStyleState} from "@src/recoils/LayerStyle";
 import LineForm from "@src/components/layer-style/style-form/line/LineForm";
 import PolygonForm from "@src/components/layer-style/style-form/polygon/PolygonForm";
 import AttributeSelector from "@src/components/layer-style/style-form/attribute/AttributeSelector";
+import {StyleContextType} from "@src/types/StyleContext";
 
 interface AttributeFormProps {
   ctx: Maybe<Scalars['JSON']['output']>;
-  handleChangeContext: (key: string, value: string | number | boolean | RuleStyleInput[]) => void;
+  handleChangeContext: <K extends keyof StyleContextType>(key: K, value: StyleContextType[K]) => void;
   attributeData: PreviewColumnsQuery;
 }
 
@@ -38,9 +38,9 @@ const AttributeForm = ({ ctx, handleChangeContext, attributeData }: AttributeFor
   const [selectedLayerStyle, setSelectedLayerStyle] = useRecoilState(selectedLayerStyleState);
   const [innerType, setInnerType] = useState<StyleType>(() => getInitialStyleType(ctx));
 
-  useEffect(() => {
-    handleChangeContext("innerType", innerType);
-  }, [innerType]);
+  // useEffect(() => {
+  //   handleChangeContext("innerType", innerType);
+  // }, [innerType]);
 
   return (
     <div>

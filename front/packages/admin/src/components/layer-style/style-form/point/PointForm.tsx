@@ -2,18 +2,16 @@ import React from 'react';
 import {
   Maybe,
   PreviewColumnsQuery,
-  RuleStyleInput,
   Scalars
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {StyleSelectRow} from "@src/components/layerset/layer/style/StyleSelectRow";
 import IconTypeForm from "@src/components/layer-style/style-form/point/IconTypeForm";
 import PointTypeForm from "@src/components/layer-style/style-form/point/PointTypeForm";
-import {ToggleRow} from "@src/components/layerset/layer/style/ToggleRow";
-import LabelForm from "@src/components/layer-style/style-form/LabelForm";
+import {StyleContextType} from "@src/types/StyleContext";
 
 interface PointFormProps {
   ctx: Maybe<Scalars['JSON']['output']>,
-  handleChangeContext: (key: string, value: string | number | boolean | RuleStyleInput[]) => void;
+  handleChangeContext: <K extends keyof StyleContextType>(key: K, value: StyleContextType[K]) => void;
   attributeData: PreviewColumnsQuery;
 }
 
@@ -24,7 +22,7 @@ const PointForm = ({ctx, handleChangeContext, attributeData}: PointFormProps) =>
       <StyleSelectRow
         title="점 모양"
         value={ctx.pointType ?? "point"}
-        onChange={val => handleChangeContext("pointType", val)}
+        onChange={val => handleChangeContext("shape", val)}
         options={[{label: "점", value: "point"}, {label: "아이콘", value: "icon"}]}
       />
       {
@@ -32,15 +30,15 @@ const PointForm = ({ctx, handleChangeContext, attributeData}: PointFormProps) =>
           <IconTypeForm ctx={ctx} handleChangeContext={handleChangeContext} /> :
           <PointTypeForm ctx={ctx} handleChangeContext={handleChangeContext} />
       }
-      <ToggleRow
-        title="라벨 사용"
-        enabled={ctx.isLabelEnabled ?? false}
-        onToggle={(val: boolean) => handleChangeContext("isLabelEnabled", val)}
-      />
-      {
-        ctx.isLabelEnabled &&
-        <LabelForm ctx={ctx} handleChangeContext={handleChangeContext} attributeData={attributeData} />
-      }
+      {/*<ToggleRow*/}
+      {/*  title="라벨 사용"*/}
+      {/*  enabled={ctx.isLabelEnabled ?? false}*/}
+      {/*  onToggle={(val: boolean) => handleChangeContext("isLabelEnabled", val)}*/}
+      {/*/>*/}
+      {/*{*/}
+      {/*  ctx.isLabelEnabled &&*/}
+      {/*  <LabelForm ctx={ctx} handleChangeContext={handleChangeContext} attributeData={attributeData} />*/}
+      {/*}*/}
     </>
   );
 };

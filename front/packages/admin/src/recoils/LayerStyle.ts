@@ -1,5 +1,6 @@
 import {LayerAsset, LayerStyle} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {atom} from "recoil";
+import {DEFAULT_STYLE_CONTEXT, StyleContextType} from "@src/types/StyleContext";
 
 // 선택된 에셋
 export const selectedAssetState = atom<LayerAsset | undefined>({
@@ -23,6 +24,12 @@ export const selectedLayerStyleState = atom<LayerStyle | undefined>({
 export const remoteAssetDataState = atom<any>({
   key: "remoteAssetDataState",
   default: undefined
+})
+
+// globalContext
+export const globalStyleContextState = atom<StyleContextType>({
+  key: "globalStyleContextState",
+  default: DEFAULT_STYLE_CONTEXT
 })
 
 // 기본 스타일

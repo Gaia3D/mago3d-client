@@ -1,13 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
-import { selectedAssetState } from "@src/recoils/LayerStyle";
+import {useRecoilValue, useSetRecoilState} from "recoil";
+import {globalStyleContextState, selectedAssetState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
 import { LayerAsset, LayerAssetType } from "@src/generated/gql/layerset/graphql";
 import LayerPreviewCog from "@src/components/layerset/layer/preview/LayerPreviewCog";
 import LayerPreviewHybrid from "@src/components/layerset/layer/preview/LayerPreviewHybrid";
 import LayerPreviewRaster from "@src/components/layerset/layer/preview/LayerPreviewRaster";
 import LayerPreview3dTile from "@src/components/layerset/layer/preview/LayerPreview3dTile";
 import LayerVectorStyle from "@src/components/layer-style/LayerVectorStyle";
+import {mapStyleToContext} from "@src/utils/layer/mapStyleType";
 
 const getPreviewComponent = (type: LayerAssetType) => {
   switch (type) {
@@ -29,6 +30,13 @@ const getPreviewComponent = (type: LayerAssetType) => {
 const LayerStyle = () => {
   const { t } = useTranslation();
   const asset = useRecoilValue(selectedAssetState);
+  const selectedLayerStyle = useRecoilValue(selectedLayerStyleState);
+  const setGlobalStyleContext = useSetRecoilState(globalStyleContextState);
+
+  useEffect(() => {
+    if (!selectedLayerStyle) return;
+    setGlobalStyleContext(mapStyleToContext(selectedLayerStyle));
+  }, [selectedLayerStyle]);
 
   if (!asset?.type) return <div>{t("레이어 유형이 없습니다.")}</div>;
 

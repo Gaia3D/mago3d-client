@@ -1,11 +1,17 @@
 import React from 'react';
 import {useRecoilState} from "recoil";
-import {selectedLayerStyleState} from "@src/recoils/LayerStyle";
-import {RuleStyleInput, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {globalStyleContextState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
+import {StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {StyleInputRow} from "@src/components/layerset/layer/style/StyleInputRow";
+import {StyleContextType} from "@src/types/StyleContext";
 
-const CommonForm = () => {
+interface CommonFormProps {
+  handleChangeContext: <K extends keyof StyleContextType>(key: K, value: StyleContextType[K]) => void;
+}
+
+const CommonForm = ({handleChangeContext}: CommonFormProps) => {
   const [selectedLayerStyle, setSelectedLayerStyle] = useRecoilState(selectedLayerStyleState);
+  const [globalStyleContext, setGlobalStyleContext] = useRecoilState(globalStyleContextState);
 
   const handleChangeType = (type: StyleType) => {
     setSelectedLayerStyle(prev => ({
@@ -20,16 +26,6 @@ const CommonForm = () => {
       name
     }));
   }
-
-  const handleChangeContext = (key: keyof typeof selectedLayerStyle.context, value: string | number | boolean | RuleStyleInput[]) => {
-    setSelectedLayerStyle(prev => ({
-      ...prev,
-      context: {
-        ...prev.context,
-        [key]: value
-      }
-    }));
-  };
 
   return (
     <div>
@@ -48,14 +44,16 @@ const CommonForm = () => {
       <StyleInputRow
         title="최소 스케일"
         type="number"
-        value={selectedLayerStyle.context.minScale ?? 0}
-        onChange={val => handleChangeContext("minScale", val)}
+        min={0}
+        value={globalStyleContext.minScale}
+        onChange={val => handleChangeContext("minScale", Number(val))}
       />
       <StyleInputRow
         title="최대 스케일"
         type="number"
-        value={selectedLayerStyle.context.maxScale ?? 0}
-        onChange={val => handleChangeContext("maxScale", val)}
+        min={0}
+        value={globalStyleContext.maxScale}
+        onChange={val => handleChangeContext("maxScale", Number(val))}
       />
     </div>
   );

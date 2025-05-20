@@ -2,11 +2,12 @@ import React, {useState} from 'react';
 import reactSvg from "@src/assets/images/react.svg";
 import SymbolPicker from "@src/components/layerset/layer/style/SymbolPicker";
 import {StyleInputRow} from "@src/components/layerset/layer/style/StyleInputRow";
-import {Maybe, RuleStyleInput, Scalars} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {Maybe, Scalars} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {StyleContextType} from "@src/types/StyleContext";
 
 interface IconTypeForm {
   ctx: Maybe<Scalars['JSON']['output']>,
-  handleChangeContext: (key: string, value: string | number | boolean | RuleStyleInput[]) => void;
+  handleChangeContext: <K extends keyof StyleContextType>(key: K, value: StyleContextType[K]) => void;
 }
 
 const IconTypeForm = ({ctx, handleChangeContext}: IconTypeForm) => {
@@ -24,21 +25,21 @@ const IconTypeForm = ({ctx, handleChangeContext}: IconTypeForm) => {
           />
         </div>
       </div>
-      {isSymbolPickerVisible && (
-        <SymbolPicker
-          onSelect={(src: string) => handleChangeContext("symbol", src)}
-          onClose={() => setIsSymbolPickerVisible(false)}
-        />
-      )}
-      <StyleInputRow
-        title="이미지 배율"
-        type="range"
-        value={ctx.scale ?? 1}
-        min={0.1}
-        max={2}
-        step={0.1}
-        onChange={val => handleChangeContext("scale", val)}
-      />
+      {/*{isSymbolPickerVisible && (*/}
+      {/*  <SymbolPicker*/}
+      {/*    onSelect={(src: string) => handleChangeContext("symbol", src)}*/}
+      {/*    onClose={() => setIsSymbolPickerVisible(false)}*/}
+      {/*  />*/}
+      {/*)}*/}
+      {/*<StyleInputRow*/}
+      {/*  title="이미지 배율"*/}
+      {/*  type="range"*/}
+      {/*  value={ctx.scale ?? 1}*/}
+      {/*  min={0.1}*/}
+      {/*  max={2}*/}
+      {/*  step={0.1}*/}
+      {/*  onChange={val => handleChangeContext("scale", val)}*/}
+      {/*/>*/}
     </>
   );
 };

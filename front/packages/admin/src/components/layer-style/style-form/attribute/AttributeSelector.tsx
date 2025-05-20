@@ -4,10 +4,11 @@ import {useRecoilValue} from "recoil";
 import {remoteAssetDataState} from "@src/recoils/LayerStyle";
 import {useFetchRules} from "@src/hooks/useFetchRules";
 import RuleTable from "@src/components/layer-style/style-form/RuleTable";
+import {StyleContextType} from "@src/types/StyleContext";
 
 interface AttributeFormProps {
   ctx: Maybe<Scalars['JSON']['output']>,
-  handleChangeContext: (key: string, value: string | number | boolean | RuleStyleInput[]) => void;
+  handleChangeContext: <K extends keyof StyleContextType>(key: K, value: StyleContextType[K]) => void;
   attributeData: PreviewColumnsQuery;
 }
 
@@ -62,10 +63,10 @@ const AttributeSelector = ({ctx, handleChangeContext, attributeData}: AttributeF
     // handleChangeContext("attributeName", selectedAttribute);
   }, [selectedAttribute]);
 
-  useEffect(() => {
-    console.log("comparisonType", comparisonType);
-    handleChangeContext("attributeType", comparisonType === "eq" ? "String" : "Number");
-  }, [comparisonType]);
+  // useEffect(() => {
+  //   console.log("comparisonType", comparisonType);
+  //   handleChangeContext("attributeType", comparisonType === "eq" ? "String" : "Number");
+  // }, [comparisonType]);
 
   useEffect(() => {
     console.log("ruleStyles", ruleStyles);

@@ -1,11 +1,11 @@
 import React from 'react';
-import {Maybe, RuleStyleInput, Scalars} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {Maybe, Scalars} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {StyleInputRow} from "@src/components/layerset/layer/style/StyleInputRow";
-import {StyleSelectRow} from "@src/components/layerset/layer/style/StyleSelectRow";
+import {StyleContextType} from "@src/types/StyleContext";
 
 interface LineFormProps {
   ctx: Maybe<Scalars['JSON']['output']>,
-  handleChangeContext: (key: string, value: string | number | boolean | RuleStyleInput[]) => void;
+  handleChangeContext: <K extends keyof StyleContextType>(key: K, value: StyleContextType[K]) => void;
 }
 
 const LineForm = ({ctx, handleChangeContext}: LineFormProps) => {
@@ -14,30 +14,30 @@ const LineForm = ({ctx, handleChangeContext}: LineFormProps) => {
       <StyleInputRow
         title="외각선 너비"
         type="number"
-        value={ctx.strokeWidth ?? 0}
-        onChange={val => handleChangeContext("strokeWidth", val)}
+        value={ctx.strokeWidth}
+        onChange={val => handleChangeContext("strokeWidth", Number(val))}
       />
       <StyleInputRow
         title="외각선 색상"
         type="color"
-        value={ctx.strokeColor ?? "#000"}
-        onChange={val => handleChangeContext("strokeColor", val)}
+        value={ctx.strokeColor}
+        onChange={val => handleChangeContext("strokeColor", String(val))}
       />
       <StyleInputRow
         title="외각선 투명도"
         type="range"
-        value={ctx.strokeOpacity ?? 0}
+        value={ctx.strokeOpacity}
         min={0}
         max={1}
         step={0.01}
-        onChange={val => handleChangeContext("strokeOpacity", val)}
+        onChange={val => handleChangeContext("strokeOpacity", Number(val))}
       />
-      <StyleSelectRow
-        title="외각선 종류"
-        value={ctx.strokeType ?? "outline"}
-        onChange={val => handleChangeContext("strokeType", val)}
-        options={[{label: "실선", value: "outline"}, {label: "점선", value: "dash"}]}
-      />
+      {/*<StyleSelectRow*/}
+      {/*  title="외각선 종류"*/}
+      {/*  value={ctx.strokeType ?? "outline"}*/}
+      {/*  onChange={val => handleChangeContext("strokeType", val)}*/}
+      {/*  options={[{label: "실선", value: "outline"}, {label: "점선", value: "dash"}]}*/}
+      {/*/>*/}
     </>
   );
 };

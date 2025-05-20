@@ -1,30 +1,35 @@
 import {
   UpdateLayerStyleDocument,
-  RuleStyleInput,
   StyleType,
   PreviewColumnsDocument
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {useRecoilState, useRecoilValue} from "recoil";
-import {selectedAssetState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
+import {globalStyleContextState, selectedAssetState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
 import {useMutation, useQuery} from "@apollo/client";
 import {toast} from "react-toastify";
 import {mapToUpdateStyleInput} from "@src/components/layer-style/panels/mapToUpdateStyleInput";
-import React from "react";
+import React, {useEffect} from "react";
 import PointForm from "@src/components/layer-style/style-form/point/PointForm";
 import LineForm from "@src/components/layer-style/style-form/line/LineForm";
 import PolygonForm from "@src/components/layer-style/style-form/polygon/PolygonForm";
 import CommonForm from "@src/components/layer-style/style-form/CommonForm";
 import AttributeForm from "@src/components/layer-style/style-form/attribute/AttributeForm";
+import {StyleContextType} from "@src/types/StyleContext";
 
 const StyleForm = () => {
   const asset = useRecoilValue(selectedAssetState);
   const [selectedLayerStyle, setSelectedLayerStyle] = useRecoilState(selectedLayerStyleState);
+  const [globalStyleContext, setGlobalStyleContext] = useRecoilState(globalStyleContextState);
   const [updateStyleMutation] = useMutation(UpdateLayerStyleDocument);  // 스타일 생성
   const { data: attributeData } = useQuery(PreviewColumnsDocument,{
     variables: {
       assetID: asset.id
     }
   });
+
+  useEffect(() => {
+    console.log("globalStyleContext", globalStyleContext);
+  }, [globalStyleContext]);
 
   const styleUpdate = async () => {
 
@@ -41,13 +46,13 @@ const StyleForm = () => {
     }
   };
 
-  const handleChangeContext = (key: keyof typeof selectedLayerStyle.context, value: string | number | boolean | RuleStyleInput[]) => {
-    setSelectedLayerStyle(prev => ({
+  const handleChangeContext = <K extends keyof StyleContextType>(
+    key: K,
+    value: StyleContextType[K]
+  ) => {
+    setGlobalStyleContext(prev => ({
       ...prev,
-      context: {
-        ...prev.context,
-        [key]: value
-      }
+      [key]: value
     }));
   };
 
@@ -69,26 +74,28 @@ const StyleForm = () => {
         </div>
       </div>
       <div className="section-body">
-        <CommonForm />
+        <CommonForm
+          handleChangeContext={handleChangeContext}
+        />
         {selectedLayerStyle.type === StyleType.Point &&
           <PointForm
-            ctx={selectedLayerStyle.context}
+            ctx={globalStyleContext}
             handleChangeContext={handleChangeContext}
             attributeData={attributeData}
           />}
         {selectedLayerStyle.type === StyleType.Line &&
           <LineForm
-            ctx={selectedLayerStyle.context}
+            ctx={globalStyleContext}
             handleChangeContext={handleChangeContext}
           />}
         {selectedLayerStyle.type === StyleType.Polygon &&
           <PolygonForm
-            ctx={selectedLayerStyle.context}
+            ctx={globalStyleContext}
             handleChangeContext={handleChangeContext}
           />}
         {selectedLayerStyle.type === StyleType.Attribute &&
           <AttributeForm
-            ctx={selectedLayerStyle.context}
+            ctx={globalStyleContext}
             handleChangeContext={handleChangeContext}
             attributeData={attributeData}
           />}
