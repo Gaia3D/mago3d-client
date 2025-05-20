@@ -9,7 +9,7 @@ import {
 
 export const useFetchRules = (
   assetName: string | undefined,
-  selectedAttribute: string,
+  selectedAttribute: string | undefined,
   style: Maybe<Scalars['JSON']['output']>,
   setComparisonType: (type: 'eq' | 'ge_lt' | 'gt_le') => void,
   setRuleStyles: (rules: RuleStyleInput[]) => void,
@@ -29,13 +29,14 @@ export const useFetchRules = (
     fetchAttributes({
       variables: { nativeName: assetName, attribute: selectedAttribute }
     }).then(result => {
-      const { type, rules } = result.data.classifyAttribute;
-      setComparisonType(type === 'STRING' ? 'eq' : 'ge_lt');
 
-      if (!rules?.length) {
+      if (!result?.data?.classifyAttribute?.rules?.length) {
         setRuleStyles([]);
         return;
       }
+
+      const { type, rules } = result.data.classifyAttribute;
+      setComparisonType(type === 'STRING' ? 'eq' : 'ge_lt');
 
       const sorted = [...rules].sort((a, b) => parseFloat(a.min) - parseFloat(b.min));
       const newRules: RuleStyleInput[] = [];
@@ -77,12 +78,16 @@ export const useFetchRules = (
       });
 
       setRuleStyles(newRules);
+    })
+    .catch((e) => {
+      console.error('fetchAttributes error:', e);
+      setRuleStyles([]); // 실패 시 비워줌
     });
   }, [assetName, selectedAttribute]);
 };
 
 const createColorStyle = (color: string) => ({
   point: { fillColor: color },
-  polygon: { fillColor: color },
-  line: { strokeColor: color }
+  // polygon: { fillColor: color },
+  // line: { strokeColor: color }
 });

@@ -14,7 +14,7 @@ const LabelForm = ({ctx, handleChangeContext, attributeData}: LabelFormProps) =>
   return (
     <>
       <StyleSelectRow
-        title="속성 명"
+        title="속성"
         value={ctx.labelAttribute}
         onChange={val => handleChangeContext("labelAttribute", val)}
         options={attributeData.previewColumns.map((data) => {

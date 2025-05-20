@@ -17,21 +17,6 @@ const PointTypeForm = ({ctx, handleChangeContext}: PointTypeFormProps) => {
         onChange={val => handleChangeContext("size", val)}
       />
       <StyleInputRow
-        title="채우기 색상"
-        type="color"
-        value={ctx.fillColor ?? "#000"}
-        onChange={val => handleChangeContext("fillColor", val)}
-      />
-      <StyleInputRow
-        title="채우기 투명도"
-        type="range"
-        value={ctx.fillOpacity ?? 0}
-        min={0}
-        max={1}
-        step={0.01}
-        onChange={val => handleChangeContext("fillOpacity", val)}
-      />
-      <StyleInputRow
         title="외각선 너비"
         type="number"
         value={ctx.strokeWidth ?? 0}
@@ -51,6 +36,21 @@ const PointTypeForm = ({ctx, handleChangeContext}: PointTypeFormProps) => {
         max={1}
         step={0.01}
         onChange={val => handleChangeContext("strokeOpacity", val)}
+      />
+      <StyleInputRow
+        title="채우기 색상"
+        type="color"
+        value={ctx.fillColor ?? "#000"}
+        onChange={val => handleChangeContext("fillColor", val)}
+      />
+      <StyleInputRow
+        title="채우기 투명도"
+        type="range"
+        value={ctx.fillOpacity ?? 0}
+        min={0}
+        max={1}
+        step={0.01}
+        onChange={val => handleChangeContext("fillOpacity", val)}
       />
     </>
   );

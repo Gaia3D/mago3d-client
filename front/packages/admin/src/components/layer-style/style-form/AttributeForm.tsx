@@ -16,7 +16,7 @@ const AttributeForm = ({ctx, handleChangeContext, attributeData}: AttributeFormP
   const assetName = remoteAsset?.featureType?.nativeName;
   const previewColumns = attributeData?.previewColumns;
   const options = previewColumns?.map(col => ({ label: col.field, value: col.field })) ?? [];
-  const [selectedAttribute, setSelectedAttribute] = useState(options[0].value);
+  const [selectedAttribute, setSelectedAttribute] = useState(ctx.attribute ?? '');
   const [ruleStyles, setRuleStyles] = useState<RuleStyleInput[]>([]);
   const [comparisonType, setComparisonType] = useState<'eq' | 'ge_lt' | 'gt_le'>('ge_lt');
 
@@ -59,7 +59,7 @@ const AttributeForm = ({ctx, handleChangeContext, attributeData}: AttributeFormP
   useEffect(() => {
     console.log("selectedAttribute", selectedAttribute);
     handleChangeContext("attribute", selectedAttribute);
-    handleChangeContext("attributeName", selectedAttribute);
+    // handleChangeContext("attributeName", selectedAttribute);
   }, [selectedAttribute]);
 
   useEffect(() => {
@@ -78,6 +78,7 @@ const AttributeForm = ({ctx, handleChangeContext, attributeData}: AttributeFormP
   return (
     <div className="attribute-style-container">
       <select value={selectedAttribute} onChange={(e) => setSelectedAttribute(e.target.value)}>
+        <option value={''} hidden>속성 선택</option>
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
