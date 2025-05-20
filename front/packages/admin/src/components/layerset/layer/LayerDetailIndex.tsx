@@ -2,7 +2,7 @@ import {Suspense, useEffect, useState} from "react";
 import { classifyAssetTypeClassNameByLayerAssetType } from "@src/api/Data";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useSuspenseQuery } from "@apollo/client";
+import {useMutation, useQuery, useSuspenseQuery} from "@apollo/client";
 import { useFragment } from "@src/generated/gql/layerset";
 import { alertToast } from "@mnd/shared/src/utils/toast";
 import { useTranslation } from "react-i18next";
@@ -16,10 +16,13 @@ import {
   LayersetGroupListWithAssetDocument,
   LayersetUpdateAssetDocument,
   UpdateAssetInput,
+  RemoteQueryVariables,
+  RemoteDocument
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {useRecoilState, useSetRecoilState} from "recoil";
-import {layerStylesState, selectedAssetState} from "@src/recoils/LayerStyle";
+import {layerStylesState, remoteAssetDataState, selectedAssetState} from "@src/recoils/LayerStyle";
 import LayerStyle from "@src/components/layer-style/LayerStyle";
+import {useRemoteAsset} from "@src/hooks/useRemoteAsset";
 
 interface LayerDetailIndexProps {
   id: string;
@@ -40,10 +43,14 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
   const [globalAsset, setGlobalAsset] = useRecoilState(selectedAssetState);
   const setLayerStyles = useSetRecoilState(layerStylesState);
 
+  const { layer } = asset.properties;
+  const originalHref = layer.resource.href;
+  useRemoteAsset(originalHref);
+
   useEffect(() => {
     setGlobalAsset(asset);
     setLayerStyles(asset.styles);
-  }, [asset, setGlobalAsset]);
+  }, [asset, setGlobalAsset, setLayerStyles]);
 
   const [updateAsset] = useMutation(LayersetUpdateAssetDocument, {
     refetchQueries: [LayersetAssetDocument],

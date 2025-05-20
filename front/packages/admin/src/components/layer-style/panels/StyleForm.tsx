@@ -1,7 +1,12 @@
-import {UpdateLayerStyleDocument, RuleStyleInput, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
-import {useRecoilState} from "recoil";
-import {selectedLayerStyleState} from "@src/recoils/LayerStyle";
-import {useMutation} from "@apollo/client";
+import {
+  UpdateLayerStyleDocument,
+  RuleStyleInput,
+  StyleType,
+  PreviewColumnsDocument
+} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {selectedAssetState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
+import {useMutation, useQuery} from "@apollo/client";
 import {toast} from "react-toastify";
 import {mapToUpdateStyleInput} from "@src/components/layer-style/panels/mapToUpdateStyleInput";
 import React from "react";
@@ -13,9 +18,14 @@ import AttributeForm from "@src/components/layer-style/style-form/AttributeForm"
 import {ToggleRow} from "@src/components/layerset/layer/style/ToggleRow";
 
 const StyleForm = () => {
-
+  const asset = useRecoilValue(selectedAssetState);
   const [selectedLayerStyle, setSelectedLayerStyle] = useRecoilState(selectedLayerStyleState);
   const [updateStyleMutation] = useMutation(UpdateLayerStyleDocument);  // 스타일 생성
+  const { data: attributeData } = useQuery(PreviewColumnsDocument,{
+    variables: {
+      assetID: asset.id
+    }
+  });
 
   const styleUpdate = async () => {
 
@@ -62,11 +72,21 @@ const StyleForm = () => {
       <div className="section-body">
         <CommonForm />
         {selectedLayerStyle.type === StyleType.Point &&
-          <PointForm ctx={selectedLayerStyle.context} handleChangeContext={handleChangeContext}/>}
+          <PointForm
+            ctx={selectedLayerStyle.context}
+            handleChangeContext={handleChangeContext}
+            attributeData={attributeData}
+          />}
         {selectedLayerStyle.type === StyleType.Line &&
-          <LineForm ctx={selectedLayerStyle.context} handleChangeContext={handleChangeContext}/>}
+          <LineForm
+            ctx={selectedLayerStyle.context}
+            handleChangeContext={handleChangeContext}
+          />}
         {selectedLayerStyle.type === StyleType.Polygon &&
-          <PolygonForm ctx={selectedLayerStyle.context} handleChangeContext={handleChangeContext}/>}
+          <PolygonForm
+            ctx={selectedLayerStyle.context}
+            handleChangeContext={handleChangeContext}
+          />}
         <ToggleRow
           title="속성 사용"
           enabled={selectedLayerStyle.context.isAttributeEnabled ?? false}
@@ -74,7 +94,11 @@ const StyleForm = () => {
         />
         {
           selectedLayerStyle.context.isAttributeEnabled &&
-          <AttributeForm ctx={selectedLayerStyle.context} handleChangeContext={handleChangeContext} />
+          <AttributeForm
+            ctx={selectedLayerStyle.context}
+            handleChangeContext={handleChangeContext}
+            attributeData={attributeData}
+          />
         }
       </div>
     </>

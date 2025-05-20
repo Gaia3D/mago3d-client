@@ -1,8 +1,10 @@
 import React from 'react';
-import {useRecoilValue} from "recoil";
-import {selectedAssetState} from "@src/recoils/LayerStyle";
-import {useQuery} from "@apollo/client";
-import {Maybe, PreviewColumnsDocument, RuleStyleInput, Scalars} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {
+  Maybe,
+  PreviewColumnsQuery,
+  RuleStyleInput,
+  Scalars
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {StyleSelectRow} from "@src/components/layerset/layer/style/StyleSelectRow";
 import IconTypeForm from "@src/components/layer-style/style-form/point/IconTypeForm";
 import PointTypeForm from "@src/components/layer-style/style-form/point/PointTypeForm";
@@ -12,15 +14,10 @@ import LabelForm from "@src/components/layer-style/style-form/LabelForm";
 interface PointFormProps {
   ctx: Maybe<Scalars['JSON']['output']>,
   handleChangeContext: (key: string, value: string | number | boolean | RuleStyleInput[]) => void;
+  attributeData: PreviewColumnsQuery;
 }
 
-const PointForm = ({ctx, handleChangeContext}: PointFormProps) => {
-  const asset = useRecoilValue(selectedAssetState);
-  const { data: attributeData } = useQuery(PreviewColumnsDocument,{
-    variables: {
-      assetID: asset.id
-    }
-  });
+const PointForm = ({ctx, handleChangeContext, attributeData}: PointFormProps) => {
 
   return (
     <>
@@ -42,7 +39,7 @@ const PointForm = ({ctx, handleChangeContext}: PointFormProps) => {
       />
       {
         ctx.isLabelEnabled &&
-        <LabelForm ctx={ctx} handleChangeContext={handleChangeContext} />
+        <LabelForm ctx={ctx} handleChangeContext={handleChangeContext} attributeData={attributeData} />
       }
     </>
   );

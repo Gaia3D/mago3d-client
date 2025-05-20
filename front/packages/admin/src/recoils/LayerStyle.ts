@@ -19,6 +19,12 @@ export const selectedLayerStyleState = atom<LayerStyle | undefined>({
   default: undefined
 })
 
+// 선택한 asset의 remote
+export const remoteAssetDataState = atom<any>({
+  key: "remoteAssetDataState",
+  default: undefined
+})
+
 // 기본 스타일
 // 라벨 스타일
 // 속성 스타일

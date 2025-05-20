@@ -65,7 +65,7 @@ export const mapToUpdateStyleInput = (
     };
   }
 
-  if (type === "ATTRIBUTE") {
+  if (ctx.isAttributeEnabled) {
     context.attribute = {
       attribute: ctx.attribute,
       name: ctx.attributeName,

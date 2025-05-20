@@ -376,3 +376,71 @@
   }
 
 }
+
+
+// styleForm
+.table-wrapper {
+  width: 100%;
+  max-width: 400px;
+  overflow-x: auto;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+
+  .rule-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background-color: #f0f0f0;
+
+      th {
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        color: #333;
+        text-align: left;
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          padding: 0.2rem;
+          border-bottom: 1px solid #ddd;
+
+          input[type="number"],
+          input[type="text"] {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+          }
+
+          input[type="color"] {
+            width: 40px;
+            height: 32px;
+            border: none;
+            background: none;
+            cursor: pointer;
+          }
+
+          button {
+            background-color: #ff4d4f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+              background-color: #d9363e;
+            }
+          }
+        }
+      }
+    }
+  }
+}
