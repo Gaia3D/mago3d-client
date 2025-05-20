@@ -22,6 +22,37 @@ interface ResponsePlace {
     };
 }
 
+interface ResponseAddress {
+    id: string;
+    address: {
+        bldnm: string;
+        bldnmdc: string;
+        category: string;
+        road: string;
+        parcel: string;
+        zipcode: string;
+    };
+    point: {
+        x: number;
+        y: number;
+    };
+}
+
+interface VWorldSearchParams {
+    service: string;
+    request: string;
+    version: string;
+    crs: string;
+    bbox: string;
+    size: number;
+    page: number;
+    query: string;
+    type: string;
+    format: string;
+    key: string;
+    category?: string;
+}
+
 interface ErrorResponse {
     response: {
         data: any;
@@ -58,58 +89,15 @@ export const SearchPlaceList = () => {
         setErrorMessage(null);
 
         try {
-            const API_KEY = import.meta.env.VITE_VWORLD_TOKEN;
-            const bbox = '124.0,33.0,132.0,43.0';
             const size = 100; // 페이지당 결과 수
+            const responsePlaceItems = await requestSearch(currentPage, size, 'place');
+            //const responseAddressRoadItems = await requestSearch(currentPage, size, 'address', 'road');
+            //const responseAddressParcelItems = await requestSearch(currentPage, size, 'address', 'parcel');
 
-            const response = await axios.get(`/user/vworld/search`, {
-                params: {
-                    service: 'search',
-                    request: 'search',
-                    version: '2.0',
-                    crs: 'EPSG:4326',
-                    bbox: bbox,
-                    size: size,
-                    page: currentPage,
-                    query: debouncedValue.trim(),
-                    type: 'place',
-                    format: 'json',
-                    key: API_KEY,
-                },
-            });
+            handlePlaceItems(currentPage, size, responsePlaceItems);
+            //handleAddressItems(currentPage, size, responseAddressRoadItems);
+            //handleAddressItems(currentPage, size, responseAddressParcelItems);
 
-            const responseData = response?.data;
-            const responseMap = responseData?.response;
-            const resultMap = responseMap?.result;
-            const items = resultMap?.items || [];
-            const addressSet = new Set<string>(); // 주소 중복 체크를 위한 Set
-
-            if (items.length === 0) {
-                if (currentPage === 1) {
-                    setErrorMessage('검색결과가 없습니다.');
-                }
-                setHasMore(false);
-            } else {
-                const extractedPlaces: Place[] = items
-                    .filter((item: ResponsePlace) => {
-                        const roadAddress = item?.address?.road;
-                        if (!roadAddress || addressSet.has(roadAddress)) {
-                            return false; // 중복 주소는 제외
-                        }
-                        addressSet.add(roadAddress);
-                        return true;
-                    })
-                    .map((item: ResponsePlace) => ({
-                        title: item.title ?? '제목 없음',
-                        address: item.address?.road?.trim() !== '' ? item.address.road : '주소 없음',
-                        x: item.point?.x,
-                        y: item.point?.y,
-                    }));
-
-                setPlaces((prevPlaces) => currentPage === 1 ? extractedPlaces : [...prevPlaces, ...extractedPlaces]);
-                setPage(currentPage + 1);
-                setHasMore(items.length === size);
-            }
         } catch (error) {
             if ((error as ErrorResponse).response?.data) {
                 setErrorMessage('검색결과가 없습니다.');
@@ -228,6 +216,105 @@ export const SearchPlaceList = () => {
             viewer?.entities.remove(existingEntity);
         }
     };
+
+    const requestSearch = async (currentPage: number, size: number, type: string, category?: string) => {
+        const API_KEY = import.meta.env.VITE_VWORLD_TOKEN;
+        const bbox = '124.0,33.0,132.0,43.0';
+
+        const params: VWorldSearchParams = {
+            service: 'search',
+            request: 'search',
+            version: '2.0',
+            crs: 'EPSG:4326',
+            bbox: bbox,
+            size: size,
+            page: currentPage,
+            query: debouncedValue.trim(),
+            type: type,
+            format: 'json',
+            key: API_KEY,
+        };
+
+        if (category?.trim()) {
+            params.category = category.trim();
+        }
+
+        const response = await axios.get(`/user/vworld/search`, { params });
+
+        const responseData = response.data;
+        const responseMap = responseData?.response;
+        if (responseMap.status !== "OK") {
+            console.log('Error fetching data: ', responseMap.status, params);
+        }
+
+        const resultMap = responseMap?.result;
+        return resultMap?.items || [];
+    };
+
+    const handlePlaceItems = (currentPage: number, size: number, responsePlaceItems: ResponsePlace[]) => {
+        const addressSet = new Set<string>(); // 주소 중복 체크를 위한 Set
+        if (responsePlaceItems.length === 0) {
+            if (currentPage === 1) {
+                setErrorMessage('검색결과가 없습니다.');
+            }
+            setHasMore(false);
+        } else {
+            const extractedPlaces: Place[] = responsePlaceItems
+              .filter((item: ResponsePlace) => {
+                  const roadAddress = item?.address?.road;
+                  if (!roadAddress || addressSet.has(roadAddress)) {
+                      return false; // 중복 주소는 제외
+                  }
+                  addressSet.add(roadAddress);
+                  return true;
+              })
+              .map((item: ResponsePlace) => ({
+                  title: item.title ?? '제목 없음',
+                  address: item.address?.road?.trim() !== '' ? item.address.road : '주소 없음',
+                  x: item.point?.x,
+                  y: item.point?.y,
+              }));
+
+            setPlaces(prev => currentPage === 1 ? extractedPlaces : [...prev, ...extractedPlaces]);
+            setPage(prev => prev + 1)
+            setHasMore(responsePlaceItems.length === size);
+        }
+    }
+
+    const handleAddressItems = (currentPage: number, size: number, responseAddressItems: ResponseAddress[]) => {
+        const addressSet = new Set<string>(); // 주소 중복 체크를 위한 Set
+        if (responseAddressItems.length === 0) {
+            if (currentPage === 1) {
+                setErrorMessage('검색결과가 없습니다.');
+            }
+            setHasMore(false);
+        } else {
+            const extractedPlaces: Place[] = responseAddressItems
+              .filter((item: ResponseAddress) => {
+                  const category = item.address.category;
+                  const address = category === 'road' ? item?.address.road.trim() : item.address.parcel?.trim();
+                  if (!address || addressSet.has(address)) {
+                      return false; // 중복 주소는 제외
+                  }
+                  addressSet.add(address);
+                  return true;
+              })
+              .map((item: ResponseAddress): Place => {
+                  const category = item.address.category;
+                  const addr = category === 'road' ? item.address.road?.trim() : item.address.parcel?.trim();
+                  return {
+                      title: addr ?? '제목 없음',
+                      address: addr !== '' ? addr : '주소 없음',
+                      x: item.point.x,
+                      y: item.point.y,
+                  };
+              });
+
+            setPlaces(prev => currentPage === 1 ? extractedPlaces : [...prev, ...extractedPlaces]);
+            setPage(prev => prev + 1)
+            setHasMore(responseAddressItems.length === size);
+        }
+    }
 
     useEffect(() => {
         const observerCallback: IntersectionObserverCallback = (entries) => {
