@@ -48,6 +48,8 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
   useEffect(() => {
     setGlobalAsset(asset);
     setLayerStyles(asset.styles);
+
+    console.log("asset.styles", asset.styles);
   }, [asset, setGlobalAsset, setLayerStyles]);
 
   const [updateAsset] = useMutation(LayersetUpdateAssetDocument, {

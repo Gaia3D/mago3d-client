@@ -21,12 +21,12 @@ const PointForm = ({ctx, handleChangeContext, attributeData}: PointFormProps) =>
     <>
       <StyleSelectRow
         title="점 모양"
-        value={ctx.pointType ?? "point"}
+        value={ctx.shape}
         onChange={val => handleChangeContext("shape", val)}
         options={[{label: "점", value: "point"}, {label: "아이콘", value: "icon"}]}
       />
       {
-        ctx.pointType === "icon" ?
+        ctx.shape === "icon" ?
           <IconTypeForm ctx={ctx} handleChangeContext={handleChangeContext} /> :
           <PointTypeForm ctx={ctx} handleChangeContext={handleChangeContext} />
       }

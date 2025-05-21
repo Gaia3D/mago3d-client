@@ -16,6 +16,8 @@ const PreviewPanel = () => {
   const [backgroundMap, setBackgroundMap] = useState<BackgroundMapType>(BackgroundMaps[0]);
   const [previewMode, setPreviewMode] = useState<PreviewMode>(PreviewMode.Single);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const resourceName = asset?.properties?.layer?.resource?.name;
     if (!resourceName) return;
@@ -26,11 +28,16 @@ const PreviewPanel = () => {
         setDataSource(loadedDataSource);
       } catch (e) {
         console.error("GeoJSON load error:", e);
+      } finally {
+        console.log("datasource 호출 완료")
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [asset]);
+
+  if (loading) return <>loading...</>;
 
   return (
     <>

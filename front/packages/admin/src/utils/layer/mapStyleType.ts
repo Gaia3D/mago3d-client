@@ -85,19 +85,12 @@ export const mapPolygonStyleToContext = (context: Maybe<Scalars['JSON']['output'
     strokeWidth: context.strokeWidth,
   });
 
-export const mapAttributeStyleToContext = (context: Maybe<Scalars['JSON']['output']>): StyleContextType => {
-  const { attribute, name, rules } = context;
-
-  if (!attribute) {
-    throw new Error("attribute 값은 필수입니다.");
-  }
-
-  return {
-    attribute,
-    ...(name !== undefined && { name }),
-    ...(rules !== undefined && { rules }),
-  }
-};
+export const mapAttributeStyleToContext = (context: Maybe<Scalars['JSON']['output']>): StyleContextType =>
+  cleanObject({
+    attribute: context.attribute,
+    name: context.name,
+    rules: context.rules
+  });
 
 export const mapRasterStyleToContext = (context: Maybe<Scalars['JSON']['output']>): StyleContextType =>
   cleanObject({

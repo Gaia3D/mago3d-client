@@ -8,11 +8,11 @@ import {
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 
 export interface StyleContextType {
-  maxScale?: number;                       // 최대 축적 (전체)
   minScale?: number;                       // 최소 축적 (전체)
   strokeColor?: string;                    // 선 색상 (point, line, polygon)
   strokeOpacity?: number;                  // 선 투명도 (point, line, polygon)
   strokeWidth?: number;                    // 선 너비 (point, line, polygon)
+  maxScale?: number;                       // 최대 축적 (전체)
   fillColor?: string                       // 채우기 색상 (point, polygon)
   fillOpacity?: number                     // 채우기 투명도 (point, polygon)
   rotation?: number                        // 회전 (point)

@@ -35,8 +35,7 @@ const getInitialStyleType = (ctx: Maybe<Scalars['JSON']['output']>): StyleType =
 };
 
 const AttributeForm = ({ ctx, handleChangeContext, attributeData }: AttributeFormProps) => {
-  const [selectedLayerStyle, setSelectedLayerStyle] = useRecoilState(selectedLayerStyleState);
-  const [innerType, setInnerType] = useState<StyleType>(() => getInitialStyleType(ctx));
+  const [innerType, setInnerType] = useState<StyleType>(() => getInitialStyleType(ctx.type ?? StyleType.Point));
 
   // useEffect(() => {
   //   handleChangeContext("innerType", innerType);
@@ -49,18 +48,18 @@ const AttributeForm = ({ ctx, handleChangeContext, attributeData }: AttributeFor
       <button onClick={() => setInnerType(StyleType.Polygon)}>Polygon</button>
       {innerType === StyleType.Point &&
         <PointForm
-          ctx={selectedLayerStyle.context}
+          ctx={ctx}
             handleChangeContext={handleChangeContext}
             attributeData={attributeData}
         />}
       {innerType === StyleType.Line &&
         <LineForm
-          ctx={selectedLayerStyle.context}
+          ctx={ctx}
           handleChangeContext={handleChangeContext}
         />}
       {innerType === StyleType.Polygon &&
         <PolygonForm
-          ctx={selectedLayerStyle.context}
+          ctx={ctx}
           handleChangeContext={handleChangeContext}
         />}
       <AttributeSelector ctx={ctx} handleChangeContext={handleChangeContext} attributeData={attributeData} />

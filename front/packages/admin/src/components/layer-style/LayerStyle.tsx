@@ -34,9 +34,9 @@ const LayerStyle = () => {
   const setGlobalStyleContext = useSetRecoilState(globalStyleContextState);
 
   useEffect(() => {
-    if (!selectedLayerStyle) return;
+    if (!selectedLayerStyle?.type) return;
     setGlobalStyleContext(mapStyleToContext(selectedLayerStyle));
-  }, [selectedLayerStyle]);
+  }, [selectedLayerStyle?.type]);
 
   if (!asset?.type) return <div>{t("레이어 유형이 없습니다.")}</div>;
 

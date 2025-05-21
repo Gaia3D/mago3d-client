@@ -5,6 +5,8 @@ import {remoteAssetDataState} from "@src/recoils/LayerStyle";
 import {useFetchRules} from "@src/hooks/useFetchRules";
 import RuleTable from "@src/components/layer-style/style-form/RuleTable";
 import {StyleContextType} from "@src/types/StyleContext";
+import {useApolloClient} from "@apollo/client";
+import {fetchRulesFromServer} from "@src/utils/layer/fetchRulesFromServer";
 
 interface AttributeFormProps {
   ctx: Maybe<Scalars['JSON']['output']>,
@@ -20,8 +22,19 @@ const AttributeSelector = ({ctx, handleChangeContext, attributeData}: AttributeF
   const [selectedAttribute, setSelectedAttribute] = useState(ctx.attribute ?? '');
   const [ruleStyles, setRuleStyles] = useState<RuleStyleInput[]>([]);
   const [comparisonType, setComparisonType] = useState<'eq' | 'ge_lt' | 'gt_le'>('ge_lt');
+  const client = useApolloClient();
 
-  useFetchRules(assetName, selectedAttribute, ctx, setComparisonType, setRuleStyles);
+  const split = async () => {
+    if (!assetName || !selectedAttribute) return;
+    try {
+      const { rules, comparisonType } = await fetchRulesFromServer(client, assetName, selectedAttribute, ctx);
+      setComparisonType(comparisonType);
+      setRuleStyles(rules);
+    } catch (e) {
+      console.error('split fetch error', e);
+      setRuleStyles([]);
+    }
+  };
 
   const handleDeleteRule = (index: number) => {
     const updated = [...ruleStyles];
@@ -78,12 +91,15 @@ const AttributeSelector = ({ctx, handleChangeContext, attributeData}: AttributeF
 
   return (
     <div className="attribute-style-container">
-      <select value={selectedAttribute} onChange={(e) => setSelectedAttribute(e.target.value)}>
-        <option value={''} hidden>속성 선택</option>
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
-        ))}
-      </select>
+      <div className="flex">
+        <select value={selectedAttribute} onChange={(e) => setSelectedAttribute(e.target.value)}>
+          <option value={''} hidden>속성 선택</option>
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+        <button onClick={split}>분할</button>
+      </div>
       <RuleTable
         ruleStyles={ruleStyles}
         comparisonType={comparisonType}

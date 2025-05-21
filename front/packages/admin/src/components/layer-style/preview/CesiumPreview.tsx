@@ -1,11 +1,11 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import * as Cesium from "cesium";
 import {BackgroundMapType} from "@src/constants/backgroundMap";
 import {PreviewMode} from "@src/types/Layer";
 import {initCesiumViewer} from "@src/utils/layer/initCesiumViewer";
 import {updateImageryProvider} from "@src/utils/layer/updateImageryProvider";
-import {useRecoilValue} from "recoil";
-import {layerStylesState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {globalStyleContextState, layerStylesState, selectedLayerStyleState} from "@src/recoils/LayerStyle";
 import {applyStyledEntities} from "@src/components/layer-style/preview/applyStyledEntities";
 
 interface CesiumPreviewerProps {
@@ -18,12 +18,13 @@ const CesiumPreview = ({ dataSource, backgroundMap, previewMode }: CesiumPreview
   const viewerRef = useRef<HTMLDivElement>(null);
   const cesiumViewerRef = useRef<Cesium.Viewer | null>(null);
   const imageryLayerRef = useRef<Cesium.ImageryLayer | null>(null);
-
+  const [globalStyleContext, setGlobalStyleContext] = useRecoilState(globalStyleContextState);
   const [currentEntities, setCurrentEntities] = useState<Cesium.Entity[]>([]);
 
   const layerStyles = useRecoilValue(layerStylesState);
   const selectedLayerStyle = useRecoilValue(selectedLayerStyleState);
   useEffect(() => {
+    console.log("selectedLayerStyle", selectedLayerStyle);
     const next = selectedLayerStyle ? [selectedLayerStyle] : layerStyles;
     setCurrentLayerStyles(next);
   }, [selectedLayerStyle, layerStyles]);

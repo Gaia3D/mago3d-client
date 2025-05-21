@@ -93,12 +93,13 @@ const StyleForm = () => {
             ctx={globalStyleContext}
             handleChangeContext={handleChangeContext}
           />}
-        {selectedLayerStyle.type === StyleType.Attribute &&
+        <div className={selectedLayerStyle.type === StyleType.Attribute ? "" : "none"}>
           <AttributeForm
             ctx={globalStyleContext}
             handleChangeContext={handleChangeContext}
             attributeData={attributeData}
-          />}
+          />
+        </div>
       </div>
     </>
   );
