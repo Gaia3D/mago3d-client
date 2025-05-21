@@ -19,8 +19,8 @@ import {
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {layerStylesState, selectedAssetState} from "@src/recoils/LayerStyle";
-import LayerStyle from "@src/components/layer-style/LayerStyle";
 import {useRemoteAsset} from "@src/hooks/useRemoteAsset";
+import LayerStyle from "@src/components/refactor-layer-style/LayerStyle";
 
 interface LayerDetailIndexProps {
   id: string;
@@ -48,8 +48,6 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
   useEffect(() => {
     setGlobalAsset(asset);
     setLayerStyles(asset.styles);
-
-    console.log("asset.styles", asset.styles);
   }, [asset, setGlobalAsset, setLayerStyles]);
 
   const [updateAsset] = useMutation(LayersetUpdateAssetDocument, {

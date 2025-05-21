@@ -1,6 +1,7 @@
-import {LayerAsset, LayerStyle} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {LayerAsset, LayerStyle, UpdateStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {atom} from "recoil";
 import {DEFAULT_STYLE_CONTEXT, StyleContextType} from "@src/types/StyleContext";
+import {CompleteStyleType} from "@src/components/refactor-layer-style/mapStyleToCompleteStyleType";
 
 // 선택된 에셋
 export const selectedAssetState = atom<LayerAsset | undefined>({
@@ -30,6 +31,16 @@ export const remoteAssetDataState = atom<any>({
 export const globalStyleContextState = atom<StyleContextType>({
   key: "globalStyleContextState",
   default: DEFAULT_STYLE_CONTEXT
+})
+
+export const completeStylesState = atom<CompleteStyleType[]>({
+  key: "completeStylesState",
+  default: []
+})
+
+export const editingStyleState = atom<CompleteStyleType | undefined>({
+  key: "editingStyleState",
+  default: undefined
 })
 
 // 기본 스타일

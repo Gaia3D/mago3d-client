@@ -32,6 +32,7 @@
   }
   article {
     width: 100%;
+    min-width: 1000px;
     height: calc(100% - 200px);
     &>div {
       width: 100%;
