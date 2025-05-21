@@ -46,6 +46,7 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
   useRemoteAsset(originalHref);
 
   useEffect(() => {
+    console.log("asset", asset);
     setGlobalAsset(asset);
     setLayerStyles(asset.styles);
   }, [asset, setGlobalAsset, setLayerStyles]);

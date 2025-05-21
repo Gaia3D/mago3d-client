@@ -29,11 +29,31 @@ const CommonForm = () => {
         value={editingStyle.name}
         onChange={val => handleChangeName(val.toString())}
       />
-      <div>
-        <button onClick={() => handleChangeType(StyleType.Point)}>Point</button>
-        <button onClick={() => handleChangeType(StyleType.Line)}>Line</button>
-        <button onClick={() => handleChangeType(StyleType.Polygon)}>Polygon</button>
-        <button onClick={() => handleChangeType(StyleType.Attribute)}>Attribute</button>
+      <div className="style-type-button-group">
+        <button
+          className={editingStyle.type === StyleType.Point ? 'selected' : ''}
+          onClick={() => handleChangeType(StyleType.Point)}
+        >
+          Point
+        </button>
+        <button
+          className={editingStyle.type === StyleType.Line ? 'selected' : ''}
+          onClick={() => handleChangeType(StyleType.Line)}
+        >
+          Line
+        </button>
+        <button
+          className={editingStyle.type === StyleType.Polygon ? 'selected' : ''}
+          onClick={() => handleChangeType(StyleType.Polygon)}
+        >
+          Polygon
+        </button>
+        <button
+          className={editingStyle.type === StyleType.Attribute ? 'selected' : ''}
+          onClick={() => handleChangeType(StyleType.Attribute)}
+        >
+          Attribute
+        </button>
       </div>
     </div>
   );

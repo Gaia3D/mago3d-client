@@ -2,10 +2,11 @@ import React, {useEffect} from 'react';
 import {useRecoilState, useRecoilValue} from "recoil";
 import {editingStyleState, selectedAssetState} from "@src/recoils/LayerStyle";
 import {useMutation, useQuery} from "@apollo/client";
-import {PreviewColumnsDocument, UpdateLayerStyleDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {PreviewColumnsDocument, StyleType, UpdateLayerStyleDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {toast} from "react-toastify";
 import {mapCompleteStyleToUpdateType} from "@src/components/refactor-layer-style/mapCompleteStyleToUpdateType";
 import CommonForm from "@src/components/refactor-layer-style/style-form/CommonForm";
+import PointForm from "@src/components/refactor-layer-style/style-form/PointForm";
 
 const StyleForm = () => {
   const asset = useRecoilValue(selectedAssetState);
@@ -28,6 +29,7 @@ const StyleForm = () => {
       console.error("스타일 생성 오류:", err);
       toast.error("스타일 생성 중 오류가 발생했습니다.");
     } finally {
+      // TODO 새로운 에셋 설정
       exit();
     }
   };
@@ -50,7 +52,19 @@ const StyleForm = () => {
         </div>
       </div>
       <div className="section-body">
-        <CommonForm />
+        <CommonForm/>
+        <div className={editingStyle.type === StyleType.Point ? "" : "none"}>
+          <PointForm />
+        </div>
+        <div className={editingStyle.type === StyleType.Line ? "" : "none"}>
+
+        </div>
+        <div className={editingStyle.type === StyleType.Polygon ? "" : "none"}>
+
+        </div>
+        <div className={editingStyle.type === StyleType.Attribute ? "" : "none"}>
+
+        </div>
       </div>
     </>
   );

@@ -52,6 +52,8 @@ const StyleList = () => {
     } catch (err) {
       console.error("스타일 삭제 오류:", err);
       toast.error("스타일 삭제 중 오류가 발생했습니다.");
+    } finally {
+      // TODO 새로운 에셋 설정
     }
   }
 
