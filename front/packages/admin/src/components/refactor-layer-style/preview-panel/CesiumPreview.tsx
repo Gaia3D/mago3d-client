@@ -49,7 +49,8 @@ const CesiumPreview = ({ dataSource, backgroundMap, previewMode }: CesiumPreview
 
   // preview 스타일 배열 설정
   useEffect(() => {
-    const next = editingStyle ? [editingStyle] : completeStyles;
+    const toggledStyles = completeStyles.filter(style => style.enabled);
+    const next = editingStyle ? [editingStyle] : toggledStyles;
     setCurrentLayerStyles(next);
   }, [editingStyle, completeStyles]);
 
