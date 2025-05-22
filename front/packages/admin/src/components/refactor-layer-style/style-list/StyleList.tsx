@@ -48,7 +48,9 @@ const StyleList = () => {
   const styleDelete = async (styleId: string) => {
     try {
       const response = await deleteStyleMutation({variables: {id: styleId}});
-      console.log(response);
+      toast.success("스타일 삭제 완료");
+      setCompleteStyles(prev => prev.filter(style => style.id !== styleId));
+
     } catch (err) {
       console.error("스타일 삭제 오류:", err);
       toast.error("스타일 삭제 중 오류가 발생했습니다.");

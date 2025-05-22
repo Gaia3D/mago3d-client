@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useRecoilState, useRecoilValue} from "recoil";
-import {editingStyleState, selectedAssetState} from "@src/recoils/LayerStyle";
+import {completeStylesState, editingStyleState, selectedAssetState} from "@src/recoils/LayerStyle";
 import {useMutation, useQuery} from "@apollo/client";
 import {PreviewColumnsDocument, StyleType, UpdateLayerStyleDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {toast} from "react-toastify";
@@ -11,6 +11,7 @@ import PointForm from "@src/components/refactor-layer-style/style-form/PointForm
 const StyleForm = () => {
   const asset = useRecoilValue(selectedAssetState);
   const [editingStyle, setEditingStyle] = useRecoilState(editingStyleState);
+  const [completeStyles, setCompleteStyles] = useRecoilState(completeStylesState);
   const [updateStyleMutation] = useMutation(UpdateLayerStyleDocument);
   const { data: attributes } = useQuery(PreviewColumnsDocument,{
     variables: {
@@ -25,11 +26,16 @@ const StyleForm = () => {
       const response = await updateStyleMutation({ variables: { id: editingStyle.id, input: updateStyleInput } });
       console.log("response.data", response.data)
       toast.success("스타일 수정 완료");
+
+      const updatedStyle = editingStyle;
+      const newCompleteStyles = completeStyles.map(style =>
+        style.id === updatedStyle.id ? updatedStyle : style
+      );
+      setCompleteStyles(newCompleteStyles);
     } catch (err) {
       console.error("스타일 생성 오류:", err);
       toast.error("스타일 생성 중 오류가 발생했습니다.");
     } finally {
-      // TODO 새로운 에셋 설정
       exit();
     }
   };

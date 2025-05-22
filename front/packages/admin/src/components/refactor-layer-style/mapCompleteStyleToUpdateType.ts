@@ -48,9 +48,6 @@ export const mapCompleteStyleToUpdateType = (
     switch (type) {
       case StyleType.Point: {
         const iconStyle = context.point?.iconStyle;
-        if (!iconStyle || !iconStyle.symbolId) {
-          throw toast.warning("아이콘을 선택해주세요.");
-        }
 
         if (!iconStyle) {
           return {
@@ -62,6 +59,9 @@ export const mapCompleteStyleToUpdateType = (
         }
 
         const { images, ...iconStyleWithoutImages } = iconStyle as CompleteIconStyleType;
+        if (!iconStyleWithoutImages || !iconStyleWithoutImages.symbolId) {
+          throw toast.warning("아이콘을 선택해주세요.");
+        }
 
         return {
           point: {
