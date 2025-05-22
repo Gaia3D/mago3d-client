@@ -16,6 +16,7 @@ const DEFAULT_STYLE_CONTEXT = {
   strokeOpacity: 1,
   strokeWidth: 1,
   opacity: 1,
+  size: 10,
 };
 
 // undefined 필드 제거 유틸
@@ -40,7 +41,7 @@ export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleTyp
       minScale: context?.minScale,
       rotation: context?.rotation,
       shape: context?.shape,
-      size: context?.size,
+      size: context?.size ?? DEFAULT_STYLE_CONTEXT.size,
       strokeColor: context?.strokeColor ?? DEFAULT_STYLE_CONTEXT.strokeColor,
       strokeDasharray: context?.strokeDasharray,
       strokeDashoffset: context?.strokeDashoffset,
