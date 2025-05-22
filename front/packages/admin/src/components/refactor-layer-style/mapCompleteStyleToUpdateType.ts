@@ -8,6 +8,7 @@ import {
   StyleType,
   RuleStyleContextValue, IconStyleInput,
 } from "@mnd/shared/src/types/layerset/gql/graphql";
+import {toast} from "react-toastify";
 
 export type CompleteIconStyleType = IconStyleInput & {
   images?: string[];
@@ -46,7 +47,22 @@ export const mapCompleteStyleToUpdateType = (
   const filteredContext: StyleContextValue = (() => {
     switch (type) {
       case StyleType.Point: {
-        const { images, ...iconStyleWithoutImages } = (context.point?.iconStyle || {}) as CompleteIconStyleType;
+        const iconStyle = context.point?.iconStyle;
+        if (!iconStyle || !iconStyle.symbolId) {
+          throw toast.warning("아이콘을 선택해주세요.");
+        }
+
+        if (!iconStyle) {
+          return {
+            point: {
+              ...context.point,
+              iconStyle: undefined,
+            },
+          };
+        }
+
+        const { images, ...iconStyleWithoutImages } = iconStyle as CompleteIconStyleType;
+
         return {
           point: {
             ...context.point,
