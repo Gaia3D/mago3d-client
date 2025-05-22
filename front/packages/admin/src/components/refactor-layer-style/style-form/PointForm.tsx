@@ -2,8 +2,9 @@ import React from 'react';
 import { useRecoilState } from 'recoil';
 import { editingStyleState } from '@src/recoils/LayerStyle';
 import { StyleSelectRow } from '@src/components/layerset/layer/style/StyleSelectRow';
-import {PointStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {IconStyleInput, PointStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
 import IconShapeForm from "@src/components/refactor-layer-style/style-form/IconShapeForm";
+import PointShapeForm from "@src/components/refactor-layer-style/style-form/PointShapeForm";
 
 const PointForm = () => {
   const [editingStyle, setEditingStyle] = useRecoilState(editingStyleState);
@@ -21,7 +22,24 @@ const PointForm = () => {
     }));
   }
 
-  const pointStyle = editingStyle?.context?.point ?? {};
+  const handleIconStyleChange = <K extends keyof IconStyleInput>(key: K, value: IconStyleInput[K]) => {
+    setEditingStyle(prev => ({
+      ...prev,
+      context: {
+        ...prev.context,
+        point: {
+          ...prev.context.point,
+          iconStyle: {
+            ...prev.context.point.iconStyle,
+            [key]: value,
+          }
+        }
+      },
+    }));
+  }
+
+  const pointStyle = editingStyle.context.point ?? {iconStyle:{symbolId:""}};
+  const iconStyle = pointStyle.iconStyle;
 
   return (
     <div>
@@ -35,10 +53,12 @@ const PointForm = () => {
         ]}
       />
       {pointStyle.shape === 'point' ?
-        <></> :
+        <PointShapeForm
+
+        /> :
         <IconShapeForm
-          pointStyle={pointStyle}
-          handleChange={handlePointChange}
+          iconStyle={iconStyle}
+          handleChange={handleIconStyleChange}
         />
       }
     </div>

@@ -6,8 +6,12 @@ import {
   UpdateStyleInput,
   StyleContextValue,
   StyleType,
-  RuleStyleContextValue,
+  RuleStyleContextValue, IconStyleInput,
 } from "@mnd/shared/src/types/layerset/gql/graphql";
+
+export type CompleteIconStyleType = IconStyleInput & {
+  images?: string[];
+};
 
 export const mapCompleteStyleToUpdateType = (
   complete: CompleteStyleType
@@ -41,8 +45,15 @@ export const mapCompleteStyleToUpdateType = (
 
   const filteredContext: StyleContextValue = (() => {
     switch (type) {
-      case StyleType.Point:
-        return { point: context.point };
+      case StyleType.Point: {
+        const { images, ...iconStyleWithoutImages } = (context.point?.iconStyle || {}) as CompleteIconStyleType;
+        return {
+          point: {
+            ...context.point,
+            iconStyle: iconStyleWithoutImages,
+          },
+        };
+      }
       case StyleType.Line:
         return { line: context.line };
       case StyleType.Polygon:
