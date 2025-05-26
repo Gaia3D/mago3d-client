@@ -7,6 +7,7 @@ import {toast} from "react-toastify";
 import {mapCompleteStyleToUpdateType} from "@src/components/refactor-layer-style/mapCompleteStyleToUpdateType";
 import CommonForm from "@src/components/refactor-layer-style/style-form/CommonForm";
 import PointForm from "@src/components/refactor-layer-style/style-form/PointForm";
+import LineForm from "@src/components/refactor-layer-style/style-form/LineForm";
 
 const StyleForm = () => {
   const asset = useRecoilValue(selectedAssetState);
@@ -63,7 +64,7 @@ const StyleForm = () => {
           <PointForm attributes={attributes} />
         </div>
         <div className={editingStyle.type === StyleType.Line ? "" : "none"}>
-
+          <LineForm />
         </div>
         <div className={editingStyle.type === StyleType.Polygon ? "" : "none"}>
 

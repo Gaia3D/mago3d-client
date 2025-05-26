@@ -51,5 +51,31 @@ export const createStyledEntity = (
     }
   }
 
+  if (type === StyleType.Line && entity.polygon?.hierarchy) {
+    const line = context.line;
+    const hierarchy = entity.polygon.hierarchy.getValue(now);
+    const strokeColor = Cesium.Color.fromCssColorString(line.strokeColor)
+      .withAlpha(line.strokeOpacity);
+    if (!hierarchy?.positions?.length) return null;
+
+    const positions = [...hierarchy.positions];
+    if (!Cesium.Cartesian3.equals(positions[0], positions[positions.length - 1])) {
+      positions.push(positions[0]);
+    }
+
+    return {
+      polyline: new Cesium.PolylineGraphics({
+        positions,
+        width: line.strokeWidth,
+        material: strokeColor,
+        // material:
+        //   context.strokeType === "dash"
+        //     ? new Cesium.PolylineDashMaterialProperty({ color: strokeColor })
+        //     : strokeColor,
+        clampToGround: true,
+      }),
+    };
+  }
+
   return null;
 }
