@@ -77,5 +77,36 @@ export const createStyledEntity = (
     };
   }
 
+  if (type === StyleType.Polygon && entity.polygon?.hierarchy) {
+    const polygon = context.polygon;
+    const hierarchy = entity.polygon.hierarchy.getValue(now);
+    const strokeColor = Cesium.Color.fromCssColorString(polygon.strokeColor)
+      .withAlpha(polygon.strokeOpacity);
+    const fillColor = Cesium.Color.fromCssColorString(polygon.fillColor)
+      .withAlpha(polygon.fillOpacity);
+    if (!hierarchy?.positions?.length) return null;
+    const positions = [...hierarchy.positions];
+
+    return {
+      polyline: new Cesium.PolylineGraphics({
+        positions,
+        width: polygon.strokeWidth,
+        material: strokeColor,
+        // material:
+        //   context.strokeType === "dash"
+        //     ? new Cesium.PolylineDashMaterialProperty({ color: strokeColor })
+        //     : strokeColor,
+        clampToGround: true,
+      }),
+      polygon: new Cesium.PolygonGraphics({
+        hierarchy,
+        material: fillColor,
+        outline: false,
+        height: 0,
+      }),
+    };
+
+  }
+
   return null;
 }

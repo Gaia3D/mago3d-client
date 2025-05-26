@@ -8,6 +8,7 @@ import {mapCompleteStyleToUpdateType} from "@src/components/refactor-layer-style
 import CommonForm from "@src/components/refactor-layer-style/style-form/CommonForm";
 import PointForm from "@src/components/refactor-layer-style/style-form/PointForm";
 import LineForm from "@src/components/refactor-layer-style/style-form/LineForm";
+import PolygonForm from "@src/components/refactor-layer-style/style-form/PolygonForm";
 
 const StyleForm = () => {
   const asset = useRecoilValue(selectedAssetState);
@@ -67,7 +68,7 @@ const StyleForm = () => {
           <LineForm />
         </div>
         <div className={editingStyle.type === StyleType.Polygon ? "" : "none"}>
-
+          <PolygonForm />
         </div>
         <div className={editingStyle.type === StyleType.Attribute ? "" : "none"}>
 
