@@ -1,14 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import { useRecoilState } from 'recoil';
 import { editingStyleState } from '@src/recoils/LayerStyle';
-import { LabelStyleInput, PointStyleInput } from "@mnd/shared/src/types/layerset/gql/graphql";
+import {
+  HaloInput,
+  LabelStyleInput,
+  PointStyleInput,
+  PreviewColumnsQuery
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import IconShapeForm from "@src/components/refactor-layer-style/style-form/IconShapeForm";
 import PointShapeForm from "@src/components/refactor-layer-style/style-form/PointShapeForm";
 import LabelForm from "@src/components/refactor-layer-style/style-form/LabelForm";
 import {ToggleRow} from "@src/components/layerset/layer/style/ToggleRow";
 import {CompleteIconStyleType} from "@src/components/refactor-layer-style/mapCompleteStyleToUpdateType";
 
-const PointForm = () => {
+interface PointFormProps {
+  attributes: PreviewColumnsQuery;
+}
+
+const PointForm = ({attributes}: PointFormProps) => {
   const [editingStyle, setEditingStyle] = useRecoilState(editingStyleState);
   const pointStyle = editingStyle.context.point;
 
@@ -78,7 +87,7 @@ const PointForm = () => {
         onToggle={() => setIsLabelStyle(!isLabelStyle)}
       />
       {isLabelStyle && (
-        <LabelForm />
+        <LabelForm labelStyle={labelStyle} handleLabelStyleChange={handleLabelStyleChange} attributes={attributes}  />
       )}
     </div>
   );

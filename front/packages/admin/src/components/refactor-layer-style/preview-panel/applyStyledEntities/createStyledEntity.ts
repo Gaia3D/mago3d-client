@@ -1,5 +1,8 @@
 import * as Cesium from "cesium";
 import {LayerStyle, StyleType} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {
+  createLabelGraphics
+} from "@src/components/refactor-layer-style/preview-panel/applyStyledEntities/createLabelGraphics";
 
 export const createStyledEntity = (
   entity: Cesium.Entity,
@@ -8,8 +11,10 @@ export const createStyledEntity = (
   finalFillColor: string
 ): Cesium.Entity.ConstructorOptions | null => {
 
-
+  // const { context, type } = mapStyleToCompleteStyleType(style);
   const { context, type } = style;
+
+  const label = createLabelGraphics(context?.point, entity, now);
 
   if (type === StyleType.Point && entity.position) {
     const point = context.point;
@@ -29,7 +34,7 @@ export const createStyledEntity = (
           outlineWidth: point.strokeWidth,
           heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         }),
-        // ...label,
+        label
       };
 
   }else {
@@ -41,7 +46,7 @@ export const createStyledEntity = (
           heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
           disableDepthTestDistance: Number.POSITIVE_INFINITY,
         }),
-        // ...label,
+        label
       };
     }
   }

@@ -7,6 +7,8 @@ import {
   PolygonStyleInput,
   AttributeStyleInput,
   RasterStyleInput, StyleType, RuleStyleContextValue, Maybe, Scalars,
+  LabelStyleInput,
+  FontStyle
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 
 const DEFAULT_STYLE_CONTEXT = {
@@ -19,6 +21,15 @@ const DEFAULT_STYLE_CONTEXT = {
   size: 10,
 };
 
+const DEFAULT_LABEL_STYLE: LabelStyleInput = {
+  attributeName: "",
+  fontStyle: FontStyle.Normal,
+  fontSize: 12,
+  fillColor: "#000000",
+  halo: {
+    fillColor: "#000000"
+  }
+};
 // undefined 필드 제거 유틸
 const clean = <T extends object>(obj: T): Partial<T> =>
   Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined)) as Partial<T>;
@@ -30,13 +41,22 @@ export type CompleteStyleType = UpdateStyleInput & {
 
 export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleType => {
   const { id, type, access, backgroundId, defaultStatus, description, enabled, format, name, context } = style;
+  const labelStyle = context?.labelStyle
 
   const styleContext: StyleContextValue = {
     point: clean({
       fillColor: context?.fillColor ?? DEFAULT_STYLE_CONTEXT.fillColor,
       fillOpacity: context?.fillOpacity ?? DEFAULT_STYLE_CONTEXT.fillOpacity,
       iconStyle: context?.iconStyle,
-      labelStyle: context?.labelStyle,
+      labelStyle: {
+        attributeName: labelStyle?.attributeName ?? DEFAULT_LABEL_STYLE.attributeName,
+        fontStyle: labelStyle?.fontStyle ?? DEFAULT_LABEL_STYLE.fontStyle,
+        fontSize: labelStyle?.fontSize ?? DEFAULT_LABEL_STYLE.fontSize,
+        fillColor: labelStyle?.fillColor ?? DEFAULT_LABEL_STYLE.fillColor,
+        halo: {
+          fillColor: labelStyle?.halo?.fillColor ?? DEFAULT_LABEL_STYLE.halo.fillColor
+        }
+      },
       maxScale: context?.maxScale,
       minScale: context?.minScale,
       rotation: context?.rotation,
@@ -54,7 +74,12 @@ export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleTyp
     line: clean({
       graphicFillStyle: context?.graphicFillStyle,
       graphicStrokeStyle: context?.graphicStrokeStyle,
-      labelStyle: context?.labelStyle,
+      labelStyle: {
+        attributeName: labelStyle?.attributeName ?? DEFAULT_LABEL_STYLE.attributeName,
+        fontStyle: labelStyle?.fontStyle ?? DEFAULT_LABEL_STYLE.fontStyle,
+        fontSize: labelStyle?.fontSize ?? DEFAULT_LABEL_STYLE.fontSize,
+        fillColor: labelStyle?.fillColor ?? DEFAULT_LABEL_STYLE.fillColor,
+      },
       maxScale: context?.maxScale,
       minScale: context?.minScale,
       strokeColor: context?.strokeColor ?? DEFAULT_STYLE_CONTEXT.strokeColor,
@@ -72,7 +97,12 @@ export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleTyp
       fillOpacity: context?.fillOpacity ?? DEFAULT_STYLE_CONTEXT.fillOpacity,
       graphicFillStyle: context?.graphicFillStyle,
       graphicStrokeStyle: context?.graphicStrokeStyle,
-      labelStyle: context?.labelStyle,
+      labelStyle: {
+        attributeName: labelStyle?.attributeName ?? DEFAULT_LABEL_STYLE.attributeName,
+        fontStyle: labelStyle?.fontStyle ?? DEFAULT_LABEL_STYLE.fontStyle,
+        fontSize: labelStyle?.fontSize ?? DEFAULT_LABEL_STYLE.fontSize,
+        fillColor: labelStyle?.fillColor ?? DEFAULT_LABEL_STYLE.fillColor,
+      },
       maxScale: context?.maxScale,
       minScale: context?.minScale,
       strokeColor: context?.strokeColor ?? DEFAULT_STYLE_CONTEXT.strokeColor,

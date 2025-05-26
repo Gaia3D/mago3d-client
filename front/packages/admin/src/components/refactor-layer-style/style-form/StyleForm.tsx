@@ -60,7 +60,7 @@ const StyleForm = () => {
       <div className="section-body">
         <CommonForm/>
         <div className={editingStyle.type === StyleType.Point ? "" : "none"}>
-          <PointForm />
+          <PointForm attributes={attributes} />
         </div>
         <div className={editingStyle.type === StyleType.Line ? "" : "none"}>
 

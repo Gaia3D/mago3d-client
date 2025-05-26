@@ -32,7 +32,7 @@ const SymbolGrid = ({ groupId, currentPage, setCurrentPage, onSelect, onClose }:
         {items.map((symbol) => {
           const symbolData = symbol.files[symbol.files.length - 1];
           if (!symbolData) return;
-          const symbolSrc = symbolData?.download;
+          const symbolSrc = symbolData?.thumbnail?.download;
           const symbolId = symbolData?.id;
           return (
             <li key={symbol.id}>
