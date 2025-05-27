@@ -2,12 +2,14 @@ import { ClassifyAttributeQuery, ClassifyAttributeQueryVariables } from '@src/ge
 import { RuleStyleInput, Scalars } from '@mnd/shared/src/types/layerset/gql/graphql';
 import { ApolloClient } from "@apollo/client";
 import { ClassifyAttributeDocument } from '@src/generated/gql/layerset/graphql';
+import {AttributeType} from "@src/components/refactor-layer-style/mapStyleToCompleteStyleType";
 
 export const fetchRulesFromServer = async (
   client: ApolloClient<object>,
   assetName: string,
   selectedAttribute: string,
-  style: Scalars['JSON']['output'] | undefined,
+  context: Scalars['JSON']['output'] | undefined,
+  innerType: AttributeType
 ): Promise<{ rules: RuleStyleInput[], comparisonType: 'eq' | 'ge_lt' }> => {
   const result = await client.query<ClassifyAttributeQuery, ClassifyAttributeQueryVariables>({
     query: ClassifyAttributeDocument,
@@ -25,6 +27,13 @@ export const fetchRulesFromServer = async (
   const sorted = [...rules].sort((a, b) => parseFloat(a.min) - parseFloat(b.min));
   const newRules: RuleStyleInput[] = [];
 
+  const createColorStyle = (color: string) => ({
+    '@type': innerType,
+    point: { ...context.point, fillColor: color },
+    line: { ...context.line, strokeColor: color },
+    polygon: { ...context.polygon, fillColor: color },
+  });
+
   newRules.push({
     rule: {
       ge: String(Number.NEGATIVE_INFINITY),
@@ -32,7 +41,7 @@ export const fetchRulesFromServer = async (
       le: sorted[0].min,
       lt: sorted[0].min
     },
-    style: createColorStyle('#000000')
+    style: createColorStyle('#000000'),
   });
 
   for (let i = 0; i < sorted.length - 1; i++) {
@@ -45,7 +54,7 @@ export const fetchRulesFromServer = async (
         le: next.min,
         lt: next.min
       },
-      style: createColorStyle(curr.color)
+      style: createColorStyle(curr.color),
     });
   }
 
@@ -57,14 +66,8 @@ export const fetchRulesFromServer = async (
       le: String(Number.POSITIVE_INFINITY),
       lt: String(Number.POSITIVE_INFINITY)
     },
-    style: createColorStyle(sorted.at(-1)?.color ?? '#000000')
+    style: createColorStyle(sorted.at(-1)?.color ?? '#000000'),
   });
 
   return { rules: newRules, comparisonType };
 };
-
-const createColorStyle = (color: string) => ({
-  point: { fillColor: color },
-  polygon: { fillColor: color },
-  line: { strokeColor: color }
-});

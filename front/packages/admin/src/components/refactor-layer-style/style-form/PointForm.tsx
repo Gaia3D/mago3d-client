@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import { useRecoilState } from 'recoil';
 import { editingStyleState } from '@src/recoils/LayerStyle';
 import {
-  HaloInput,
   LabelStyleInput,
   PointStyleInput,
   PreviewColumnsQuery

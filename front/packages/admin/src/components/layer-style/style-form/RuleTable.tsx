@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { RuleStyleInput } from "@mnd/shared/src/types/layerset/gql/graphql";
 
 interface RuleTableProps {
@@ -12,48 +12,104 @@ const RuleTable = ({
                      ruleStyles,
                      comparisonType,
                      setRuleStyles,
-                     handleDeleteRule
+                     handleDeleteRule,
                    }: RuleTableProps) => {
-
   const handleMinChange = (index: number, value: string) => {
-    const updated = [...ruleStyles];
-    updated[index].rule.ge = value;
-    updated[index].rule.gt = value;
-    if (index > 0) {
-      updated[index - 1].rule.le = value;
-      updated[index - 1].rule.lt = value;
-    }
+    const updated = ruleStyles.map((rule, i) => {
+      if (i === index) {
+        return {
+          ...rule,
+          rule: {
+            ...rule.rule,
+            ge: value,
+            gt: value,
+          },
+        };
+      }
+      if (i === index - 1) {
+        return {
+          ...rule,
+          rule: {
+            ...rule.rule,
+            le: value,
+            lt: value,
+          },
+        };
+      }
+      return rule;
+    });
+
     setRuleStyles(updated);
   };
 
   const handleMaxChange = (index: number, value: string) => {
-    const updated = [...ruleStyles];
-    updated[index].rule.le = value;
-    updated[index].rule.lt = value;
-    if (index + 1 < updated.length) {
-      updated[index + 1].rule.ge = value;
-      updated[index + 1].rule.gt = value;
-    }
+    const updated = ruleStyles.map((rule, i) => {
+      if (i === index) {
+        return {
+          ...rule,
+          rule: {
+            ...rule.rule,
+            le: value,
+            lt: value,
+          },
+        };
+      }
+      if (i === index + 1) {
+        return {
+          ...rule,
+          rule: {
+            ...rule.rule,
+            ge: value,
+            gt: value,
+          },
+        };
+      }
+      return rule;
+    });
+
     setRuleStyles(updated);
   };
 
   const handleColorChange = (index: number, color: string) => {
-    const updated = [...ruleStyles];
-    updated[index].style.point.fillColor = color;
-    updated[index].style.polygon.fillColor = color;
-    updated[index].style.line.strokeColor = color;
+    const updated = ruleStyles.map((rule, i) => {
+      if (i === index) {
+        return {
+          ...rule,
+          style: {
+            ...rule.style,
+            point: {
+              ...rule.style.point,
+              fillColor: color,
+            },
+            polygon: {
+              ...rule.style.polygon,
+              fillColor: color,
+            },
+            line: {
+              ...rule.style.line,
+              strokeColor: color,
+            },
+          },
+        };
+      }
+      return rule;
+    });
+
     setRuleStyles(updated);
   };
 
   const handleAliasChange = (index: number, alias: string) => {
-    const updated = [...ruleStyles];
-    updated[index].alias = alias;
-  }
+    const updated = ruleStyles.map((rule, i) =>
+      i === index ? { ...rule, alias } : rule
+    );
+
+    setRuleStyles(updated);
+  };
 
   const renderRangeRuleRow = (ruleStyle: RuleStyleInput, index: number) => {
     const min = ruleStyle.rule.ge ?? ruleStyle.rule.gt ?? '';
     const max = ruleStyle.rule.le ?? ruleStyle.rule.lt ?? '';
-    const color = ruleStyle.style.point.fillColor ?? '#000000';
+    const color = ruleStyle.style.point?.fillColor ?? '#000000';
     const alias = ruleStyle.alias ?? '';
 
     return (
@@ -100,11 +156,11 @@ const RuleTable = ({
   };
 
   const renderEqualRuleRow = (ruleStyle: RuleStyleInput, index: number) => {
+    if (index === 0) return null;
     const eq = ruleStyle.rule.eq ?? '';
-    const color = ruleStyle.style.point.fillColor ?? '#000000';
+    const color = ruleStyle.style.point?.fillColor ?? '#000000';
     const alias = ruleStyle.alias ?? '';
 
-    if (index === 0) return null;
     return (
       <tr key={index}>
         <td>

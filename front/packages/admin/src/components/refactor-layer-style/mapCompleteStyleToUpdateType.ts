@@ -1,14 +1,12 @@
+import {AttributeType, CompleteRuleStyleContextValue, CompleteStyleType} from './mapStyleToCompleteStyleType';
 import {
-  CompleteRuleStyleContextValue,
-  CompleteStyleType
-} from './mapStyleToCompleteStyleType';
-import {
-  UpdateStyleInput,
+  IconStyleInput,
+  LabelStyleInput,
+  RuleStyleContextValue,
   StyleContextValue,
   StyleType,
-  RuleStyleContextValue, IconStyleInput, LabelStyleInput,
+  UpdateStyleInput,
 } from "@mnd/shared/src/types/layerset/gql/graphql";
-import {toast} from "react-toastify";
 
 export type CompleteIconStyleType = IconStyleInput & {
   images?: string[];
@@ -42,7 +40,7 @@ export const mapCompleteStyleToUpdateType = (
   };
 
   const filterRuleStyle = (style: CompleteRuleStyleContextValue): RuleStyleContextValue => {
-    const typeValue = style?.['@type'];
+    const typeValue = style?.["@type"];
 
     const baseStyle = {
       point: style?.point
@@ -67,11 +65,11 @@ export const mapCompleteStyleToUpdateType = (
     };
 
     switch (typeValue) {
-      case 'PointStyle':
+      case AttributeType.PointStyle:
         return { point: baseStyle.point };
-      case 'LineStyle':
+      case AttributeType.LineStyle:
         return { line: baseStyle.line };
-      case 'PolygonStyle':
+      case AttributeType.PolygonStyle:
         return { polygon: baseStyle.polygon };
       default:
         return {};

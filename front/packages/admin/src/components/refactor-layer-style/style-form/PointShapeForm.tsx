@@ -5,9 +5,10 @@ import {IconStyleInput, PointStyleInput} from "@mnd/shared/src/types/layerset/gq
 interface  PointShapeFormProps {
   pointStyle: PointStyleInput,
   handleChange: <K extends keyof PointStyleInput>(key: K, value: PointStyleInput[K]) => void;
+  isAttribute?: boolean
 }
 
-const PointShapeForm = ({pointStyle, handleChange}: PointShapeFormProps) => {
+const PointShapeForm = ({pointStyle, handleChange, isAttribute = false}: PointShapeFormProps) => {
   return (
     <>
       <StyleInputRow
@@ -39,12 +40,16 @@ const PointShapeForm = ({pointStyle, handleChange}: PointShapeFormProps) => {
         step={0.01}
         onChange={val => handleChange("strokeOpacity", Number(val))}
       />
-      <StyleInputRow
-        title="채우기 색상"
-        type="color"
-        value={pointStyle.fillColor}
-        onChange={val => handleChange("fillColor", String(val))}
-      />
+      {
+        !isAttribute && (
+          <StyleInputRow
+            title="채우기 색상"
+            type="color"
+            value={pointStyle.fillColor}
+            onChange={val => handleChange("fillColor", String(val))}
+          />
+        )
+      }
       <StyleInputRow
         title="채우기 투명도"
         type="range"

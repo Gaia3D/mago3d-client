@@ -9,6 +9,7 @@ import CommonForm from "@src/components/refactor-layer-style/style-form/CommonFo
 import PointForm from "@src/components/refactor-layer-style/style-form/PointForm";
 import LineForm from "@src/components/refactor-layer-style/style-form/LineForm";
 import PolygonForm from "@src/components/refactor-layer-style/style-form/PolygonForm";
+import AttributeForm from "@src/components/refactor-layer-style/style-form/AttributeForm";
 
 const StyleForm = () => {
   const asset = useRecoilValue(selectedAssetState);
@@ -26,7 +27,7 @@ const StyleForm = () => {
     console.log("updateStyleInput", updateStyleInput);
     try {
       const response = await updateStyleMutation({ variables: { id: editingStyle.id, input: updateStyleInput } });
-      console.log("response.data", response.data)
+      console.log("response.data", response.data);
       toast.success("스타일 수정 완료");
 
       const updatedStyle = editingStyle;
@@ -71,7 +72,7 @@ const StyleForm = () => {
           <PolygonForm />
         </div>
         <div className={editingStyle.type === StyleType.Attribute ? "" : "none"}>
-
+          <AttributeForm attributes={attributes} />
         </div>
       </div>
     </>

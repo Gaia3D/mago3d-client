@@ -39,6 +39,16 @@ export type CompleteStyleType = UpdateStyleInput & {
   type: StyleType;
 };
 
+export enum AttributeType {
+  PointStyle = "PointStyle",
+  LineStyle = "LineStyle",
+  PolygonStyle = "PolygonStyle",
+}
+
+export type CompleteRuleStyleContextValue = RuleStyleContextValue & {
+  '@type': AttributeType;
+};
+
 export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleType => {
   const { id, type, access, backgroundId, defaultStatus, description, enabled, format, name, context } = style;
   const labelStyle = context?.labelStyle
@@ -148,10 +158,6 @@ export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleTyp
     name,
     context: styleContext,
   };
-};
-
-export type CompleteRuleStyleContextValue = RuleStyleContextValue & {
-  '@type': 'PointStyle' | 'LineStyle' | 'PolygonStyle';
 };
 
 const normalizeRuleStyleContext = (rawStyle: Maybe<Scalars['JSON']['output']>): CompleteRuleStyleContextValue  => {
