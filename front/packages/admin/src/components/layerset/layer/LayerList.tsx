@@ -28,20 +28,44 @@ import CreatePopup from "../group/CreatePopup";
 import {FragmentType} from "@src/generated/gql/layerset";
 import {RenderParams} from "@minoru/react-dnd-treeview/dist/types";
 import {useTranslation} from "react-i18next";
+import {useKeycloak} from "@react-keycloak/web";
 
 const LayerList = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const mutationOptions = {
-    refetchQueries: [LayersetGroupListWithAssetDocument]
-  };
+  const {keycloak} = useKeycloak();
+  const userId = keycloak?.profile?.id ?? "";
+  const filter = {
+    userId: { eq : userId },
+    or : [
+      {
+        access : { eq : "Public" }
+      },
+      {
+        and : [
+          { access : { eq : "Private" }},
+          { createdBy : { eq : userId }}
+        ]
+      }
+    ]
+  }
 
+  const mutationOptions = {
+    refetchQueries: [
+      {
+        query: LayersetGroupListWithAssetDocument,
+        variables: {filter: filter}
+      }
+    ]
+  };
   const [updateGroupMutation] = useMutation(LayersetUpdateGroupDocument, mutationOptions);
   const [updateAssetMutation] = useMutation(LayersetUpdateAssetDocument, mutationOptions);
   const [locateGroupMutation] = useMutation(LayersetLocateGroupDocument, mutationOptions);
   const [locateAssetMutation] = useMutation(LayersetLocateAssetDocument, mutationOptions);
 
-  const {data} = useSuspenseQuery(LayersetGroupListWithAssetDocument)
+  const { data } = useSuspenseQuery(LayersetGroupListWithAssetDocument, {
+    variables: {filter: filter}
+  });
 
   const [onCreate, setOnCreate] = useState<boolean>(false);
   const [initialOpen, setInitialOpen] = useState<string[] | number[]>([]);
@@ -312,16 +336,42 @@ const TreeNode = (props: TreeNodeProps) => {
 const LayerNode = ({node, params }: TreeNodeProps) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const {keycloak} = useKeycloak();
+  const userId = keycloak?.profile?.id ?? "";
+  const filter = {
+    userId: { eq : userId },
+    or : [
+      {
+        access : { eq : "Public" }
+      },
+      {
+        and : [
+          { access : { eq : "Private" }},
+          { createdBy : { eq : userId }}
+        ]
+      }
+    ]
+  }
 
   const asset = node.data as LayersetAssetBasicFragment;
   //console.log('asset', asset);
 
   const [updateAssetMutation] = useMutation(LayersetUpdateAssetDocument, {
-    refetchQueries: [LayersetGroupListWithAssetDocument]
+    refetchQueries: [
+      {
+        query: LayersetGroupListWithAssetDocument,
+        variables: {filter: filter}
+      }
+    ]
   });
 
   const [deleteAssetMutation] = useMutation(LayersetDeleteAssetDocument, {
-    refetchQueries: [LayersetGroupListWithAssetDocument]
+    refetchQueries: [
+      {
+        query: LayersetGroupListWithAssetDocument,
+        variables: {filter: filter}
+      }
+    ]
   });
 
   const toDetail = useCallback(() => {
@@ -390,13 +440,39 @@ const LayerNode = ({node, params }: TreeNodeProps) => {
 const GroupNode = ({node, params}: TreeNodeProps) => {
   const { t } = useTranslation();
   const group = node.data as LayersetGroupBasicFragment;
+  const {keycloak} = useKeycloak();
+  const userId = keycloak?.profile?.id ?? "";
+  const filter = {
+    userId: { eq : userId },
+    or : [
+      {
+        access : { eq : "Public" }
+      },
+      {
+        and : [
+          { access : { eq : "Private" }},
+          { createdBy : { eq : userId }}
+        ]
+      }
+    ]
+  }
 
   const [updateMutation] = useMutation(LayersetUpdateGroupDocument, {
-    refetchQueries: [LayersetGroupListWithAssetDocument]
+    refetchQueries: [
+      {
+        query: LayersetGroupListWithAssetDocument,
+        variables: {filter: filter}
+      }
+    ]
   });
 
   const [deleteMutation] = useMutation(LayersetDeleteGroupDocument, {
-    refetchQueries: [LayersetGroupListWithAssetDocument]
+    refetchQueries: [
+      {
+        query: LayersetGroupListWithAssetDocument,
+        variables: {filter: filter}
+      }
+    ]
   });
 
   const deleteGroup = useCallback(() => {

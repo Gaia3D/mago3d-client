@@ -44,13 +44,13 @@ fragment LayersetAssetBasic on LayerAsset {
     }
 }
 
-query LayersetGroupListWithAsset @api(name: layerset) {
-    groups {
-        ...LayersetGroupBasic
-        assets {
-            ...LayersetAssetBasic
-        }
+query LayersetGroupListWithAsset($filter: GroupFilterInput) @api(name: layerset) {
+  groups(filter: $filter) {
+    ...LayersetGroupBasic
+    assets {
+      ...LayersetAssetBasic
     }
+  }
 }
 
 query GroupById($id: ID!) @api(name: layerset) {

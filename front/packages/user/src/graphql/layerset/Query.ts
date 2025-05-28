@@ -1,58 +1,57 @@
 import gql from "graphql-tag";
 
-export const GET_USERLAYERGROUPS = gql `
-    query GET_USERLAYERGROUPS{
-    userGroups
-    {
+export const GET_USERLAYERGROUPS = gql`
+  query GET_USERLAYERGROUPS($filter: UserGroupFilterInput) {
+    userGroups(filter: $filter) {
+      groupId
+      name
+      description
+      collapsed
+      order
+      parent {
         groupId
         name
         description
         collapsed
         order
-        parent {
-            groupId
-            name
-            description
-            collapsed
-            order
-        }
-        children {
-            groupId
-            name
-            description
-            collapsed
-            order
-            assets {
-                assetId
-                type
-                name
-                order
-                visible
-                # properties
-            }
-        }
+      }
+      children {
+        groupId
+        name
+        description
+        collapsed
+        order
         assets {
-            assetId
-            type
-            name
-            order
-            visible
-            properties
-            createdBy
-              styles {
-                id
-                name
-                format
-                description
-                enabled
-                defaultStatus
-                access
-                context
-            }
+          assetId
+          type
+          name
+          order
+          visible
         }
+      }
+      assets {
+        assetId
+        type
+        name
+        order
+        visible
+        properties
+        createdBy
+        styles {
+          id
+          name
+          format
+          description
+          enabled
+          defaultStatus
+          access
+          context
+        }
+      }
     }
-}
-`
+  }
+`;
+
 
 export const GET_LAYERGROUPS = gql `
     query GET_LAYERGROUPS{

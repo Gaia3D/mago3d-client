@@ -16,13 +16,11 @@ interface TreeContainerProps {
 }
 
 export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
-
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
     const setLayers = useSetRecoilState<UserLayerAsset[]>(layersState);
     const [filteredGroups, setFilteredGroups] = useState<Maybe<UserLayerGroup>[]>([]);
     const {contents} = useRecoilValueLoadable(currentUserProfileSelector);
     const userId = contents.id;
-
 
     const debouncedSetLayers = useCallback(
         debounce((layers: UserLayerAsset[]) => {
@@ -33,8 +31,22 @@ export const TreeContainer: FC<TreeContainerProps> = ({ searchTerm }) => {
 
     useEffect(() => {
         if (userLayerGroups.length === 0) {
-            layersetGraphqlFetcher<Query>(GET_USERLAYERGROUPS)
-                .then((result) => {
+            layersetGraphqlFetcher<Query>(GET_USERLAYERGROUPS, {
+                filter: {
+                    userId: { eq : userId },
+                    or : [
+                        {
+                            access : { eq : "Public" }
+                        },
+                        {
+                            and : [
+                                { access : { eq : "Private" }},
+                                { createdBy : { eq : userId }}
+                            ]
+                        }
+                    ]
+                }
+            }).then((result) => {
                     const { userGroups } = result;
                     setUserLayerGroups(userGroups);
                     const flatLayerGroup = userGroups.flatMap(group => group?.assets ?? []);

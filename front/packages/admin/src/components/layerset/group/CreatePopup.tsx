@@ -8,15 +8,39 @@ import {
 } from "@src/generated/gql/layerset/graphql";
 import React from "react";
 import {useTranslation} from "react-i18next";
+import {useKeycloak} from "@react-keycloak/web";
 
 const CreatePopup = ({onClose}: {
   onClose: () => void,
 }) => {
   const { t } = useTranslation();
   const {register, handleSubmit, formState: {errors}} = useForm<CreateGroupInput>();
+  const {keycloak} = useKeycloak();
+  const userId = keycloak?.profile?.id ?? "";
+  const filter = {
+    userId: { eq : userId },
+    or : [
+      {
+        access : { eq : "Public" }
+      },
+      {
+        and : [
+          { access : { eq : "Private" }},
+          { createdBy : { eq : userId }}
+        ]
+      }
+    ]
+  }
+
 
   const [createMutation] = useMutation(LayersetCreateGroupDocument,{
-    refetchQueries: [LayersetGroupListDocument, LayersetGroupListWithAssetDocument]
+    refetchQueries: [
+      LayersetGroupListDocument,
+      {
+        query: LayersetGroupListWithAssetDocument,
+        variables: {filter: filter}
+      }
+    ]
   });
 
   const onSubmit: SubmitHandler<CreateGroupInput> = (input) => {
