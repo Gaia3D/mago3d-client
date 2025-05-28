@@ -20,7 +20,8 @@ import {
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {layerStylesState, selectedAssetState} from "@src/recoils/LayerStyle";
 import {useRemoteAsset} from "@src/hooks/useRemoteAsset";
-import LayerStyle from "@src/components/refactor-layer-style/LayerStyle";
+import LayerStyle from "@src/layer-style/components/LayerStyle";
+// import LayerStyle from "@src/components/refactor-layer-style/LayerStyle";
 
 interface LayerDetailIndexProps {
   id: string;
