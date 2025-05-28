@@ -26,12 +26,17 @@ export const fetchRulesFromServer = async (
 
   const sorted = [...rules].sort((a, b) => parseFloat(a.min) - parseFloat(b.min));
   const newRules: RuleStyleInput[] = [];
+  const attributeStyle = context.attribute.rules[1].style;
+
+  const pointStyle = attributeStyle.point ?? context.point;
+  const lineStyle = attributeStyle.line ?? context.line;
+  const polygonStyle = attributeStyle.polygon ?? context.polygon;
 
   const createColorStyle = (color: string) => ({
     '@type': innerType,
-    point: { ...context.point, fillColor: color },
-    line: { ...context.line, strokeColor: color },
-    polygon: { ...context.polygon, fillColor: color },
+    point: { ...pointStyle, fillColor: color },
+    line: { ...lineStyle, strokeColor: color },
+    polygon: { ...polygonStyle, fillColor: color },
   });
 
   newRules.push({

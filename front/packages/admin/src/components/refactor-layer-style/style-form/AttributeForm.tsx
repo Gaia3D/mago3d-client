@@ -66,8 +66,7 @@ const AttributeForm = ({attributes}: AttributeFormProps) => {
     if (!assetName || !attribute?.attribute) return;
     try {
       const { rules, comparisonType } = await fetchRulesFromServer(client, assetName, attribute.attribute, editingStyle.context, innerType);
-      console.log("rules", rules);
-      console.log("comparisonType", comparisonType);
+
       setComparisonType(comparisonType);
       setRuleStyles(rules);
     } catch (e) {

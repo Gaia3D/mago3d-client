@@ -19,11 +19,11 @@ const AttributePointForm = ({ruleStyles, setRuleStyles, attributes}: AttributePo
   const initPointStyle = editingStyle.context.point;
   const pointStyle = editingStyle?.context?.attribute?.rules?.[0]?.style?.point ?? initPointStyle;
 
-  const [iconStyle, setIconStyle] = useState<CompleteIconStyleType>(initPointStyle.iconStyle);
-  const [labelStyle, setLabelStyle] = useState<LabelStyleInput>(initPointStyle.labelStyle);
+  const [iconStyle, setIconStyle] = useState<CompleteIconStyleType>(pointStyle.iconStyle);
+  const [labelStyle, setLabelStyle] = useState<LabelStyleInput>(pointStyle.labelStyle);
 
-  const [isIconStyle, setIsIconStyle] = useState(!!initPointStyle.iconStyle);
-  const [isLabelStyle, setIsLabelStyle] = useState(!!initPointStyle.labelStyle);
+  const [isIconStyle, setIsIconStyle] = useState(!!pointStyle.iconStyle);
+  const [isLabelStyle, setIsLabelStyle] = useState(!!pointStyle.labelStyle);
 
   const handlePointChange = <K extends keyof PointStyleInput>(key: K, value: PointStyleInput[K]) => {
     const updatedRules = ruleStyles.map(ruleStyle => ({

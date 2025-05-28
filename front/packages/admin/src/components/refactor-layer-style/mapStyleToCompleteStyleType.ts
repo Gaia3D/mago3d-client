@@ -27,7 +27,8 @@ const DEFAULT_LABEL_STYLE: LabelStyleInput = {
   fontSize: 12,
   fillColor: "#000000",
   halo: {
-    fillColor: "#000000"
+    fillColor: "#000000",
+    fillOpacity: 0
   }
 };
 // undefined 필드 제거 유틸
@@ -64,7 +65,8 @@ export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleTyp
         fontSize: labelStyle?.fontSize ?? DEFAULT_LABEL_STYLE.fontSize,
         fillColor: labelStyle?.fillColor ?? DEFAULT_LABEL_STYLE.fillColor,
         halo: {
-          fillColor: labelStyle?.halo?.fillColor ?? DEFAULT_LABEL_STYLE.halo.fillColor
+          fillColor: labelStyle?.halo?.fillColor ?? DEFAULT_LABEL_STYLE.halo.fillColor,
+          fillOpacity: labelStyle?.halo?.fillOpacity ?? DEFAULT_LABEL_STYLE.halo.fillOpacity
         }
       },
       maxScale: context?.maxScale,
@@ -89,6 +91,10 @@ export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleTyp
         fontStyle: labelStyle?.fontStyle ?? DEFAULT_LABEL_STYLE.fontStyle,
         fontSize: labelStyle?.fontSize ?? DEFAULT_LABEL_STYLE.fontSize,
         fillColor: labelStyle?.fillColor ?? DEFAULT_LABEL_STYLE.fillColor,
+        halo: {
+          fillColor: labelStyle?.halo?.fillColor ?? DEFAULT_LABEL_STYLE.halo.fillColor,
+          fillOpacity: labelStyle?.halo?.fillOpacity ?? DEFAULT_LABEL_STYLE.halo.fillOpacity
+        }
       },
       maxScale: context?.maxScale,
       minScale: context?.minScale,
@@ -112,6 +118,10 @@ export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleTyp
         fontStyle: labelStyle?.fontStyle ?? DEFAULT_LABEL_STYLE.fontStyle,
         fontSize: labelStyle?.fontSize ?? DEFAULT_LABEL_STYLE.fontSize,
         fillColor: labelStyle?.fillColor ?? DEFAULT_LABEL_STYLE.fillColor,
+        halo: {
+          fillColor: labelStyle?.halo?.fillColor ?? DEFAULT_LABEL_STYLE.halo.fillColor,
+          fillOpacity: labelStyle?.halo?.fillOpacity ?? DEFAULT_LABEL_STYLE.halo.fillOpacity
+        }
       },
       maxScale: context?.maxScale,
       minScale: context?.minScale,
@@ -162,6 +172,7 @@ export const mapStyleToCompleteStyleType = (style: LayerStyle): CompleteStyleTyp
 
 const normalizeRuleStyleContext = (rawStyle: Maybe<Scalars['JSON']['output']>): CompleteRuleStyleContextValue  => {
   const type = rawStyle?.['@type'] || 'PointStyle';
+  const labelStyle = rawStyle?.labelStyle
 
   return {
     '@type': type,
@@ -174,11 +185,31 @@ const normalizeRuleStyleContext = (rawStyle: Maybe<Scalars['JSON']['output']>): 
       size: rawStyle?.size,
       shape: rawStyle?.shape,
       rotation: rawStyle?.rotation,
+      labelStyle: {
+        attributeName: labelStyle?.attributeName ?? DEFAULT_LABEL_STYLE.attributeName,
+        fontStyle: labelStyle?.fontStyle ?? DEFAULT_LABEL_STYLE.fontStyle,
+        fontSize: labelStyle?.fontSize ?? DEFAULT_LABEL_STYLE.fontSize,
+        fillColor: labelStyle?.fillColor ?? DEFAULT_LABEL_STYLE.fillColor,
+        halo: {
+          fillColor: labelStyle?.halo?.fillColor ?? DEFAULT_LABEL_STYLE.halo.fillColor,
+          fillOpacity: labelStyle?.halo?.fillOpacity ?? DEFAULT_LABEL_STYLE.halo.fillOpacity
+        }
+      },
     }),
     line: clean({
       strokeColor: rawStyle?.strokeColor ?? DEFAULT_STYLE_CONTEXT.strokeColor,
       strokeOpacity: rawStyle?.strokeOpacity ?? DEFAULT_STYLE_CONTEXT.strokeOpacity,
       strokeWidth: rawStyle?.strokeWidth ?? DEFAULT_STYLE_CONTEXT.strokeWidth,
+      labelStyle: {
+        attributeName: labelStyle?.attributeName ?? DEFAULT_LABEL_STYLE.attributeName,
+        fontStyle: labelStyle?.fontStyle ?? DEFAULT_LABEL_STYLE.fontStyle,
+        fontSize: labelStyle?.fontSize ?? DEFAULT_LABEL_STYLE.fontSize,
+        fillColor: labelStyle?.fillColor ?? DEFAULT_LABEL_STYLE.fillColor,
+        halo: {
+          fillColor: labelStyle?.halo?.fillColor ?? DEFAULT_LABEL_STYLE.halo.fillColor,
+          fillOpacity: labelStyle?.halo?.fillOpacity ?? DEFAULT_LABEL_STYLE.halo.fillOpacity
+        }
+      },
     }),
     polygon: clean({
       fillColor: rawStyle?.fillColor ?? DEFAULT_STYLE_CONTEXT.fillColor,
@@ -186,6 +217,16 @@ const normalizeRuleStyleContext = (rawStyle: Maybe<Scalars['JSON']['output']>): 
       strokeColor: rawStyle?.strokeColor ?? DEFAULT_STYLE_CONTEXT.strokeColor,
       strokeOpacity: rawStyle?.strokeOpacity ?? DEFAULT_STYLE_CONTEXT.strokeOpacity,
       strokeWidth: rawStyle?.strokeWidth ?? DEFAULT_STYLE_CONTEXT.strokeWidth,
+      labelStyle: {
+        attributeName: labelStyle?.attributeName ?? DEFAULT_LABEL_STYLE.attributeName,
+        fontStyle: labelStyle?.fontStyle ?? DEFAULT_LABEL_STYLE.fontStyle,
+        fontSize: labelStyle?.fontSize ?? DEFAULT_LABEL_STYLE.fontSize,
+        fillColor: labelStyle?.fillColor ?? DEFAULT_LABEL_STYLE.fillColor,
+        halo: {
+          fillColor: labelStyle?.halo?.fillColor ?? DEFAULT_LABEL_STYLE.halo.fillColor,
+          fillOpacity: labelStyle?.halo?.fillOpacity ?? DEFAULT_LABEL_STYLE.halo.fillOpacity
+        }
+      },
     }),
   }
 };

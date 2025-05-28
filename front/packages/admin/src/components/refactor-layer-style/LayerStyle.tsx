@@ -20,7 +20,10 @@ const LayerStyle = () => {
   const setEditingStyle = useSetRecoilState(editingStyleState);
 
   useEffect(() => {
-    if (!asset?.styles?.length) return;
+    if (!asset?.styles?.length) {
+      setCompleteStyles([]);
+      return;
+    }
     const mapped = asset.styles.map(mapStyleToCompleteStyleType);
     setCompleteStyles(mapped);
   }, [asset, setCompleteStyles]);
