@@ -11,8 +11,8 @@ export const GraphQLAssetService: AssetService = {
     return data.remote;
   },
 
-  async updateAsset(id, data) {
-    // mutation 예시
-    // return client.mutate({ ... });
-  },
+  // async updateAsset(id, data) {
+  //   // mutation 예시
+  //   return client.mutate({ ... });
+  // },
 };
