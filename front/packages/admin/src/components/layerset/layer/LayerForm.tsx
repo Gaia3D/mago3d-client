@@ -4,7 +4,7 @@ import { UpdateAssetInput } from "@src/generated/gql/layerset/graphql";
 import { getPublishStatusName } from "@src/api/Data";
 import { useTranslation } from "react-i18next";
 import {useRecoilValue} from "recoil";
-import {selectedAssetState} from "@src/recoils/LayerStyle";
+import {selectedAssetState} from "@src/layer-style/recoils/layerStyle";
 
 interface LayerFormProps {
   groups: { id: string; name: string }[];

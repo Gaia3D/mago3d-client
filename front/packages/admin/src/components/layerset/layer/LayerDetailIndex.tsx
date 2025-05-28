@@ -17,11 +17,9 @@ import {
   LayersetUpdateAssetDocument,
   UpdateAssetInput,
 } from "@mnd/shared/src/types/layerset/gql/graphql";
-import {useRecoilState, useSetRecoilState} from "recoil";
-import {layerStylesState, selectedAssetState} from "@src/recoils/LayerStyle";
-import {useRemoteAsset} from "@src/hooks/useRemoteAsset";
+import {useRecoilState} from "recoil";
 import LayerStyle from "@src/layer-style/components/LayerStyle";
-// import LayerStyle from "@src/components/refactor-layer-style/LayerStyle";
+import {selectedAssetState} from "@src/layer-style/recoils/layerStyle";
 
 interface LayerDetailIndexProps {
   id: string;
@@ -40,17 +38,10 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
 
   const [activeTab, setActiveTab] = useState<TabType>("default");
   const [globalAsset, setGlobalAsset] = useRecoilState(selectedAssetState);
-  const setLayerStyles = useSetRecoilState(layerStylesState);
-
-  const { layer } = asset.properties;
-  const originalHref = layer.resource.href;
-  useRemoteAsset(originalHref);
 
   useEffect(() => {
-    console.log("asset", asset);
     setGlobalAsset(asset);
-    setLayerStyles(asset.styles);
-  }, [asset, setGlobalAsset, setLayerStyles]);
+  }, [asset, setGlobalAsset]);
 
   const [updateAsset] = useMutation(LayersetUpdateAssetDocument, {
     refetchQueries: [LayersetAssetDocument],
