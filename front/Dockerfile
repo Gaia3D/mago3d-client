@@ -23,7 +23,6 @@ RUN pnpm install
 
 # Build the app
 RUN pnpm --prefix packages/shared run codegen
-RUN pnpm --prefix packages/admin run codegen
 RUN pnpm --prefix packages/admin run build
 RUN pnpm --prefix packages/user run build
 

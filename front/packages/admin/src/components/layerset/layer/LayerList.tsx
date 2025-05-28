@@ -21,7 +21,7 @@ import {
   LayersetUpdateAssetDocument,
   LayersetUpdateGroupDocument,
   LocateOption
-} from "@src/generated/gql/layerset/graphql";
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {useFragment} from "@src/generated/gql/userset";
 import {useMutation, useSuspenseQuery} from "@apollo/client";
 import CreatePopup from "../group/CreatePopup";
