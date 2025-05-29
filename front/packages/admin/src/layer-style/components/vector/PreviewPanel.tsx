@@ -6,6 +6,8 @@ import {BackgroundMaps, BackgroundMapType} from "@src/constants/backgroundMap";
 import PreviewModeSelector from "@src/layer-style/components/vector/preview-panel/PreviewModeSelector";
 import BackgroundMapSelector from "@src/layer-style/components/vector/preview-panel/BackgroundMapSelector";
 import LegendPreview from "@src/layer-style/components/vector/preview-panel/LegendPreview";
+import CesiumPreview from "@src/layer-style/components/vector/preview-panel/CesiumPreview";
+import {usePreviewData} from "@src/layer-style/hooks/usePreviewData";
 
 export enum PreviewMode {
   Single = "single",
@@ -15,30 +17,10 @@ export enum PreviewMode {
 
 const PreviewPanel = () => {
   const asset = useRecoilValue(selectedAssetState);
-  const [dataSource, setDataSource] = useState<Cesium.GeoJsonDataSource | null>(null);
   const [backgroundMap, setBackgroundMap] = useState<BackgroundMapType>(BackgroundMaps[0]);
   const [previewMode, setPreviewMode] = useState<PreviewMode>(PreviewMode.Single);
 
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const resourceName = asset?.properties?.layer?.resource?.name;
-    if (!resourceName) return;
-    const fetchData = async () => {
-      try {
-        const url = `${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}service=WFS&version=2.0.0&request=GetFeature&typeName=${resourceName}&outputFormat=application/json`;
-        const loadedDataSource = await Cesium.GeoJsonDataSource.load(url);
-        setDataSource(loadedDataSource);
-      } catch (e) {
-        console.error("GeoJSON load error:", e);
-      } finally {
-        console.log("datasource 호출 완료")
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [asset]);
+  const { dataSource, loading } = usePreviewData(asset);
 
   if (loading) return <>loading...</>;
 
@@ -54,11 +36,11 @@ const PreviewPanel = () => {
           onClick={setPreviewMode}
         />
         <div className={`preview-cesium-wrapper ${previewMode === PreviewMode.Legend ? 'none' : ''}`}>
-          {/*<CesiumPreview*/}
-          {/*  dataSource={dataSource}*/}
-          {/*  backgroundMap={backgroundMap}*/}
-          {/*  previewMode={previewMode}*/}
-          {/*/>*/}
+          <CesiumPreview
+            dataSource={dataSource}
+            backgroundMap={backgroundMap}
+            previewMode={previewMode}
+          />
           <BackgroundMapSelector
             currentMap={backgroundMap}
             onClick={setBackgroundMap}
