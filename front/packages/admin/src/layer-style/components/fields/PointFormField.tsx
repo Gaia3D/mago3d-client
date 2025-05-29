@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {EditableContextModel} from "@src/layer-style/models/EditableContextModel";
 import {PreviewColumn} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {FieldRow} from "@src/layer-style/components/fields/FieldRow";
+import SymbolPicker from "@src/layer-style/components/fields/picker/SymbolPicker";
 
 interface PointFormFieldProps {
   context: EditableContextModel;
@@ -10,6 +11,12 @@ interface PointFormFieldProps {
 }
 
 const PointFormField = ({context, onChange, attributes}: PointFormFieldProps) => {
+  const [isSymbolPickerVisible, setIsSymbolPickerVisible] = useState(false);
+  const selectSymbol = (symbolId: string, symbolSrc: string) => {
+    onChange("iconSymbolId", symbolId);
+    onChange("iconImage", symbolSrc);
+  }
+
   return (
     <>
       <FieldRow
@@ -43,16 +50,42 @@ const PointFormField = ({context, onChange, attributes}: PointFormFieldProps) =>
         value={context.isIcon ? "true" : "false"}
         onChange={value => onChange("isIcon", value === "true")}
         options={[
-          { value: "false", label: "점" },
-          { value: "true", label: "아이콘" },
+          {value: "false", label: "점"},
+          {value: "true", label: "아이콘"},
         ]}
       />
 
       {context.isIcon ? (
         <>
-
+          <div className="form-row">
+            <label htmlFor="iconImage">아이콘</label>
+            <div
+              className="icon-preview"
+              onClick={() => setIsSymbolPickerVisible(true)}
+            >
+              {context.iconImage
+                ? (<img src={context.iconImage} alt="아이콘 이미지"/>)
+                : (<div className="no-icon">{"/"}</div>)}
+            </div>
+          </div>
+          {isSymbolPickerVisible && (
+            <SymbolPicker
+              onSelect={(id: string, src: string) => selectSymbol(id, src)}
+              onClose={() => setIsSymbolPickerVisible(false)}
+            />
+          )}
+          <FieldRow
+            id="iconScale"
+            label="아이콘 배율"
+            type="number"
+            min={0}
+            max={2}
+            step={0.1}
+            value={context.iconScale}
+            onChange={value => onChange("iconScale", value)}
+          />
         </>
-      ):(
+      ) : (
         <>
           <FieldRow
             id="size"
@@ -109,7 +142,7 @@ const PointFormField = ({context, onChange, attributes}: PointFormFieldProps) =>
           />
         </>
       )}
-      
+
       <FieldRow
         id="isLabel"
         label="라벨 사용"
@@ -117,7 +150,7 @@ const PointFormField = ({context, onChange, attributes}: PointFormFieldProps) =>
         value={context.isLabel}
         onChange={value => onChange("isLabel", value)}
       />
-      
+
       {context.isLabel && (
         <div className="inner-body">
           <FieldRow
@@ -126,9 +159,9 @@ const PointFormField = ({context, onChange, attributes}: PointFormFieldProps) =>
             type="select"
             value={context.attribute}
             onChange={value => onChange("attribute", value)}
-            options={attributes?.map(attr => ({ value: attr.field, label: attr.field }))}
+            options={attributes?.map(attr => ({value: attr.field, label: attr.field}))}
           />
-      
+
           <FieldRow
             id="labelFontSize"
             label="라벨 폰트 크기"

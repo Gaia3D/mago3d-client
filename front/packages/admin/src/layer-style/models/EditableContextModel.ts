@@ -40,7 +40,7 @@ export type EditableContextModel = {
 
   // 임시 사용 속성
   visible: boolean;
-  iconImage: "";
+  iconImage: string;
 };
 
 
