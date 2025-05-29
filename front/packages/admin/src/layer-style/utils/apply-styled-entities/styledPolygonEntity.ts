@@ -29,7 +29,6 @@ export const styledPolygonEntity = (
       positions: [...hierarchy.positions],
       width: context.strokeWidth,
       material: outlineColor,
-      clampToGround: true,
     }),
     polygon: new Cesium.PolygonGraphics({
       hierarchy,

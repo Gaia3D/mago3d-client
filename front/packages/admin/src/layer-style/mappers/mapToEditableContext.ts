@@ -2,18 +2,12 @@ import {
   EditableRuleStyle,
   EditableContextModel,
   LayerType,
-  AttributeType, ComparisonType,
+  AttributeType,
+  ComparisonType,
 } from "@src/layer-style/models/EditableContextModel";
-import {Maybe, RuleInput, Scalars} from "@mnd/shared/src/types/layerset/gql/graphql";
+import { Maybe, RuleInput, Scalars } from "@mnd/shared/src/types/layerset/gql/graphql";
 import { DEFAULT_STYLE } from "@src/layer-style/constants/defaultStyle";
 
-// 병합 유틸
-const merge = <T extends object>(defaults: T, overrides?: Partial<T>): T => ({
-  ...defaults,
-  ...(overrides || {}),
-});
-
-// @type 값을 기반으로 attributeType 결정
 const resolveAttributeTypeFromAtType = (atType?: string): AttributeType => {
   switch (atType) {
     case "PointStyle":
@@ -31,77 +25,81 @@ const resolveComparisonTypeFromRule = (rule?: RuleInput): ComparisonType => {
   if (rule?.eq !== undefined) return ComparisonType.EQ;
   if (rule?.gt !== undefined || rule?.le !== undefined) return ComparisonType.GT_LE;
   if (rule?.ge !== undefined || rule?.lt !== undefined) return ComparisonType.GE_LT;
-  return ComparisonType.EQ; // fallback
+  return ComparisonType.EQ;
 };
 
 export const mapToEditableContext = (
   style: Maybe<Scalars["JSON"]["output"]>
 ): EditableContextModel => {
-  const type = (style?.type ?? LayerType.POINT);
+  const type = style?.type ?? LayerType.POINT;
   const rawContext = style?.context ?? {};
   const rule0 = rawContext?.rules?.[0]?.style ?? {};
 
-  const context = merge(rule0, rawContext);
+  const label = {
+    ...(rule0.labelStyle ?? {}),
+    ...(rawContext.labelStyle ?? {}),
+  };
 
-  const label = merge(context.labelStyle ?? {}, rule0.labelStyle ?? {});
-  const icon = merge(context.iconStyle ?? {}, rule0.iconStyle ?? {});
-  const halo = merge(label.halo ?? {}, rule0.labelStyle?.halo ?? {});
+  const icon = {
+    ...(rule0.iconStyle ?? {}),
+    ...(rawContext.iconStyle ?? {}),
+  };
 
-  const rules: EditableRuleStyle[] = (rawContext.rules ?? []).map(
-    (r: Maybe<Scalars["JSON"]["output"]>): EditableRuleStyle => {
-      const rType = resolveAttributeTypeFromAtType(r.style["@type"]);
-      const isLine = rType === AttributeType.LINE;
+  const halo = {
+    ...(rule0.labelStyle?.halo ?? {}),
+    ...(rawContext.labelStyle?.halo ?? {}),
+  };
 
-      const ruleInput = r.rule ?? {};
-      return {
-        alias: r.alias ?? "",
-        eq: ruleInput.eq,
-        ge: ruleInput.ge,
-        gt: ruleInput.gt,
-        le: ruleInput.le,
-        lt: ruleInput.lt,
-        attributeColor: (isLine ? r.style?.strokeColor : r.style?.fillColor) ?? DEFAULT_STYLE.fillColor,
-        attributeOpacity: (isLine ? r.style?.strokeOpacity : r.style?.fillOpacity) ?? DEFAULT_STYLE.fillOpacity,
-      };
-    }
-  );
+  const rules: EditableRuleStyle[] = (rawContext.rules ?? []).map((r: Maybe<Scalars["JSON"]["output"]>) => {
+    const rType = resolveAttributeTypeFromAtType(r.style["@type"]);
+    const isLine = rType === AttributeType.LINE;
+    const ruleInput = r.rule ?? {};
+
+    return {
+      alias: r.alias ?? "",
+      eq: ruleInput.eq,
+      ge: ruleInput.ge,
+      gt: ruleInput.gt,
+      le: ruleInput.le,
+      lt: ruleInput.lt,
+      attributeColor: (isLine ? r.style?.strokeColor : r.style?.fillColor) ?? DEFAULT_STYLE.fillColor,
+      attributeOpacity: (isLine ? r.style?.strokeOpacity : r.style?.fillOpacity) ?? DEFAULT_STYLE.fillOpacity,
+    };
+  });
 
   const resolvedAttrType = resolveAttributeTypeFromAtType(rule0?.["@type"]);
-
-  const resolvedComparisonType = resolveComparisonTypeFromRule(rule0)
+  const resolvedComparisonType = resolveComparisonTypeFromRule(rule0);
 
   return {
     type,
-    ...merge(DEFAULT_STYLE, {
-      name: style?.name,
-      backgroundId: style?.backgroundId,
-      minScale: context.minScale,
-      maxScale: context.maxScale,
-      fillColor: context.fillColor,
-      fillOpacity: context.fillOpacity,
-      strokeColor: context.strokeColor,
-      strokeOpacity: context.strokeOpacity,
-      strokeWidth: context.strokeWidth,
-      size: context.size,
-      attribute: context.attribute,
-      attributeType: resolvedAttrType,
-      comparisonType: resolvedComparisonType,
-      rules,
-      isLabel: !!(context.labelStyle || rule0.labelStyle),
-      labelAttributeName: label.attributeName,
-      labelFillColor: label.fillColor,
-      labelFillOpacity: label.fillOpacity,
-      labelFontSize: label.fontSize,
-      isIcon: !!(context.iconStyle || rule0.iconStyle),
-      iconSymbolId: icon.symbolId,
-      iconScale: icon.scale,
-      isHalo: !!(label.halo ?? rule0.labelStyle?.halo),
-      haloFillColor: halo.fillColor,
-      haloFillOpacity: halo.fillOpacity,
+    name: style?.name ?? DEFAULT_STYLE.name,
+    backgroundId: style?.backgroundId ?? DEFAULT_STYLE.backgroundId,
+    minScale: rawContext.minScale ?? DEFAULT_STYLE.minScale,
+    maxScale: rawContext.maxScale,
+    fillColor: rawContext.fillColor ?? DEFAULT_STYLE.fillColor,
+    fillOpacity: rawContext.fillOpacity ?? DEFAULT_STYLE.fillOpacity,
+    strokeColor: rawContext.strokeColor ?? DEFAULT_STYLE.strokeColor,
+    strokeOpacity: rawContext.strokeOpacity ?? DEFAULT_STYLE.strokeOpacity,
+    strokeWidth: rawContext.strokeWidth ?? DEFAULT_STYLE.strokeWidth,
+    size: rawContext.size ?? DEFAULT_STYLE.size,
+    attribute: rawContext.attribute ?? DEFAULT_STYLE.attribute,
+    attributeType: resolvedAttrType,
+    comparisonType: resolvedComparisonType,
+    rules,
+    isLabel: !!(rawContext.labelStyle || rule0.labelStyle),
+    labelAttributeName: label.attributeName ?? DEFAULT_STYLE.labelAttributeName,
+    labelFillColor: label.fillColor ?? DEFAULT_STYLE.labelFillColor,
+    labelFillOpacity: label.fillOpacity ?? DEFAULT_STYLE.labelFillOpacity,
+    labelFontSize: label.fontSize ?? DEFAULT_STYLE.labelFontSize,
+    isIcon: !!(rawContext.iconStyle || rule0.iconStyle),
+    iconSymbolId: icon.symbolId ?? DEFAULT_STYLE.iconSymbolId,
+    iconScale: icon.scale ?? DEFAULT_STYLE.iconScale,
+    isHalo: !!(label.halo ?? rule0.labelStyle?.halo),
+    haloFillColor: halo.fillColor ?? DEFAULT_STYLE.haloFillColor,
+    haloFillOpacity: halo.haloFillOpacity ?? DEFAULT_STYLE.haloFillOpacity,
 
-      // 임시 사용 속성
-      visible: true,
-      iconImage: "",
-    }),
+    // 임시 사용 속성
+    visible: true,
+    iconImage: "",
   };
 };
