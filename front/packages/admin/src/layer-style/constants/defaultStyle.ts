@@ -1,7 +1,8 @@
-import {AttributeType, ComparisonType, EditableStyleModel} from "@src/layer-style/models/EditableStyleModel";
+import {AttributeType, ComparisonType, EditableContextModel} from "@src/layer-style/models/EditableContextModel";
 
-export const DEFAULT_STYLE: Omit<EditableStyleModel, "type"> = {
+export const DEFAULT_STYLE: Omit<EditableContextModel, "type"> = {
   name: "",
+  backgroundId: "",
   minScale: 0,
   maxScale: undefined,
   fillColor: "#000000",

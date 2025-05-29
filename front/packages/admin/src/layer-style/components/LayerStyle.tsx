@@ -24,14 +24,13 @@ const LayerStyle = () => {
     setEditableStyles(asset.styles.map(style => {
       return mapToEditableStyle(style);
     }));
+    return () => {
+      setEditableStyles([]);
+    }
   }, [asset]);
 
   useEffect(() => {
-    const hello = editableStyles.map(style => {
-      return mapToRequestStyle(style);
-    })
     console.log("editableStyles", editableStyles);
-    console.log("hello", hello);
   }, [editableStyles]);
 
   const renderPreview = () => {
