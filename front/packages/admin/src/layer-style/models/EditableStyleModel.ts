@@ -46,7 +46,8 @@ export type EditableRuleStyle = {
   gt: string | undefined;
   le: string | undefined;
   lt: string | undefined;
-  fillColor: string;
+  attributeColor: string;
+  attributeOpacity: number;
 }
 
 export enum LayerType {

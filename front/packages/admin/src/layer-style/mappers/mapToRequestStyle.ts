@@ -1,7 +1,7 @@
 import {
   EditableStyleModel,
   EditableRuleStyle,
-  LayerType,
+  LayerType, AttributeType,
 } from "@src/layer-style/models/EditableStyleModel";
 import {
   StyleContextValue,
@@ -80,6 +80,15 @@ export const mapToRequestStyle = (editable: EditableStyleModel): StyleContextVal
     };
   } else if (editable.type === LayerType.ATTRIBUTE) {
     const rules: RuleStyleInput[] = editable.rules?.map((rule: EditableRuleStyle ) => {
+      const isLine = editable.attributeType === AttributeType.LINE;
+      const style: EditableStyleModel = {
+        ...editable,
+        fillColor: isLine ? editable.fillColor : rule.attributeColor,
+        fillOpacity: isLine ? editable.fillOpacity : rule.attributeOpacity,
+        strokeColor: isLine ? rule.attributeColor : editable.strokeColor,
+        strokeOpacity: isLine ? rule.attributeOpacity : editable.strokeOpacity,
+        type: editable.attributeType as unknown as LayerType,
+      };
       return {
         alias: rule.alias,
         rule: {
@@ -89,11 +98,7 @@ export const mapToRequestStyle = (editable: EditableStyleModel): StyleContextVal
           le: rule.le,
           lt: rule.lt,
         },
-        style: mapToRuleStyleContext({
-          ...editable,
-          fillColor: rule.fillColor,
-          type: editable.attributeType as unknown as LayerType,
-        }),
+        style: mapToRuleStyleContext(style),
       };
     }) ?? [];
 

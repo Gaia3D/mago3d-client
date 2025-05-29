@@ -48,7 +48,10 @@ export const mapToEditableStyle = (
   const halo = merge(label.halo ?? {}, rule0.labelStyle?.halo ?? {});
 
   const rules: EditableRuleStyle[] = (rawContext.rules ?? []).map(
-    (r: Maybe<any>): EditableRuleStyle => {
+    (r: Maybe<Scalars["JSON"]["output"]>): EditableRuleStyle => {
+      const rType = resolveAttributeTypeFromAtType(r.style["@type"]);
+      const isLine = rType === AttributeType.LINE;
+
       const ruleInput = r.rule ?? {};
       return {
         alias: r.alias ?? "",
@@ -57,7 +60,8 @@ export const mapToEditableStyle = (
         gt: ruleInput.gt,
         le: ruleInput.le,
         lt: ruleInput.lt,
-        fillColor: r.style?.fillColor ?? DEFAULT_STYLE.fillColor,
+        attributeColor: (isLine ? r.style?.strokeColor : r.style?.fillColor) ?? DEFAULT_STYLE.fillColor,
+        attributeOpacity: (isLine ? r.style?.strokeOpacity : r.style?.fillOpacity) ?? DEFAULT_STYLE.fillOpacity,
       };
     }
   );

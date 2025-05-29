@@ -44,7 +44,7 @@ const LayerList = () => {
       {
         and : [
           { access : { eq : "Private" }},
-          { createdBy : { eq : userId }}
+          // { createdBy : { eq : userId }}
         ]
       }
     ]
