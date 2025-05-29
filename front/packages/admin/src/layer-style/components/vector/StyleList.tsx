@@ -22,7 +22,12 @@ const StyleList = () => {
 
       await ApiProvider.layer.applyStyle(asset.id, newStyle.id);
 
-      const editable = mapToEditableStyle(newStyle);
+      // newStyle에 context가 반환되지 않아 임시 방편
+      const editable = mapToEditableStyle({
+        id: newStyle.id,
+        name: DefaultCreateStyleInput.name,
+        context: DefaultCreateStyleInput.context.point
+      });
       setEditableStyles(prev => [editable, ...prev]);
 
       toast.success("스타일 생성 완료");

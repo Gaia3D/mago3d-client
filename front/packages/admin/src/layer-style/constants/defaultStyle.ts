@@ -29,4 +29,5 @@ export const DEFAULT_STYLE: Omit<EditableContextModel, "type"> = {
 
   // 임시 사용 속성
   visible: true,
+  iconImage: "",
 };

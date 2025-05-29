@@ -101,6 +101,7 @@ export const mapToEditableContext = (
 
       // 임시 사용 속성
       visible: true,
+      iconImage: "",
     }),
   };
 };
