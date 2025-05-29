@@ -2,7 +2,8 @@ import client from "@src/layer-style/libs/apollo";
 import {
   ApplyLayerStyleDocument,
   CreateLayerStyleDocument,
-  DeleteLayerStyleDocument
+  DeleteLayerStyleDocument,
+  UpdateLayerStyleDocument
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {LayerService} from "@src/layer-style/api/services/LayerService";
 
@@ -31,4 +32,12 @@ export const GraphQLLayerService: LayerService = {
       context: { clientName: "layerset" }
     });
   },
+
+  async updateStyle(styleId, updateStyleInput) {
+    const {data} = await client.mutate({
+      mutation: UpdateLayerStyleDocument,
+      variables: { id: styleId, input: updateStyleInput}
+    })
+    return data.updateStyle;
+  }
 };

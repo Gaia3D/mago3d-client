@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useRecoilValue} from "recoil";
 import {selectedAssetState} from "@src/layer-style/recoils/layerStyle";
-import * as Cesium from "cesium";
 import {BackgroundMaps, BackgroundMapType} from "@src/constants/backgroundMap";
 import PreviewModeSelector from "@src/layer-style/components/vector/preview-panel/PreviewModeSelector";
 import BackgroundMapSelector from "@src/layer-style/components/vector/preview-panel/BackgroundMapSelector";

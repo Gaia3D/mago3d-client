@@ -6,7 +6,7 @@ import {useRecoilValue} from "recoil";
 import {editableStylesState, editingStyleState} from "@src/layer-style/recoils/layerStyle";
 import {initCesiumViewer} from "@src/utils/layer/initCesiumViewer";
 import {updateImageryProvider} from "@src/utils/layer/updateImageryProvider";
-import {applyStyledEntities} from "src/layer-style/utils/apply-styled-entities";
+import {applyStyledEntities} from "@src/layer-style/utils/apply-styled-entities";
 
 interface CesiumPreviewerProps {
   dataSource: Cesium.GeoJsonDataSource;
