@@ -98,6 +98,9 @@ export const mapToEditableContext = (
       isHalo: !!(label.halo ?? rule0.labelStyle?.halo),
       haloFillColor: halo.fillColor,
       haloFillOpacity: halo.fillOpacity,
+
+      // 임시 사용 속성
+      visible: true,
     }),
   };
 };

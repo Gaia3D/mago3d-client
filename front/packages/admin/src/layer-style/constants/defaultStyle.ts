@@ -26,4 +26,7 @@ export const DEFAULT_STYLE: Omit<EditableContextModel, "type"> = {
   isHalo: false,
   haloFillColor: "#000000",
   haloFillOpacity: 1,
+
+  // 임시 사용 속성
+  visible: true,
 };

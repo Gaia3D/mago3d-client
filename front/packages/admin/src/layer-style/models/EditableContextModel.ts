@@ -37,6 +37,9 @@ export type EditableContextModel = {
   isHalo: boolean;
   haloFillColor: string;
   haloFillOpacity: number;
+
+  // 임시 사용 속성
+  visible: boolean;
 };
 
 
