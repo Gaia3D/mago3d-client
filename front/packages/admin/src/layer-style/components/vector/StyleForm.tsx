@@ -1,13 +1,17 @@
 import React, {useEffect} from 'react';
-import {useRecoilState} from "recoil";
-import {editableStylesState, editingStyleState} from "@src/layer-style/recoils/layerStyle";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {editableStylesState, editingStyleState, selectedAssetState} from "@src/layer-style/recoils/layerStyle";
 import {ApiProvider} from "@src/layer-style/api/ApiProvider";
 import {toast} from "react-toastify";
 import {mapToRequestStyle} from "@src/layer-style/mappers/mapToRequestStyle";
+import {useAttributes} from "@src/layer-style/hooks/useAttributes";
 
 const StyleForm = () => {
+  const asset = useRecoilValue(selectedAssetState);
   const [editingStyle, setEditingStyle] = useRecoilState(editingStyleState);
   const [editableStyles, setEditableStyles] = useRecoilState(editableStylesState);
+
+  const { attributes, error } = useAttributes(asset.id);
 
   const styleUpdate = async () => {
     if (!editingStyle) return;
@@ -51,6 +55,9 @@ const StyleForm = () => {
         <div>
           <button onClick={styleUpdate}>저장</button>
           <button onClick={exit}>취소</button>
+        </div>
+        <div className="section-body">
+
         </div>
       </div>
 

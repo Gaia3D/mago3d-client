@@ -2,7 +2,7 @@ import client from "@src/layer-style/libs/apollo";
 import {
   ApplyLayerStyleDocument,
   CreateLayerStyleDocument,
-  DeleteLayerStyleDocument,
+  DeleteLayerStyleDocument, PreviewColumnsDocument,
   UpdateLayerStyleDocument
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {LayerService} from "@src/layer-style/api/services/LayerService";
@@ -39,5 +39,15 @@ export const GraphQLLayerService: LayerService = {
       variables: { id: styleId, input: updateStyleInput}
     })
     return data.updateStyle;
+  },
+
+  async getAttribute(assetId) {
+    const {data} = await client.query({
+      query: PreviewColumnsDocument,
+      variables: {
+        assetID: assetId
+      }
+    })
+    return data.previewColumns;
   }
 };
