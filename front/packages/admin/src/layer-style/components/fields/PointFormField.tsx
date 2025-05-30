@@ -132,7 +132,7 @@ const PointFormField = ({context, onChange, attributes}: PointFormFieldProps) =>
 
           <FieldRow
             id="strokeOpacity"
-            label="채우기 투명도"
+            label="외각선 투명도"
             type="number"
             min={0}
             max={1}

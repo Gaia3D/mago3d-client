@@ -26,7 +26,10 @@ export const styledLineEntity = (
 
   const label = styledLabelGraphics(context, entity);
 
+  console.log("label", label);
+
   return {
+    position: entity.position as Cesium.PositionProperty,
     polyline: new Cesium.PolylineGraphics({
       positions,
       width: context.strokeWidth,

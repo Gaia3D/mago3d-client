@@ -50,6 +50,11 @@ export const mapToEditableContext = (
     ...(rawContext.labelStyle?.halo ?? {}),
   };
 
+  const finalContext = {
+    ...(rawContext),
+    ...(rule0)
+  };
+
   const rules: EditableRuleStyle[] = (rawContext.rules ?? []).map((r: Maybe<Scalars["JSON"]["output"]>) => {
     const rType = resolveAttributeTypeFromAtType(r.style["@type"]);
     const isLine = rType === AttributeType.LINE;
@@ -70,28 +75,29 @@ export const mapToEditableContext = (
   const resolvedAttrType = resolveAttributeTypeFromAtType(rule0?.["@type"]);
   const resolvedComparisonType = resolveComparisonTypeFromRule(rule0);
 
+
   return {
     type,
     name: style?.name ?? DEFAULT_STYLE.name,
     backgroundId: style?.backgroundId ?? DEFAULT_STYLE.backgroundId,
-    minScale: rawContext.minScale ?? DEFAULT_STYLE.minScale,
-    maxScale: rawContext.maxScale,
-    fillColor: rawContext.fillColor ?? DEFAULT_STYLE.fillColor,
-    fillOpacity: rawContext.fillOpacity ?? DEFAULT_STYLE.fillOpacity,
-    strokeColor: rawContext.strokeColor ?? DEFAULT_STYLE.strokeColor,
-    strokeOpacity: rawContext.strokeOpacity ?? DEFAULT_STYLE.strokeOpacity,
-    strokeWidth: rawContext.strokeWidth ?? DEFAULT_STYLE.strokeWidth,
-    size: rawContext.size ?? DEFAULT_STYLE.size,
-    attribute: rawContext.attribute ?? DEFAULT_STYLE.attribute,
+    minScale: finalContext.minScale ?? DEFAULT_STYLE.minScale,
+    maxScale: finalContext.maxScale,
+    fillColor: finalContext.fillColor ?? DEFAULT_STYLE.fillColor,
+    fillOpacity: finalContext.fillOpacity ?? DEFAULT_STYLE.fillOpacity,
+    strokeColor: finalContext.strokeColor ?? DEFAULT_STYLE.strokeColor,
+    strokeOpacity: finalContext.strokeOpacity ?? DEFAULT_STYLE.strokeOpacity,
+    strokeWidth: finalContext.strokeWidth ?? DEFAULT_STYLE.strokeWidth,
+    size: finalContext.size ?? DEFAULT_STYLE.size,
+    attribute: finalContext.attribute ?? DEFAULT_STYLE.attribute,
     attributeType: resolvedAttrType,
     comparisonType: resolvedComparisonType,
     rules,
-    isLabel: !!(rawContext.labelStyle || rule0.labelStyle),
+    isLabel: !!(finalContext.labelStyle || rule0.labelStyle),
     labelAttributeName: label.attributeName ?? DEFAULT_STYLE.labelAttributeName,
     labelFillColor: label.fillColor ?? DEFAULT_STYLE.labelFillColor,
     labelFillOpacity: label.fillOpacity ?? DEFAULT_STYLE.labelFillOpacity,
     labelFontSize: label.fontSize ?? DEFAULT_STYLE.labelFontSize,
-    isIcon: !!(rawContext.iconStyle || rule0.iconStyle),
+    isIcon: !!(finalContext.iconStyle || rule0.iconStyle),
     iconSymbolId: icon.symbolId ?? DEFAULT_STYLE.iconSymbolId,
     iconScale: icon.scale ?? DEFAULT_STYLE.iconScale,
     isHalo: !!(label.halo ?? rule0.labelStyle?.halo),
