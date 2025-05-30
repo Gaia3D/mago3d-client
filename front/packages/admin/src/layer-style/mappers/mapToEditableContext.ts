@@ -93,7 +93,7 @@ export const mapToEditableContext = (
     comparisonType: resolvedComparisonType,
     rules,
     isLabel: !!(finalContext.labelStyle || rule0.labelStyle),
-    labelAttributeName: label.attributeName ?? DEFAULT_STYLE.labelAttributeName,
+    labelAttribute: label.attributeName ?? DEFAULT_STYLE.labelAttribute,
     labelFillColor: label.fillColor ?? DEFAULT_STYLE.labelFillColor,
     labelFillOpacity: label.fillOpacity ?? DEFAULT_STYLE.labelFillOpacity,
     labelFontSize: label.fontSize ?? DEFAULT_STYLE.labelFontSize,

@@ -18,7 +18,7 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
   const buildLabel = () => {
     if (!editable.isLabel) return undefined;
     return {
-      attributeName: editable.labelAttributeName,
+      attributeName: editable.labelAttribute,
       fillColor: editable.labelFillColor,
       fillOpacity: editable.labelFillOpacity,
       fontSize: editable.labelFontSize,
@@ -120,7 +120,7 @@ const mapToRuleStyleContext = (style: EditableContextModel): RuleStyleContextVal
   const buildLabel = () => {
     if (!style.isLabel) return undefined;
     return {
-      attributeName: style.labelAttributeName,
+      attributeName: style.labelAttribute,
       fillColor: style.labelFillColor,
       fillOpacity: style.labelFillOpacity,
       fontSize: style.labelFontSize,

@@ -8,7 +8,7 @@ export const styledLabelGraphics = (
 
   if (!context.isLabel) return undefined;
 
-  const raw = entity.properties?.[context.attribute];
+  const raw = entity.properties?.[context.labelAttribute];
   const rawValue = raw?._value ?? raw;
   const labelText = rawValue != null ? String(rawValue) : "속성 없음";
 

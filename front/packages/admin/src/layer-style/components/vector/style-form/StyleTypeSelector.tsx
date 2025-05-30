@@ -1,21 +1,18 @@
 import React from 'react';
-import { LayerType } from '@src/layer-style/models/EditableContextModel';
 
-type Props = {
-  selectedType: LayerType;
-  onSelectType: (type: LayerType) => void;
+type StyleTypeSelectorProps<T extends string> = {
+  selectedType: T;
+  onSelectType: (type: T) => void;
+  types: T[];
 };
 
-const AVAILABLE_TYPES = [
-  LayerType.POINT,
-  LayerType.LINE,
-  LayerType.POLYGON,
-  LayerType.ATTRIBUTE
-];
-
-const StyleTypeSelector = ({ selectedType, onSelectType }: Props) => (
+const StyleTypeSelector = <T extends string>({
+   selectedType,
+   onSelectType,
+   types,
+ }: StyleTypeSelectorProps<T>) => (
   <div className="style-type-button-group">
-    {AVAILABLE_TYPES.map(type => (
+    {types.map((type) => (
       <button
         key={type}
         className={selectedType === type ? 'selected' : ''}

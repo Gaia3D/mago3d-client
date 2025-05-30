@@ -16,7 +16,7 @@ export const DEFAULT_STYLE: Omit<EditableContextModel, "type"> = {
   attributeType: AttributeType.POINT,
   comparisonType: ComparisonType.EQ,
   rules: [],
-  labelAttributeName: "",
+  labelAttribute: "",
   labelFillColor: "#000000",
   labelFillOpacity: 1,
   labelFontSize: 12,

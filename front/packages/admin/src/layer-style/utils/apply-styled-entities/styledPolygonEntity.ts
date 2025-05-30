@@ -25,6 +25,7 @@ export const styledPolygonEntity = (
   const label = styledLabelGraphics(context, entity);
 
   return {
+    position: entity.position as Cesium.PositionProperty,
     polyline: new Cesium.PolylineGraphics({
       positions: [...hierarchy.positions],
       width: context.strokeWidth,

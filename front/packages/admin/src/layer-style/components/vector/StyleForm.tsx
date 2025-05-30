@@ -18,6 +18,13 @@ import LineFormField from '@src/layer-style/components/fields/LineFormField';
 import PolygonFormField from '@src/layer-style/components/fields/PolygonFormField';
 import AttributeFormField from '@src/layer-style/components/fields/AttributeFormField';
 
+const LAYER_TYPES: LayerType[] = [
+  LayerType.POINT,
+  LayerType.LINE,
+  LayerType.POLYGON,
+  LayerType.ATTRIBUTE
+];
+
 const StyleForm = () => {
   const asset = useRecoilValue(selectedAssetState);
   const [editingStyle, setEditingStyle] = useRecoilState(editingStyleState);
@@ -47,7 +54,8 @@ const StyleForm = () => {
         prev.map(style => (style.id === editingStyle.id ? editingStyle : style))
       );
       toast.success('스타일 수정 완료');
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error('스타일 수정 중 오류가 발생했습니다.');
     } finally {
       setEditingStyle(undefined);
@@ -85,6 +93,7 @@ const StyleForm = () => {
         <StyleTypeSelector
           selectedType={editingStyle.context.type}
           onSelectType={type => handleChange('type', type)}
+          types={LAYER_TYPES}
         />
         {renderFields()}
       </div>

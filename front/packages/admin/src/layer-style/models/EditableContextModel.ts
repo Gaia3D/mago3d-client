@@ -23,7 +23,7 @@ export type EditableContextModel = {
 
   // 라벨 관련
   isLabel: boolean;
-  labelAttributeName: string;
+  labelAttribute: string;
   labelFillColor: string;
   labelFillOpacity: number;
   labelFontSize: number;

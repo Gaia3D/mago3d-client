@@ -74,11 +74,11 @@ const LineFormField = ({context, onChange, attributes}: LineFormFieldProps) => {
       {context.isLabel && (
         <div className="inner-body">
           <FieldRow
-            id="attribute"
+            id="labelAttribute"
             label="라벨 속성"
             type="select"
-            value={context.attribute}
-            onChange={value => onChange("attribute", value)}
+            value={context.labelAttribute}
+            onChange={value => onChange("labelAttribute", value)}
             options={attributes?.map(attr => ({value: attr.field, label: attr.field}))}
           />
 
