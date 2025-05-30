@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   AttributeType,
   ComparisonType,
@@ -39,6 +39,7 @@ const AttributeFormField = ({
     attributes,
   }: AttributeFormFieldProps) => {
   const remoteAsset = useRecoilValue(remoteAssetDataState);
+  const didMountRef = useRef(false); // ⬅️ mount 여부 추적
 
   const classify = async () => {
     if (!context.attribute) { toast.warning('속성을 선택해주세요.'); return; }
@@ -77,6 +78,14 @@ const AttributeFormField = ({
       toast.error('지원되지 않는 속성 타입입니다.');
     }
   };
+
+  useEffect(() => {
+    if (didMountRef.current) {
+      onChange("rules", []);
+    } else {
+      didMountRef.current = true;
+    }
+  }, [context.attribute]);
 
   return (
     <>

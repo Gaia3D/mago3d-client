@@ -17,6 +17,7 @@ import PointFormField from '@src/layer-style/components/fields/PointFormField';
 import LineFormField from '@src/layer-style/components/fields/LineFormField';
 import PolygonFormField from '@src/layer-style/components/fields/PolygonFormField';
 import AttributeFormField from '@src/layer-style/components/fields/AttributeFormField';
+import {validateStyleBeforeUpdate} from "@src/layer-style/utils/validateStyleBeforeUpdate";
 
 const LAYER_TYPES: LayerType[] = [
   LayerType.POINT,
@@ -44,6 +45,12 @@ const StyleForm = () => {
 
   const styleUpdate = async () => {
     if (!editingStyle) return;
+    const errorMessage = validateStyleBeforeUpdate(editingStyle);
+    if (errorMessage) {
+      toast.warning(errorMessage);
+      return;
+    }
+
     const updateStyleInput = mapToRequestStyle(editingStyle);
 
     try {
