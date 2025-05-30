@@ -6,6 +6,7 @@ import {
   UpdateLayerStyleDocument
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {LayerService} from "@src/layer-style/api/services/LayerService";
+import {ClassifyAttributeDocument} from "@src/generated/gql/layerset/graphql";
 
 export const GraphQLLayerService: LayerService = {
   async createStyle(input) {
@@ -49,5 +50,13 @@ export const GraphQLLayerService: LayerService = {
       }
     })
     return data.previewColumns;
+  },
+
+  async getClassifyAttribute(attribute, nativeName) {
+    const {data} = await client.query({
+      query: ClassifyAttributeDocument,
+      variables: { nativeName, attribute}
+    })
+    return data.classifyAttribute;
   }
 };

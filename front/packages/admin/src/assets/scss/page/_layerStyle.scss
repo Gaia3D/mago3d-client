@@ -103,6 +103,43 @@
         }
       }
 
+      .attribute-classify-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+
+        .classify-button {
+          height: 40px;
+          padding: 0 16px;
+          background-color: #4f86ff;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: #3a6fd8;
+          }
+
+          &:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+          }
+        }
+
+        .form-row {
+          flex: 1;
+
+          select {
+            width: 100%;
+          }
+        }
+      }
+
       .inner-body {
         border: 1px solid #ddd;
         border-radius: 8px;
@@ -129,6 +166,52 @@
             height: 40px;
           }
         }
+
+        .rule-table-wrapper {
+          .form-row {
+            margin-bottom: 12px;
+          }
+
+          .rule-table {
+            width: 100%;
+            font-size: 14px;
+            table-layout: fixed;
+
+            thead {
+              th {
+                padding: 12px;
+                text-align: center;
+                color: #333;
+              }
+            }
+            tbody {
+              tr {
+                transition: background-color 0.2s ease;
+
+                td {
+                  padding: 8px;
+
+                  input[type='text'],
+                  input[type='number'],
+                  input[type='color'],
+                  select {
+                    width: 100%;
+                    height: 36px;
+                    border-radius: 6px;
+                    padding: 0 8px;
+                    font-size: 14px;
+                    box-sizing: border-box;
+                  }
+
+                  input[type='color'] {
+                    padding: 0;
+                  }
+                }
+              }
+            }
+          }
+        }
+
       }
 
       .style-type-button-group {

@@ -1278,7 +1278,14 @@ export type RemoteLayerAsset = {
   __typename?: 'RemoteLayerAsset';
   href?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  featureType?: Maybe<FeatureType>;
 };
+
+export type FeatureType = {
+  nativeName?: string;
+  // 필요한 다른 필드도 여기에 추가
+};
+
 
 export type RemoteLayerStyle = {
   __typename?: 'RemoteLayerStyle';

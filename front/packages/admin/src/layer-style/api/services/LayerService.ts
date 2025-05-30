@@ -1,5 +1,6 @@
 import {CreateStyleInput, PreviewColumn} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {UpdateStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {ClassifyAttributeColumn} from "@src/generated/gql/layerset/graphql";
 
 export interface LayerService {
   createStyle(input: CreateStyleInput): Promise<{ id: string }>;
@@ -8,4 +9,5 @@ export interface LayerService {
   updateStyle(styleId: string, input: UpdateStyleInput): Promise<{ id: string }>;
 
   getAttribute(assetId: string): Promise<PreviewColumn[]>;
+  getClassifyAttribute(attribute: string, nativeName: string): Promise<ClassifyAttributeColumn>;
 }
