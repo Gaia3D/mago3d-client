@@ -2,6 +2,7 @@ import React from 'react';
 import {FieldRow} from "@src/layer-style/components/fields/FieldRow";
 import {toast} from "react-toastify";
 import {EditableContextModel} from "@src/layer-style/models/EditableContextModel";
+import {BackgroundMaps} from "@src/constants/backgroundMap";
 
 interface CommonFormFieldProps {
   context: EditableContextModel;
@@ -17,6 +18,15 @@ const CommonFormField = ({context, onChange}: CommonFormFieldProps) => {
         type="text"
         value={context.name}
         onChange={value => onChange("name", value)}
+      />
+
+      <FieldRow
+        id="backgroundId"
+        label="배경 맵 선택"
+        type="select"
+        value={context.backgroundId}
+        onChange={value => onChange("backgroundId", value)}
+        options={[{id:"", name: "전체"}, ...BackgroundMaps]?.map(attr => ({value: attr.id, label: attr.name}))}
       />
 
       <FieldRow

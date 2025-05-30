@@ -1,25 +1,24 @@
 import React, {useEffect, useRef, useState} from 'react';
 import * as Cesium from "cesium";
-import {BackgroundMapType} from "@src/constants/backgroundMap";
 import {PreviewMode} from "@src/layer-style/components/vector/PreviewPanel";
 import {useRecoilValue} from "recoil";
-import {editableStylesState, editingStyleState} from "@src/layer-style/recoils/layerStyle";
+import {editableStylesState, editingStyleState, selectedBackgroundState} from "@src/layer-style/recoils/layerStyle";
 import {initCesiumViewer} from "@src/utils/layer/initCesiumViewer";
 import {updateImageryProvider} from "@src/utils/layer/updateImageryProvider";
 import {applyStyledEntities} from "@src/layer-style/utils/apply-styled-entities";
 
 interface CesiumPreviewerProps {
   dataSource: Cesium.GeoJsonDataSource;
-  backgroundMap: BackgroundMapType;
   previewMode: PreviewMode;
 }
 
-const CesiumPreview = ({dataSource, backgroundMap, previewMode}: CesiumPreviewerProps) => {
+const CesiumPreview = ({dataSource, previewMode}: CesiumPreviewerProps) => {
   const viewerRef = useRef<HTMLDivElement>(null);
   const cesiumViewerRef = useRef<Cesium.Viewer | null>(null);
   const imageryLayerRef = useRef<Cesium.ImageryLayer | null>(null);
   const [currentEntities, setCurrentEntities] = useState<Cesium.Entity[]>([]);
 
+  const selectedBackground = useRecoilValue(selectedBackgroundState);
   const editableStyles = useRecoilValue(editableStylesState);
   const editingStyle = useRecoilValue(editingStyleState)
   const [currentStyles, setCurrentStyles] = useState(() => (
@@ -47,15 +46,26 @@ const CesiumPreview = ({dataSource, backgroundMap, previewMode}: CesiumPreviewer
     imageryLayerRef.current = updateImageryProvider(
       cesiumViewerRef.current,
       imageryLayerRef.current,
-      backgroundMap
+      selectedBackground
     );
-  }, [backgroundMap]);
+  }, [selectedBackground]);
 
-  // 스타일 껏다 켜기 적용
+  // 보여야할 스타일 적용
   useEffect(() => {
-    const visibleStyles = editableStyles.filter(style => style.context.visible);
-    const next = editingStyle ? [editingStyle] : visibleStyles;
-    setCurrentStyles(next);
+    // visible 켜진 스타일만
+    const visibleOnly = editableStyles.filter(style => style.context.visible);
+    // 해당 배경에 나타날 스타일만
+    const matchedBackgroundStyles = visibleOnly.filter(
+      style =>
+        style.context.backgroundId === "" ||
+        style.context.backgroundId === selectedBackground.id
+    );
+
+    const stylesToApply = editingStyle
+      ? [editingStyle] // 편집 중인 스타일만 우선 적용
+      : matchedBackgroundStyles;
+
+    setCurrentStyles(stylesToApply);
   }, [editingStyle, editableStyles]);
 
   // preview entity 설정

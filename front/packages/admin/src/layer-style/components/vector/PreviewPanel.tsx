@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {useRecoilValue} from "recoil";
 import {selectedAssetState} from "@src/layer-style/recoils/layerStyle";
-import {BackgroundMaps, BackgroundMapType} from "@src/constants/backgroundMap";
 import PreviewModeSelector from "@src/layer-style/components/vector/preview-panel/PreviewModeSelector";
 import BackgroundMapSelector from "@src/layer-style/components/vector/preview-panel/BackgroundMapSelector";
 import LegendPreview from "@src/layer-style/components/vector/preview-panel/LegendPreview";
@@ -16,7 +15,6 @@ export enum PreviewMode {
 
 const PreviewPanel = () => {
   const asset = useRecoilValue(selectedAssetState);
-  const [backgroundMap, setBackgroundMap] = useState<BackgroundMapType>(BackgroundMaps[0]);
   const [previewMode, setPreviewMode] = useState<PreviewMode>(PreviewMode.Single);
 
   const { dataSource, loading } = usePreviewData(asset);
@@ -37,13 +35,9 @@ const PreviewPanel = () => {
         <div className={`preview-cesium-wrapper ${previewMode === PreviewMode.Legend ? 'none' : ''}`}>
           <CesiumPreview
             dataSource={dataSource}
-            backgroundMap={backgroundMap}
             previewMode={previewMode}
           />
-          <BackgroundMapSelector
-            currentMap={backgroundMap}
-            onClick={setBackgroundMap}
-          />
+          <BackgroundMapSelector/>
         </div>
         <div className={`preview-legend-wrapper ${previewMode === PreviewMode.Legend ? '' : 'none'}`}>
           <LegendPreview/>

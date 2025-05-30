@@ -1,6 +1,7 @@
 import {atom} from "recoil";
 import {LayerAsset, RemoteLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {EditableStyleModel} from "@src/layer-style/models/EditableStyleModel";
+import {BackgroundMaps, BackgroundMapType} from "@src/constants/backgroundMap";
 
 // 선택된 에셋
 export const selectedAssetState = atom<LayerAsset | undefined>({
@@ -12,6 +13,12 @@ export const selectedAssetState = atom<LayerAsset | undefined>({
 export const remoteAssetDataState = atom<RemoteLayerAsset>({
   key: "remoteAssetDataState",
   default: undefined
+})
+
+// 선택된 배경지도
+export const selectedBackgroundState = atom<BackgroundMapType>({
+  key: "selectedBackgroundState",
+  default: BackgroundMaps[0]
 })
 
 // 전체 스타일

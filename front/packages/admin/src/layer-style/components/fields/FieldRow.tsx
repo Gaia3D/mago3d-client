@@ -30,7 +30,7 @@ export const FieldRow = <T,>({
         value={value as string}
         onChange={e => onChange(e.target.value as T)}
       >
-        <option value="" hidden>선택</option>
+        <option value={undefined} hidden>선택</option>
         {options.map(opt => (
           <option key={opt.value} value={opt.value}>
             {opt.label}

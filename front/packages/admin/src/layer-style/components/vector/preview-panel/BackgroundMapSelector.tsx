@@ -1,20 +1,19 @@
 import React from 'react';
-import { BackgroundMaps, BackgroundMapType } from "@src/constants/backgroundMap";
+import { BackgroundMaps } from "@src/constants/backgroundMap";
+import {useRecoilState} from "recoil";
+import {selectedBackgroundState} from "@src/layer-style/recoils/layerStyle";
 
-interface BackgroundMapSelectorProps {
-  currentMap: BackgroundMapType;
-  onClick: (map: BackgroundMapType) => void;
-}
+const BackgroundMapSelector = () => {
+  const [selectedBackground, setSelectedBackground] = useRecoilState(selectedBackgroundState);
 
-const BackgroundMapSelector = ({ currentMap, onClick }: BackgroundMapSelectorProps) => {
   return (
     <div className="preview-bottom-button-container">
       <div>
         {BackgroundMaps.map((backgroundMap) => (
           <button
             key={backgroundMap.id}
-            onClick={() => onClick(backgroundMap)}
-            className={backgroundMap.name === currentMap.name ? "active" : ""}
+            onClick={() => setSelectedBackground(backgroundMap)}
+            className={backgroundMap.name === selectedBackground.name ? "active" : ""}
           >
             {backgroundMap.name}
           </button>
