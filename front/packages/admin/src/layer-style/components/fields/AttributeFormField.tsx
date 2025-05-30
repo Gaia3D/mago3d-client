@@ -41,16 +41,10 @@ const AttributeFormField = ({
   const remoteAsset = useRecoilValue(remoteAssetDataState);
 
   const classify = async () => {
-    if (!context.attribute) {
-      toast.warning('속성을 선택해주세요.');
-      return;
-    }
+    if (!context.attribute) { toast.warning('속성을 선택해주세요.'); return; }
 
     const assetName = remoteAsset?.featureType?.nativeName;
-    if (!assetName) {
-      toast.warning('해당 에셋은 분류할 수 없습니다.');
-      return;
-    }
+    if (!assetName) { toast.warning('해당 에셋은 분류할 수 없습니다.'); return; }
 
     try {
       const classifyAttribute = await ApiProvider.layer.getClassifyAttribute(
@@ -68,7 +62,7 @@ const AttributeFormField = ({
       }
 
       const newRules: EditableRuleStyle[] = classifyAttribute.rules.map(rule => ({
-        alias: '',
+        alias: "",
         eq: rule.eq,
         ge: rule.min,
         gt: rule.min,
