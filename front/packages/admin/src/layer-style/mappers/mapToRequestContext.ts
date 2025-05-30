@@ -41,6 +41,8 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
 
   if (editable.type === LayerType.POINT) {
     const point: PointStyleInput = {
+      minScale: editable.minScale,
+      maxScale: editable.maxScale,
       fillColor: editable.fillColor,
       fillOpacity: editable.fillOpacity,
       strokeColor: editable.strokeColor,
@@ -56,6 +58,8 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
     };
   } else if (editable.type === LayerType.LINE) {
     const line: LineStyleInput = {
+      minScale: editable.minScale,
+      maxScale: editable.maxScale,
       strokeColor: editable.strokeColor,
       strokeOpacity: editable.strokeOpacity,
       strokeWidth: editable.strokeWidth,
@@ -67,6 +71,8 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
     };
   } else if (editable.type === LayerType.POLYGON) {
     const polygon: PolygonStyleInput = {
+      minScale: editable.minScale,
+      maxScale: editable.maxScale,
       fillColor: editable.fillColor,
       fillOpacity: editable.fillOpacity,
       strokeColor: editable.strokeColor,
@@ -145,6 +151,8 @@ const mapToRuleStyleContext = (style: EditableContextModel): RuleStyleContextVal
     point:
       style.type === LayerType.POINT || style.type === LayerType.ATTRIBUTE
         ? {
+          minScale: style.minScale,
+          maxScale: style.maxScale,
           fillColor: style.fillColor,
           fillOpacity: style.fillOpacity,
           strokeColor: style.strokeColor,
@@ -158,6 +166,8 @@ const mapToRuleStyleContext = (style: EditableContextModel): RuleStyleContextVal
     line:
       style.type === LayerType.LINE
         ? {
+          minScale: style.minScale,
+          maxScale: style.maxScale,
           strokeColor: style.strokeColor,
           strokeOpacity: style.strokeOpacity,
           strokeWidth: style.strokeWidth,
@@ -167,6 +177,8 @@ const mapToRuleStyleContext = (style: EditableContextModel): RuleStyleContextVal
     polygon:
       style.type === LayerType.POLYGON
         ? {
+          minScale: style.minScale,
+          maxScale: style.maxScale,
           fillColor: style.fillColor,
           fillOpacity: style.fillOpacity,
           strokeColor: style.strokeColor,

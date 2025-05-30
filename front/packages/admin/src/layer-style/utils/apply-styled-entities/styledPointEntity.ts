@@ -3,6 +3,7 @@ import {EditableStyleModel} from "@src/layer-style/models/EditableStyleModel";
 import {DEFAULT_STYLE} from "@src/layer-style/constants/defaultStyle";
 import {getFinalAttributeColor} from "@src/layer-style/utils/apply-styled-entities/getFinalAttributeColor";
 import {styledLabelGraphics} from "@src/layer-style/utils/apply-styled-entities/styledLabelGraphics";
+import {getCameraDistanceFromScale} from "@src/layer-style/utils/getCameraDistanceFromScale";
 
 export const styledPointEntity = (
   entity: Cesium.Entity,
@@ -21,6 +22,9 @@ export const styledPointEntity = (
 
   const label = styledLabelGraphics(context, entity);
 
+  const minDistance = getCameraDistanceFromScale(context.minScale);
+  const maxDistance = getCameraDistanceFromScale(context.maxScale);
+
   if (context.isIcon) {
     return {
       position: entity.position as Cesium.PositionProperty,
@@ -29,6 +33,7 @@ export const styledPointEntity = (
         scale: context.iconScale,
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(minDistance, maxDistance),
       }),
       label
     };
@@ -42,6 +47,7 @@ export const styledPointEntity = (
       outlineColor,
       outlineWidth: context.strokeWidth,
       heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+      distanceDisplayCondition: new Cesium.DistanceDisplayCondition(minDistance, maxDistance),
     }),
     label
   };

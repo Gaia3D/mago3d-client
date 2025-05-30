@@ -39,7 +39,7 @@ const AttributeFormField = ({
     attributes,
   }: AttributeFormFieldProps) => {
   const remoteAsset = useRecoilValue(remoteAssetDataState);
-  const didMountRef = useRef(false); // ⬅️ mount 여부 추적
+  const didMountRef = useRef(false); // mount 여부 추적
 
   const classify = async () => {
     if (!context.attribute) { toast.warning('속성을 선택해주세요.'); return; }

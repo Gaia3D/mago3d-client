@@ -3,6 +3,7 @@ import {EditableContextModel} from "@src/layer-style/models/EditableContextModel
 import {PreviewColumn} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {FieldRow} from "@src/layer-style/components/fields/FieldRow";
 import LabelFormField from "@src/layer-style/components/fields/LabelFormField";
+import CommonFormField from "@src/layer-style/components/fields/CommonFormField";
 
 interface LineFormFieldProps {
   context: EditableContextModel;
@@ -13,29 +14,7 @@ interface LineFormFieldProps {
 const LineFormField = ({context, onChange, attributes}: LineFormFieldProps) => {
   return (
     <>
-      <FieldRow
-        id="name"
-        label="스타일명"
-        type="text"
-        value={context.name}
-        onChange={value => onChange("name", value)}
-      />
-
-      <FieldRow
-        id="minScale"
-        label="최소 축적"
-        type="number"
-        value={context.minScale}
-        onChange={value => onChange("minScale", value)}
-      />
-
-      <FieldRow
-        id="maxScale"
-        label="최대 축적"
-        type="number"
-        value={context.maxScale}
-        onChange={value => onChange("maxScale", value)}
-      />
+      <CommonFormField context={context} onChange={onChange} />
 
       <FieldRow
         id="strokeWidth"

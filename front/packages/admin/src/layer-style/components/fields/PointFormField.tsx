@@ -4,6 +4,7 @@ import {PreviewColumn} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {FieldRow} from "@src/layer-style/components/fields/FieldRow";
 import SymbolPicker from "@src/layer-style/components/fields/picker/SymbolPicker";
 import LabelFormField from "@src/layer-style/components/fields/LabelFormField";
+import CommonFormField from "@src/layer-style/components/fields/CommonFormField";
 
 interface PointFormFieldProps {
   context: EditableContextModel;
@@ -20,29 +21,7 @@ const PointFormField = ({context, onChange, attributes}: PointFormFieldProps) =>
 
   return (
     <>
-      <FieldRow
-        id="name"
-        label="스타일명"
-        type="text"
-        value={context.name}
-        onChange={value => onChange("name", value)}
-      />
-
-      <FieldRow
-        id="minScale"
-        label="최소 축적"
-        type="number"
-        value={context.minScale}
-        onChange={value => onChange("minScale", value)}
-      />
-
-      <FieldRow
-        id="maxScale"
-        label="최대 축적"
-        type="number"
-        value={context.maxScale}
-        onChange={value => onChange("maxScale", value)}
-      />
+      <CommonFormField context={context} onChange={onChange} />
 
       <FieldRow
         id="isIcon"

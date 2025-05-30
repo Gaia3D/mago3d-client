@@ -3,6 +3,7 @@ import {EditableStyleModel} from "@src/layer-style/models/EditableStyleModel";
 import {getFinalAttributeColor} from "./getFinalAttributeColor";
 import {DEFAULT_STYLE} from "@src/layer-style/constants/defaultStyle";
 import {styledLabelGraphics} from "@src/layer-style/utils/apply-styled-entities/styledLabelGraphics";
+import {getCameraDistanceFromScale} from "@src/layer-style/utils/getCameraDistanceFromScale";
 
 export const styledLineEntity = (
   entity: Cesium.Entity,
@@ -26,7 +27,8 @@ export const styledLineEntity = (
 
   const label = styledLabelGraphics(context, entity);
 
-  console.log("label", label);
+  const minDistance = getCameraDistanceFromScale(context.minScale);
+  const maxDistance = getCameraDistanceFromScale(context.maxScale);
 
   return {
     position: entity.position as Cesium.PositionProperty,
@@ -35,6 +37,7 @@ export const styledLineEntity = (
       width: context.strokeWidth,
       material: color,
       clampToGround: true,
+      distanceDisplayCondition: new Cesium.DistanceDisplayCondition(minDistance, maxDistance),
     }),
     label
   };
