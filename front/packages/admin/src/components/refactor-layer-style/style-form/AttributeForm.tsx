@@ -8,7 +8,7 @@ import {
 import {StyleSelectRow} from "@src/components/layerset/layer/style/StyleSelectRow";
 import {fetchRulesFromServer} from "@src/utils/layer/fetchRulesFromServer";
 import {useApolloClient} from "@apollo/client";
-import RuleTable from "@src/components/layer-style/style-form/RuleTable";
+import RuleTable from "@src/components/refactor-layer-style/style-form/RuleTable";
 import {toast} from "react-toastify";
 import {AttributeType} from "@src/components/refactor-layer-style/mapStyleToCompleteStyleType";
 import AttributePointForm from "@src/components/refactor-layer-style/style-form/attribute/AttributePointForm";

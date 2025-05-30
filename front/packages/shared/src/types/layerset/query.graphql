@@ -30,6 +30,7 @@ fragment LayersetAssetBasic on LayerAsset {
     status
     createdAt
     updatedAt
+    properties
     styles {
         id
         name
