@@ -25,10 +25,6 @@ const CesiumPreview = ({dataSource, previewMode}: CesiumPreviewerProps) => {
     editingStyle ? [editingStyle] : editableStyles
   ));
 
-  useEffect(() => {
-    console.log("현재 미리보기되는 스타일배열", currentStyles);
-  }, [currentStyles]);
-
   // 초기 Cesium 뷰어 생성
   useEffect(() => {
     if (!viewerRef.current) return;
