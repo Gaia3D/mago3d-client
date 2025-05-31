@@ -9,9 +9,16 @@ export const validateStyleBeforeUpdate = (style: EditableStyleModel): string | n
     context.type === LayerType.ATTRIBUTE &&
     context.rules.length === 0
   ) {
-    return 'ATTRIBUTE를 선택했지만 속성을 분류하지 않았습니다.';
+    return "ATTRIBUTE를 선택했지만 속성을 분류하지 않았습니다.";
   }
 
+  // 예외 2: 라벨 사용은 했지만 라벨 속성은 선택하지 않음
+  if (
+    context.isLabel &&
+    !context.labelAttribute
+  ) {
+    return "라벨은 허용했지만 라벨 속성을 선택하지 않았습니다.";
+  }
 
   return null;
 };
