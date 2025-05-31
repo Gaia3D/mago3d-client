@@ -4,6 +4,8 @@ export const getCameraDistanceFromScale = (
   dpi = 96,
   fovDegrees = 60
 ): number => {
+  if (scaleDenominator === undefined) return Number.MAX_SAFE_INTEGER;
+
   const inchesPerPixel = 1 / dpi;
   const metersPerInch = 0.0254;
   const metersPerPixel = inchesPerPixel * metersPerInch;

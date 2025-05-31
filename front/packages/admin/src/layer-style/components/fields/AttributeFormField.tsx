@@ -96,13 +96,28 @@ const AttributeFormField = ({
       />
 
       {context.attributeType === AttributeType.POINT && (
-        <PointFormField context={context} onChange={onChange} attributes={attributes}/>
+        <PointFormField
+          context={context}
+          onChange={onChange}
+          attributes={attributes}
+          isAttribute={true}
+        />
       )}
       {context.attributeType === AttributeType.LINE && (
-        <LineFormField context={context} onChange={onChange} attributes={attributes}/>
+        <LineFormField
+          context={context}
+          onChange={onChange}
+          attributes={attributes}
+          isAttribute={true}
+        />
       )}
       {context.attributeType === AttributeType.POLYGON && (
-        <PolygonFormField context={context} onChange={onChange} attributes={attributes}/>
+        <PolygonFormField
+          context={context}
+          onChange={onChange}
+          attributes={attributes}
+          isAttribute={true}
+        />
       )}
       <div className="attribute-classify-row">
         <FieldRow

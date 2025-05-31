@@ -2,6 +2,7 @@ import React from 'react';
 import { EditableContextModel, EditableRuleStyle } from '@src/layer-style/models/EditableContextModel';
 import { FieldCell } from '@src/layer-style/components/fields/rule/FieldCell';
 import { ComparisonType } from '@src/layer-style/models/EditableContextModel';
+import {DEFAULT_STYLE} from "@src/layer-style/constants/defaultStyle";
 
 interface Props {
   context: EditableContextModel;
@@ -9,82 +10,113 @@ interface Props {
 }
 
 const RangeRuleTable = ({ context, onChange }: Props) => {
+  const handleAddRow = () => {
+    const rules = context.rules;
+    const maxValue = rules[rules.length - 1].le ?? rules[rules.length - 1].lt ?? "0"
+    const newRule: EditableRuleStyle = {
+      ge: maxValue,
+      gt: maxValue,
+      le: maxValue,
+      lt: maxValue,
+      attributeColor: DEFAULT_STYLE.fillColor,
+      attributeOpacity: DEFAULT_STYLE.fillOpacity,
+      alias: '',
+    };
+    onChange('rules', [...context.rules, newRule]);
+  };
+
+  const handleRemoveRow = (index: number) => {
+    const updatedRules = [...context.rules];
+    updatedRules.splice(index, 1);
+    onChange('rules', updatedRules);
+  };
+
   return (
-    <table className="rule-table">
-      <thead>
-      <tr>
-        <th>최소 {context.comparisonType === ComparisonType.GE_LT && '(포함)'}</th>
-        <th>최대 {context.comparisonType === ComparisonType.GT_LE && '(포함)'}</th>
-        <th>색상</th>
-        <th>투명도</th>
-        <th>속성 명</th>
-      </tr>
-      </thead>
-      <tbody>
-      {context.rules.map((rule, idx) => {
-        const updateRule = (updated: Partial<EditableRuleStyle>) => {
-          const updatedRules = [...context.rules];
-          updatedRules[idx] = { ...updatedRules[idx], ...updated };
-          onChange('rules', updatedRules);
-        };
+    <>
+      <table className="rule-table">
+        <thead>
+        <tr>
+          <th>최소 {context.comparisonType === ComparisonType.GE_LT && '(포함)'}</th>
+          <th>최대 {context.comparisonType === ComparisonType.GT_LE && '(포함)'}</th>
+          <th>색상</th>
+          <th>투명도</th>
+          <th>속성 명</th>
+          <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        {context.rules.map((rule, idx) => {
+          const updateRule = (updated: Partial<EditableRuleStyle>) => {
+            const updatedRules = [...context.rules];
+            updatedRules[idx] = {...updatedRules[idx], ...updated};
+            onChange('rules', updatedRules);
+          };
 
-        const updateRuleMulti = (updates: Partial<EditableRuleStyle>) => {
-          const updatedRules = [...context.rules];
-          updatedRules[idx] = { ...updatedRules[idx], ...updates };
-          onChange('rules', updatedRules);
-        };
+          const updateRuleMulti = (updates: Partial<EditableRuleStyle>) => {
+            const updatedRules = [...context.rules];
+            updatedRules[idx] = {...updatedRules[idx], ...updates};
+            onChange('rules', updatedRules);
+          };
 
-        return (
-          <tr key={idx}>
-            <td>
-              <FieldCell
-                id={`rule-${idx}-min`}
-                type="text"
-                value={rule.ge}
-                onChange={value => updateRuleMulti({ ge: value, gt: value })}
-              />
-            </td>
-            <td>
-              <FieldCell
-                id={`rule-${idx}-max`}
-                type="text"
-                value={rule.le}
-                onChange={value => updateRuleMulti({ le: value, lt: value })}
-              />
-            </td>
-            <td>
-              <FieldCell
-                id={`rule-${idx}-color`}
-                type="color"
-                value={rule.attributeColor}
-                onChange={value => updateRule({ attributeColor: value })}
-              />
-            </td>
-            <td>
-              <FieldCell
-                id={`rule-${idx}-opacity`}
-                type="number"
-                min={0}
-                max={1}
-                step={0.01}
-                value={rule.attributeOpacity}
-                onChange={value => updateRule({ attributeOpacity: value })}
-              />
-            </td>
-            <td>
-              <FieldCell
-                id={`rule-${idx}-alias`}
-                type="text"
-                value={rule.alias}
-                onChange={value => updateRule({ alias: value })}
-                placeholder="속성 명"
-              />
-            </td>
-          </tr>
-        );
-      })}
-      </tbody>
-    </table>
+          return (
+            <tr key={idx}>
+              <td>
+                <FieldCell
+                  id={`rule-${idx}-min`}
+                  type="text"
+                  value={rule.ge}
+                  onChange={value => updateRuleMulti({ge: value, gt: value})}
+                />
+              </td>
+              <td>
+                <FieldCell
+                  id={`rule-${idx}-max`}
+                  type="text"
+                  value={rule.lt}
+                  onChange={value => updateRuleMulti({le: value, lt: value})}
+                />
+              </td>
+              <td>
+                <FieldCell
+                  id={`rule-${idx}-color`}
+                  type="color"
+                  value={rule.attributeColor}
+                  onChange={value => updateRule({attributeColor: value})}
+                />
+              </td>
+              <td>
+                <FieldCell
+                  id={`rule-${idx}-opacity`}
+                  type="number"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={rule.attributeOpacity}
+                  onChange={value => updateRule({attributeOpacity: value})}
+                />
+              </td>
+              <td>
+                <FieldCell
+                  id={`rule-${idx}-alias`}
+                  type="text"
+                  value={rule.alias}
+                  onChange={value => updateRule({alias: value})}
+                  placeholder="속성 명"
+                />
+              </td>
+              <td>
+                <button className="delete-button" type="button" onClick={() => handleRemoveRow(idx)}>삭제</button>
+              </td>
+            </tr>
+          );
+        })}
+        </tbody>
+      </table>
+
+      <div className="rule-table-actions">
+        <button type="button" className="add-row-button" onClick={handleAddRow}>행 추가</button>
+      </div>
+    </>
   );
 };
 

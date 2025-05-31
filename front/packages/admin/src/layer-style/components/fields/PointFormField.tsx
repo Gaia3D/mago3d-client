@@ -10,9 +10,10 @@ interface PointFormFieldProps {
   context: EditableContextModel;
   onChange: <K extends keyof EditableContextModel>(field: K, value: EditableContextModel[K]) => void;
   attributes?: PreviewColumn[];
+  isAttribute?: boolean;
 }
 
-const PointFormField = ({context, onChange, attributes}: PointFormFieldProps) => {
+const PointFormField = ({context, onChange, attributes, isAttribute = false}: PointFormFieldProps) => {
   const [isSymbolPickerVisible, setIsSymbolPickerVisible] = useState(false);
   const selectSymbol = (symbolId: string, symbolSrc: string) => {
     onChange("iconSymbolId", symbolId);
@@ -75,24 +76,30 @@ const PointFormField = ({context, onChange, attributes}: PointFormFieldProps) =>
             onChange={value => onChange("size", value)}
           />
 
-          <FieldRow
-            id="fillColor"
-            label="채우기 색상"
-            type="color"
-            value={context.fillColor}
-            onChange={value => onChange("fillColor", value)}
-          />
+          {
+            !isAttribute && (
+              <>
+                <FieldRow
+                  id="fillColor"
+                  label="채우기 색상"
+                  type="color"
+                  value={context.fillColor}
+                  onChange={value => onChange("fillColor", value)}
+                />
 
-          <FieldRow
-            id="fillOpacity"
-            label="채우기 투명도"
-            type="number"
-            min={0}
-            max={1}
-            step={0.01}
-            value={context.fillOpacity}
-            onChange={value => onChange("fillOpacity", value)}
-          />
+                <FieldRow
+                  id="fillOpacity"
+                  label="채우기 투명도"
+                  type="number"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={context.fillOpacity}
+                  onChange={value => onChange("fillOpacity", value)}
+                />
+              </>
+            )
+          }
 
           <FieldRow
             id="strokeWidth"

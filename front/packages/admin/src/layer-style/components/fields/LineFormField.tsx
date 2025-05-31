@@ -9,9 +9,10 @@ interface LineFormFieldProps {
   context: EditableContextModel;
   onChange: <K extends keyof EditableContextModel>(field: K, value: EditableContextModel[K]) => void;
   attributes?: PreviewColumn[];
+  isAttribute?: boolean;
 }
 
-const LineFormField = ({context, onChange, attributes}: LineFormFieldProps) => {
+const LineFormField = ({context, onChange, attributes, isAttribute = false}: LineFormFieldProps) => {
   return (
     <>
       <CommonFormField context={context} onChange={onChange} />
@@ -24,24 +25,28 @@ const LineFormField = ({context, onChange, attributes}: LineFormFieldProps) => {
         onChange={value => onChange("strokeWidth", value)}
       />
 
-      <FieldRow
-        id="strokeColor"
-        label="외각선 색상"
-        type="color"
-        value={context.strokeColor}
-        onChange={value => onChange("strokeColor", value)}
-      />
+      {!isAttribute && (
+        <>
+          <FieldRow
+            id="strokeColor"
+            label="외각선 색상"
+            type="color"
+            value={context.strokeColor}
+            onChange={value => onChange("strokeColor", value)}
+          />
 
-      <FieldRow
-        id="strokeOpacity"
-        label="외각선 투명도"
-        type="number"
-        min={0}
-        max={1}
-        step={0.01}
-        value={context.strokeOpacity}
-        onChange={value => onChange("strokeOpacity", value)}
-      />
+          <FieldRow
+            id="strokeOpacity"
+            label="외각선 투명도"
+            type="number"
+            min={0}
+            max={1}
+            step={0.01}
+            value={context.strokeOpacity}
+            onChange={value => onChange("strokeOpacity", value)}
+          />
+        </>
+      )}
 
       <FieldRow
         id="isLabel"

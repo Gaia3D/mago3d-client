@@ -1,16 +1,18 @@
 import {
+  AttributeType,
+  ComparisonType,
   EditableContextModel,
   EditableRuleStyle,
-  LayerType, AttributeType,
+  LayerType,
 } from "@src/layer-style/models/EditableContextModel";
 import {
-  StyleContextValue,
-  PointStyleInput,
-  LineStyleInput,
-  PolygonStyleInput,
   AttributeStyleInput,
-  RuleStyleInput,
+  LineStyleInput,
+  PointStyleInput,
+  PolygonStyleInput,
   RuleStyleContextValue,
+  RuleStyleInput,
+  StyleContextValue,
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 
 export const mapToRequestContext = (editable: EditableContextModel): StyleContextValue => {
@@ -87,6 +89,8 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
   } else if (editable.type === LayerType.ATTRIBUTE) {
     const rules: RuleStyleInput[] = editable.rules?.map((rule: EditableRuleStyle ) => {
       const isLine = editable.attributeType === AttributeType.LINE;
+      const comparisonType = editable.comparisonType;
+
       const style: EditableContextModel = {
         ...editable,
         fillColor: isLine ? editable.fillColor : rule.attributeColor,
@@ -95,15 +99,16 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
         strokeOpacity: isLine ? rule.attributeOpacity : editable.strokeOpacity,
         type: editable.attributeType as unknown as LayerType,
       };
+
+      const ruleCondition = {
+        ...(comparisonType === ComparisonType.EQ && { eq: rule.eq }),
+        ...(comparisonType === ComparisonType.GT_LE && { gt: rule.gt, le: rule.le }),
+        ...(comparisonType === ComparisonType.GE_LT && { ge: rule.ge, lt: rule.lt }),
+      };
+
       return {
         alias: rule.alias,
-        rule: {
-          eq: rule.eq,
-          ge: rule.ge,
-          gt: rule.gt,
-          le: rule.le,
-          lt: rule.lt,
-        },
+        rule: ruleCondition,
         style: mapToRuleStyleContext(style),
       };
     }) ?? [];
