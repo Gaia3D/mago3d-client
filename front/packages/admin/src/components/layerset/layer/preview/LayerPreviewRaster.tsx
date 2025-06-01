@@ -1,14 +1,13 @@
 import {
-    ApplyLayerStyleDocument, CreateLayerStyleDocument,
-    CreateStyleInput, DeleteLayerStyleDocument,
+    CreateStyleInput,
     LayerAsset,
-    LayersetAssetDocument, RemoteDocument, RemoteQueryVariables, UpdateLayerStyleDocument
+    LayersetAssetDocument, RemoteDocument, RemoteQueryVariables
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {useEffect, useRef, useState} from "react";
 import * as Cesium from "cesium";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {useMutation, useSuspenseQuery} from "@apollo/client";
-import {getWmsLayer, getWmsLayerImageProvider} from "@src/components/layerset/utils/utils";
+import {useSuspenseQuery} from "@apollo/client";
+import {getWmsLayer} from "@src/components/layerset/utils/utils";
 import {createCesiumViewer} from "@src/utils/createCesiumViewer";
 import {useLayerStyleMutations} from "@src/hooks/useLayerStyleMutation";
 

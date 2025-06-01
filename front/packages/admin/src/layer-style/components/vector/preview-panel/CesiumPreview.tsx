@@ -3,8 +3,8 @@ import * as Cesium from "cesium";
 import {PreviewMode} from "@src/layer-style/components/vector/PreviewPanel";
 import {useRecoilValue} from "recoil";
 import {editableStylesState, editingStyleState, selectedBackgroundState} from "@src/layer-style/recoils/layerStyle";
-import {initCesiumViewer} from "@src/utils/layer/initCesiumViewer";
-import {updateImageryProvider} from "@src/utils/layer/updateImageryProvider";
+import {initCesiumViewer} from "@src/layer-style/utils/initCesiumViewer";
+import {updateImageryProvider} from "@src/layer-style/utils/updateImageryProvider";
 import {applyStyledEntities} from "@src/layer-style/utils/apply-styled-entities";
 
 interface CesiumPreviewerProps {
