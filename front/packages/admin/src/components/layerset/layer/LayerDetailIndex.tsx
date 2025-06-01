@@ -1,15 +1,15 @@
 import {Suspense, useEffect, useState} from "react";
-import { classifyAssetTypeClassNameByLayerAssetType } from "@src/api/Data";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import {classifyAssetTypeClassNameByLayerAssetType} from "@src/api/Data";
+import {SubmitHandler, useForm} from "react-hook-form";
+import {useNavigate} from "react-router-dom";
 import {useMutation, useSuspenseQuery} from "@apollo/client";
-import { useFragment } from "@src/generated/gql/layerset";
-import { alertToast } from "@mnd/shared/src/utils/toast";
-import { useTranslation } from "react-i18next";
+import {useFragment} from "@src/generated/gql/layerset";
+import {alertToast} from "@mnd/shared/src/utils/toast";
+import {useTranslation} from "react-i18next";
 import LayerLogTable from "@src/components/layerset/layer/LayerLogTable";
 import LayerForm from "@src/components/layerset/layer/LayerForm";
-import LayerAttribute from "@src/components/layerset/layer/LayerAttribute";
 import {
+  LayerAssetType,
   LayersetAssetBasicFragmentDoc,
   LayersetAssetDocument,
   LayersetDeleteAssetDocument,
@@ -25,6 +25,7 @@ import {
   remoteAssetDataState,
   selectedAssetState
 } from "@src/layer-style/recoils/layerStyle";
+import LayerAttribute from "@src/components/layerset/layer/LayerAttribute";
 
 interface LayerDetailIndexProps {
   id: string;
@@ -101,7 +102,11 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
           <ul>
             <li className={activeTab === "default" ? "on" : ""} onClick={() => setActiveTab("default")}>기본 설정</li>
             <li className={activeTab === "style" ? "on" : ""} onClick={() => setActiveTab("style")}>스타일 설정</li>
-            <li className={activeTab === "attribute" ? "on" : ""} onClick={() => setActiveTab("attribute")}>속성 설정</li>
+            {
+              asset.type === LayerAssetType.Vector && (
+                <li className={activeTab === "attribute" ? "on" : ""} onClick={() => setActiveTab("attribute")}>속성 설정</li>
+              )
+            }
             <li className={activeTab === "log" ? "on" : ""} onClick={() => setActiveTab("log")}>로그</li>
           </ul>
         </div>
@@ -118,9 +123,13 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
           <div className={activeTab === "style" ? "block" : "none"}>
             <LayerStyle />
           </div>
-          <div className={activeTab === "attribute" ? "block" : "none"}>
-            <LayerAttribute />
-          </div>
+          {
+            asset.type === LayerAssetType.Vector && (
+              <div className={activeTab === "attribute" ? "block" : "none"}>
+                <LayerAttribute />
+              </div>
+            )
+          }
           <div className={activeTab === "log" ? "block" : "none"}>
             <LayerLogTable logs={logs}/>
           </div>

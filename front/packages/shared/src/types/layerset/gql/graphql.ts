@@ -1259,13 +1259,57 @@ export type QueryUserGroupsArgs = {
 };
 
 export type RasterStyleInput = {
+  /**
+   * RGB 또는 밴드 설정 등 채널 정보를 정의합니다.
+   * 예: { red: 1, green: 2, blue: 3 } 또는 { gray: 1 }
+   * GeoTIFF 등 멀티밴드 래스터에서 어떤 밴드를 어떤 색상으로 표시할지 결정할 때 사용합니다.
+   */
   channels?: InputMaybe<Channels>;
+
+  /**
+   * 색상 맵(ColorMap)을 구성하는 엔트리 목록입니다.
+   * 각 엔트리는 특정 픽셀 값 또는 값 범위에 대해 색상과 투명도를 지정합니다.
+   * 예: { quantity: 100, color: "#ff0000", opacity: 1.0, label: "High" }
+   */
   entries?: InputMaybe<Array<InputMaybe<ColorMapEntry>>>;
+
+  /**
+   * 감마 보정 값입니다.
+   * 감마 값이 1보다 크면 이미지가 더 밝아지고, 1보다 작으면 어두워집니다.
+   * 일반적으로 디스플레이 조정을 위해 사용됩니다.
+   */
   gamma?: InputMaybe<Scalars['Float']['input']>;
+
+  /**
+   * 스타일이 적용될 최대 스케일입니다.
+   * 지도 줌 수준이 이 값보다 작으면 스타일이 적용되지 않습니다.
+   * 예: 1000000 (1:1,000,000 이하에서만 표시)
+   */
   maxScale?: InputMaybe<Scalars['Float']['input']>;
+
+  /**
+   * 스타일이 적용될 최소 스케일입니다.
+   * 지도 줌 수준이 이 값보다 크면 스타일이 적용되지 않습니다.
+   */
   minScale?: InputMaybe<Scalars['Float']['input']>;
+
+  /**
+   * 대비(contrast) 적용 방식입니다.
+   * 예: 'normalize', 'histogram', 'clip' 등이 있으며 GeoServer에서 지원되는 `ContrastEnhancement`의 방법에 해당합니다.
+   */
   mode?: InputMaybe<ContrastMethod>;
+
+  /**
+   * 전체 래스터의 불투명도(opacity)를 설정합니다.
+   * 0은 완전히 투명, 1은 완전히 불투명입니다.
+   */
   opacity?: InputMaybe<Scalars['Float']['input']>;
+
+  /**
+   * 색상 맵핑 방식입니다.
+   * 예: 'ramp' (선형 보간), 'intervals' (값 범위별 고정 색상), 'values' (정확한 값별 색상)
+   * SLD에서 ColorMap의 type 속성과 대응됩니다.
+   */
   type?: InputMaybe<ColorMapType>;
 };
 
