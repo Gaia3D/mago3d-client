@@ -76,7 +76,6 @@ export const mapToEditableContext = (
   const resolvedAttrType = resolveAttributeTypeFromAtType(rule0Style?.["@type"]);
   const resolvedComparisonType = resolveComparisonTypeFromRule(rule0Input);
 
-
   return {
     type,
     name: style?.name ?? DEFAULT_STYLE.name,
@@ -101,12 +100,16 @@ export const mapToEditableContext = (
     isIcon: !!(finalContext.iconStyle || rule0Style.iconStyle),
     iconSymbolId: icon.symbolId ?? DEFAULT_STYLE.iconSymbolId,
     iconScale: icon.scale ?? DEFAULT_STYLE.iconScale,
+    iconImage: icon.images?.[0] ?? DEFAULT_STYLE.iconImage,
     isHalo: !!(label.halo ?? rule0Style.labelStyle?.halo),
     haloFillColor: halo.fillColor ?? DEFAULT_STYLE.haloFillColor,
     haloFillOpacity: halo.haloFillOpacity ?? DEFAULT_STYLE.haloFillOpacity,
 
+    raster: {
+      ...finalContext ?? DEFAULT_STYLE.raster
+    },
+
     // 임시 사용 속성
     visible: true,
-    iconImage: "",
   };
 };

@@ -125,7 +125,16 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
     };
   } else if (editable.type === LayerType.RASTER) {
     return {
-      raster: editable.raster,
+      raster: {
+        channels: editable.raster.channels,
+        entries: editable.raster.entries,
+        gamma: editable.raster.gamma,
+        maxScale: editable.raster.maxScale,
+        minScale: editable.raster.minScale,
+        mode: editable.raster.mode,
+        opacity: editable.raster.opacity,
+        type: editable.raster.type,
+      },
     }
   }
 

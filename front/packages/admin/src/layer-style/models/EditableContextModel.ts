@@ -1,3 +1,5 @@
+import {RasterStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
+
 export type EditableContextModel = {
   type: LayerType;
   name: string;
@@ -41,6 +43,9 @@ export type EditableContextModel = {
   // 임시 사용 속성
   visible: boolean;
   iconImage: string;
+
+  // 레스터
+  raster: RasterStyleInput
 };
 
 

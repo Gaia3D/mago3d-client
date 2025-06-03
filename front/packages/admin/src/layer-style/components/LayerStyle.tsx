@@ -3,13 +3,12 @@ import {useRecoilState, useRecoilValue} from "recoil";
 import { useRemoteAsset } from "../hooks/useRemoteAsset";
 import {editableStylesState, selectedAssetState} from "@src/layer-style/recoils/layerStyle";
 import {LayerAssetType} from "@mnd/shared/src/types/layerset/gql/graphql";
-import LayerPreviewRaster from "@src/components/layerset/layer/preview/LayerPreviewRaster";
 import LayerPreviewCog from "@src/components/layerset/layer/preview/LayerPreviewCog";
 import LayerPreviewHybrid from "@src/components/layerset/layer/preview/LayerPreviewHybrid";
 import LayerPreview3dTile from "@src/components/layerset/layer/preview/LayerPreview3dTile";
 import LayerVectorStyle from "@src/layer-style/components/LayerVectorStyle";
 import {mapToEditableStyle} from "@src/layer-style/mappers/mapToEditableStyle";
-import {mapToRequestStyle} from "@src/layer-style/mappers/mapToRequestStyle";
+import LayerRasterStyle from "@src/layer-style/components/LayerRasterStyle";
 
 const LayerStyle = () => {
   const asset = useRecoilValue(selectedAssetState);
@@ -29,16 +28,12 @@ const LayerStyle = () => {
     }
   }, [asset]);
 
-  useEffect(() => {
-    console.log("editableStyles", editableStyles);
-  }, [editableStyles]);
-
   const renderPreview = () => {
     switch (asset?.type) {
       case LayerAssetType.Vector:
         return <LayerVectorStyle />;
       case LayerAssetType.Raster:
-        return <LayerPreviewRaster asset={asset} />;
+        return <LayerRasterStyle />
       case LayerAssetType.Cog:
         return <LayerPreviewCog asset={asset} />;
       case LayerAssetType.Layergroup:

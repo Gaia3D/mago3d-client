@@ -1,35 +1,40 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {editableStylesState, editingStyleState, selectedAssetState} from "@src/layer-style/recoils/layerStyle";
 import {ApiProvider} from "@src/layer-style/api/ApiProvider";
 import {toast} from "react-toastify";
-import {DefaultCreateStyleInput} from "@src/layer-style/constants/defaultInput";
+import {DefaultCreateRasterStyleInput, DefaultCreateVectorStyleInput} from "@src/layer-style/constants/defaultInput";
 import StyleRow from "@src/layer-style/components/vector/style-list/StyleRow";
 import {mapToEditableStyle} from "@src/layer-style/mappers/mapToEditableStyle";
 import {EditableStyleModel} from "@src/layer-style/models/EditableStyleModel";
 
-
 const StyleList = () => {
   const asset = useRecoilValue(selectedAssetState);
+  const assetType = asset.type;
   const setEditingStyle = useSetRecoilState(editingStyleState);
   const [editableStyles, setEditableStyles] = useRecoilState(editableStylesState);
 
 
   const styleCreate = async () => {
+    const isVector = assetType === "VECTOR";
+    const defaultInput = isVector ? DefaultCreateVectorStyleInput : DefaultCreateRasterStyleInput;
+    const defaultContext = isVector
+      ? DefaultCreateVectorStyleInput.context.point
+      : DefaultCreateRasterStyleInput.context.raster;
+
     try {
-      const newStyle = await ApiProvider.layer.createStyle(DefaultCreateStyleInput);
+      const newStyle = await ApiProvider.layer.createStyle(defaultInput);
       if (!newStyle?.id) return;
 
       await ApiProvider.layer.applyStyle(asset.id, newStyle.id);
 
-      // newStyle에 context가 반환되지 않아 임시 방편
       const editable = mapToEditableStyle({
         id: newStyle.id,
-        name: DefaultCreateStyleInput.name,
-        context: DefaultCreateStyleInput.context.point
+        name: defaultInput.name,
+        context: defaultContext,
       });
-      setEditableStyles(prev => [editable, ...prev]);
 
+      setEditableStyles(prev => [editable, ...prev]);
       toast.success("스타일 생성 완료");
     } catch (err) {
       console.error("스타일 생성 오류:", err);

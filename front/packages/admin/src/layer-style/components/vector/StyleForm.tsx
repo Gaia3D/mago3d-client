@@ -1,16 +1,12 @@
 import React from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  editableStylesState,
-  editingStyleState,
-  selectedAssetState
-} from '@src/layer-style/recoils/layerStyle';
-import { ApiProvider } from '@src/layer-style/api/ApiProvider';
-import { toast } from 'react-toastify';
-import { mapToRequestStyle } from '@src/layer-style/mappers/mapToRequestStyle';
-import { useAttributes } from '@src/layer-style/hooks/useAttributes';
-import { produce } from 'immer';
-import { EditableContextModel, LayerType } from '@src/layer-style/models/EditableContextModel';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {editableStylesState, editingStyleState, selectedAssetState} from '@src/layer-style/recoils/layerStyle';
+import {ApiProvider} from '@src/layer-style/api/ApiProvider';
+import {toast} from 'react-toastify';
+import {mapToRequestStyle} from '@src/layer-style/mappers/mapToRequestStyle';
+import {useAttributes} from '@src/layer-style/hooks/useAttributes';
+import {produce} from 'immer';
+import {EditableContextModel, LayerType} from '@src/layer-style/models/EditableContextModel';
 
 import StyleTypeSelector from '@src/layer-style/components/vector/style-form/StyleTypeSelector';
 import PointFormField from '@src/layer-style/components/fields/PointFormField';
@@ -18,6 +14,7 @@ import LineFormField from '@src/layer-style/components/fields/LineFormField';
 import PolygonFormField from '@src/layer-style/components/fields/PolygonFormField';
 import AttributeFormField from '@src/layer-style/components/fields/AttributeFormField';
 import {validateStyleBeforeUpdate} from "@src/layer-style/utils/validateStyleBeforeUpdate";
+import RasterFormField from "@src/layer-style/components/fields/RasterFormField";
 
 const LAYER_TYPES: LayerType[] = [
   LayerType.POINT,
@@ -52,7 +49,7 @@ const StyleForm = () => {
     }
 
     const updateStyleInput = mapToRequestStyle(editingStyle);
-
+    console.log("updateStyleInput", updateStyleInput);
     try {
       const newStyle = await ApiProvider.layer.updateStyle(editingStyle.id, updateStyleInput);
       if (!newStyle?.id) return;
@@ -81,6 +78,8 @@ const StyleForm = () => {
         return <PolygonFormField context={editingStyle.context} onChange={handleChange} attributes={attributes} />;
       case LayerType.ATTRIBUTE:
         return <AttributeFormField context={editingStyle.context} onChange={handleChange} attributes={attributes} />;
+      case LayerType.RASTER:
+        return <RasterFormField context={editingStyle.context} onChange={handleChange} />;
       default:
         return null;
     }
@@ -97,11 +96,15 @@ const StyleForm = () => {
       </div>
 
       <div className="section-body">
-        <StyleTypeSelector
-          selectedType={editingStyle.context.type}
-          onSelectType={type => handleChange('type', type)}
-          types={LAYER_TYPES}
-        />
+        {
+          editingStyle.context.type !== LayerType.RASTER && (
+            <StyleTypeSelector
+              selectedType={editingStyle.context.type}
+              onSelectType={type => handleChange('type', type)}
+              types={LAYER_TYPES}
+            />
+          )
+        }
         {renderFields()}
       </div>
     </>

@@ -1,4 +1,5 @@
 import {AttributeType, ComparisonType, EditableContextModel} from "@src/layer-style/models/EditableContextModel";
+import {ColorMapType} from "@mnd/shared/src/types/layerset/gql/graphql";
 
 export const DEFAULT_STYLE: Omit<EditableContextModel, "type"> = {
   name: "",
@@ -30,4 +31,25 @@ export const DEFAULT_STYLE: Omit<EditableContextModel, "type"> = {
   // 임시 사용 속성
   visible: true,
   iconImage: "",
+  raster: {
+    entries: [
+      {
+        color: "#000000",
+        entryOpacity: 1,
+        bandValue: 0,
+        textLabel: "Min"
+      },
+      {
+        color: "#ffffff",
+        entryOpacity: 1,
+        bandValue: 10,
+        textLabel: "Max"
+      }
+    ],
+    type: ColorMapType.Ramp,
+    opacity: 1.0,
+    minScale: 0,
+    maxScale: undefined,
+    gamma: 1.0,
+  }
 };

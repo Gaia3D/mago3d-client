@@ -1,6 +1,9 @@
-import {CreateStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {
+  ColorMapType,
+  CreateStyleInput, RasterStyleInput
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 
-export const DefaultCreateStyleInput: CreateStyleInput = {
+export const DefaultCreateVectorStyleInput: CreateStyleInput = {
   context: {
     point: {
       fillColor: "#000000",
@@ -13,4 +16,33 @@ export const DefaultCreateStyleInput: CreateStyleInput = {
     }
   },
   name: "New Style"
+}
+
+export const DefaultRasterContext: RasterStyleInput = {
+  entries: [
+    {
+      color: "#000000",
+      entryOpacity: 1,
+      bandValue: 0,
+      textLabel: "Min"
+    },
+    {
+      color: "#ffffff",
+      entryOpacity: 1,
+      bandValue: 10,
+      textLabel: "Max"
+    }
+  ],
+  type: ColorMapType.Ramp,
+  opacity: 1.0,
+  minScale: 0,
+  maxScale: undefined,
+  gamma: 1.0,
+}
+
+export const DefaultCreateRasterStyleInput: CreateStyleInput = {
+  context: {
+    raster: DefaultRasterContext
+  },
+  name: "Raster Style Test",
 }

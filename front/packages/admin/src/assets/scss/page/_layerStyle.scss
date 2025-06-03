@@ -166,92 +166,91 @@
             height: 40px;
           }
         }
+      }
 
-        .rule-table-wrapper {
-          .form-row {
-            margin-bottom: 12px;
+      .rule-table-wrapper {
+        .form-row {
+          margin-bottom: 12px;
+        }
+
+        .rule-table-actions {
+          display: flex;
+          justify-content: center;
+          margin-top: 12px;
+          gap: 8px;
+
+          .add-row-button {
+            background-color: #4f86ff;
+            width: 100px;
+            height: 36px;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+              background-color: #3a6fd8;
+            }
           }
+        }
 
-          .rule-table-actions {
-            display: flex;
-            justify-content: center;
-            margin-top: 12px;
-            gap: 8px;
 
-            .add-row-button {
-              background-color: #4f86ff;
-              width: 100px;
-              height: 36px;
-              color: #fff;
-              border: none;
-              border-radius: 6px;
-              font-weight: 500;
-              cursor: pointer;
+        .rule-table {
+          width: 100%;
+          font-size: 14px;
+          table-layout: fixed;
+
+          thead {
+            th {
+              padding: 12px;
+              font-size: 12px;
+              text-align: center;
+              color: #333;
+            }
+          }
+          tbody {
+            tr {
               transition: background-color 0.2s ease;
 
-              &:hover {
-                background-color: #3a6fd8;
-              }
-            }
-          }
-
-
-          .rule-table {
-            width: 100%;
-            font-size: 14px;
-            table-layout: fixed;
-
-            thead {
-              th {
-                padding: 12px;
-                font-size: 12px;
+              td {
+                padding: 8px;
                 text-align: center;
-                color: #333;
-              }
-            }
-            tbody {
-              tr {
-                transition: background-color 0.2s ease;
+                input[type='text'],
+                input[type='number'],
+                input[type='color'],
+                select {
+                  width: 100%;
+                  height: 36px;
+                  border-radius: 6px;
+                  padding: 0 8px;
+                  font-size: 14px;
+                  box-sizing: border-box;
+                }
 
-                td {
-                  padding: 8px;
-                  text-align: center;
-                  input[type='text'],
-                  input[type='number'],
-                  input[type='color'],
-                  select {
-                    width: 100%;
-                    height: 36px;
-                    border-radius: 6px;
-                    padding: 0 8px;
-                    font-size: 14px;
-                    box-sizing: border-box;
-                  }
+                input[type='color'] {
+                  padding: 0;
+                }
+                .delete-button {
+                  width: 100%;
+                  height: 36px;
+                  background-color: #ff5c5c;
+                  color: #fff;
+                  border: none;
+                  border-radius: 6px;
+                  padding: 4px 10px;
+                  font-size: 12px;
+                  transition: background-color 0.2s ease;
 
-                  input[type='color'] {
-                    padding: 0;
-                  }
-                  .delete-button {
-                    width: 100%;
-                    height: 36px;
-                    background-color: #ff5c5c;
-                    color: #fff;
-                    border: none;
-                    border-radius: 6px;
-                    padding: 4px 10px;
-                    font-size: 12px;
-                    transition: background-color 0.2s ease;
-
-                    &:hover {
-                      background-color: #e04444;
-                    }
+                  &:hover {
+                    background-color: #e04444;
                   }
                 }
               }
             }
           }
         }
-
       }
 
       .style-type-button-group {
