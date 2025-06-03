@@ -8,11 +8,12 @@ export const loadWmsLayer = async (layer: UserLayerAsset, viewer: Cesium.Viewer)
             url: import.meta.env.VITE_GEOSERVER_WMS_SERVICE_URL,
             layers: layer.properties.layer.resource.name,
             parameters: {
-                service: "WMS",
-                request: "GetMap",
-                version: "1.1.1",
-                format: "image/png",
-                transparent: "true"
+              service: "WMS",
+              request: "GetMap",
+              version: "1.1.1",
+              format: "image/png",
+              transparent: "true",
+              tiled: true,
             },
         }),
         {show: !!layer.visible}

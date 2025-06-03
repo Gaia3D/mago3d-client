@@ -31,7 +31,7 @@ export const styledLabelGraphics = (
     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
     verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
     show: new Cesium.ConstantProperty(true),
-    outlineWidth: context.isHalo ? 10 : 0,
+    outlineWidth: context.isHalo ? 20 : 0,
     outlineColor: Cesium.Color.fromCssColorString(context.haloFillColor)
       .withAlpha(context.haloFillOpacity),
     distanceDisplayCondition: new Cesium.DistanceDisplayCondition(minDistance, maxDistance),

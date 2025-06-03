@@ -28,6 +28,7 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
         ? {
           fillColor: editable.haloFillColor,
           fillOpacity: editable.haloFillOpacity,
+          radius: 2,
         }
         : undefined,
     };
@@ -122,6 +123,10 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
     return {
       attribute,
     };
+  } else if (editable.type === LayerType.RASTER) {
+    return {
+      raster: editable.raster,
+    }
   }
 
   return {};
@@ -139,6 +144,7 @@ const mapToRuleStyleContext = (style: EditableContextModel): RuleStyleContextVal
         ? {
           fillColor: style.haloFillColor,
           fillOpacity: style.haloFillOpacity,
+          radius: 2,
         }
         : undefined,
     };
