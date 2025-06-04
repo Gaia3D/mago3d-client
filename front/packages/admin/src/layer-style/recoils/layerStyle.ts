@@ -1,7 +1,23 @@
 import {atom} from "recoil";
-import {LayerAsset, RemoteLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {
+  LayerAsset,
+  LayerBackground,
+  Maybe,
+  Scalars
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {EditableStyleModel} from "@src/layer-style/models/EditableStyleModel";
-import {BackgroundMaps, BackgroundMapType} from "@src/constants/backgroundMap";
+
+type RemoteLayerAsset = {
+  __typename?: 'RemoteLayerAsset';
+  href?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  featureType?: Maybe<FeatureType>;
+};
+
+type FeatureType = {
+  nativeName?: string;
+  // 필요한 다른 필드도 여기에 추가
+};
 
 // 선택된 에셋
 export const selectedAssetState = atom<LayerAsset | undefined>({
@@ -15,10 +31,16 @@ export const remoteAssetDataState = atom<RemoteLayerAsset>({
   default: undefined
 })
 
+// 전체 배경지도
+export const backgroundsState = atom<LayerBackground[]>({
+  key: "backgroundsState",
+  default: []
+})
+
 // 선택된 배경지도
-export const selectedBackgroundState = atom<BackgroundMapType>({
+export const selectedBackgroundState = atom<LayerBackground | undefined>({
   key: "selectedBackgroundState",
-  default: BackgroundMaps[0]
+  default: undefined
 })
 
 // 전체 스타일

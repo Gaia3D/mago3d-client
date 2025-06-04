@@ -2,7 +2,8 @@ import React from 'react';
 import {FieldRow} from "@src/layer-style/components/fields/FieldRow";
 import {toast} from "react-toastify";
 import {EditableContextModel} from "@src/layer-style/models/EditableContextModel";
-import {BackgroundMaps} from "@src/constants/backgroundMap";
+import {useRecoilValue} from "recoil";
+import {backgroundsState} from "@src/layer-style/recoils/layerStyle";
 
 interface CommonFormFieldProps {
   context: EditableContextModel;
@@ -10,6 +11,8 @@ interface CommonFormFieldProps {
 }
 
 const CommonFormField = ({context, onChange}: CommonFormFieldProps) => {
+  const backgrounds = useRecoilValue(backgroundsState);
+
   return (
     <>
       <FieldRow
@@ -26,7 +29,7 @@ const CommonFormField = ({context, onChange}: CommonFormFieldProps) => {
         type="select"
         value={context.backgroundId}
         onChange={value => onChange("backgroundId", value)}
-        options={[{id:"", name: "전체"}, ...BackgroundMaps]?.map(attr => ({value: attr.id, label: attr.name}))}
+        options={[{id:"", name: "전체"}, ...backgrounds]?.map(attr => ({value: attr.id, label: attr.name}))}
       />
 
       <FieldRow

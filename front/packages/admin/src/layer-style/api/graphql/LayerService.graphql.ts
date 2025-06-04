@@ -1,12 +1,11 @@
 import client from "@src/layer-style/libs/apollo";
 import {
-  ApplyLayerStyleDocument,
+  ApplyLayerStyleDocument, BackgroundsDocument,
   CreateLayerStyleDocument,
   DeleteLayerStyleDocument, PreviewColumnsDocument,
-  UpdateLayerStyleDocument
+  UpdateLayerStyleDocument, ClassifyAttributeDocument
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {LayerService} from "@src/layer-style/api/services/LayerService";
-import {ClassifyAttributeDocument} from "@src/generated/gql/layerset/graphql";
 
 export const GraphQLLayerService: LayerService = {
   async createStyle(input) {
@@ -58,5 +57,13 @@ export const GraphQLLayerService: LayerService = {
       variables: { nativeName, attribute}
     })
     return data.classifyAttribute;
+  },
+
+  async getBackgrounds() {
+    const {data} = await client.query({
+      query: BackgroundsDocument,
+    })
+    console.log("data", data);
+    return data.backgrounds;
   }
 };

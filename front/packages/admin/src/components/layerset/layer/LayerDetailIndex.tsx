@@ -20,12 +20,14 @@ import {
 import {useRecoilState, useSetRecoilState} from "recoil";
 import LayerStyle from "@src/layer-style/components/LayerStyle";
 import {
+  backgroundsState,
   editableStylesState,
   editingStyleState,
   remoteAssetDataState,
-  selectedAssetState
+  selectedAssetState, selectedBackgroundState
 } from "@src/layer-style/recoils/layerStyle";
 import LayerAttribute from "@src/components/layerset/layer/LayerAttribute";
+import {useBackgrounds} from "@src/layer-style/hooks/useBackgrounds";
 
 interface LayerDetailIndexProps {
   id: string;
@@ -42,6 +44,10 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
   const asset = useFragment(LayersetAssetBasicFragmentDoc, data.asset);
   const { logs, groups } = data.asset;
 
+  const { backgrounds } = useBackgrounds();
+  const setBackgrounds = useSetRecoilState(backgroundsState);
+  const setSelectedBackground = useSetRecoilState(selectedBackgroundState)
+
   const [activeTab, setActiveTab] = useState<TabType>("default");
   const [globalAsset, setGlobalAsset] = useRecoilState(selectedAssetState);
   const setRemoteAetData = useSetRecoilState(remoteAssetDataState)
@@ -57,6 +63,12 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
       setEditingStyle(undefined);
     }
   }, [asset, setGlobalAsset]);
+
+  useEffect(() => {
+    if (!backgrounds.length) return;
+    setBackgrounds(backgrounds);
+    setSelectedBackground(backgrounds[0]);
+  }, [backgrounds]);
 
   const [updateAsset] = useMutation(LayersetUpdateAssetDocument, {
     refetchQueries: [LayersetAssetDocument],

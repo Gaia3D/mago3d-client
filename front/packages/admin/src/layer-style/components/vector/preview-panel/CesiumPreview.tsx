@@ -15,7 +15,7 @@ interface CesiumPreviewerProps {
 const CesiumPreview = ({dataSource, previewMode}: CesiumPreviewerProps) => {
   const viewerRef = useRef<HTMLDivElement>(null);
   const cesiumViewerRef = useRef<Cesium.Viewer | null>(null);
-  const imageryLayerRef = useRef<Cesium.ImageryLayer | null>(null);
+  const imageryLayerRef = useRef<Cesium.ImageryLayer[] | null>(null);
   const [currentEntities, setCurrentEntities] = useState<Cesium.Entity[]>([]);
 
   const selectedBackground = useRecoilValue(selectedBackgroundState);
@@ -38,7 +38,7 @@ const CesiumPreview = ({dataSource, previewMode}: CesiumPreviewerProps) => {
 
   // 배경맵 변경 처리
   useEffect(() => {
-    if (!cesiumViewerRef.current) return;
+    if (!cesiumViewerRef.current || !selectedBackground) return;
     imageryLayerRef.current = updateImageryProvider(
       cesiumViewerRef.current,
       imageryLayerRef.current,
@@ -62,7 +62,7 @@ const CesiumPreview = ({dataSource, previewMode}: CesiumPreviewerProps) => {
       : matchedBackgroundStyles;
 
     setCurrentStyles(stylesToApply);
-  }, [editingStyle, editableStyles]);
+  }, [editingStyle, editableStyles, selectedBackground]);
 
   // preview entity 설정
   useEffect(() => {

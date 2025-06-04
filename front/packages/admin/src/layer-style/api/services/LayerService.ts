@@ -1,4 +1,4 @@
-import {CreateStyleInput, PreviewColumn} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {CreateStyleInput, LayerBackground, PreviewColumn} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {UpdateStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {ClassifyAttributeColumn} from "@src/generated/gql/layerset/graphql";
 
@@ -10,4 +10,5 @@ export interface LayerService {
 
   getAttribute(assetId: string): Promise<PreviewColumn[]>;
   getClassifyAttribute(attribute: string, nativeName: string): Promise<ClassifyAttributeColumn>;
+  getBackgrounds(): Promise<LayerBackground[]>;
 }

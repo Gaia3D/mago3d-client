@@ -294,6 +294,7 @@
         transition: all 0.2s ease;
 
         .map {
+          line-height: 16px;
           width: 36px;
           height: 36px;
           border-radius: 4px;
@@ -393,16 +394,22 @@
         padding: 6px 12px;
 
         button {
-          background-color: #4f86ff;
-          color: white;
-          border: none;
+          background-color: #e3edff;
+          border: 1px solid #b5cfff;
+          color: #2a4d9f;
           border-radius: 6px;
           padding: 4px 10px;
           cursor: pointer;
 
           &:hover {
-            background-color: #3a6fd8;
+            background-color: #d0e3ff;
           }
+          &.active {
+            background-color: #4f86ff;
+            color: white;
+            border: none;
+          }
+
         }
       }
 
