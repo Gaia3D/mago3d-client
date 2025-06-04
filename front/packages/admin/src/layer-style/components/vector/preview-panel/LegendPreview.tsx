@@ -45,8 +45,8 @@ const LegendPreview = () => {
                       backgroundColor: rule.attributeColor,
                       opacity: rule.attributeOpacity
                     }}/>
-                    <div className="legend-label">{valueLabel}</div>
                     <div className="legend-alias">{rule.alias || '-'}</div>
+                    <div className="legend-label">{valueLabel}</div>
                   </div>
                 );
               })}

@@ -37,11 +37,11 @@ const LegendPreview = () => {
                       opacity: entry.entryOpacity ?? 1,
                     }}
                   />
-                  <div className="legend-label">
-                    {entry.bandValue ?? "-"}
-                  </div>
                   <div className="legend-alias">
                     {entry.textLabel || "-"}
+                  </div>
+                  <div className="legend-label">
+                    {entry.bandValue ?? "-"}
                   </div>
                 </div>
               ))}
