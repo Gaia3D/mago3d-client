@@ -1259,57 +1259,13 @@ export type QueryUserGroupsArgs = {
 };
 
 export type RasterStyleInput = {
-  /**
-   * RGB 또는 밴드 설정 등 채널 정보를 정의합니다.
-   * 예: { red: 1, green: 2, blue: 3 } 또는 { gray: 1 }
-   * GeoTIFF 등 멀티밴드 래스터에서 어떤 밴드를 어떤 색상으로 표시할지 결정할 때 사용합니다.
-   */
   channels?: InputMaybe<Channels>;
-
-  /**
-   * 색상 맵(ColorMap)을 구성하는 엔트리 목록입니다.
-   * 각 엔트리는 특정 픽셀 값 또는 값 범위에 대해 색상과 투명도를 지정합니다.
-   * 예: { quantity: 100, color: "#ff0000", opacity: 1.0, label: "High" }
-   */
   entries?: InputMaybe<Array<InputMaybe<ColorMapEntry>>>;
-
-  /**
-   * 감마 보정 값입니다.
-   * 감마 값이 1보다 크면 이미지가 더 밝아지고, 1보다 작으면 어두워집니다.
-   * 일반적으로 디스플레이 조정을 위해 사용됩니다.
-   */
   gamma?: InputMaybe<Scalars['Float']['input']>;
-
-  /**
-   * 스타일이 적용될 최대 스케일입니다.
-   * 지도 줌 수준이 이 값보다 작으면 스타일이 적용되지 않습니다.
-   * 예: 1000000 (1:1,000,000 이하에서만 표시)
-   */
   maxScale?: InputMaybe<Scalars['Float']['input']>;
-
-  /**
-   * 스타일이 적용될 최소 스케일입니다.
-   * 지도 줌 수준이 이 값보다 크면 스타일이 적용되지 않습니다.
-   */
   minScale?: InputMaybe<Scalars['Float']['input']>;
-
-  /**
-   * 대비(contrast) 적용 방식입니다.
-   * 예: 'normalize', 'histogram', 'clip' 등이 있으며 GeoServer에서 지원되는 `ContrastEnhancement`의 방법에 해당합니다.
-   */
   mode?: InputMaybe<ContrastMethod>;
-
-  /**
-   * 전체 래스터의 불투명도(opacity)를 설정합니다.
-   * 0은 완전히 투명, 1은 완전히 불투명입니다.
-   */
   opacity?: InputMaybe<Scalars['Float']['input']>;
-
-  /**
-   * 색상 맵핑 방식입니다.
-   * 예: 'ramp' (선형 보간), 'intervals' (값 범위별 고정 색상), 'values' (정확한 값별 색상)
-   * SLD에서 ColorMap의 type 속성과 대응됩니다.
-   */
   type?: InputMaybe<ColorMapType>;
 };
 
@@ -1322,14 +1278,7 @@ export type RemoteLayerAsset = {
   __typename?: 'RemoteLayerAsset';
   href?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
-  featureType?: Maybe<FeatureType>;
 };
-
-export type FeatureType = {
-  nativeName?: string;
-  // 필요한 다른 필드도 여기에 추가
-};
-
 
 export type RemoteLayerStyle = {
   __typename?: 'RemoteLayerStyle';
@@ -2181,6 +2130,11 @@ export type PreviewColumnsQueryVariables = Exact<{
 
 export type PreviewColumnsQuery = { __typename?: 'Query', previewColumns?: Array<{ __typename?: 'PreviewColumn', field: string, value?: string | null } | null> | null };
 
+export type BackgroundsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type BackgroundsQuery = { __typename?: 'Query', backgrounds: Array<{ __typename?: 'LayerBackground', id: string, type: string, url: Array<string | null>, color?: string | null, name: string, image: string, createdBy?: string | null, createdAt?: string | null, updatedBy?: string | null, updatedAt?: string | null } | null> };
+
 export const LayersetGroupBasicFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayersetGroupBasic"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"collapsed"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<LayersetGroupBasicFragment, unknown>;
 export const LayersetAssetBasicFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayersetAssetBasic"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerAsset"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"visible"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"properties"}},{"kind":"Field","name":{"kind":"Name","value":"styles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"format"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"defaultStatus"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"context"}},{"kind":"Field","name":{"kind":"Name","value":"backgroundId"}}]}}]}}]} as unknown as DocumentNode<LayersetAssetBasicFragment, unknown>;
 export const LayerGroupBasicFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"layerGroupBasic"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"published"}},{"kind":"Field","name":{"kind":"Name","value":"collapsed"}},{"kind":"Field","name":{"kind":"Name","value":"access"}},{"kind":"Field","name":{"kind":"Name","value":"order"}}]}}]} as unknown as DocumentNode<LayerGroupBasicFragment, unknown>;
@@ -2231,3 +2185,4 @@ export const RemoteDocument = {"kind":"Document","definitions":[{"kind":"Operati
 export const ClassifyAttributeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"classifyAttribute"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"nativeName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attribute"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"classifyAttribute"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"nativeName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"nativeName"}}},{"kind":"Argument","name":{"kind":"Name","value":"attribute"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attribute"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"rules"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"eq"}},{"kind":"Field","name":{"kind":"Name","value":"color"}}]}}]}}]}}]} as unknown as DocumentNode<ClassifyAttributeQuery, ClassifyAttributeQueryVariables>;
 export const AttributeByNativeNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AttributeByNativeName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attributeByNativeName"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}},{"kind":"Field","name":{"kind":"Name","value":"sortOrder"}},{"kind":"Field","name":{"kind":"Name","value":"properties"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"weight"}},{"kind":"Field","name":{"kind":"Name","value":"sortOrder"}}]}}]}}]}}]} as unknown as DocumentNode<AttributeByNativeNameQuery, AttributeByNativeNameQueryVariables>;
 export const PreviewColumnsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PreviewColumns"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"assetID"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"previewColumns"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"assetId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"assetID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<PreviewColumnsQuery, PreviewColumnsQueryVariables>;
+export const BackgroundsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Backgrounds"},"directives":[{"kind":"Directive","name":{"kind":"Name","value":"api"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"EnumValue","value":"layerset"}}]}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"backgrounds"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<BackgroundsQuery, BackgroundsQueryVariables>;

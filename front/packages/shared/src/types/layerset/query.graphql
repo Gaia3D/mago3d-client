@@ -210,3 +210,18 @@ query PreviewColumns($assetID: ID!) @api(name: layerset) {
     value
   }
 }
+
+query Backgrounds @api(name: layerset) {
+    backgrounds {
+        id
+        type
+        url
+        color
+        name
+        image
+        createdBy
+        createdAt
+        updatedBy
+        updatedAt
+    }
+}
