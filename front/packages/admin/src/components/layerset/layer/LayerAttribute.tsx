@@ -125,11 +125,8 @@ const LayerAttribute = () => {
   }
 
   return (
+    <>
     <div className="layer-attribute-container">
-      <div className="button-container">
-        <button onClick={save}>저장</button>
-        <button onClick={reset}>초기화</button>
-      </div>
       <DndProvider backend={HTML5Backend}>
         <div className="base-prop-category-container">
           <div className="base-prop-section">
@@ -141,7 +138,7 @@ const LayerAttribute = () => {
             </div>
           </div>
           <div className="category-section">
-            <div className="section-header">테이블 정보 </div>
+            <div className="section-header">테이블 정보</div>
             <div className="section-body">
               <button className="btn-category-add" onClick={createCategory}>+ 테이블 추가</button>
               {categoryArr.map((category, index) => (
@@ -158,6 +155,11 @@ const LayerAttribute = () => {
         <AttributeTableContainer categoryArr={categoryArr}/>
       </DndProvider>
     </div>
+    <div className="alg-right">
+      <button className="btn-l-save" onClick={save}>저장</button>
+      <button className="btn-l-cancel" onClick={reset}>초기화</button>
+    </div>
+    </>
   );
 };
 
