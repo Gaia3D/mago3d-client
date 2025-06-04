@@ -12,13 +12,22 @@ export const getFinalAttributeColor = (
   const rawValue = typeof raw?._value !== "undefined" ? raw._value : raw;
 
   const matchedRule = rules.find(rule => {
+    const ge = parseFloat(rule.ge ?? "-Infinity");
+    const gt = parseFloat(rule.gt ?? "-Infinity");
+    const le = parseFloat(rule.le ?? "Infinity");
+    const lt = parseFloat(rule.lt ?? "Infinity");
+
     switch (comparisonType) {
       case ComparisonType.EQ:
         return rule.eq === rawValue;
       case ComparisonType.GE_LT:
-        return parseFloat(rule.ge ?? "-Infinity") <= rawValue && rawValue < parseFloat(rule.lt ?? "Infinity");
+        if (ge === lt) return rawValue === ge;
+        return ge <= rawValue && rawValue < lt;
+
       case ComparisonType.GT_LE:
-        return parseFloat(rule.gt ?? "-Infinity") < rawValue && rawValue <= parseFloat(rule.le ?? "Infinity");
+        if (gt === le) return rawValue === le;
+        return gt < rawValue && rawValue <= le;
+
       default:
         return false;
     }
