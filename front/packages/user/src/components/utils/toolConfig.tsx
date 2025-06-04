@@ -16,7 +16,7 @@ import CameraInfo from "@/components/tool/actions/CameraInfo.tsx";
 import LayerInfo from "@/components/tool/actions/LayerInfo.tsx";
 import {useTerrainTrans} from "@/components/tool/actions/useTerrainTrans.ts";
 import Watercourse from "@/components/tool/actions/Watercourse.tsx";
-import Legend from "@/components/Legend.tsx";
+import Legend from "@/components/legend/Legend.tsx";
 
 export interface ToolConfig {
     id: string;
