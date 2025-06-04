@@ -43,6 +43,11 @@ const StyleList = () => {
   };
 
   const styleDelete = async (styleId: string) => {
+    if (editableStyles.length <= 1) {
+      toast.warning("스타일은 최소 1개 이상 유지되어야 합니다.");
+      return;
+    }
+
     try {
       await ApiProvider.layer.deleteStyle(styleId);
 
