@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
-    layerMenuState, userLayerAssetArrState, UserLayerGroupState
+    layerMenuState, UserLayerGroupState
 } from "@/recoils/Layer";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {AsideDisplayProps} from "@/components/aside/AsidePanel.tsx";
@@ -18,18 +18,21 @@ import {
     CreateUserGroupInput,
     Maybe,
     Mutation,
-    UserLayerAsset,
     UserLayerGroup
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {RESTORE_USERLAYER, SAVE_USERLAYER} from "@/graphql/layerset/Mutation.ts";
+import {useLayerVisibilitySetter} from "@/hooks/useLayerVisibilitySetter.ts";
+import {loadingState} from "@/recoils/Spinner.ts";
 
 export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const {t} = useTranslation();
     const [layerMenu, setLayerMenu] = useRecoilState(layerMenuState);
     const [searchTerm, setSearchTerm] = useState('');
-    const [visibleAll, setVisibleAll] = useState<boolean>(true);
+    const [showAllLayersNext, setShowAllLayersNext] = useState(false);
     const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
-    const setUserLayerAssetArr = useSetRecoilState(userLayerAssetArrState);
+
+    const setLoadingState = useSetRecoilState(loadingState);
+    const setLayerVisibility = useLayerVisibilitySetter(setLoadingState);
 
     const debouncedSearch = useDebounce(searchTerm, 300);
 
@@ -61,28 +64,32 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
         await saveUserLayerMutateAsync({ input });
     };
 
-    const toggleAllLayer = () => {
-        const newVisibleState = !visibleAll;
-        setVisibleAll(newVisibleState);
+    const toggleAllLayer = async () => {
+        setShowAllLayersNext(!showAllLayersNext);
 
-        const userLayers: UserLayerAsset[] = [];
+        const updatedGroups = userLayerGroups.map(group => {
+            if (!group) return group;
 
-        setUserLayerGroups(prevGroups =>
-            prevGroups.map(group => {
-                if (!group) return group;
+            const updatedAssets = group.assets.map(asset => {
+                // Cesium에 먼저 반영
+                setLayerVisibility(asset, showAllLayersNext);
+                // Recoil에 반영될 새로운 객체 생성
+                return { ...asset, visible: showAllLayersNext };
+            });
 
-                const updatedAssets = group.assets.map(asset => {
-                    const updatedAsset = { ...asset, visible: !newVisibleState };
-                    userLayers.push(updatedAsset);
-                    return updatedAsset;
-                });
+            return { ...group, assets: updatedAssets };
+        });
 
-                return { ...group, assets: updatedAssets };
-            })
-        );
-
-        setUserLayerAssetArr(userLayers);
+        setUserLayerGroups(updatedGroups);
     };
+
+    // 레이어가 하나라도 켜져있으면 전체 끄기 on
+    useEffect(() => {
+        const hasAnyVisible = userLayerGroups.some(group =>
+          group?.assets.some(asset => asset.visible)
+        );
+        setShowAllLayersNext(!hasAnyVisible);
+    }, [userLayerGroups]);
 
 
 
@@ -105,7 +112,7 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
                     </ul>
                     <div className={`tileset-button ${layerMenu === 'tileset' ? 'on' : 'off'}`}>
                         <button type="button" onClick={toggleAllLayer}
-                                className={`layer-funtion-button ${visibleAll ? 'visible' : 'not-visible'}`}></button>
+                                className={`layer-funtion-button ${showAllLayersNext ? 'visible' : 'not-visible'}`}></button>
                         <button onClick={restoreToDefault} className='layer-funtion-button reset'></button>
                         <button onClick={saveState} className='layer-funtion-button save'></button>
                     </div>

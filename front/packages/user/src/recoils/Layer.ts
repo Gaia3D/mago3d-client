@@ -12,18 +12,8 @@ export const layersState = atom<UserLayerAsset[]>({
   default: []
 });
 
-export const reRenderLayerState = atom<boolean>({
-  key: 'reRenderLayerState',
-  default: false
-})
-
 export const terrainState = atom<Maybe<TerrainAsset>[]>({
   key:"terrainState",
-  default: []
-})
-
-export const userLayerAssetArrState = atom<UserLayerAsset[]>({
-  key: "userLayerAssetArrState",
   default: []
 })
 
@@ -34,11 +24,6 @@ export const NodeModelsState = atom<NodeModel[]>({
 
 export const UserLayerGroupState = atom<Maybe<UserLayerGroup>[]>({
   key: 'UserLayerGroupState',
-  default: []
-});
-
-export const InitialOpenState = atom<number[]>({
-  key: 'InitialOpenState',
   default: []
 });
 

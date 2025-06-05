@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import { onCameraInformation } from "@/api/camera/magoCameraInformation";
-import {useRecoilValue} from "recoil";
-import {userLayerAssetArrState} from "@/recoils/Layer.ts";
+import {useRecoilState} from "recoil";
+import {Maybe, UserLayerGroup} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import {UserLayerGroupState} from "@/recoils/Layer.ts";
 
 type idActive = {
   id: string;
@@ -17,35 +18,29 @@ const PitchVisibilityController = () => {
   const [minPitch, setMinPitch] = useState(-90);
   const [maxPitch, setMaxPitch] = useState(-20);
   const [currentPitch, setCurrentPitch] = useState(0);
-  const userLayerAssetArr = useRecoilValue(userLayerAssetArrState);
 
   const [layerIdActive, setLayerIdActive] = useState<idActive[]>([]);
+  const [visible, setVisible] = useState(true);
+  const [userLayerGroups, setUserLayerGroups] = useRecoilState<Maybe<UserLayerGroup>[]>(UserLayerGroupState);
 
   useEffect(() => {
-    setLayerIdActive((prev) => {
-      const updated = [...prev];
+    setLayerIdActive(() => {
+      const updated: idActive[] = [];
 
-      userLayerAssetArr.forEach((layerAsset) => {
-        const index = updated.findIndex((item) => item.id === layerAsset.assetId);
+      userLayerGroups.forEach(group => {
+        if (!group) return;
 
-        if (index === -1) {
+        group.assets.forEach(asset => {
           updated.push({
-            id: layerAsset.assetId,
-            active: layerAsset.visible ?? false,
+            id: asset.assetId,
+            active: asset.visible ?? false,
           });
-        } else {
-          updated[index] = {
-            ...updated[index],
-            active: layerAsset.visible ?? false,
-          };
-        }
+        });
       });
 
       return updated;
     });
-  }, [userLayerAssetArr, primitiveMap]);
-
-  const [visible, setVisible] = useState(true);
+  }, [userLayerGroups]);
 
   useEffect(() => {
     if (!viewer || !initialized) return;

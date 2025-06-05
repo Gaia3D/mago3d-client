@@ -1,11 +1,12 @@
-import {FC, useEffect, useRef, useState} from 'react';
+import {FC, useRef} from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import {UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useFlyToLayer} from "@/hooks/useFlyToLayer.ts";
-import useLayerVisibilityToggle from "@/hooks/useLayerVisibilityToggle.ts";
 import {useDeleteLayer} from "@/hooks/useDeleteLayer.ts";
-import {useRecoilValueLoadable} from "recoil";
-import {currentUserProfileSelector} from "@/recoils/Auth.ts";
+import {useSetRecoilState} from "recoil";
+import {UserLayerGroupState} from "@/recoils/Layer.ts";
+import {loadingState} from "@/recoils/Spinner.ts";
+import {useLayerVisibilitySetter} from "@/hooks/useLayerVisibilitySetter.ts";
 
 interface DraggableItemProps {
     id: string;
@@ -27,8 +28,30 @@ interface DragItem {
 export const TreeDraggableItem: FC<DraggableItemProps> = ({ id, text, index, groupIndex, moveItem, item, userId }) => {
     const ref = useRef<HTMLDivElement>(null);
     const { flyToLayer } = useFlyToLayer();
-    const { layerVisibilityToggle } = useLayerVisibilityToggle();
     const { deleteLayer } = useDeleteLayer();
+    const setUserLayerGroup = useSetRecoilState(UserLayerGroupState);
+
+    const setLoadingState = useSetRecoilState(loadingState);
+    const setLayerVisibility = useLayerVisibilitySetter(setLoadingState);
+
+    const visibilityToggle = async (item: UserLayerAsset) => {
+        const newVisible = !item.visible;
+
+        setUserLayerGroup(prevGroups =>
+          prevGroups.map(group => {
+              if (!group) return group;
+
+              return {
+                  ...group,
+                  assets: group.assets.map(asset =>
+                    asset.assetId === item.assetId ? { ...asset, visible: newVisible } : asset
+                  )
+              };
+          })
+        );
+
+        await setLayerVisibility(item, newVisible);
+    };
 
     const [, drop] = useDrop<DragItem>({
         accept: 'ITEM',
@@ -73,7 +96,7 @@ export const TreeDraggableItem: FC<DraggableItemProps> = ({ id, text, index, gro
             <div className="layer-button">
                 <button
                     type="button"
-                    onClick={() => {layerVisibilityToggle(item)}}
+                    onClick={() => {visibilityToggle(item)}}
                     className={`layer-funtion-button ${item.visible ? 'visible' : 'not-visible'}`}
                 ></button>
                 <button
