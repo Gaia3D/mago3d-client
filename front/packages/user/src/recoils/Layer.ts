@@ -1,5 +1,11 @@
 import { NodeModel } from "@minoru/react-dnd-treeview";
-import {Maybe, TerrainAsset, UserLayerAsset, UserLayerGroup} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {
+  LayerBackground,
+  Maybe,
+  TerrainAsset,
+  UserLayerAsset,
+  UserLayerGroup
+} from "@mnd/shared/src/types/layerset/gql/graphql";
 import { atom } from "recoil";
 
 export const layerMenuState = atom<string>({
@@ -27,69 +33,19 @@ export const UserLayerGroupState = atom<Maybe<UserLayerGroup>[]>({
   default: []
 });
 
-export type LayerMapType = {
-  type: string;
-  url: string;
-  background: string;
-  name: string;
-  image: string;
-};
+export const backgroundsState = atom<LayerBackground[]>({
+  key:"backgroundsState",
+  default: []
+})
 
-export const LayerMapArrState = atom<LayerMapType[]>({
-  key: 'LayerMapArrState',
-  default: [
-    {
-      type: 'osm',
-      url : "https://a.basemaps.cartocdn.com/light_all/",
-      background : "#d2d8dd",
-      name : "OSM White",
-      image : "osm_white",
-    },
-    {
-      type: 'osm',
-      url : "https://a.basemaps.cartocdn.com/dark_all/",
-      background : "#090909",
-      name : "OSM Dark",
-      image : "osm_dark",
-    },
-    {
-      type: 'osm',
-      url : "https://tile.openstreetmap.org/",
-      background : "#edebe5",
-      name : "OSM Basic",
-      image : "osm_basic",
-    },
-    {
-      type: 'vworld',
-      url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Hybrid/{TileMatrix}/{TileRow}/{TileCol}.png`,
-      background : "#686b61",
-      name : "VW Hybrid",
-      image : "vw_hybrid",
-    },
-    {
-      type: 'vworld',
-      url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Base/{TileMatrix}/{TileRow}/{TileCol}.png`,
-      background : "#f0eee9",
-      name : "VW Basic",
-      image : "vw_basic",
-    },
-    {
-      type: 'vworld',
-      url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Satellite/{TileMatrix}/{TileRow}/{TileCol}.jpeg`,
-      background : "#686b61",
-      name : "VW Satellite",
-      image : "vw_sate",
-    }
-  ]
-});
-
-export const CurrentLayerMapState = atom<LayerMapType>({
+export const CurrentLayerMapState = atom<LayerBackground>({
   key: 'CurrentLayerMapState',
   default: {
-    type: 'vworld',
-    url : `https://api.vworld.kr/req/wmts/1.0.0/${import.meta.env.VITE_VWORLD_TOKEN}/Hybrid/{TileMatrix}/{TileRow}/{TileCol}.png`,
-    background : "#686b61",
-    name : "VW Hybrid",
-    image : "vw_hybrid",
+    id: "0",
+    type: 'osm',
+    url : ["https://tile.openstreetmap.org/"],
+    color : "#edebe5",
+    name : "OSM Basic",
+    image : "osm_basic",
   }
 });
