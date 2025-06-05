@@ -38,8 +38,8 @@ export const backgroundsState = atom<LayerBackground[]>({
   default: []
 })
 
-export const CurrentLayerMapState = atom<LayerBackground>({
-  key: 'CurrentLayerMapState',
+export const SelectedBackgroundState = atom<LayerBackground>({
+  key: 'SelectedBackgroundState',
   default: {
     id: "0",
     type: 'osm',

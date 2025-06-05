@@ -2,7 +2,6 @@ import { RefObject, useEffect, useRef } from "react";
 import * as Cesium from "cesium";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import { useRecoilState } from "recoil";
-import { CurrentLayerMapState } from "@/recoils/Layer.ts";
 import { OptionsState } from "@/recoils/Tool.ts";
 import { BackgroundsDocument, LayerBackground } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { useQuery } from "@apollo/client";
@@ -13,7 +12,7 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
 
   const { globeController } = useGlobeController();
   const [options, setOptions] = useRecoilState(OptionsState);
-  const { backgrounds, currentMap } = useBackgrounds();
+  const { backgrounds, selectedBackground } = useBackgrounds();
   const { data } = useQuery<{ backgrounds: LayerBackground[] }>(BackgroundsDocument);
 
   const viewerRef = useRef<Cesium.Viewer | null>(null);
@@ -28,9 +27,9 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
       const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
       setOptions(prev => ({ ...prev, isTerrain: true }));
 
-      const baseLayers = currentMap.url
+      const baseLayers = selectedBackground.url
         .filter((url): url is string => !!url)
-        .map(url => initBackground(currentMap.type, url));
+        .map(url => initBackground(selectedBackground.type, url));
 
       if (baseLayers.length === 0) return;
 
@@ -81,14 +80,14 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
     initializeViewer();
   }, [containerRef]);
 
-  // 4. currentMap 변경 시 baseLayer 교체
+  // 4. selectedBackground 변경 시 baseLayer 교체
   useEffect(() => {
     const viewer = viewerRef.current;
-    if (!viewer || !currentMap.url.length) return;
+    if (!viewer || !selectedBackground.url.length) return;
 
-    const newBaseLayers = currentMap.url
+    const newBaseLayers = selectedBackground.url
       .filter((url): url is string => !!url)
-      .map(url => initBackground(currentMap.type, url));
+      .map(url => initBackground(selectedBackground.type, url));
 
     if (baseLayerRef.current) {
       viewer.scene.imageryLayers.remove(baseLayerRef.current);
@@ -109,5 +108,5 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
     backgroundLayerRef.current = backgrounds;
 
     viewer.scene.requestRender();
-  }, [currentMap]);
+  }, [selectedBackground]);
 };

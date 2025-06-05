@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { BackgroundsDocument, LayerBackground } from "@mnd/shared/src/types/layerset/gql/graphql";
 import { useRecoilState } from "recoil";
-import { backgroundsState, CurrentLayerMapState } from "@/recoils/Layer";
+import { backgroundsState, SelectedBackgroundState } from "@/recoils/Layer";
 
 export const useBackgrounds = () => {
   const [backgrounds, setBackgrounds] = useRecoilState(backgroundsState);
-  const [currentMap, setCurrentMap] = useRecoilState(CurrentLayerMapState);
+  const [selectedBackground, setSelectedBackground] = useRecoilState(SelectedBackgroundState);
 
   const { data } = useQuery<{ backgrounds: LayerBackground[] }>(BackgroundsDocument);
 
@@ -21,9 +21,9 @@ export const useBackgrounds = () => {
       : data.backgrounds[0];
 
     if (initBackground) {
-      setCurrentMap(initBackground);
+      setSelectedBackground(initBackground);
     }
   }, [data]);
 
-  return { backgrounds, currentMap };
+  return { backgrounds, selectedBackground };
 };
