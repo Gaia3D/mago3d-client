@@ -20,5 +20,13 @@ export const validateStyleBeforeUpdate = (style: EditableStyleModel): string | n
     return "라벨은 허용했지만 라벨 속성을 선택하지 않았습니다.";
   }
 
+  // 예외 3: 아이콘 스타일을 선택했지만 아이콘은 선택하지 않음
+  if (
+    context.isIcon &&
+    !context.iconSymbolId
+  ) {
+    return "아이콘을 선택해주세요."
+  }
+
   return null;
 };

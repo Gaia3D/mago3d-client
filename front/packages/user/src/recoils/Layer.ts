@@ -28,16 +28,19 @@ export const NodeModelsState = atom<NodeModel[]>({
   default: []
 });
 
+// 해당 사용자 레이어 그룹
 export const UserLayerGroupState = atom<Maybe<UserLayerGroup>[]>({
   key: 'UserLayerGroupState',
   default: []
 });
 
+// 전체 배경 맵
 export const backgroundsState = atom<LayerBackground[]>({
   key:"backgroundsState",
   default: []
 })
 
+// 현재 선택된 배경맵
 export const SelectedBackgroundState = atom<LayerBackground>({
   key: 'SelectedBackgroundState',
   default: {
