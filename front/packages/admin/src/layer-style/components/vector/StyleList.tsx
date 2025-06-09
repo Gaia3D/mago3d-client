@@ -34,7 +34,10 @@ const StyleList = () => {
         context: defaultContext,
       });
 
-      setEditableStyles(prev => [editable, ...prev]);
+      const styles = [editable, ...editableStyles.map(s => ({ ...s, defaultStatus: false }))];
+      const updatedStyles = updateDefaultStatus(styles, newStyle.id);
+
+      setEditableStyles(updatedStyles);
       toast.success("스타일 생성 완료");
     } catch (err) {
       console.error("스타일 생성 오류:", err);
@@ -42,16 +45,21 @@ const StyleList = () => {
     }
   };
 
-  const styleDelete = async (styleId: string) => {
+  const styleDelete = async (style: EditableStyleModel) => {
+    const styleId = style.id;
     if (editableStyles.length <= 1) {
       toast.warning("스타일은 최소 1개 이상 유지되어야 합니다.");
+      return;
+    }
+    if (style.defaultStatus) {
+      toast.warning("활성화된 스타일은 삭제할 수 없습니다.");
       return;
     }
 
     try {
       await ApiProvider.layer.deleteStyle(styleId);
 
-      setEditableStyles(prev => prev.filter(style => style.id !== styleId));
+      setEditableStyles(prev => prev.filter(s => s.id !== styleId));
 
       toast.success("스타일 삭제 완료");
     } catch (err) {
@@ -64,7 +72,7 @@ const StyleList = () => {
     setEditingStyle(style);
   }
 
-  const styleToggle = (styleId: string) => {
+  const visibleToggle = (styleId: string) => {
     setEditableStyles(prev =>
       prev.map(style => {
         if (style.id !== styleId) return style;
@@ -82,6 +90,30 @@ const StyleList = () => {
     );
   };
 
+  const statusToggle = async (style: EditableStyleModel) => {
+    if (style.defaultStatus) return;
+    try {
+      await ApiProvider.layer.ApplyDefaultStyle(asset.id, style.id);
+
+      const updatedStyles = updateDefaultStatus(editableStyles, style.id);
+      setEditableStyles(updatedStyles);
+
+      toast.success("스타일 활성화 완료");
+    } catch (err) {
+      console.error("스타일 활성화 오류:", err);
+      toast.error("스타일 활성화 중 오류가 발생했습니다.");
+    }
+  };
+
+  const updateDefaultStatus = (
+    styles: EditableStyleModel[],
+    newDefaultId: string
+  ): EditableStyleModel[] => {
+    return styles.map(style => ({
+      ...style,
+      defaultStatus: style.id === newDefaultId,
+    }));
+  };
 
   return (
     <div>
@@ -96,9 +128,10 @@ const StyleList = () => {
           <StyleRow
             key={index}
             style={style}
-            onToggle={styleToggle}
+            statusToggle={statusToggle}
+            visibleToggle={visibleToggle}
             onUpdate={() => styleUpdate(style)}
-            onDelete={styleDelete}
+            onDelete={() => styleDelete(style)}
           />
         ))}
       </div>

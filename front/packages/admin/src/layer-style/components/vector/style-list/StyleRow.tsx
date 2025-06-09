@@ -5,7 +5,8 @@ import {backgroundsState} from "@src/layer-style/recoils/layerStyle";
 
 interface StyleRowProps {
   style: EditableStyleModel;
-  onToggle: (styleId: string) => void;
+  statusToggle: (style: EditableStyleModel) => void;
+  visibleToggle: (styleId: string) => void;
   onUpdate: (styleId: string) => void;
   onDelete: (styleId: string) => void;
 }
@@ -20,7 +21,7 @@ const getContrastFontColor = (hex: string) => {
   return luminance > 186 ? '#000000' : '#ffffff'; // 기준값은 186
 };
 
-const StyleRow = ({ style, onToggle, onUpdate, onDelete }: StyleRowProps) => {
+const StyleRow = ({ style, statusToggle, visibleToggle, onUpdate, onDelete }: StyleRowProps) => {
   const { context } = style;
   const backgrounds = useRecoilValue(backgroundsState);
 
@@ -33,14 +34,17 @@ const StyleRow = ({ style, onToggle, onUpdate, onDelete }: StyleRowProps) => {
   const fontColor = getContrastFontColor(backgroundColor);
 
   return (
-    <div className="style-row">
+    <div className={`style-row ${style.defaultStatus ? "default-status" : ""}`}>
       <div className="map" style={{backgroundColor, color: fontColor}}>
         {backgroundName}
       </div>
       <div className="name ellipsis">{context.name}</div>
       <div className="button-container">
-        <div onClick={() => onToggle(style.id)}>
-          {context.visible ? "끄기" : "보기"}
+        <div onClick={() => statusToggle(style)}>
+          {style.defaultStatus ? "활성화" : "비활성화"}
+        </div>
+        <div onClick={() => visibleToggle(style.id)}>
+          {context.visible ? "보기" : "끄기"}
         </div>
         <div onClick={() => onUpdate(style.id)}>수정</div>
         <div onClick={() => onDelete(style.id)}>삭제</div>

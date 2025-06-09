@@ -194,3 +194,22 @@ mutation UpdateAttributes($assetId: ID!, $input: [UpdateAttributeInput]!) @api(n
         }
     }
 }
+
+mutation ApplyDefaultStyle($id: ID!, $styleId: ID!) @api(name: layerset) {
+    applyDefaultStyle(id: $id, styleId: $styleId) {
+        id
+        name
+        description
+        type
+        enabled
+        visible
+        access
+        status
+        order
+        createdBy
+        createdAt
+        updatedBy
+        updatedAt
+        properties
+    }
+}

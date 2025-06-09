@@ -3,7 +3,7 @@ import {
   ApplyLayerStyleDocument, BackgroundsDocument,
   CreateLayerStyleDocument,
   DeleteLayerStyleDocument, PreviewColumnsDocument,
-  UpdateLayerStyleDocument, ClassifyAttributeDocument
+  UpdateLayerStyleDocument, ClassifyAttributeDocument, ApplyDefaultStyleDocument
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {LayerService} from "@src/layer-style/api/services/LayerService";
 
@@ -21,6 +21,14 @@ export const GraphQLLayerService: LayerService = {
     await client.mutate({
       mutation: ApplyLayerStyleDocument,
       variables: { id: assetId, styleId },
+      context: { clientName: "layerset" }
+    });
+  },
+
+  async ApplyDefaultStyle(id, styleId) {
+    await client.mutate({
+      mutation: ApplyDefaultStyleDocument,
+      variables: { id: id, styleId },
       context: { clientName: "layerset" }
     });
   },

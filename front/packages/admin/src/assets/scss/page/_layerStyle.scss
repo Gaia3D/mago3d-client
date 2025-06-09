@@ -337,6 +337,11 @@
           box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
           border-color: #aaa;
         }
+
+        &.default-status {
+          border: 2px solid #4f86ff;
+        }
+
       }
     }
   }
