@@ -7,17 +7,7 @@ import {
 } from "@mnd/shared/src/types/layerset/gql/graphql";
 import {EditableStyleModel} from "@src/layer-style/models/EditableStyleModel";
 
-type RemoteLayerAsset = {
-  __typename?: 'RemoteLayerAsset';
-  href?: Maybe<Scalars['String']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
-  featureType?: Maybe<FeatureType>;
-};
-
-type FeatureType = {
-  nativeName?: string;
-  // 필요한 다른 필드도 여기에 추가
-};
+type RemoteLayerAsset = Maybe<Scalars['JSON']['output']>;
 
 // 선택된 에셋
 export const selectedAssetState = atom<LayerAsset | undefined>({

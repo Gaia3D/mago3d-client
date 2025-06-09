@@ -1,4 +1,4 @@
-import {EditableContextModel} from "@src/layer-style/models/EditableContextModel";
+import {EditableContextModel, LayerType} from "@src/layer-style/models/EditableContextModel";
 import {JsonPropertyInput, LayerAccess, LayerStyleFormat} from "@mnd/shared/src/types/layerset/gql/graphql";
 
 export type EditableStyleModel = {
@@ -13,4 +13,5 @@ export type EditableStyleModel = {
   format?: LayerStyleFormat;
   name?: string;
   properties?: JsonPropertyInput;
+  type: LayerType;
 }

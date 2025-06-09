@@ -15,34 +15,37 @@ export const DefaultCreateVectorStyleInput: CreateStyleInput = {
       strokeWidth: 2,
     }
   },
-  name: "New Style"
+  name: "Default Vector Style",
 }
-
-export const DefaultRasterContext: RasterStyleInput = {
-  entries: [
-    {
-      color: "#000000",
-      entryOpacity: 1,
-      bandValue: 0,
-      textLabel: "Min"
+export const DefaultCreateRasterStyleInput = (min=0, max=10): CreateStyleInput => {
+  return {
+    context: {
+      raster: DefaultRasterContext(min, max)
     },
-    {
-      color: "#ffffff",
-      entryOpacity: 1,
-      bandValue: 10,
-      textLabel: "Max"
-    }
-  ],
-  type: ColorMapType.Ramp,
-  opacity: 1.0,
-  minScale: 0,
-  maxScale: undefined,
-  gamma: 1.0,
+    name: "Default Raster Style",
+  }
 }
 
-export const DefaultCreateRasterStyleInput: CreateStyleInput = {
-  context: {
-    raster: DefaultRasterContext
-  },
-  name: "Raster Style Test",
+export const DefaultRasterContext = (min=0, max=10): RasterStyleInput => {
+  return {
+    entries: [
+      {
+        color: "#000000",
+        entryOpacity: 1,
+        bandValue: min,
+        textLabel: "Min"
+      },
+      {
+        color: "#ffffff",
+        entryOpacity: 1,
+        bandValue: max,
+        textLabel: "Max"
+      }
+    ],
+    type: ColorMapType.Ramp,
+    opacity: 1.0,
+    minScale: 0,
+    maxScale: undefined,
+    gamma: 1.0,
+  }
 }

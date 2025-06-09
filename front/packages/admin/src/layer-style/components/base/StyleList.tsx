@@ -1,26 +1,41 @@
-import React, {useEffect} from 'react';
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
-import {editableStylesState, editingStyleState, selectedAssetState} from "@src/layer-style/recoils/layerStyle";
-import {ApiProvider} from "@src/layer-style/api/ApiProvider";
-import {toast} from "react-toastify";
-import {DefaultCreateRasterStyleInput, DefaultCreateVectorStyleInput} from "@src/layer-style/constants/defaultInput";
+import React from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  editableStylesState,
+  editingStyleState,
+  remoteAssetDataState,
+  selectedAssetState
+} from "@src/layer-style/recoils/layerStyle";
+import { ApiProvider } from "@src/layer-style/api/ApiProvider";
+import { toast } from "react-toastify";
+import {
+  DefaultCreateVectorStyleInput,
+  DefaultCreateRasterStyleInput,
+} from "@src/layer-style/constants/defaultInput";
+import { mapToEditableStyle } from "@src/layer-style/mappers/mapToEditableStyle";
 import StyleRow from "@src/layer-style/components/vector/style-list/StyleRow";
-import {mapToEditableStyle} from "@src/layer-style/mappers/mapToEditableStyle";
-import {EditableStyleModel} from "@src/layer-style/models/EditableStyleModel";
+import { EditableStyleModel } from "@src/layer-style/models/EditableStyleModel";
+import { LayerType } from "@src/layer-style/models/EditableContextModel";
 
 const StyleList = () => {
   const asset = useRecoilValue(selectedAssetState);
-  const assetType = asset.type;
-  const setEditingStyle = useSetRecoilState(editingStyleState);
+  const remoteAssetData = useRecoilValue(remoteAssetDataState);
   const [editableStyles, setEditableStyles] = useRecoilState(editableStylesState);
-
+  const setEditingStyle = useSetRecoilState(editingStyleState);
 
   const styleCreate = async () => {
-    const isVector = assetType === "VECTOR";
-    const defaultInput = isVector ? DefaultCreateVectorStyleInput : DefaultCreateRasterStyleInput;
+    const isVector = asset.type === "VECTOR";
+
+    const defaultInput = isVector
+      ? DefaultCreateVectorStyleInput
+      : DefaultCreateRasterStyleInput(
+        remoteAssetData?.coverage?.dimensions?.coverageDimension?.range?.min,
+        remoteAssetData?.coverage?.dimensions?.coverageDimension?.range?.max
+      );
+
     const defaultContext = isVector
-      ? DefaultCreateVectorStyleInput.context.point
-      : DefaultCreateRasterStyleInput.context.raster;
+      ? defaultInput.context.point
+      : { ...defaultInput.context.raster, type: LayerType.RASTER };
 
     try {
       const newStyle = await ApiProvider.layer.createStyle(defaultInput);
@@ -32,10 +47,13 @@ const StyleList = () => {
         id: newStyle.id,
         name: defaultInput.name,
         context: defaultContext,
+        type: isVector ? LayerType.POINT : LayerType.RASTER
       });
 
-      const styles = [editable, ...editableStyles.map(s => ({ ...s, defaultStatus: false }))];
-      const updatedStyles = updateDefaultStatus(styles, newStyle.id);
+      const updatedStyles = [
+        editable,
+        ...editableStyles.map(s => ({ ...s, defaultStatus: false })),
+      ].map(s => ({ ...s, defaultStatus: s.id === newStyle.id }));
 
       setEditableStyles(updatedStyles);
       toast.success("스타일 생성 완료");
@@ -46,7 +64,6 @@ const StyleList = () => {
   };
 
   const styleDelete = async (style: EditableStyleModel) => {
-    const styleId = style.id;
     if (editableStyles.length <= 1) {
       toast.warning("스타일은 최소 1개 이상 유지되어야 합니다.");
       return;
@@ -57,10 +74,8 @@ const StyleList = () => {
     }
 
     try {
-      await ApiProvider.layer.deleteStyle(styleId);
-
-      setEditableStyles(prev => prev.filter(s => s.id !== styleId));
-
+      await ApiProvider.layer.deleteStyle(style.id);
+      setEditableStyles(prev => prev.filter(s => s.id !== style.id));
       toast.success("스타일 삭제 완료");
     } catch (err) {
       console.error("스타일 삭제 오류:", err);
@@ -70,7 +85,7 @@ const StyleList = () => {
 
   const styleUpdate = (style: EditableStyleModel) => {
     setEditingStyle(style);
-  }
+  };
 
   const visibleToggle = (styleId: string) => {
     setEditableStyles(prev =>
@@ -92,27 +107,19 @@ const StyleList = () => {
 
   const statusToggle = async (style: EditableStyleModel) => {
     if (style.defaultStatus) return;
+
     try {
       await ApiProvider.layer.ApplyDefaultStyle(asset.id, style.id);
-
-      const updatedStyles = updateDefaultStatus(editableStyles, style.id);
+      const updatedStyles = editableStyles.map(s => ({
+        ...s,
+        defaultStatus: s.id === style.id,
+      }));
       setEditableStyles(updatedStyles);
-
       toast.success("스타일 활성화 완료");
     } catch (err) {
       console.error("스타일 활성화 오류:", err);
       toast.error("스타일 활성화 중 오류가 발생했습니다.");
     }
-  };
-
-  const updateDefaultStatus = (
-    styles: EditableStyleModel[],
-    newDefaultId: string
-  ): EditableStyleModel[] => {
-    return styles.map(style => ({
-      ...style,
-      defaultStatus: style.id === newDefaultId,
-    }));
   };
 
   return (

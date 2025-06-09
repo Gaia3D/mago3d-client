@@ -1,6 +1,7 @@
 import { EditableStyleModel } from "@src/layer-style/models/EditableStyleModel";
 import { Maybe, Scalars } from "@mnd/shared/src/types/layerset/gql/graphql";
 import { mapToEditableContext } from "@src/layer-style/mappers/mapToEditableContext";
+import {LayerType} from "@src/layer-style/models/EditableContextModel";
 
 export const mapToEditableStyle = (
   style: Maybe<Scalars["JSON"]["output"]>
@@ -19,5 +20,6 @@ export const mapToEditableStyle = (
     enabled: style?.enabled ?? undefined,
     format: style?.format ?? undefined,
     properties: style?.properties ?? undefined,
+    type: style?.style ?? LayerType.POINT
   };
 };
