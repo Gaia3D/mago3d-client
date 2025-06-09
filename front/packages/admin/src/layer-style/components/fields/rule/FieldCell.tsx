@@ -10,6 +10,7 @@ type FieldCellProps<T> = {
   max?: number;
   step?: number;
   placeholder?: string;
+  disabled?: boolean;
 };
 
 export const FieldCell = <T,>({
@@ -22,6 +23,7 @@ export const FieldCell = <T,>({
   max,
   step,
   placeholder,
+  disabled,
 }: FieldCellProps<T>) => {
   return (
     <div className="field-cell">
@@ -30,6 +32,7 @@ export const FieldCell = <T,>({
           id={id}
           value={value as string}
           onChange={(e) => onChange(e.target.value as T)}
+          disabled={disabled}
         >
           <option value="" hidden>선택</option>
           {options.map((opt) => (
@@ -44,6 +47,7 @@ export const FieldCell = <T,>({
           type="checkbox"
           checked={value as boolean}
           onChange={(e) => onChange(e.target.checked as T)}
+          disabled={disabled}
         />
       ) : (
         <input
@@ -55,6 +59,7 @@ export const FieldCell = <T,>({
           }
           {...(type === 'number' && { min, max, step })}
           placeholder={placeholder}
+          disabled={disabled}
         />
       )}
     </div>

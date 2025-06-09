@@ -21,15 +21,27 @@ const RasterEntryTable = ({ context, onChange }: RasterEntryTableProps) => {
   };
 
   const addEntry = () => {
+    const baseValue = entries.length >= 2
+      ? entries[0]?.bandValue ?? 0
+      : 0;
+
     const newEntry: ColorMapEntry = {
-      bandValue: entries[entries.length - 1].bandValue ?? 0,
+      bandValue: baseValue,
       color: '#000000',
       entryOpacity: 1,
       textLabel: '',
     };
+
+    const insertIndex = entries.length - 1;
+    const newEntries = [
+      ...entries.slice(0, insertIndex),
+      newEntry,
+      ...entries.slice(insertIndex),
+    ];
+
     onChange('raster', {
       ...context.raster,
-      entries: [...entries, newEntry],
+      entries: newEntries,
     });
   };
 
@@ -62,6 +74,7 @@ const RasterEntryTable = ({ context, onChange }: RasterEntryTableProps) => {
                 id={`entry-${idx}-value`}
                 type="number"
                 value={entry.bandValue}
+                disabled={idx === 0 || idx === entries.length - 1}
                 onChange={(value) => updateEntry(idx, {bandValue: Number(value)})}
               />
             </td>

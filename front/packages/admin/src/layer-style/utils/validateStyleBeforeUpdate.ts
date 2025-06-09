@@ -28,5 +28,19 @@ export const validateStyleBeforeUpdate = (style: EditableStyleModel): string | n
     return "아이콘을 선택해주세요."
   }
 
+// 예외 4: 레스터 스타일의 band값을 오름차순으로 설정하지 않음
+  if (
+    context.type === LayerType.RASTER &&
+    context.raster.entries &&
+    context.raster.entries.length > 1
+  ) {
+    const isNotSorted = context.raster.entries.some((entry, idx, arr) =>
+      idx > 0 && entry.bandValue < arr[idx - 1].bandValue
+    );
+
+    if (isNotSorted) {
+      return "Raster 스타일의 값은 오름차순으로 정렬되어야 합니다.";
+    }
+  }
   return null;
 };
