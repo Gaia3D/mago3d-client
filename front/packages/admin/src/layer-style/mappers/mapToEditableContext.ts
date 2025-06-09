@@ -1,12 +1,12 @@
 import {
-  EditableRuleStyle,
-  EditableContextModel,
-  LayerType,
   AttributeType,
   ComparisonType,
+  EditableContextModel,
+  EditableRuleStyle,
+  LayerType,
 } from "@src/layer-style/models/EditableContextModel";
-import { Maybe, RuleInput, Scalars } from "@mnd/shared/src/types/layerset/gql/graphql";
-import { DEFAULT_STYLE } from "@src/layer-style/constants/defaultStyle";
+import {LineStyle, Maybe, RuleInput, Scalars, ShapeType} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {DEFAULT_STYLE} from "@src/layer-style/constants/defaultStyle";
 
 const resolveAttributeTypeFromAtType = (atType?: string): AttributeType => {
   switch (atType) {
@@ -27,6 +27,49 @@ const resolveComparisonTypeFromRule = (rule?: RuleInput): ComparisonType => {
   if (rule?.gt !== undefined || rule?.le !== undefined) return ComparisonType.GT_LE;
   return ComparisonType.EQ;
 };
+
+const resolveFillGraphicShape = (shape: string): ShapeType => {
+  if (shape === "shape://times") {
+    return ShapeType.NormalX;
+  }
+  if (shape === "shape://horline") {
+    return ShapeType.Horizontal;
+  }
+  if (shape === "shape://vertline") {
+    return ShapeType.Vertical;
+  }
+  if (shape === "shape://slash") {
+    return ShapeType.Slash;
+  }
+  if (shape === "shape://backslash") {
+    return ShapeType.Backslash;
+  }
+  if (shape === "cross") {
+    return ShapeType.Cross;
+  }
+  if (shape === "x") {
+    return ShapeType.BoldX;
+  }
+  return DEFAULT_STYLE.shape;
+}
+
+const resolveStrokeDasharray = (dashArray: number[]): LineStyle => {
+  if (!Array.isArray(dashArray)) return LineStyle.Solid;
+
+  if (dashArray.length === 2 && dashArray[0] === 2 && dashArray[1] === 3) {
+    return LineStyle.Dotted;
+  }
+  if (dashArray.length === 2 && dashArray[0] === 10 && dashArray[1] === 5) {
+    return LineStyle.Dashed;
+  }
+  if (dashArray.length === 4 && dashArray[0] === 12 && dashArray[1] === 4 && dashArray[2] === 3 && dashArray[3] === 4) {
+    return LineStyle.DashSingle;
+  }
+  if (dashArray.length === 6 && dashArray[0] === 12 && dashArray[1] === 4 && dashArray[2] === 3 && dashArray[3] === 3 && dashArray[4] === 3 && dashArray[5] === 8) {
+    return LineStyle.DashDouble;
+  }
+  return LineStyle.Solid;
+}
 
 export const mapToEditableContext = (
   style: Maybe<Scalars["JSON"]["output"]>
@@ -51,10 +94,18 @@ export const mapToEditableContext = (
     ...(rawContext.labelStyle?.halo ?? {}),
   };
 
+  const fillGraphic = {
+    ...(rule0Style.fillGraphic ?? {}),
+    ...(rawContext.fillGraphic ?? {}),
+  }
+
   const finalContext = {
     ...(rawContext),
     ...(rule0Style)
   };
+
+  const ctxFillGraphicShape = resolveFillGraphicShape(fillGraphic?.shape);
+  const ctxStrokeDasharray = resolveStrokeDasharray(rawContext?.strokeDasharray);
 
   const rules: EditableRuleStyle[] = (rawContext.rules ?? []).map((r: Maybe<Scalars["JSON"]["output"]>) => {
     const rType = resolveAttributeTypeFromAtType(r.style["@type"]);
@@ -104,6 +155,9 @@ export const mapToEditableContext = (
     isHalo: !!(label.halo ?? rule0Style.labelStyle?.halo),
     haloFillColor: halo.fillColor ?? DEFAULT_STYLE.haloFillColor,
     haloFillOpacity: halo.haloFillOpacity ?? DEFAULT_STYLE.haloFillOpacity,
+    isShape: !!(finalContext.fillGraphic || rule0Style.fillGraphic),
+    shape: ctxFillGraphicShape ?? DEFAULT_STYLE.shape,
+    strokeDasharray: ctxStrokeDasharray ?? DEFAULT_STYLE.strokeDasharray,
 
     raster: {
       ...finalContext ?? DEFAULT_STYLE.raster

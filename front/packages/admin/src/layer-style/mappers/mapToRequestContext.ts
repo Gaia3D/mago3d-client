@@ -52,6 +52,7 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
       strokeOpacity: editable.strokeOpacity,
       strokeWidth: editable.strokeWidth,
       size: editable.size,
+      shape: editable.isShape ? editable.shape : undefined,
       labelStyle: buildLabel(),
       iconStyle: buildIcon(),
     };
@@ -66,6 +67,7 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
       strokeColor: editable.strokeColor,
       strokeOpacity: editable.strokeOpacity,
       strokeWidth: editable.strokeWidth,
+      strokeDasharray: editable.strokeDasharray,
       labelStyle: buildLabel(),
     };
 
@@ -81,6 +83,14 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
       strokeColor: editable.strokeColor,
       strokeOpacity: editable.strokeOpacity,
       strokeWidth: editable.strokeWidth,
+      strokeDasharray: editable.strokeDasharray,
+      fillGraphic: editable.isShape ? {
+        shape: editable.shape,
+        fillColor: editable.fillColor,
+        fillOpacity: editable.fillOpacity,
+        strokeColor: editable.fillColor,
+        strokeOpacity: editable.fillOpacity,
+      } : undefined,
       labelStyle: buildLabel(),
     };
 
@@ -179,6 +189,7 @@ const mapToRuleStyleContext = (style: EditableContextModel): RuleStyleContextVal
           strokeOpacity: style.strokeOpacity,
           strokeWidth: style.strokeWidth,
           size: style.size,
+          shape: style.isShape ? style.shape : undefined,
           labelStyle: buildLabel(),
           iconStyle: buildIcon(),
         }
@@ -191,6 +202,7 @@ const mapToRuleStyleContext = (style: EditableContextModel): RuleStyleContextVal
           strokeColor: style.strokeColor,
           strokeOpacity: style.strokeOpacity,
           strokeWidth: style.strokeWidth,
+          strokeDasharray: style.strokeDasharray,
           labelStyle: buildLabel(),
         }
         : undefined,
@@ -204,6 +216,13 @@ const mapToRuleStyleContext = (style: EditableContextModel): RuleStyleContextVal
           strokeColor: style.strokeColor,
           strokeOpacity: style.strokeOpacity,
           strokeWidth: style.strokeWidth,
+          fillGraphic: style.isShape ? {
+            shape: style.shape,
+            fillColor: style.fillColor,
+            fillOpacity: style.fillOpacity,
+            strokeColor: style.fillColor,
+            strokeOpacity: style.fillOpacity,
+          } : undefined,
           labelStyle: buildLabel(),
         }
         : undefined,

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {EditableContextModel} from "@src/layer-style/models/EditableContextModel";
-import {PreviewColumn} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {PreviewColumn, ShapeType} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {FieldRow} from "@src/layer-style/components/fields/FieldRow";
 import SymbolPicker from "@src/layer-style/components/fields/picker/SymbolPicker";
 import LabelFormField from "@src/layer-style/components/fields/LabelFormField";
@@ -99,6 +99,34 @@ const PointFormField = ({context, onChange, attributes, isAttribute = false}: Po
                 />
               </>
             )
+          }
+
+          <FieldRow
+            id="isShape"
+            label="패턴 사용"
+            type="checkbox"
+            value={context.isShape}
+            onChange={value => onChange("isShape", value)}
+          />
+
+          {context.isShape &&
+            <FieldRow
+              id="shape"
+              label="채우기 패턴"
+              type="select"
+              value={context.shape}
+              onChange={value => onChange("shape", value)}
+              options={[
+                {value: ShapeType.Horizontal, label: "가로선"},
+                {value: ShapeType.Vertical, label: "세로선"},
+                {value: ShapeType.Slash, label: "대각선"},
+                {value: ShapeType.Backslash, label: "역대각선"},
+                {value: ShapeType.BoldX, label: "엑스"},
+                {value: ShapeType.NormalX, label: "격자"},
+                {value: ShapeType.Cross, label: "십자"},
+              ]}
+              isPreviewUnsupported={true}
+            />
           }
 
           <FieldRow

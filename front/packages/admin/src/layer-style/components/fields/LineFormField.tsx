@@ -1,6 +1,6 @@
 import React from 'react';
 import {EditableContextModel} from "@src/layer-style/models/EditableContextModel";
-import {PreviewColumn} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {LineStyle, PreviewColumn} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {FieldRow} from "@src/layer-style/components/fields/FieldRow";
 import LabelFormField from "@src/layer-style/components/fields/LabelFormField";
 import CommonFormField from "@src/layer-style/components/fields/CommonFormField";
@@ -47,6 +47,22 @@ const LineFormField = ({context, onChange, attributes, isAttribute = false}: Lin
           />
         </>
       )}
+
+      <FieldRow
+        id="strokeDasharray"
+        label="외각선 종류"
+        type="select"
+        value={context.strokeDasharray}
+        onChange={value => onChange("strokeDasharray", value)}
+        options={[
+          {value: LineStyle.Solid, label: "실선"},
+          {value: LineStyle.Dotted, label: "점선"},
+          {value: LineStyle.Dashed, label: "파선"},
+          {value: LineStyle.DashSingle, label: "1점쇄선"},
+          {value: LineStyle.DashDouble, label: "2점쇄선"},
+        ]}
+        isPreviewUnsupported={true}
+      />
 
       <FieldRow
         id="isLabel"

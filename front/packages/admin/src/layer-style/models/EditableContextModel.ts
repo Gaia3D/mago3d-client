@@ -1,4 +1,4 @@
-import {RasterStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {LineStyle, RasterStyleInput, ShapeType} from "@mnd/shared/src/types/layerset/gql/graphql";
 
 export type EditableContextModel = {
   type: LayerType;
@@ -34,6 +34,11 @@ export type EditableContextModel = {
   isIcon: boolean;
   iconSymbolId?: string;
   iconScale?: number;
+
+  // 패턴 관련
+  isShape: boolean;
+  strokeDasharray: LineStyle;
+  shape: ShapeType;
 
   // 헬로
   isHalo: boolean;

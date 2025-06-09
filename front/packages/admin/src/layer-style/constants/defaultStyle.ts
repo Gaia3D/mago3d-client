@@ -1,5 +1,5 @@
 import {AttributeType, ComparisonType, EditableContextModel} from "@src/layer-style/models/EditableContextModel";
-import {ColorMapType} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {ColorMapType, LineStyle, ShapeType} from "@mnd/shared/src/types/layerset/gql/graphql";
 
 export const DEFAULT_STYLE: Omit<EditableContextModel, "type"> = {
   name: "",
@@ -27,6 +27,10 @@ export const DEFAULT_STYLE: Omit<EditableContextModel, "type"> = {
   isHalo: false,
   haloFillColor: "#000000",
   haloFillOpacity: 1,
+
+  isShape: false,
+  shape: ShapeType.NormalX,
+  strokeDasharray: LineStyle.Solid,
 
   // 임시 사용 속성
   visible: true,
