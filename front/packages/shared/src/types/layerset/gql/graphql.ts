@@ -1088,7 +1088,7 @@ export type PointStyleInput = {
   maxScale?: InputMaybe<Scalars['Float']['input']>;
   minScale?: InputMaybe<Scalars['Float']['input']>;
   rotation?: InputMaybe<Scalars['Float']['input']>;
-  shape?: InputMaybe<Scalars['String']['input']>;
+  shape?: InputMaybe<ShapeType>;
   size?: InputMaybe<Scalars['Float']['input']>;
   strokeColor?: InputMaybe<Scalars['String']['input']>;
   strokeDasharray?: InputMaybe<LineStyle>;
