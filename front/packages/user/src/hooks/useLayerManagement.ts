@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import { layersState } from "@/recoils/Layer";
+import {layersState, SelectedBackgroundState} from "@/recoils/Layer";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import keycloak from "@/api/keycloak";
 import { createImageryLayer } from "@/services/imageryProviders/createImageryLayer";
@@ -12,6 +12,7 @@ export const useLayerManagement = () => {
     const { initialized, globeController } = useGlobeController();
     const setLoadingState = useSetRecoilState(loadingState);
     const layers = useRecoilValue(layersState);
+    const selectedBackground = useRecoilValue(SelectedBackgroundState);
 
     useEffect(() => {
         if (!initialized || !globeController?.viewer) return;
@@ -22,7 +23,7 @@ export const useLayerManagement = () => {
         clearLayerCache(viewer);
 
         layers.slice().reverse().forEach(layer => {
-            createImageryLayer(layer, viewer, setLoadingState, tilesPrimitives, token)
+            createImageryLayer(layer, viewer, setLoadingState, tilesPrimitives, selectedBackground, token)
                 .then(createdLayer => {
                     if (createdLayer) {
                         addLayerToCache(layer.assetId, createdLayer);
@@ -30,5 +31,5 @@ export const useLayerManagement = () => {
                 });
         });
 
-    }, [initialized, layers]);
+    }, [initialized, layers, selectedBackground]);
 };

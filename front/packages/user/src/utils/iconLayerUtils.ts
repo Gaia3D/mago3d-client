@@ -5,7 +5,7 @@ export type PrimitiveType = "billboard" | "label";
 export interface BillboardProps {
   originalImage?: HTMLImageElement | ImageBitmap;
   selectedImage?: HTMLImageElement | ImageBitmap;
-  label: Cesium.Label;
+  label?: Cesium.Label;
   properties: unknown;
 }
 
@@ -19,7 +19,7 @@ export function createCollection<T extends Cesium.BillboardCollection | Cesium.L
   return collection;
 }
 
-export function getOptions(minDistance: number, maxDistance: number) {
+export function getOptions(minDistance: number, maxDistance: number, iconScale = 1) {
   const safeMin = Math.min(minDistance, maxDistance);
   const safeMax = Math.max(minDistance, maxDistance);
 
@@ -32,9 +32,11 @@ export function getOptions(minDistance: number, maxDistance: number) {
       scaleByDistance: new Cesium.NearFarScalar(100000, 1.0, 200000, 0.5),
       translucencyByDistance: new Cesium.NearFarScalar(100000, 1.0, 200000, 0.5),
       distanceDisplayCondition: new Cesium.DistanceDisplayCondition(safeMin, safeMax || Infinity),
+      scale: iconScale
     },
     nearBillboard: {
       distanceDisplayCondition: new Cesium.DistanceDisplayCondition(safeMin, Math.min(safeMax, 20000)),
+      scale: iconScale
     },
     label: {
       font: "14px NanumSquareNeo-r",

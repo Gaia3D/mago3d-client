@@ -1,7 +1,6 @@
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
-import { UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql";
+import {UserLayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql";
 import { getLayerFromCache } from "@/utils/layerCache";
-import { LayerAssetType } from "@mnd/shared/src/types/layerset/gql/graphql";
 import { loadIconLayer } from "@/services/imageryProviders/providers/loadIconLayer";
 import { SetterOrUpdater } from "recoil";
 import { LoadingStateType } from "@/recoils/Spinner";
@@ -12,8 +11,10 @@ export const useLayerVisibilitySetter = (setLoadingState: SetterOrUpdater<Loadin
   return async (layerAsset: UserLayerAsset, visible: boolean) => {
     const viewer = globeController?.viewer;
     if (!viewer || viewer.isDestroyed()) return;
-
-    if (layerAsset.type === LayerAssetType.Icon) {
+    const imageryLayer = getLayerFromCache(layerAsset.assetId);
+    if (imageryLayer) {
+      imageryLayer.show = visible;
+    } else {
       const primitive = globeController.primitiveMap.get(layerAsset.assetId);
 
       if (primitive) {
@@ -23,13 +24,6 @@ export const useLayerVisibilitySetter = (setLoadingState: SetterOrUpdater<Loadin
         primitive.nearLabelCollection.show = visible;
       } else {
         await loadIconLayer({ ...layerAsset, visible }, viewer, setLoadingState);
-      }
-    } else {
-      const imageryLayer = getLayerFromCache(layerAsset.assetId);
-      if (imageryLayer) {
-        imageryLayer.show = visible;
-      } else {
-        console.warn(`Cache miss: ${layerAsset.assetId}`);
       }
     }
   };

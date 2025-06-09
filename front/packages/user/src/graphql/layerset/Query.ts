@@ -46,6 +46,7 @@ export const GET_USERLAYERGROUPS = gql`
           defaultStatus
           access
           context
+          backgroundId
         }
       }
     }

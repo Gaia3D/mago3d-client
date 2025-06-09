@@ -4,6 +4,7 @@ import { UserLayerAsset } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import { SetterOrUpdater } from "recoil";
 import { LoadingStateType } from "@/recoils/Spinner.ts";
 import { addBillboard, addLabel, createCollection, getOptions } from "@/utils/iconLayerUtils.ts";
+import {getCameraDistanceFromScale} from "@/services/imageryProviders/providers/loadVectorIconLayer.ts";
 
 const fetchGeoJson = async (layerName: string): Promise<GeoJSON.FeatureCollection> => {
     const response = await fetch(
@@ -17,12 +18,6 @@ type FeatureWithPosition = {
     labelText: string;
     properties: unknown;
 }
-
-const getCameraDistanceFromScale = (scale: number): number => {
-    const visibleGround = (scale * 1000) / 100;
-    const halfFovRad = (60 * Math.PI) / 180 / 2;
-    return (visibleGround / 2) / Math.tan(halfFovRad);
-};
 
 export const loadIconLayer = async (
   layer: UserLayerAsset,
