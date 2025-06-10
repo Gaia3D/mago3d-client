@@ -553,10 +553,13 @@ td .w400 {width:400px;}
 .list04-logs table th:nth-child(2), .list04-logs table td:nth-child(2) {width:20%;}
 .list04-logs table th:nth-child(3), .list04-logs table td:nth-child(3) {width:auto;}
 .list04-logs table th:nth-child(4), .list04-logs table td:nth-child(4) {width:20%;}
-.type-hybrid, .type-3d, .type-vector, .type-raster  {display:inline-block; cursor:default; text-align:center; width:84px; margin-left:5px; font-size:12px; color:white; font-weight:600; border-radius:30px; height:22px; line-height:24px; vertical-align:middle; background: #f68c03;}
+.type-hybrid, .type-3d, .type-vector, .type-raster, .type-icon, .type-vworld-wms, .type-vworld-wfs  {display:inline-block; cursor:default; text-align:center; width:84px; margin-left:5px; font-size:12px; color:white; font-weight:600; border-radius:30px; height:22px; line-height:24px; vertical-align:middle; background: #f68c03;}
 .type-vector {color:white; background: #05bba3;}
 .type-raster {color:white; background: #bf2ac8;}
 .type-hybrid {color:white; background: #3F48CC;}
+.type-icon {color:white; background: #194a7a;}
+.type-vworld-wms {color:white; background: #63238e;}
+.type-vworld-wfs {color:white; background: #7c1d69;}
 .type-delete {color:white; background: #ED1C24;display:inline-block; text-align:center; width:60px; font-size:12px;font-weight:600; border-radius:30px; height:22px; line-height:24px; vertical-align:middle;}
 td select {font-size:14px;}
 td label.switch {margin-left:30%;}

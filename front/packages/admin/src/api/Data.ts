@@ -14,6 +14,12 @@ export const classifyAssetTypeClassNameByLayerAssetType = (assetType:LayerAssetT
             return 'type-vector';
         case LayerAssetType.Layergroup:
             return 'type-hybrid';
+        case LayerAssetType.Icon:
+            return 'type-icon';
+        case LayerAssetType.VworldWms:
+            return 'type-vworld-wms';
+        case LayerAssetType.VworldWfs:
+            return 'type-vworld-wfs';
         default:
             return '';
     }

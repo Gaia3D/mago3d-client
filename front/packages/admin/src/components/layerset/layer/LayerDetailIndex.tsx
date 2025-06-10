@@ -113,7 +113,11 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
         <div className="tabmenu">
           <ul>
             <li className={activeTab === "default" ? "on" : ""} onClick={() => setActiveTab("default")}>기본 설정</li>
-            <li className={activeTab === "style" ? "on" : ""} onClick={() => setActiveTab("style")}>스타일 설정</li>
+            {
+              (asset.type === LayerAssetType.Vector || asset.type === LayerAssetType.Raster) && (
+                <li className={activeTab === "style" ? "on" : ""} onClick={() => setActiveTab("style")}>스타일 설정</li>
+              )
+            }
             {
               asset.type === LayerAssetType.Vector && (
                 <li className={activeTab === "attribute" ? "on" : ""} onClick={() => setActiveTab("attribute")}>속성 설정</li>
@@ -132,9 +136,13 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
               onCancel={() => navigate(-1)}
             />
           </div>
-          <div className={activeTab === "style" ? "block" : "none"}>
-            <LayerStyle />
-          </div>
+          {
+            (asset.type === LayerAssetType.Vector || asset.type === LayerAssetType.Raster) && (
+              <div className={activeTab === "style" ? "block" : "none"}>
+                <LayerStyle/>
+              </div>
+            )
+          }
           {
             asset.type === LayerAssetType.Vector && (
               <div className={activeTab === "attribute" ? "block" : "none"}>
