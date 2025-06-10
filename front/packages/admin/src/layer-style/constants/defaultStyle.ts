@@ -50,7 +50,7 @@ export const DEFAULT_STYLE: Omit<EditableContextModel, "type"> = {
         textLabel: "Max"
       }
     ],
-    type: ColorMapType.Ramp,
+    type: ColorMapType.Values,
     opacity: 1.0,
     minScale: 0,
     maxScale: undefined,

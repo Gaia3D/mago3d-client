@@ -16,6 +16,7 @@ import { mapToEditableStyle } from "@src/layer-style/mappers/mapToEditableStyle"
 import StyleRow from "@src/layer-style/components/vector/style-list/StyleRow";
 import { EditableStyleModel } from "@src/layer-style/models/EditableStyleModel";
 import { LayerType } from "@src/layer-style/models/EditableContextModel";
+import {ColorMapType} from "@mnd/shared/src/types/layerset/gql/graphql";
 
 const StyleList = () => {
   const asset = useRecoilValue(selectedAssetState);
@@ -35,7 +36,7 @@ const StyleList = () => {
 
     const defaultContext = isVector
       ? defaultInput.context.point
-      : { ...defaultInput.context.raster, type: LayerType.RASTER };
+      : { ...defaultInput.context.raster, type: ColorMapType.Values };
 
     try {
       const newStyle = await ApiProvider.layer.createStyle(defaultInput);

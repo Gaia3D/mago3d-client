@@ -42,7 +42,7 @@ export const DefaultRasterContext = (min=0, max=10): RasterStyleInput => {
         textLabel: "Max"
       }
     ],
-    type: ColorMapType.Ramp,
+    type: ColorMapType.Values,
     opacity: 1.0,
     minScale: 0,
     maxScale: undefined,
