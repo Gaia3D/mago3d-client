@@ -665,9 +665,9 @@
 
     .legend-ramp-color {
       width: 24px;
-      height: 180px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      margin: 8px 0;
     }
 
     .legend-ramp-rows {
@@ -675,7 +675,6 @@
       width: calc(100% - 36px);
       flex-direction: column;
       justify-content: space-between;
-      height: 180px;
 
       .legend-ramp-row-item {
         display: flex;
