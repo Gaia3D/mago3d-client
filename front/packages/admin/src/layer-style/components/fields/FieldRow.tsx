@@ -8,7 +8,6 @@ type FieldRowProps<T> = {
   min?: number;
   max?: number;
   step?: number;
-  isPreviewUnsupported?: boolean;
 };
 
 export const FieldRow = <T,>({
@@ -21,12 +20,9 @@ export const FieldRow = <T,>({
    min,
    max,
    step,
-   isPreviewUnsupported = false
  }: FieldRowProps<T>) => (
   <div className="form-row">
-    <label htmlFor={id}>{label}
-      {isPreviewUnsupported && <span title = {"해당 속성은 미리보기 지원이 되지 않습니다."}> ℹ️ </span>}
-    </label>
+    <label htmlFor={id}>{label}</label>
 
     {type === 'select' && Array.isArray(options) ? (
       <select
