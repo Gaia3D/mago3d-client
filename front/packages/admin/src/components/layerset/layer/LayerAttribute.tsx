@@ -98,12 +98,10 @@ const LayerAttribute = () => {
     try {
       if (!hasAttributes) {
         const variables = mapToCreateInput(asset.id, categoryArr);
-        console.log("variables", variables);
         await createAttributes({ variables });
         toast("생성 완료");
       } else {
         const variables = mapToUpdateInput(asset.id, categoryArr);
-        console.log("variables", variables);
         await updateAttributes({ variables });
         toast("수정 완료");
       }
@@ -113,6 +111,8 @@ const LayerAttribute = () => {
   };
 
   const reset = () => {
+    if (!attributeData?.attributeByNativeName) return;
+
     const patched = attributeData.attributeByNativeName.map((cat) => ({
       ...cat,
       dndId: uuidv4(),
