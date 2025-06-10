@@ -2,7 +2,7 @@ import React from 'react';
 import {EditableContextModel} from "@src/layer-style/models/EditableContextModel";
 import CommonFormField from "@src/layer-style/components/fields/CommonFormField";
 import {FieldRow} from "@src/layer-style/components/fields/FieldRow";
-import {ColorMapType, ContrastMethod, RasterStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {ColorMapType, RasterStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
 import RasterEntryTable from "@src/layer-style/components/fields/entry/RasterEntryTable";
 
 interface RasterFormFieldProps {
@@ -29,28 +29,28 @@ const RasterFormField = ({context, onChange}: RasterFormFieldProps) => {
     <>
       <CommonFormField context={context} onChange={onChange}/>
 
-      <FieldRow
-        id="raster-opacity"
-        label="투명도"
-        type="number"
-        value={context.raster.opacity ?? 1.0}
-        onChange={(value) => handleRasterFieldChange("opacity", value)}
-        min={0}
-        max={1}
-        step={0.05}
-      />
+      {/*<FieldRow*/}
+      {/*  id="raster-opacity"*/}
+      {/*  label="투명도"*/}
+      {/*  type="number"*/}
+      {/*  value={context.raster.opacity ?? 1.0}*/}
+      {/*  onChange={(value) => handleRasterFieldChange("opacity", value)}*/}
+      {/*  min={0}*/}
+      {/*  max={1}*/}
+      {/*  step={0.05}*/}
+      {/*/>*/}
 
-      <FieldRow
-        id="raster-type"
-        label="명암 대비 방식"
-        type="select"
-        value={context.raster.mode ?? ContrastMethod.Normalize}
-        onChange={(value) => handleRasterFieldChange("mode", value)}
-        options={[
-          {value: ContrastMethod.Normalize, label: "NORMALIZE"},
-          {value: ContrastMethod.Histogram, label: "HISTOGRAM"},
-        ]}
-      />
+      {/*<FieldRow*/}
+      {/*  id="raster-type"*/}
+      {/*  label="명암 대비 방식"*/}
+      {/*  type="select"*/}
+      {/*  value={context.raster.mode ?? ContrastMethod.Normalize}*/}
+      {/*  onChange={(value) => handleRasterFieldChange("mode", value)}*/}
+      {/*  options={[*/}
+      {/*    {value: ContrastMethod.Normalize, label: "NORMALIZE"},*/}
+      {/*    {value: ContrastMethod.Histogram, label: "HISTOGRAM"},*/}
+      {/*  ]}*/}
+      {/*/>*/}
 
       <FieldRow
         id="raster-gamma"
@@ -72,7 +72,7 @@ const RasterFormField = ({context, onChange}: RasterFormFieldProps) => {
         options={[
           {value: ColorMapType.Ramp, label: "램프(RAMP)"},
           {value: ColorMapType.Values, label: "값(VALUES)"},
-          {value: ColorMapType.Intervals, label: "간격(INTERVALS)"},
+          // {value: ColorMapType.Intervals, label: "간격(INTERVALS)"},
         ]}
       />
 
