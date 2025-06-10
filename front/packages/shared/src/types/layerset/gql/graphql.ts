@@ -759,6 +759,7 @@ export type LayerLegend = {
 export type LayerStyle = {
   __typename?: 'LayerStyle';
   access?: Maybe<LayerAccess>;
+  backgroundAllActive?: Maybe<Scalars['Boolean']['output']>;
   backgroundId?: Maybe<Scalars['ID']['output']>;
   context?: Maybe<Scalars['JSON']['output']>;
   defaultStatus?: Maybe<Scalars['Boolean']['output']>;
@@ -1653,6 +1654,7 @@ export type UpdateLabelResponse = WithAuditable & {
  */
 export type UpdateStyleInput = {
   access?: InputMaybe<LayerAccess>;
+  backgroundAllActive?: InputMaybe<Scalars['Boolean']['input']>;
   backgroundId?: InputMaybe<Scalars['ID']['input']>;
   context?: InputMaybe<StyleContextValue>;
   defaultStatus?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1666,6 +1668,7 @@ export type UpdateStyleInput = {
 export type UpdateStyleResponse = WithAuditable & {
   __typename?: 'UpdateStyleResponse';
   access?: Maybe<LayerAccess>;
+  backgroundAllActive?: Maybe<Scalars['Boolean']['output']>;
   createdAt?: Maybe<Scalars['String']['output']>;
   createdBy?: Maybe<Scalars['ID']['output']>;
   defaultStatus?: Maybe<Scalars['Boolean']['output']>;

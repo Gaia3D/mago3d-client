@@ -5,13 +5,15 @@ export type EditableStyleModel = {
   context: EditableContextModel;
 
   id: string;
-  access?: LayerAccess;
+  name?: string;
   backgroundId?: string;
+  backgroundAllActive?: boolean;
+
+  access?: LayerAccess;
   defaultStatus?: boolean;
   description?: string;
   enabled?: boolean;
   format?: LayerStyleFormat;
-  name?: string;
   properties?: JsonPropertyInput;
   type: LayerType;
 }

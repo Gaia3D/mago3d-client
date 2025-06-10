@@ -14,6 +14,7 @@ export const mapToRequestStyle = (
     context,
     name: style.context.name,
     backgroundId: style.context.backgroundId,
+    backgroundAllActive: !style.context.backgroundId,
 
     access: style.access,
     defaultStatus: true,
