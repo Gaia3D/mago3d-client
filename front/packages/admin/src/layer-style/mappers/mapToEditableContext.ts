@@ -7,6 +7,8 @@ import {
 } from "@src/layer-style/models/EditableContextModel";
 import {LineStyle, Maybe, RuleInput, Scalars, ShapeType} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {DEFAULT_STYLE} from "@src/layer-style/constants/defaultStyle";
+import {ColorMapType} from "@src/generated/gql/layerset/graphql";
+import {normalizeIntervalEntries, normalizeRampEntries} from "@src/layer-style/utils/normalizeEntries";
 
 const resolveAttributeTypeFromAtType = (atType?: string): AttributeType => {
   switch (atType) {
@@ -160,7 +162,13 @@ export const mapToEditableContext = (
     strokeDasharray: ctxStrokeDasharray ?? DEFAULT_STYLE.strokeDasharray,
 
     raster: {
-      ...finalContext ?? DEFAULT_STYLE.raster
+      ...finalContext ?? DEFAULT_STYLE.raster,
+      entries:
+        finalContext?.type === ColorMapType.Intervals
+          ? normalizeIntervalEntries(finalContext.entries ?? [])
+          : finalContext?.type === ColorMapType.Ramp
+            ? normalizeRampEntries(finalContext.entries ?? [])
+            : finalContext.entries ?? [],
     },
 
     // 임시 사용 속성

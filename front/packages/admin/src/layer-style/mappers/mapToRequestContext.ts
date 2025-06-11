@@ -7,96 +7,19 @@ import {
 } from "@src/layer-style/models/EditableContextModel";
 import {
   AttributeStyleInput,
-  LineStyleInput,
-  PointStyleInput,
-  PolygonStyleInput,
-  RuleStyleContextValue,
   RuleStyleInput,
   StyleContextValue,
 } from "@mnd/shared/src/types/layerset/gql/graphql";
+import { buildPointStyle, buildLineStyle, buildPolygonStyle } from "@src/layer-style/mappers/mapToStyleInput";
+import {mapToRasterContext} from "@src/layer-style/mappers/mapToRasterContext";
 
 export const mapToRequestContext = (editable: EditableContextModel): StyleContextValue => {
-
-  const buildLabel = () => {
-    if (!editable.isLabel) return undefined;
-    return {
-      attributeName: editable.labelAttribute,
-      fillColor: editable.labelFillColor,
-      fillOpacity: editable.labelFillOpacity,
-      fontSize: editable.labelFontSize,
-      halo: editable.isHalo
-        ? {
-          fillColor: editable.haloFillColor,
-          fillOpacity: editable.haloFillOpacity,
-          radius: 2,
-        }
-        : undefined,
-    };
-  };
-
-  const buildIcon = () => {
-    if (!editable.isIcon) return undefined;
-    return {
-      scale: editable.iconScale,
-      symbolId: editable.iconSymbolId,
-    };
-  };
-
   if (editable.type === LayerType.POINT) {
-    const point: PointStyleInput = {
-      minScale: editable.minScale,
-      maxScale: editable.maxScale,
-      fillColor: editable.fillColor,
-      fillOpacity: editable.fillOpacity,
-      strokeColor: editable.strokeColor,
-      strokeOpacity: editable.strokeOpacity,
-      strokeWidth: editable.strokeWidth,
-      size: editable.size,
-      shape: editable.isShape ? editable.shape : undefined,
-      labelStyle: buildLabel(),
-      iconStyle: buildIcon(),
-    };
-
-    return {
-      point,
-    };
+    return {point: buildPointStyle(editable)};
   } else if (editable.type === LayerType.LINE) {
-    const line: LineStyleInput = {
-      minScale: editable.minScale,
-      maxScale: editable.maxScale,
-      strokeColor: editable.strokeColor,
-      strokeOpacity: editable.strokeOpacity,
-      strokeWidth: editable.strokeWidth,
-      strokeDasharray: editable.strokeDasharray,
-      labelStyle: buildLabel(),
-    };
-
-    return {
-      line,
-    };
+      return { line: buildLineStyle(editable) };
   } else if (editable.type === LayerType.POLYGON) {
-    const polygon: PolygonStyleInput = {
-      minScale: editable.minScale,
-      maxScale: editable.maxScale,
-      fillColor: editable.fillColor,
-      fillOpacity: editable.fillOpacity,
-      strokeColor: editable.strokeColor,
-      strokeOpacity: editable.strokeOpacity,
-      strokeWidth: editable.strokeWidth,
-      strokeDasharray: editable.strokeDasharray,
-      fillGraphic: editable.isShape ? {
-        shape: editable.shape,
-        fillColor: editable.fillColor,
-        fillOpacity: editable.fillOpacity,
-        strokeColor: editable.fillColor,
-        strokeOpacity: editable.fillOpacity,
-      } : undefined,
-      labelStyle: buildLabel(),
-    };
-
-    return {
-      polygon,
-    };
+      return { polygon: buildPolygonStyle(editable) };
   } else if (editable.type === LayerType.ATTRIBUTE) {
     const rules: RuleStyleInput[] = editable.rules?.map((rule: EditableRuleStyle ) => {
       const isLine = editable.attributeType === AttributeType.LINE;
@@ -134,102 +57,24 @@ export const mapToRequestContext = (editable: EditableContextModel): StyleContex
       attribute,
     };
   } else if (editable.type === LayerType.RASTER) {
-    return {
-      raster: {
-        channels: editable.raster.channels,
-        entries: editable.raster.entries,
-        gamma: editable.raster.gamma,
-        maxScale: editable.raster.maxScale,
-        minScale: editable.raster.minScale,
-        mode: editable.raster.mode,
-        opacity: editable.raster.opacity,
-        type: editable.raster.type,
-      },
-    }
+    return mapToRasterContext(editable);
   }
-
-  return {};
 };
 
-const mapToRuleStyleContext = (style: EditableContextModel): RuleStyleContextValue => {
-  const buildLabel = () => {
-    if (!style.isLabel) return undefined;
-    return {
-      attributeName: style.labelAttribute,
-      fillColor: style.labelFillColor,
-      fillOpacity: style.labelFillOpacity,
-      fontSize: style.labelFontSize,
-      halo: style.isHalo
-        ? {
-          fillColor: style.haloFillColor,
-          fillOpacity: style.haloFillOpacity,
-          radius: 2,
-        }
-        : undefined,
-    };
+const mapToRuleStyleContext = (style: EditableContextModel) => {
+  const raw = {
+    point: style.type === LayerType.POINT || style.type === LayerType.ATTRIBUTE
+      ? buildPointStyle(style)
+      : undefined,
+    line: style.type === LayerType.LINE
+      ? buildLineStyle(style)
+      : undefined,
+    polygon: style.type === LayerType.POLYGON
+      ? buildPolygonStyle(style)
+      : undefined,
   };
 
-  const buildIcon = () => {
-    if (!style.isIcon) return undefined;
-    return {
-      scale: style.iconScale,
-      symbolId: style.iconSymbolId,
-    };
-  };
-
-  const raw: RuleStyleContextValue = {
-    point:
-      style.type === LayerType.POINT || style.type === LayerType.ATTRIBUTE
-        ? {
-          minScale: style.minScale,
-          maxScale: style.maxScale,
-          fillColor: style.fillColor,
-          fillOpacity: style.fillOpacity,
-          strokeColor: style.strokeColor,
-          strokeOpacity: style.strokeOpacity,
-          strokeWidth: style.strokeWidth,
-          size: style.size,
-          shape: style.isShape ? style.shape : undefined,
-          labelStyle: buildLabel(),
-          iconStyle: buildIcon(),
-        }
-        : undefined,
-    line:
-      style.type === LayerType.LINE
-        ? {
-          minScale: style.minScale,
-          maxScale: style.maxScale,
-          strokeColor: style.strokeColor,
-          strokeOpacity: style.strokeOpacity,
-          strokeWidth: style.strokeWidth,
-          strokeDasharray: style.strokeDasharray,
-          labelStyle: buildLabel(),
-        }
-        : undefined,
-    polygon:
-      style.type === LayerType.POLYGON
-        ? {
-          minScale: style.minScale,
-          maxScale: style.maxScale,
-          fillColor: style.fillColor,
-          fillOpacity: style.fillOpacity,
-          strokeColor: style.strokeColor,
-          strokeOpacity: style.strokeOpacity,
-          strokeWidth: style.strokeWidth,
-          fillGraphic: style.isShape ? {
-            shape: style.shape,
-            fillColor: style.fillColor,
-            fillOpacity: style.fillOpacity,
-            strokeColor: style.fillColor,
-            strokeOpacity: style.fillOpacity,
-          } : undefined,
-          labelStyle: buildLabel(),
-        }
-        : undefined,
-  };
-
-  // undefined 필드 제거
   return Object.fromEntries(
     Object.entries(raw).filter(([, v]) => v !== undefined)
-  ) as RuleStyleContextValue;
+  );
 };

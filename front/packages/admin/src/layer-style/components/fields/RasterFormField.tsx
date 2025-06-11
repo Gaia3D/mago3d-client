@@ -3,7 +3,8 @@ import {EditableContextModel} from "@src/layer-style/models/EditableContextModel
 import CommonFormField from "@src/layer-style/components/fields/CommonFormField";
 import {FieldRow} from "@src/layer-style/components/fields/FieldRow";
 import {ColorMapType, RasterStyleInput} from "@mnd/shared/src/types/layerset/gql/graphql";
-import RasterEntryTable from "@src/layer-style/components/fields/entry/RasterEntryTable";
+import RasterEntryTableInterval from "@src/layer-style/components/fields/entry/RasterEntryTableInterval";
+import RasterEntryTableValue from "@src/layer-style/components/fields/entry/RasterEntryTableValue";
 
 interface RasterFormFieldProps {
   context: EditableContextModel;
@@ -72,11 +73,16 @@ const RasterFormField = ({context, onChange}: RasterFormFieldProps) => {
         options={[
           {value: ColorMapType.Ramp, label: "램프(RAMP)"},
           {value: ColorMapType.Values, label: "값(VALUES)"},
-          // {value: ColorMapType.Intervals, label: "간격(INTERVALS)"},
+          {value: ColorMapType.Intervals, label: "간격(INTERVALS)"},
         ]}
       />
 
-      <RasterEntryTable context={context} onChange={onChange} />
+      {
+        context.raster.type === ColorMapType.Intervals
+          ? <RasterEntryTableInterval context={context} onChange={onChange} />
+          : <RasterEntryTableValue context={context} onChange={onChange} />
+      }
+      {/*<RasterEntryTable context={context} onChange={onChange} />*/}
     </>
   );
 };
