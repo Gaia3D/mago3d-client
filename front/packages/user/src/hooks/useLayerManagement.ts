@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import {useRecoilValue, useSetRecoilState} from "recoil";
-import {layersState, SelectedBackgroundState} from "@/recoils/Layer";
+import {layersState, SelectedBackgroundState, UserLayerGroupState} from "@/recoils/Layer";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
 import keycloak from "@/api/keycloak";
 import { createImageryLayer } from "@/services/imageryProviders/createImageryLayer";
@@ -11,6 +11,7 @@ export const useLayerManagement = () => {
     const { token } = keycloak;
     const { initialized, globeController } = useGlobeController();
     const setLoadingState = useSetRecoilState(loadingState);
+    const userLayerGroup = useRecoilValue(UserLayerGroupState);
     const layers = useRecoilValue(layersState);
     const selectedBackground = useRecoilValue(SelectedBackgroundState);
 
@@ -19,10 +20,11 @@ export const useLayerManagement = () => {
 
         const { viewer, tilesPrimitives } = globeController;
         if (!viewer || !tilesPrimitives) return;
+        const userLayerAssets = userLayerGroup.flatMap(group => group?.assets ?? []);
 
         clearLayerCache(viewer);
 
-        layers.slice().reverse().forEach(layer => {
+        userLayerAssets.slice().reverse().forEach(layer => {
             createImageryLayer(layer, viewer, setLoadingState, tilesPrimitives, selectedBackground, token)
                 .then(createdLayer => {
                     if (createdLayer) {

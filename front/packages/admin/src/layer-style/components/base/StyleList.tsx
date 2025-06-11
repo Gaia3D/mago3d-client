@@ -36,7 +36,7 @@ const StyleList = () => {
 
     const defaultContext = isVector
       ? defaultInput.context.point
-      : { ...defaultInput.context.raster, type: ColorMapType.Values };
+      : defaultInput.context.raster;
 
     try {
       const newStyle = await ApiProvider.layer.createStyle(defaultInput);

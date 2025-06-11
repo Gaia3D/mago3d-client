@@ -1,19 +1,16 @@
 import { RefObject, useEffect, useRef } from "react";
 import * as Cesium from "cesium";
 import { useGlobeController } from "@/components/providers/GlobeControllerProvider";
-import { useRecoilState } from "recoil";
+import {useSetRecoilState} from "recoil";
 import { OptionsState } from "@/recoils/Tool.ts";
-import { BackgroundsDocument, LayerBackground } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
-import { useQuery } from "@apollo/client";
 import {initBackground} from "@/utils/cesium/initBackground.ts";
 import {useBackgrounds} from "@/hooks/api/useBackgrounds.ts";
 
 export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
 
   const { globeController } = useGlobeController();
-  const [options, setOptions] = useRecoilState(OptionsState);
+  const setOptions = useSetRecoilState(OptionsState);
   const { backgrounds, selectedBackground } = useBackgrounds();
-  const { data } = useQuery<{ backgrounds: LayerBackground[] }>(BackgroundsDocument);
 
   const viewerRef = useRef<Cesium.Viewer | null>(null);
   const baseLayerRef = useRef<Cesium.ImageryLayer | null>(null);
