@@ -36,7 +36,7 @@ const LayerList = () => {
   const {keycloak} = useKeycloak();
   const userId = keycloak?.profile?.id ?? "";
   const filter = {
-    enabled : { eq : true }
+    // enabled : { eq : true }
     // userId: { eq : userId },
     // or : [
     //   {
