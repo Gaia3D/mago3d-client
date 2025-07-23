@@ -126,7 +126,7 @@ const LayerDetailIndex = ({ id }: LayerDetailIndexProps) => {
             <li className={activeTab === "log" ? "on" : ""} onClick={() => setActiveTab("log")}>로그</li>
           </ul>
         </div>
-        <article>
+        <article className="layer-article">
           <div className={activeTab === "default" ? "block" : "none"}>
             <LayerForm
               groups={groupOptions}

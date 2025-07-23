@@ -68,62 +68,58 @@ const SearchForm = () => {
     }
 
     return (
-        <div className="search-bx">
-            <div className="search-bx-01">
-                <label htmlFor="data-list-search-text">{t('search-word')}</label>
-                <select defaultValue={currentSearchTarget} ref={searchTargetRef}>
-                    <option value="data">{t('data-name')}</option>
-                    <option value="group">{t('group')}</option>
-                </select>
-                <select defaultValue={currentSearchQueryOption} ref={searchQueryOptionRef}>
-                    <option value="eq">{t('equals')}</option>
-                    <option value="contains">{t('contains')}</option>
-                </select>
-                <input id="data-list-search-text" type="text" className="" defaultValue={currentSearchText} ref={searchTextRef}/>
-            </div>
-            <div className="search-bx-02">
-                <label>{t('type')}</label>
-                <select defaultValue={dataAssetType} ref={dataAssetTypeRef}>
-                    <option value="">{t('all')}</option>
-                    {
-                        Object.keys(AssetType).map((key) => {
-                            return <option key={key} value={AssetType[key]}>{AssetType[key]}</option>
-                        })
-                    }
-                </select>
-            </div>
-            <div className="search-bx-01">
-                <label htmlFor="data-list-create-date-from">{t('created-at')}</label>
-                <input type="date" id="data-list-create-date-from" defaultValue={createDateFrom} ref={createDateFromRef}/>
-                <span className="txt">~</span>
-                <label htmlFor="data-list-create-date-to"></label>
-                <input type="date" id="data-list-create-date-to" defaultValue={createDateTo} ref={createDateToRef}/>
-            </div>
-            <div className="search-bx-02">
-                <label htmlFor="data-list-process-status">{t('status')}</label>
-                <select id="data-list-process-status" defaultValue={processStatus} ref={processStatusRef}>
-                    <option value="">{t('all')}</option>
-                    {
-                        Object.keys(ProcessTaskStatus).map((key) => {
-                            return <option key={key} value={ProcessTaskStatus[key]}>{t(ProcessTaskStatus[key])}</option>
-                        })
-                    }
-                </select>
-            </div>
-            <div className="search-bx-01">
-                <label>{t('display-count')}</label>
-                <select defaultValue={dataItemSize} ref={dataItemSizeRef}>
-                    <option value={10}>{t('10-each')}</option>
-                    <option value={50}>{t('50-each')}</option>
-                    <option value={100}>{t('100-each')}</option>
-                </select>
-            </div>
-            <div style={{float: "right"}}>
-                <button type="button" className="btn-search-init" onClick={resetSearchParam}>{t('reset')}</button>
-                <button type="button" className="btn-search" onClick={setSearchParam}>{t('search')}</button>
-            </div>
-        </div>
-    )
+      <div className="search-condition">
+          <form>
+              <div className="form-row">
+                  <label>{t("search-word")}</label>
+                  <select defaultValue={currentSearchTarget} ref={searchTargetRef}>
+                      <option value="data">{t("data-name")}</option>
+                      <option value="group">{t("group")}</option>
+                  </select>
+                  <select defaultValue={currentSearchQueryOption} ref={searchQueryOptionRef}>
+                      <option value="eq">{t("equals")}</option>
+                      <option value="contains">{t("contains")}</option>
+                  </select>
+                  <input type="text" defaultValue={currentSearchText} ref={searchTextRef} />
+              </div>
+
+              <div className="form-row">
+                  <label>{t("created-at")}</label>
+                  <input type="date" defaultValue={createDateFrom} ref={createDateFromRef} />
+                  <span className="txt">~</span>
+                  <input type="date" defaultValue={createDateTo} ref={createDateToRef} />
+              </div>
+
+              <div className="form-row">
+                  <label>{t("type")}</label>
+                  <select defaultValue={dataAssetType} ref={dataAssetTypeRef}>
+                      <option value="">{t("all")}</option>
+                      {Object.keys(AssetType).map((key) => (
+                        <option key={key} value={AssetType[key]}>{AssetType[key]}</option>
+                      ))}
+                  </select>
+
+                  <label>{t("status")}</label>
+                  <select defaultValue={processStatus} ref={processStatusRef}>
+                      <option value="">{t("all")}</option>
+                      {Object.keys(ProcessTaskStatus).map((key) => (
+                        <option key={key} value={ProcessTaskStatus[key]}>{t(ProcessTaskStatus[key])}</option>
+                      ))}
+                  </select>
+                  <label>{t("display-count")}</label>
+                  <select defaultValue={dataItemSize} ref={dataItemSizeRef}>
+                      <option value={10}>{t("10-each")}</option>
+                      <option value={50}>{t("50-each")}</option>
+                      <option value={100}>{t("100-each")}</option>
+                  </select>
+              </div>
+              <div className="form-actions">
+                  <button type="button" className="btn-search-init-new" onClick={resetSearchParam}>{t("reset")}</button>
+                  <button type="button" className="btn-search-new" onClick={setSearchParam}>{t("search")}</button>
+              </div>
+          </form>
+      </div>
+    );
 }
 
 export default SearchForm;

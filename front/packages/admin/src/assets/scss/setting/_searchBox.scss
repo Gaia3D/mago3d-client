@@ -1,0 +1,104 @@
+@use "sass:color";
+$primary: #38a9dd;
+
+.search-condition {
+  padding: 16px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+    align-items: center;
+
+    @media (min-width: 640px) {
+      flex-direction: row;
+    }
+
+    label {
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+      max-width: 68px;
+      width: 100%;
+      flex-shrink: 0;
+      padding-left: 12px;
+    }
+
+    .txt {
+      padding: 0 4px;
+      font-weight: bold;
+    }
+
+    select {
+      flex: 1;
+    }
+
+    input[type="date"],
+    input[type="text"] {
+      flex: 3;
+    }
+
+    select,
+    input[type="date"],
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      height: 36px !important;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $primary;
+        box-shadow: 0 0 0 2px rgba($primary, 0.2);
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .btn-search-new,
+  .btn-search-init-new {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    background-color: $primary;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    max-width: 160px;
+
+    &:hover {
+      background-color: darken($primary, 10%);
+    }
+  }
+
+  .btn-search-init-new {
+    background-color: #888;
+
+    &:hover {
+      background-color: darken(#888, 10%);
+    }
+  }
+}

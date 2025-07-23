@@ -17,7 +17,7 @@ export const SearchCondition = () => {
     exact: string;
   }
 
-  const {register, handleSubmit, watch} = useForm<FormType>({
+  const { register, handleSubmit, watch, reset } = useForm<FormType>({
     defaultValues: {
       ...searchState,
       enabled: '',
@@ -41,9 +41,9 @@ export const SearchCondition = () => {
   };
 
   return (
-    <div className="search-bx">
+    <div className="search-condition">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="search-bx-01">
+        <div className="form-row">
           <label>{t("search-word")}</label>
           <select {...register("target")}>
             <option value="">{t("select")}</option>
@@ -51,39 +51,32 @@ export const SearchCondition = () => {
             <option value="name">{t("user-name")}</option>
             <option value="unit">{t("division-unit")}</option>
           </select>
-          {
-            watchTarget === 'unit'
-              ?
-              <select {...register("division")}>
-                <option value="army">{t("army")}</option>
-                <option value="navy">{t("navy")}</option>
-                <option value="airforce">{t("airforce")}</option>
-                <option value="marines">{t("marines")}</option>
-                <option value="personnel">{t("personnel")}</option>
-              </select>
-              :
-              <>
-                <select {...register("exact")}>
-                  <option value="true">{t("equals")}</option>
-                  <option value="false">{t("contains")}</option>
-                </select>
-              </>
-          }
-          <input type="text" className="" {...register("keyword")}/>
+
+          {watchTarget === "unit" ? (
+            <select {...register("division")}>
+              <option value="army">{t("army")}</option>
+              <option value="navy">{t("navy")}</option>
+              <option value="airforce">{t("airforce")}</option>
+              <option value="marines">{t("marines")}</option>
+              <option value="personnel">{t("personnel")}</option>
+            </select>
+          ) : (
+            <select {...register("exact")}>
+              <option value="true">{t("equals")}</option>
+              <option value="false">{t("contains")}</option>
+            </select>
+          )}
+
+          <input type="text" {...register("keyword")} />
         </div>
-        <div className="search-bx-02">
+
+        <div className="form-row">
           <label>{t("state")}</label>
           <select {...register("enabled")}>
             <option value="">{t("all")}</option>
             <option value="true">{t("using")}</option>
             <option value="false">{t("stop-using")}</option>
           </select>
-        </div>
-        {/* <div className="search-bx-01">
-                <label className="cboth">가입일</label> 
-                <input type="date" /><span className="txt">~</span><input type="date" />
-            </div> */}
-        <div className="search-bx-02">
           <label>{t("display-count")}</label>
           <select {...register("pageSize")}>
             <option value={10}>{t("10-each")}</option>
@@ -91,8 +84,11 @@ export const SearchCondition = () => {
             <option value={100}>{t("100-each")}</option>
           </select>
         </div>
-        <button type="submit" className="btn-search">{t("search")}</button>
+        <div className="form-actions">
+          <button type="button" className="btn-search-init-new" onClick={() => reset()}>{t("reset")}</button>
+          <button type="submit" className="btn-search-new">{t("search")}</button>
+        </div>
       </form>
     </div>
-  )
-}
+  );
+};
