@@ -36,18 +36,19 @@ const LayerList = () => {
   const {keycloak} = useKeycloak();
   const userId = keycloak?.profile?.id ?? "";
   const filter = {
-    userId: { eq : userId },
-    or : [
-      {
-        access : { eq : "Public" }
-      },
-      {
-        and : [
-          { access : { eq : "Private" }},
-          // { createdBy : { eq : userId }}
-        ]
-      }
-    ]
+    // enabled : { eq : true }
+    // userId: { eq : userId },
+    // or : [
+    //   {
+    //     access : { eq : "Public" }
+    //   },
+    //   {
+    //     and : [
+    //       { access : { eq : "Private" }},
+    //       // { createdBy : { eq : userId }}
+    //     ]
+    //   }
+    // ]
   }
 
   const mutationOptions = {
