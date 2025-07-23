@@ -1,3 +1,23 @@
+query FindAssetsByFilter($filter: AssetFilterInput) @api(name: layerset) {
+    assets(filter: $filter) {
+        id
+        name
+        description
+        type
+        enabled
+        visible
+        printable
+        access
+        status
+        order
+        createdBy
+        createdAt
+        updatedBy
+        updatedAt
+        properties
+    }
+}
+
 query LayersetGroupList @api(name: layerset) {
     groups {
         id

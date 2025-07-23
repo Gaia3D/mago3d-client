@@ -32,7 +32,7 @@ const config: CodegenConfig = {
           customFetch: fetchWithAgent,
         },
       } as unknown as string,
-      documents: "src/types/layerset/*.{ts,tsx,graphql}",
+      documents: "src/types/layerset/doc/*.{ts,tsx,graphql}",
       plugins: [],
       preset: "client",
     },
