@@ -123,75 +123,53 @@ function GroupForm({
   };
 
   return (
-    <>
-      <div className="alg-right symbol-group-register">
-        <div className="symbol-group-register-button">
-          <button
-            type="button"
-            className="btn-basic mar-r5"
-            onClick={clearForm}
-          >
-            신규등록
-          </button>
-          {id ? (
-            <button
-              type="button"
-              className="btn-basic mar-r5"
-              onClick={handleDeleteButton}
-            >
-              선택삭제
+    <section className="symbol-group-panel">
+      <header className="symbol-group-header">
+        <h3>{id ? '그룹 수정' : '그룹 생성'}</h3>
+        <div className="header-actions">
+          {id && (
+            <button type="button" className="btn-outline danger" onClick={handleDeleteButton}>
+              선택 그룹 삭제
             </button>
-          ) : (
-            <></>
           )}
+          <button type="button" className="btn-outline" onClick={toListById}>심볼 목록</button>
         </div>
-        <label>심볼그룹명</label>
-        <input type="text" defaultValue={name} ref={groupNameRef} />
-        <label>사용여부</label>
-        <div style={{ display: "inline" }}>
-          <input
-            id="group-enabled"
-            type="radio"
-            name="enabled"
-            ref={groupEnabledTRef}
-          />
-          <label htmlFor={"group-enabled"} className="txt">
+      </header>
+
+      <div className="form-group">
+        <label htmlFor="group-name">심볼 그룹명</label>
+        <input id="group-name" type="text" ref={groupNameRef} />
+      </div>
+
+      <div className="form-group">
+        <label>사용 여부</label>
+        <div className="form-radio-group">
+          <label className="radio-label">
+            <input type="radio" name="enabled" ref={groupEnabledTRef} />
             사용
           </label>
-          <input
-            id="group-disabled"
-            type="radio"
-            name="enabled"
-            ref={groupEnabledFRef}
-          />
-          <label htmlFor={"group-disabled"} className="txt">
+          <label className="radio-label">
+            <input type="radio" name="enabled" ref={groupEnabledFRef} />
             미사용
           </label>
         </div>
       </div>
-      <div className="mar-t50 symbol-group-register-button-02">
-        {id !== undefined ? (
-          <button
-            type="button"
-            className="btn-l-save"
-            onClick={handleUpdateButton}
-          >
+
+      <div className="symbol-group-footer">
+        <button type="button" className="btn-secondary" onClick={clearForm}>
+          초기화
+        </button>
+        {id ? (
+          <button type="button" className="btn-primary" onClick={handleUpdateButton}>
             수정
           </button>
         ) : (
-          <button
-            type="button"
-            className="btn-l-save"
-            onClick={handleCreateButton}
-          >
+          <button type="button" className="btn-primary" onClick={handleCreateButton}>
             등록
           </button>
         )}
-        <button type="button" className="btn-l-cancel" onClick={toListById}>
-          목록
-        </button>
       </div>
-    </>
+    </section>
   );
 }
 
