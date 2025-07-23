@@ -6,6 +6,7 @@ import BackgroundMapSelector from "@src/layer-style/components/vector/preview-pa
 import LegendPreview from "@src/layer-style/components/vector/preview-panel/LegendPreview";
 import CesiumPreview from "@src/layer-style/components/vector/preview-panel/CesiumPreview";
 import {usePreviewData} from "@src/layer-style/hooks/usePreviewData";
+import {MAX_PREVIEW_FEATURE_COUNT} from "@src/constants/common";
 
 export enum PreviewMode {
   Single = "single",
@@ -25,7 +26,7 @@ const PreviewPanel = () => {
     <>
       <div className="section-header">
         <div>레이어 미리보기</div>
-        <div>성능상의 이유로 최대 50개의 객체만 미리보기 됩니다.</div>
+        <div>성능상의 이유로 최대 {MAX_PREVIEW_FEATURE_COUNT}개의 객체만 미리보기 됩니다.</div>
       </div>
       <div className="preview-container">
         <PreviewModeSelector

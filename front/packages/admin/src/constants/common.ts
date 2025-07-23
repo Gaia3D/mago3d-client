@@ -1,0 +1,1 @@
+export const MAX_PREVIEW_FEATURE_COUNT = 50;
