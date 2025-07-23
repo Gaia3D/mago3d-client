@@ -340,18 +340,18 @@ const LayerNode = ({node, params }: TreeNodeProps) => {
   const {keycloak} = useKeycloak();
   const userId = keycloak?.profile?.id ?? "";
   const filter = {
-    userId: { eq : userId },
-    or : [
-      {
-        access : { eq : "Public" }
-      },
-      {
-        and : [
-          { access : { eq : "Private" }},
-          { createdBy : { eq : userId }}
-        ]
-      }
-    ]
+    // userId: { eq : userId },
+    // or : [
+    //   {
+    //     access : { eq : "Public" }
+    //   },
+    //   {
+    //     and : [
+    //       { access : { eq : "Private" }},
+    //       { createdBy : { eq : userId }}
+    //     ]
+    //   }
+    // ]
   }
 
   const asset = node.data as LayersetAssetBasicFragment;
