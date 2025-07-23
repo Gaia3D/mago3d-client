@@ -70,6 +70,7 @@ export type AssetFilterInput = {
   name?: InputMaybe<StringCriteria>;
   not?: InputMaybe<AssetFilterInput>;
   or?: InputMaybe<Array<AssetFilterInput>>;
+  printable?: InputMaybe<BooleanCriteria>;
 };
 
 export type AttributeStyleInput = {
@@ -180,6 +181,7 @@ export type CreateAssetInput = {
   groupIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   name: Scalars['String']['input'];
   order?: InputMaybe<Scalars['Int']['input']>;
+  printable?: Scalars['Boolean']['input'];
   properties?: InputMaybe<Scalars['JSON']['input']>;
   type: LayerAssetType;
   visible?: Scalars['Boolean']['input'];
@@ -195,6 +197,7 @@ export type CreateAssetResponse = WithAuditable & WithJsonProperty & {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   order?: Maybe<Scalars['Int']['output']>;
+  printable: Scalars['Boolean']['output'];
   properties?: Maybe<Scalars['JSON']['output']>;
   status?: Maybe<LayerAssetStatus>;
   type?: Maybe<LayerAssetType>;
@@ -599,6 +602,7 @@ export type LayerAsset = WithAuditable & WithJsonProperty & {
   logs?: Maybe<Array<Maybe<LayerAssetLog>>>;
   name?: Maybe<Scalars['String']['output']>;
   order?: Maybe<Scalars['Int']['output']>;
+  printable?: Maybe<Scalars['Boolean']['output']>;
   properties?: Maybe<Scalars['JSON']['output']>;
   status?: Maybe<LayerAssetStatus>;
   styles?: Maybe<Array<Maybe<LayerStyle>>>;
@@ -1492,6 +1496,7 @@ export type UpdateAssetInput = {
   groupIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   name?: InputMaybe<Scalars['String']['input']>;
   order?: InputMaybe<Scalars['Int']['input']>;
+  printable?: InputMaybe<Scalars['Boolean']['input']>;
   properties?: InputMaybe<JsonPropertyInput>;
   type?: InputMaybe<LayerAssetType>;
   visible?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1507,6 +1512,7 @@ export type UpdateAssetResponse = WithAuditable & WithJsonProperty & {
   id: Scalars['ID']['output'];
   name?: Maybe<Scalars['String']['output']>;
   order?: Maybe<Scalars['Int']['output']>;
+  printable?: Maybe<Scalars['Boolean']['output']>;
   properties?: Maybe<Scalars['JSON']['output']>;
   status?: Maybe<LayerAssetStatus>;
   type?: Maybe<LayerAssetType>;
@@ -1726,6 +1732,7 @@ export type UserLayerAsset = WithAuditable & WithJsonProperty & {
   logs?: Maybe<Array<Maybe<LayerAssetLog>>>;
   name?: Maybe<Scalars['String']['output']>;
   order?: Maybe<Scalars['Int']['output']>;
+  printable?: Maybe<Scalars['Boolean']['output']>;
   properties?: Maybe<Scalars['JSON']['output']>;
   styles?: Maybe<Array<Maybe<LayerStyle>>>;
   type?: Maybe<LayerAssetType>;
