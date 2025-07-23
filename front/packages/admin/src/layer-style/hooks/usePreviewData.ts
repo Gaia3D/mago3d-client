@@ -11,13 +11,17 @@ export const usePreviewData = (asset: LayerAsset | null) => {
     if (!asset?.properties?.layer?.resource?.name) return;
     const fetch = async () => {
       try {
-        const url = `${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}
-        service=WFS
-        &version=2.0.0
-        &request=GetFeature&typeName=${asset.properties.layer.resource.name}
-        &outputFormat=application/json&
-        count=${MAX_PREVIEW_FEATURE_COUNT}`;
+        const baseUrl = import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL;
+        const params = new URLSearchParams({
+          service: "WFS",
+          version: "2.0.0",
+          request: "GetFeature",
+          typeName: asset.properties.layer.resource.name,
+          outputFormat: "application/json",
+          count: MAX_PREVIEW_FEATURE_COUNT.toString(),
+        });
 
+        const url = `${baseUrl}?${params.toString()}`;
         const ds = await Cesium.GeoJsonDataSource.load(url);
         setDataSource(ds);
       } catch (e) {
