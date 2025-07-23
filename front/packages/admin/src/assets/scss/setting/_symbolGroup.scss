@@ -43,6 +43,17 @@ $bg-light: #f9f9f9;
           box-sizing: border-box;
           line-height: unset;
 
+          &.selected {
+            background-color: lighten($primary, 42%);
+            border-left: 4px solid $primary;
+            font-weight: 600;
+            color: $primary;
+
+            .group-name {
+              color: $primary;
+            }
+          }
+
           &:hover {
             background: $bg-light;
           }

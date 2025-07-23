@@ -40,7 +40,7 @@ function GroupList() {
           <ul>
             {symbolGroups && symbolGroups.length > 0 ? (
               symbolGroups.map((group, index) => (
-                <li key={index} onClick={() => handleListClick(group)}>
+                <li key={index} onClick={() => handleListClick(group)} className={group.id === selectedGroup.id ? "selected" : ""}>
                   <div className="group-name">{group.name}</div>
                   <div className="group-count">{group.count}</div>
                 </li>
