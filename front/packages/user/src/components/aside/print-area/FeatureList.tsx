@@ -84,12 +84,16 @@ const FeatureList = ({ features, searchKey }: Props) => {
   if (!viewer || features.length === 0) return null;
 
   return (
-    <div>
+    <div className="feature-list">
       {features.map((f) => (
-        <div key={f.id as string} onClick={() => {console.log(f)}}>
-          {f.properties?.[searchKey ?? ""] ?? f.id}
-          <button onClick={() => flyToFeature(f)}>날아가기</button>
-          <button onClick={() => captureCesium()}>스크린샷</button>
+        <div key={f.id as string} className="feature-item">
+          <div className="feature-id ellipsis">
+            {f.properties?.[searchKey ?? ""] ?? f.id}
+          </div>
+          <div className="feature-actions">
+            <button className="fly-to" onClick={() => flyToFeature(f)}></button>
+            <button onClick={() => captureCesium()}></button>
+          </div>
         </div>
       ))}
     </div>

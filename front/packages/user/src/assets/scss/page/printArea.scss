@@ -1,4 +1,112 @@
-.basic-input {
-  background-color: white;
-  height: 32px;
+.side-bar-wrapper {
+  .content--wrapper {
+    .content-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      height: 30px;
+
+      .content-title {
+        font-size: 13px;
+        width: 80px;
+        height: 100%;
+      }
+      .content-value {
+        width: calc(100% - 80px);
+        height: 100%;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      select, input {
+        padding: 0 30px 0 10px;
+        border-radius: 6px;
+        background-color:#3E3E3E;
+        color: white;
+      }
+
+      select {
+        appearance: none; /* 기본 화살표 제거 (지원 브라우저 한정) */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%23fff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 5px center;
+        background-size: 16px;
+      }
+
+      input {
+
+      }
+
+      select:focus,
+      input:focus {
+        outline: none;
+      }
+    }
+
+  }
+}
+
+.feature-list {
+  height: calc(100% - 152px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+  font-family: var(--font-family-regular);
+
+  .feature-item {
+    width: 100%;
+    font-size: 13px;
+    padding: 4px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 6px;
+    background-color: var(--nav-hover-color);
+
+    &:hover {
+      background: var(--layer-sblist-hover-color);
+    }
+
+    .feature-id {
+      width: calc(100% - 100px);
+    }
+
+    .feature-actions {
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      gap: 8px;
+      width: 100px;
+      overflow: hidden;
+
+      button {
+        width: 22px;
+        height: 22px;
+        background: rgba(255,255,255,0.14);
+        border: none;
+        border-radius: 5px;
+
+        &:hover {
+          background-color: var(--layer-hover-color);
+          cursor: pointer;
+        }
+        &.fly-to {
+          background-image: var(--icon-current);
+          background-position: -114px -181px;
+          background-size: 777px 1076px;
+          background-repeat: no-repeat;
+        }
+      }
+    }
+  }
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

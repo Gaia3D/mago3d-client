@@ -12,7 +12,12 @@ const FieldSelector = ({ previewData, searchKey, onChange }: Props) => {
   const fields = previewData.previewColumns?.map(p => p?.field);
 
   return (
-    <select value={searchKey ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
+    <select
+      className="content-value"
+      name="field-selector"
+      value={searchKey ?? ""}
+      onChange={(e) => onChange(e.target.value || undefined)}
+    >
       <option value="" hidden>2. 검색 필드 선택</option>
       {fields?.map((field) => (
         <option key={field} value={field}>

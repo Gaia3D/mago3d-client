@@ -52,7 +52,7 @@ const AsidePrintArea = ({ display }: Props) => {
     );
   }, [selectedAsset, searchKey, searchKeyword]);
 
-  const features = useGeoJsonLoader(layerUrl);
+  const { features, loading } = useGeoJsonLoader(layerUrl);
 
   return (
     <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
@@ -62,33 +62,47 @@ const AsidePrintArea = ({ display }: Props) => {
         </div>
         <div className="content--wrapper layer-wrapper">
           {/* 1. 인쇄 구역 선택 */}
-          <AssetSelector
-            assetData={assetData}
-            selectedAssetId={selectedAssetId}
-            onChange={setSelectedAssetId}
-          />
+          <div className="content-row">
+            <div className="content-title">인쇄 구역</div>
+            <AssetSelector
+              assetData={assetData}
+              selectedAssetId={selectedAssetId}
+              onChange={setSelectedAssetId}
+            />
+          </div>
 
           {/* 2. 검색 필드 선택 */}
           {previewData?.previewColumns && (
-            <FieldSelector
-              previewData={previewData}
-              searchKey={searchKey}
-              onChange={setSearchKey}
-            />
+            <div className="content-row">
+              <div className="content-title">검색 필드</div>
+                <FieldSelector
+                  previewData={previewData}
+                  searchKey={searchKey}
+                  onChange={setSearchKey}
+                />
+            </div>
           )}
-
           {/* 3. 검색어 입력 */}
           {searchKey && (
-            <DebouncedInput
-              value={searchKeyword}
-              onDebounce={setSearchKeyword}
-              placeholder="3. 검색어 입력"
-              className="basic-input"
-            />
+            <div className="content-row">
+              <div className="content-title">검색어</div>
+                <DebouncedInput
+                  value={searchKeyword}
+                  onDebounce={setSearchKeyword}
+                  placeholder="3. 검색어 입력"
+                  className="content-value"
+                />
+            </div>
           )}
 
           {/* 4. 결과 Feature 목록 */}
-          <FeatureList features={features} searchKey={searchKey} />
+          {loading ? (
+            <div className="feature-list flex-center">
+              <span className="spin-loader"></span>
+            </div>
+          ) : (
+            <FeatureList features={features} searchKey={searchKey} />
+          )}
         </div>
       </div>
     </div>
