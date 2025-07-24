@@ -1,0 +1,99 @@
+import React, {useEffect, useRef} from "react";
+import {Feature, GeoJsonProperties, Geometry} from "geojson";
+import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
+import * as Cesium from "cesium";
+import {Rectangle} from "cesium";
+import {download} from "@mnd/shared";
+import {createEntityFromGeometry} from "@/utils/cesium/createEntityFromGeometry.ts";
+
+interface Props {
+  features: Feature<Geometry, GeoJsonProperties>[];
+  searchKey?: string;
+}
+
+const FeatureList = ({ features, searchKey }: Props) => {
+  const { globeController } = useGlobeController();
+  const viewer = globeController?.viewer;
+
+  const highlightRef = useRef<Cesium.Entity | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (viewer && highlightRef.current) {
+        viewer.entities.remove(highlightRef.current);
+        highlightRef.current = null;
+      }
+    };
+  }, [viewer]);
+
+  const flyToFeature = (feature: Feature<Geometry, GeoJsonProperties>) => {
+    if (!viewer || !feature.bbox) {
+      alert("bbox 정보 없음");
+      return;
+    }
+
+    const [minLon, minLat, maxLon, maxLat] = feature.bbox;
+    const padding = 0.2;  // 20% 패딩
+    const lonPad = (maxLon - minLon) * padding;
+    const latPad = (maxLat - minLat) * padding;
+
+    const padded = Rectangle.fromDegrees(
+      minLon - lonPad,
+      minLat - latPad,
+      maxLon + lonPad,
+      maxLat + latPad
+    );
+
+    if (highlightRef.current) {
+      viewer.entities.remove(highlightRef.current);
+    }
+
+    viewer.camera.flyTo({
+      destination: padded,
+      duration: 0,
+      complete: () => {
+        const entity = createEntityFromGeometry(feature.geometry);
+        if (entity) {
+          const added = viewer.entities.add(entity);
+          highlightRef.current = added;
+        }
+      },
+    });
+  };
+
+  const captureCesium = () => {
+    if (!viewer) return;
+    const scene = viewer.scene;
+
+    viewer.resolutionScale = 2.0;
+
+    const takeScreenshot = () => {
+      scene.postRender.removeEventListener(takeScreenshot);
+      scene.requestRender(); // 캡처 전에 명시적 렌더 요청
+
+      scene?.canvas.toBlob((blob) => {
+        if (!blob) return;
+        download(blob, `snapshot-${Date.now()}.png`);
+        viewer.resolutionScale = 1.0;
+      });
+    };
+
+    scene.postRender.addEventListener(takeScreenshot);
+  };
+
+  if (!viewer || features.length === 0) return null;
+
+  return (
+    <div>
+      {features.map((f) => (
+        <div key={f.id as string} onClick={() => {console.log(f)}}>
+          {f.properties?.[searchKey ?? ""] ?? f.id}
+          <button onClick={() => flyToFeature(f)}>날아가기</button>
+          <button onClick={() => captureCesium()}>스크린샷</button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default FeatureList;
