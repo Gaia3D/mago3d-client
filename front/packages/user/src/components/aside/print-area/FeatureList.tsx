@@ -9,9 +9,10 @@ import {createEntityFromGeometry} from "@/utils/cesium/createEntityFromGeometry.
 interface Props {
   features: Feature<Geometry, GeoJsonProperties>[];
   searchKey?: string;
+  refCallback?: (node: HTMLDivElement | null) => void;
 }
 
-const FeatureList = ({ features, searchKey }: Props) => {
+const FeatureList = ({ features, searchKey, refCallback }: Props) => {
   const { globeController } = useGlobeController();
   const viewer = globeController?.viewer;
 
@@ -85,17 +86,24 @@ const FeatureList = ({ features, searchKey }: Props) => {
 
   return (
     <div className="feature-list">
-      {features.map((f) => (
-        <div key={f.id as string} className="feature-item">
-          <div className="feature-id ellipsis">
-            {f.properties?.[searchKey ?? ""] ?? f.id}
+      {features.map((f, i) => {
+        const isLast = features.length - 1 === i;
+        return (
+          <div
+            key={`${f.id}-${i}`}
+            className="feature-item"
+            ref={isLast ? refCallback : undefined}
+          >
+            <div className="feature-id ellipsis">
+              {f.properties?.[searchKey ?? ""] ?? f.id}
+            </div>
+            <div className="feature-actions">
+              <button className="fly-to" onClick={() => flyToFeature(f)}></button>
+              <button onClick={() => captureCesium()}></button>
+            </div>
           </div>
-          <div className="feature-actions">
-            <button className="fly-to" onClick={() => flyToFeature(f)}></button>
-            <button onClick={() => captureCesium()}></button>
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import { useQuery } from "@apollo/client";
 import { useRecoilValueLoadable } from "recoil";
 
@@ -14,7 +14,8 @@ import {
 import { currentUserProfileSelector } from "@/recoils/Auth";
 import { buildFilter, buildWfsUrl } from "../../../utils/printAreaUtils.ts";
 import DebouncedInput from "@/components/common/DebouncedInput.tsx";
-import {useGeoJsonLoader} from "@/hooks/printArea/useGeoJsonLoader.ts";
+import {useInfiniteScrollObserver} from "@/hooks/printArea/useInfiniteScrollObserver.ts";
+import {Feature} from "geojson";
 
 interface Props {
   display: boolean;
@@ -23,11 +24,24 @@ interface Props {
 const AsidePrintArea = ({ display }: Props) => {
   const { contents } = useRecoilValueLoadable(currentUserProfileSelector);
   const userId = contents.id;
+  const searchFilter = useMemo(() => buildFilter(userId), [userId]);
 
-  const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedAssetId, setSelectedAssetId] = useState("");
   const [searchKey, setSearchKey] = useState<string | undefined>(undefined);
-  const searchFilter = useMemo(() => buildFilter(userId), [userId]);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [page, setPage] = useState(0);
+  const [features, setFeatures] = useState<Feature[]>([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const hasNextRef = useRef(true);
+  const isFetchingRef = useRef(false);
+
+  const { lastItemRef } = useInfiniteScrollObserver({
+    hasNextRef,
+    isFetchingRef,
+    onLoadMore: () => setPage((prev) => prev + 1),
+  });
 
   const { data: assetData } = useQuery(FindAssetsByFilterDocument, {
     variables: { filter: searchFilter },
@@ -43,16 +57,56 @@ const AsidePrintArea = ({ display }: Props) => {
     [selectedAssetId, assetData]
   );
 
-  const layerUrl = useMemo(() => {
-    if (!selectedAsset) return "";
-    return buildWfsUrl(
+  const fetchFeatures = async (currentPage: number, reset = false) => {
+    if (!selectedAsset) return;
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+    const PAGE_SIZE = 20;
+    const layerUrl = buildWfsUrl(
       selectedAsset.properties.layer.name,
+      currentPage,
+      PAGE_SIZE,
       searchKey,
-      searchKeyword || undefined
-    );
-  }, [selectedAsset, searchKey, searchKeyword]);
+      searchKeyword
+    )
+    const controller = new AbortController();
+    console.log("layerUrl", layerUrl);
+    try {
+      setLoading(true);
+      const res = await fetch(layerUrl, { signal: controller.signal });
+      if (!res.ok) throw new Error("bad response");
+      const json = await res.json();
+      const newFeatures = json.features ?? [];
 
-  const { features, loading } = useGeoJsonLoader(layerUrl);
+      setFeatures((prev) => (reset ? newFeatures : [...prev, ...newFeatures]));
+
+      // 👇 다음 페이지 유무 판단
+      hasNextRef.current = newFeatures.length === PAGE_SIZE;
+
+      // 만약 fetchFeatures(page) 호출 이후에 features.length === 0 이면 종료
+      if (newFeatures.length === 0) {
+        hasNextRef.current = false;
+      }
+    } catch (err) {
+      if (!controller.signal.aborted) console.error(err);
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false; // 추가해야 함!
+    }
+  }
+
+  useEffect(() => {
+    setPage(0);
+    setFeatures([]);
+    hasNextRef.current = true;
+    fetchFeatures(0, true);
+  }, [selectedAsset, searchKeyword, searchKey]);
+
+  useEffect(() => {
+    if (page === 0) return;
+    fetchFeatures(page);
+  }, [page]);
+
 
   return (
     <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
@@ -83,7 +137,7 @@ const AsidePrintArea = ({ display }: Props) => {
             </div>
           )}
           {/* 3. 검색어 입력 */}
-          {searchKey && (
+          {previewData?.previewColumns && (
             <div className="content-row">
               <div className="content-title">검색어</div>
                 <DebouncedInput
@@ -96,12 +150,15 @@ const AsidePrintArea = ({ display }: Props) => {
           )}
 
           {/* 4. 결과 Feature 목록 */}
-          {loading ? (
-            <div className="feature-list flex-center">
+          <FeatureList
+            features={features}
+            searchKey={searchKey}
+            refCallback={(node) => lastItemRef.current = node}
+          />
+          {loading && (
+            <div className="flex-center">
               <span className="spin-loader"></span>
             </div>
-          ) : (
-            <FeatureList features={features} searchKey={searchKey} />
           )}
         </div>
       </div>

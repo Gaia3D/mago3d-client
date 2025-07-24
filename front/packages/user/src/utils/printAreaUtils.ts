@@ -19,8 +19,10 @@ export const buildFilter = (userId: string): AssetFilterInput => ({
 
 export const buildWfsUrl = (
   layerName: string,
+  page: number,
+  size: number = 10,
   searchKey?: string,
-  searchValue?: string
+  searchValue?: string,
 ): string => {
   const baseUrl = import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL;
   const params = new URLSearchParams({
@@ -29,6 +31,8 @@ export const buildWfsUrl = (
     request: "GetFeature",
     typeName: layerName,
     outputFormat: "application/json",
+    startIndex: `${page * size}`,
+    count: `${size}`,
   });
 
   if (searchKey && searchValue) {
