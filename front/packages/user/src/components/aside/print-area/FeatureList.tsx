@@ -8,12 +8,13 @@ import {createEntityFromGeometry} from "@/utils/cesium/createEntityFromGeometry.
 
 interface Props {
   display: boolean;
+  assetName: string;
   features: Feature<Geometry, GeoJsonProperties>[];
   searchKey?: string;
   refCallback?: (node: HTMLDivElement | null) => void;
 }
 
-const FeatureList = ({ display, features, searchKey, refCallback }: Props) => {
+const FeatureList = ({ display, assetName, features, searchKey, refCallback }: Props) => {
   const { globeController } = useGlobeController();
   const viewer = globeController?.viewer;
 
@@ -63,7 +64,7 @@ const FeatureList = ({ display, features, searchKey, refCallback }: Props) => {
     });
   };
 
-  const captureCesium = (scale: number) => {
+  const captureCesium = (feature: Feature<Geometry, GeoJsonProperties>, scale: number) => {
     if (!viewer) return;
     const scene = viewer.scene;
 
@@ -75,7 +76,7 @@ const FeatureList = ({ display, features, searchKey, refCallback }: Props) => {
 
       scene?.canvas.toBlob((blob) => {
         if (!blob) return;
-        download(blob, `snapshot-${Date.now()}.png`);
+        download(blob, `${assetName}_${feature.properties?.id ?? "0"}.png`);
         viewer.resolutionScale = 1.0;
       });
     };
@@ -107,8 +108,8 @@ const FeatureList = ({ display, features, searchKey, refCallback }: Props) => {
             </div>
             <div className="feature-actions">
               <button title="이동" className="fly-to" onClick={() => flyToFeature(f)}></button>
-              <button title="저화질 캡쳐" onClick={() => captureCesium(1)}>저</button>
-              <button title="고화질 캡쳐" onClick={() => captureCesium(2)}>고</button>
+              <button title="저화질 캡쳐" onClick={() => captureCesium(f, 1)}>저</button>
+              <button title="고화질 캡쳐" onClick={() => captureCesium(f, 2)}>고</button>
             </div>
           </div>
         )
