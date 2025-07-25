@@ -164,7 +164,7 @@ const AsidePrintArea = ({ display }: Props) => {
             {loading ? (
               <span className="spin-loader"></span>
             ) : (
-              <FeatureList features={features} searchKey={searchKey} />
+              <FeatureList features={features} searchKey={searchKey} display={display} />
               )
             }
           </div>

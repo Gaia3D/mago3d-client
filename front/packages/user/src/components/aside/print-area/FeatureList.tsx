@@ -7,12 +7,13 @@ import {download} from "@mnd/shared";
 import {createEntityFromGeometry} from "@/utils/cesium/createEntityFromGeometry.ts";
 
 interface Props {
+  display: boolean;
   features: Feature<Geometry, GeoJsonProperties>[];
   searchKey?: string;
   refCallback?: (node: HTMLDivElement | null) => void;
 }
 
-const FeatureList = ({ features, searchKey, refCallback }: Props) => {
+const FeatureList = ({ display, features, searchKey, refCallback }: Props) => {
   const { globeController } = useGlobeController();
   const viewer = globeController?.viewer;
 
@@ -25,7 +26,7 @@ const FeatureList = ({ features, searchKey, refCallback }: Props) => {
         highlightRef.current = null;
       }
     };
-  }, [viewer]);
+  }, [viewer, display]);
 
   const flyToFeature = (feature: Feature<Geometry, GeoJsonProperties>) => {
     if (!viewer || !feature.bbox) {
@@ -62,11 +63,11 @@ const FeatureList = ({ features, searchKey, refCallback }: Props) => {
     });
   };
 
-  const captureCesium = () => {
+  const captureCesium = (scale: number) => {
     if (!viewer) return;
     const scene = viewer.scene;
 
-    viewer.resolutionScale = 2.0;
+    viewer.resolutionScale = scale; // 저해상도 1, 고해상도 2
 
     const takeScreenshot = () => {
       scene.postRender.removeEventListener(takeScreenshot);
@@ -105,8 +106,9 @@ const FeatureList = ({ features, searchKey, refCallback }: Props) => {
               )}
             </div>
             <div className="feature-actions">
-              <button className="fly-to" onClick={() => flyToFeature(f)}></button>
-              <button onClick={() => captureCesium()}></button>
+              <button title="이동" className="fly-to" onClick={() => flyToFeature(f)}></button>
+              <button title="저화질 캡쳐" onClick={() => captureCesium(1)}>저</button>
+              <button title="고화질 캡쳐" onClick={() => captureCesium(2)}>고</button>
             </div>
           </div>
         )
