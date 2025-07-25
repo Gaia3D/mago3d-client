@@ -233,6 +233,7 @@ query PreviewColumns($assetID: ID!) @api(name: layerset) {
   previewColumns(assetId: $assetID) {
     field
     value
+    isString
   }
 }
 
