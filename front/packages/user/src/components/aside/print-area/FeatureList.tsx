@@ -95,7 +95,14 @@ const FeatureList = ({ features, searchKey, refCallback }: Props) => {
             ref={isLast ? refCallback : undefined}
           >
             <div className="feature-id ellipsis">
-              {f.properties?.[searchKey ?? ""] ?? f.id}
+              <span>
+                {f.properties?.id ?? f.id}
+              </span>
+              {searchKey && (
+                <span className="feature-key">
+                ({f.properties?.[searchKey ?? ""] ?? f.id})
+              </span>
+              )}
             </div>
             <div className="feature-actions">
               <button className="fly-to" onClick={() => flyToFeature(f)}></button>

@@ -129,10 +129,6 @@ const AsidePrintArea = ({ display }: Props) => {
             {previewData?.previewColumns && (
               <div className="content-row">
                 <div className="content-title">검색 필드</div>
-                <select className="content-value" onChange={(e) => setKeywordCriteria(e.target.value as "eq" | "contains")}>
-                  <option value="eq">일치</option>
-                  {searchKeyIsString && <option value="contains">포함</option>}
-                </select>
                 <FieldSelector
                   previewData={previewData}
                   searchKey={searchKey}
@@ -148,11 +144,16 @@ const AsidePrintArea = ({ display }: Props) => {
             {previewData?.previewColumns && (
               <div className="content-row">
                 <div className="content-title">검색어</div>
+                <select className="criteria-select"
+                        onChange={(e) => setKeywordCriteria(e.target.value as "eq" | "contains")}>
+                  <option value="eq">일치</option>
+                  {searchKeyIsString && <option value="contains">포함</option>}
+                </select>
                 <DebouncedInput
                   value={keyword}
                   onDebounce={setKeyword}
                   placeholder="검색어 입력"
-                  className="content-value"
+                  className="keyword-input"
                 />
               </div>
             )}
@@ -161,9 +162,9 @@ const AsidePrintArea = ({ display }: Props) => {
           {/* 4. 결과 Feature 목록 */}
           <div className="feature-container flex-center">
             {loading ? (
-                <span className="spin-loader"></span>
-              ):(
-                <FeatureList features={features} searchKey={searchKey} />
+              <span className="spin-loader"></span>
+            ) : (
+              <FeatureList features={features} searchKey={searchKey} />
               )
             }
           </div>
