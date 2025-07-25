@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useRecoilValueLoadable } from "recoil";
 
@@ -14,8 +14,8 @@ import {
 import { currentUserProfileSelector } from "@/recoils/Auth";
 import { buildFilter, buildWfsUrl } from "../../../utils/printAreaUtils.ts";
 import DebouncedInput from "@/components/common/DebouncedInput.tsx";
-import {useInfiniteScrollObserver} from "@/hooks/printArea/useInfiniteScrollObserver.ts";
-import {Feature} from "geojson";
+import { Feature } from "geojson";
+import InputPagination from "@/components/InputPagination.tsx";
 
 interface Props {
   display: boolean;
@@ -28,20 +28,14 @@ const AsidePrintArea = ({ display }: Props) => {
 
   const [selectedAssetId, setSelectedAssetId] = useState("");
   const [searchKey, setSearchKey] = useState<string | undefined>(undefined);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchKeyIsString, setSearchKeyIsString] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const [keywordCriteria, setKeywordCriteria] = useState<"eq" | "contains">("eq");
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
   const [features, setFeatures] = useState<Feature[]>([]);
-
   const [loading, setLoading] = useState(false);
-
-  const hasNextRef = useRef(true);
-  const isFetchingRef = useRef(false);
-
-  const { lastItemRef } = useInfiniteScrollObserver({
-    hasNextRef,
-    isFetchingRef,
-    onLoadMore: () => setPage((prev) => prev + 1),
-  });
+  const [totalFeatures, setTotalFeatures] = useState<number>(0);
 
   const { data: assetData } = useQuery(FindAssetsByFilterDocument, {
     variables: { filter: searchFilter },
@@ -57,56 +51,61 @@ const AsidePrintArea = ({ display }: Props) => {
     [selectedAssetId, assetData]
   );
 
-  const fetchFeatures = async (currentPage: number, reset = false) => {
+  const fetchTotalCount = async () => {
     if (!selectedAsset) return;
-    if (isFetchingRef.current) return;
-    isFetchingRef.current = true;
-    const PAGE_SIZE = 20;
-    const layerUrl = buildWfsUrl(
-      selectedAsset.properties.layer.name,
-      currentPage,
-      PAGE_SIZE,
+    const url = buildWfsUrl({
+      layerName: selectedAsset.properties.layer.name,
       searchKey,
-      searchKeyword
-    )
-    const controller = new AbortController();
-    console.log("layerUrl", layerUrl);
+      searchValue: keyword,
+      criteria: keywordCriteria,
+      hitsOnly: true,
+    });
+
+    const res = await fetch(url);
+    const text = await res.text();
+    const matched = text.match(/numberOfFeatures="(\d+)"/);
+    setTotalFeatures(matched ? Number(matched[1]) : 0);
+  };
+
+  const fetchFeatures = async (currentPage: number) => {
+    if (!selectedAsset) return;
+
+    const url = buildWfsUrl({
+      layerName: selectedAsset.properties.layer.name,
+      page: currentPage,
+      size: pageSize,
+      searchKey,
+      searchValue: keyword,
+      criteria: keywordCriteria,
+    });
+
     try {
       setLoading(true);
-      const res = await fetch(layerUrl, { signal: controller.signal });
+      const res = await fetch(url);
       if (!res.ok) throw new Error("bad response");
       const json = await res.json();
-      const newFeatures = json.features ?? [];
-
-      setFeatures((prev) => (reset ? newFeatures : [...prev, ...newFeatures]));
-
-      // 👇 다음 페이지 유무 판단
-      hasNextRef.current = newFeatures.length === PAGE_SIZE;
-
-      // 만약 fetchFeatures(page) 호출 이후에 features.length === 0 이면 종료
-      if (newFeatures.length === 0) {
-        hasNextRef.current = false;
-      }
+      setFeatures(json.features ?? []);
     } catch (err) {
-      if (!controller.signal.aborted) console.error(err);
+      console.error(err);
     } finally {
       setLoading(false);
-      isFetchingRef.current = false; // 추가해야 함!
     }
-  }
+  };
 
   useEffect(() => {
     setPage(0);
     setFeatures([]);
-    hasNextRef.current = true;
-    fetchFeatures(0, true);
-  }, [selectedAsset, searchKeyword, searchKey]);
+    setTotalFeatures(0);
+    if (selectedAsset) {
+      fetchTotalCount();
+    }
+  }, [selectedAsset, searchKey, keyword]);
 
   useEffect(() => {
-    if (page === 0) return;
-    fetchFeatures(page);
-  }, [page]);
+    if (selectedAsset) fetchFeatures(page);
+  }, [page, pageSize, selectedAsset, searchKey, keyword]);
 
+  const totalPages = Math.ceil(totalFeatures / pageSize);
 
   return (
     <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
@@ -115,51 +114,71 @@ const AsidePrintArea = ({ display }: Props) => {
           <SideCloseButton />
         </div>
         <div className="content--wrapper layer-wrapper">
-          {/* 1. 인쇄 구역 선택 */}
-          <div className="content-row">
-            <div className="content-title">인쇄 구역</div>
-            <AssetSelector
-              assetData={assetData}
-              selectedAssetId={selectedAssetId}
-              onChange={setSelectedAssetId}
-            />
-          </div>
-
-          {/* 2. 검색 필드 선택 */}
-          {previewData?.previewColumns && (
+          <div className="search-container">
+            {/* 1. 인쇄 구역 선택 */}
             <div className="content-row">
-              <div className="content-title">검색 필드</div>
+              <div className="content-title">인쇄 구역</div>
+              <AssetSelector
+                assetData={assetData}
+                selectedAssetId={selectedAssetId}
+                onChange={setSelectedAssetId}
+              />
+            </div>
+
+            {/* 2. 검색 필드 선택 */}
+            {previewData?.previewColumns && (
+              <div className="content-row">
+                <div className="content-title">검색 필드</div>
+                <select className="content-value" onChange={(e) => setKeywordCriteria(e.target.value as "eq" | "contains")}>
+                  <option value="eq">일치</option>
+                  {searchKeyIsString && <option value="contains">포함</option>}
+                </select>
                 <FieldSelector
                   previewData={previewData}
                   searchKey={searchKey}
-                  onChange={setSearchKey}
+                  onChange={(key, isStr) => {
+                    setSearchKey(key);
+                    setSearchKeyIsString(isStr ?? false);
+                  }}
                 />
-            </div>
-          )}
-          {/* 3. 검색어 입력 */}
-          {previewData?.previewColumns && (
-            <div className="content-row">
-              <div className="content-title">검색어</div>
+              </div>
+            )}
+
+            {/* 3. 검색어 입력 */}
+            {previewData?.previewColumns && (
+              <div className="content-row">
+                <div className="content-title">검색어</div>
                 <DebouncedInput
-                  value={searchKeyword}
-                  onDebounce={setSearchKeyword}
-                  placeholder="3. 검색어 입력"
+                  value={keyword}
+                  onDebounce={setKeyword}
+                  placeholder="검색어 입력"
                   className="content-value"
                 />
-            </div>
-          )}
+              </div>
+            )}
+          </div>
 
           {/* 4. 결과 Feature 목록 */}
-          <FeatureList
-            features={features}
-            searchKey={searchKey}
-            refCallback={(node) => lastItemRef.current = node}
+          <div className="feature-container flex-center">
+            {loading ? (
+                <span className="spin-loader"></span>
+              ):(
+                <FeatureList features={features} searchKey={searchKey} />
+              )
+            }
+          </div>
+
+          {/* 5. 페이지네이션 */}
+          <InputPagination
+            page={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            onChange={setPage}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize);
+              setPage(0);
+            }}
           />
-          {loading && (
-            <div className="flex-center">
-              <span className="spin-loader"></span>
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -17,26 +17,50 @@ export const buildFilter = (userId: string): AssetFilterInput => ({
   ],
 });
 
-export const buildWfsUrl = (
-  layerName: string,
-  page: number,
-  size: number = 10,
-  searchKey?: string,
-  searchValue?: string,
-): string => {
+interface BuildWfsOptions {
+  layerName: string;
+  page?: number;
+  size?: number;
+  searchKey?: string;
+  searchValue?: string | number;
+  criteria?: "eq" | "contains";
+  hitsOnly?: boolean;
+}
+
+export const buildWfsUrl = ({
+  layerName,
+  page = 0,
+  size = 10,
+  searchKey,
+  searchValue,
+  criteria = "eq",
+  hitsOnly = false,
+}: BuildWfsOptions): string => {
   const baseUrl = import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL;
+
   const params = new URLSearchParams({
     service: "WFS",
-    version: "2.0.0",
+    version: hitsOnly ? "1.1.0" : "2.0.0",
     request: "GetFeature",
     typeName: layerName,
     outputFormat: "application/json",
-    startIndex: `${page * size}`,
-    count: `${size}`,
   });
 
-  if (searchKey && searchValue) {
-    params.append("CQL_FILTER", `${searchKey} LIKE '%${searchValue}%'`);
+  if (hitsOnly) {
+    params.append("resultType", "hits");
+  } else {
+    params.append("startIndex", `${page * size}`);
+    params.append("count", `${size}`);
+  }
+
+  if (searchKey && searchValue !== undefined && searchValue !== "") {
+    const safeValue = String(searchValue).replace(/'/g, "''"); // 작은 따옴표 이스케이프
+    const cql =
+      criteria === "eq"
+        ? `${searchKey} = '${safeValue}'`
+        : `${searchKey} LIKE '%${safeValue}%'`;
+
+    params.append("CQL_FILTER", cql);
   }
 
   return `${baseUrl}?${params.toString()}`;
