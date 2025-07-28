@@ -1,13 +1,14 @@
-import React from "react";
+import {Dispatch, SetStateAction} from "react";
 import {PreviewColumnsQuery} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import {SearchCondition} from "@/types/PrintArea.ts";
 
 interface Props {
   previewData: PreviewColumnsQuery;
   searchKey?: string;
-  onChange: (key: string, isString: boolean) => void;
+  setSearchCondition: Dispatch<SetStateAction<SearchCondition>>;
 }
 
-const FieldSelector = ({ previewData, searchKey, onChange }: Props) => {
+const FieldSelector = ({ previewData, searchKey, setSearchCondition }: Props) => {
 
   const fields = previewData.previewColumns?.map(p => ({ field: p?.field, isString: p?.isString }));
 
@@ -22,7 +23,11 @@ const FieldSelector = ({ previewData, searchKey, onChange }: Props) => {
           const selectedField = e.target.value;
           const selected = fields?.find((f) => f.field === selectedField);
           if (selected?.field) {
-            onChange(selected.field, selected.isString ?? false);
+            setSearchCondition( prev => ({
+              ...prev,
+              key: selectedField,
+              isString: selected.isString ?? false
+            }));
           }
         }}
       >

@@ -1,9 +1,9 @@
 import {Pagination} from "@/types/PrintArea.ts";
-import React, {useEffect, useState} from "react";
+import {Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
 
 interface InputPaginationProps {
   pagination: Pagination;
-  setPagination: React.Dispatch<React.SetStateAction<Pagination>>;
+  setPagination: Dispatch<SetStateAction<Pagination>>;
 }
 
 const InputPagination = ({ pagination, setPagination }: InputPaginationProps) => {
@@ -20,7 +20,7 @@ const InputPagination = ({ pagination, setPagination }: InputPaginationProps) =>
   };
 
   const renderPages = () => {
-    const pages: React.ReactNode[] = [];
+    const pages: ReactNode[] = [];
     const start = Math.max(0, pagination.page - 2);
     const end = Math.min(totalPages, start + 5);
 

@@ -1,4 +1,81 @@
 import { AssetFilterInput } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
+import {Pagination, SearchCondition} from "@/types/PrintArea.ts";
+import {Feature} from "geojson";
+
+interface BuildWfsOptions {
+  layerName: string;
+  searchCondition: SearchCondition;
+  pagination?: Pagination;
+  hitsOnly?: boolean;
+}
+
+export const buildWfsUrl = ({
+  layerName,
+  searchCondition,
+  pagination,
+  hitsOnly = false,
+}: BuildWfsOptions): string | null => {
+  if (!layerName) return null;
+
+  const baseUrl = import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL;
+  const params = new URLSearchParams({
+    service: "WFS",
+    request: "GetFeature",
+    typeName: layerName,
+    outputFormat: "application/json",
+    version: hitsOnly ? "1.1.0" : "2.0.0",
+  });
+
+  if (hitsOnly) {
+    params.append("resultType", "hits");
+  } else {
+    if (!pagination) return null;
+
+    const { page, pageSize } = pagination;
+    params.append("startIndex", String(page * pageSize));
+    params.append("count", String(pageSize));
+  }
+
+  const cql = createCqlFilter(searchCondition);
+  if (cql) {
+    params.append("CQL_FILTER", cql);
+  }
+
+  return `${baseUrl}?${params.toString()}`;
+};
+
+export const fetchTotalCount = async (
+  layerName: string,
+  searchCondition: SearchCondition
+): Promise<number> => {
+  const url = buildWfsUrl({
+    layerName,
+    searchCondition,
+    hitsOnly: true
+  });
+  if (!url) return 0;
+
+  const res = await fetch(url);
+  const text = await res.text();
+  const matched = text.match(/numberOfFeatures="(\d+)"/);
+  return matched ? Number(matched[1]) : 0;
+};
+
+export const fetchFeatures = async (
+  layerName: string,
+  searchCondition: SearchCondition,
+  pagination: Pagination
+): Promise<Feature[]> => {
+  const url = buildWfsUrl({
+    layerName,
+    searchCondition,
+    pagination,
+  });
+  if (!url) return [];
+  const res = await fetch(url);
+  const json = await res.json();
+  return json.features ?? [];
+};
 
 export const buildFilter = (userId: string): AssetFilterInput => ({
   and: [
@@ -17,79 +94,16 @@ export const buildFilter = (userId: string): AssetFilterInput => ({
   ],
 });
 
-interface BuildWfsOptions {
-  layerName: string;
-  page?: number;
-  size?: number;
-  searchKey?: string;
-  searchValue?: string | number;
-  criteria?: "eq" | "contains";
-  hitsOnly?: boolean;
-}
+const escapeSingleQuotes = (value: string): string =>
+  value.replace(/'/g, "''");
 
-export const buildWfsUrl = ({
-  layerName,
-  page = 0,
-  size = 10,
-  searchKey,
-  searchValue,
-  criteria = "eq",
-  hitsOnly = false,
-}: BuildWfsOptions): string => {
-  const baseUrl = import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL;
+const createCqlFilter = (condition: SearchCondition): string | null => {
+  const { key, keyword, criteria } = condition;
+  if (!key || !keyword?.trim()) return null;
 
-  const params = new URLSearchParams({
-    service: "WFS",
-    version: hitsOnly ? "1.1.0" : "2.0.0",
-    request: "GetFeature",
-    typeName: layerName,
-    outputFormat: "application/json",
-  });
+  const escaped = escapeSingleQuotes(String(keyword));
 
-  if (hitsOnly) {
-    params.append("resultType", "hits");
-  } else {
-    params.append("startIndex", `${page * size}`);
-    params.append("count", `${size}`);
-  }
-
-  if (searchKey && searchValue !== undefined && searchValue !== "") {
-    const safeValue = String(searchValue).replace(/'/g, "''"); // 작은 따옴표 이스케이프
-    const cql =
-      criteria === "eq"
-        ? `${searchKey} = '${safeValue}'`
-        : `${searchKey} LIKE '%${safeValue}%'`;
-
-    params.append("CQL_FILTER", cql);
-  }
-
-  return `${baseUrl}?${params.toString()}`;
-};
-
-const captureScreen = () => {
-  // // viewer create 시점에 다음 옵션을 넣으면 사용가능
-  // contextOptions: {
-  //   webgl: {
-  //     preserveDrawingBuffer: true
-  //   }
-  // },
-  // const target = document.body;
-  //
-  // html2canvas(target, {
-  //   allowTaint: false,
-  //   useCORS: true,
-  //   backgroundColor: null, // 투명 배경 (필요시 제거)
-  //   scale: 2, // 고해상도 캡처
-  // }).then((canvas) => {
-  //   canvas.toBlob((blob) => {
-  //     if (!blob) return;
-  //
-  //     const url = URL.createObjectURL(blob);
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = `screenshot-${Date.now()}.png`;
-  //     a.click();
-  //     URL.revokeObjectURL(url);
-  //   });
-  // });
+  return criteria === "eq"
+    ? `${key} = '${escaped}'`
+    : `${key} LIKE '%${escaped}%'`;
 };
