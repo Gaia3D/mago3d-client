@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useRecoilValueLoadable } from "recoil";
-
 import SideCloseButton from "@/components/SideCloseButton";
 import AssetSelector from "./AssetSelector";
 import FieldSelector from "./FieldSelector.tsx";
 import FeatureList from "./FeatureList";
-
 import {
   FindAssetsByFilterDocument,
   PreviewColumnsDocument,
@@ -16,26 +14,40 @@ import { buildFilter, buildWfsUrl } from "../../../utils/printAreaUtils.ts";
 import DebouncedInput from "@/components/common/DebouncedInput.tsx";
 import { Feature } from "geojson";
 import InputPagination from "@/components/InputPagination.tsx";
+import {Pagination, SearchCondition} from "@/types/PrintArea.ts";
+import SearchInputCondition from "@/components/aside/print-area/SearchInputCondition.tsx";
 
 interface Props {
   display: boolean;
 }
 
+const INIT_SEARCH_CONDITION: SearchCondition = {
+  key: "",
+  isString: false,
+  keyword: "",
+  criteria: "eq"
+}
+
+const INIT_PAGINATION: Pagination = {
+  page: 0,
+  pageSize: 10,
+  totalCount: 0
+}
+
 const AsidePrintArea = ({ display }: Props) => {
   const { contents } = useRecoilValueLoadable(currentUserProfileSelector);
   const userId = contents.id;
-  const searchFilter = useMemo(() => buildFilter(userId), [userId]);
+  const searchFilter = buildFilter(userId);
 
   const [selectedAssetId, setSelectedAssetId] = useState("");
-  const [searchKey, setSearchKey] = useState<string | undefined>(undefined);
-  const [searchKeyIsString, setSearchKeyIsString] = useState(false);
-  const [keyword, setKeyword] = useState("");
-  const [keywordCriteria, setKeywordCriteria] = useState<"eq" | "contains">("eq");
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [searchCondition, setSearchCondition] = useState<SearchCondition>(INIT_SEARCH_CONDITION);
+  const [pagination, setPagination] = useState<Pagination>(INIT_PAGINATION);
   const [features, setFeatures] = useState<Feature[]>([]);
   const [loading, setLoading] = useState(false);
-  const [totalFeatures, setTotalFeatures] = useState<number>(0);
+
+  const updateSearchCondition = (patch: Partial<SearchCondition>) => {
+    setSearchCondition(prev => ({ ...prev, ...patch }));
+  };
 
   const { data: assetData } = useQuery(FindAssetsByFilterDocument, {
     variables: { filter: searchFilter },
@@ -55,16 +67,19 @@ const AsidePrintArea = ({ display }: Props) => {
     if (!selectedAsset) return;
     const url = buildWfsUrl({
       layerName: selectedAsset.properties.layer.name,
-      searchKey,
-      searchValue: keyword,
-      criteria: keywordCriteria,
+      searchKey: searchCondition.key,
+      searchValue: searchCondition.keyword,
+      criteria: searchCondition.criteria,
       hitsOnly: true,
     });
 
     const res = await fetch(url);
     const text = await res.text();
     const matched = text.match(/numberOfFeatures="(\d+)"/);
-    setTotalFeatures(matched ? Number(matched[1]) : 0);
+    setPagination(prev => ({
+      ...prev,
+      totalCount: matched ? Number(matched[1]) : 0
+    }))
   };
 
   const fetchFeatures = async (currentPage: number) => {
@@ -73,10 +88,10 @@ const AsidePrintArea = ({ display }: Props) => {
     const url = buildWfsUrl({
       layerName: selectedAsset.properties.layer.name,
       page: currentPage,
-      size: pageSize,
-      searchKey,
-      searchValue: keyword,
-      criteria: keywordCriteria,
+      size: pagination.pageSize,
+      searchKey: searchCondition.key,
+      searchValue: searchCondition.keyword,
+      criteria: searchCondition.criteria,
     });
 
     try {
@@ -93,19 +108,16 @@ const AsidePrintArea = ({ display }: Props) => {
   };
 
   useEffect(() => {
-    setPage(0);
+    setPagination(INIT_PAGINATION);
     setFeatures([]);
-    setTotalFeatures(0);
     if (selectedAsset) {
       fetchTotalCount();
     }
-  }, [selectedAsset, searchKey, keyword]);
+  }, [selectedAsset, searchCondition.key, searchCondition.keyword, searchCondition.criteria]);
 
   useEffect(() => {
-    if (selectedAsset) fetchFeatures(page);
-  }, [page, pageSize, selectedAsset, searchKey, keyword]);
-
-  const totalPages = Math.ceil(totalFeatures / pageSize);
+    if (selectedAsset) fetchFeatures(pagination.page);
+  }, [pagination, selectedAsset, searchCondition.key, searchCondition.keyword, searchCondition.criteria]);
 
   return (
     <div className={`side-bar-wrapper ${display ? "on" : "off"}`}>
@@ -116,46 +128,33 @@ const AsidePrintArea = ({ display }: Props) => {
         <div className="content--wrapper layer-wrapper">
           <div className="search-container">
             {/* 1. 인쇄 구역 선택 */}
-            <div className="content-row">
-              <div className="content-title">인쇄 구역</div>
-              <AssetSelector
-                assetData={assetData}
-                selectedAssetId={selectedAssetId}
-                onChange={setSelectedAssetId}
-              />
-            </div>
-
+            <AssetSelector
+              assetData={assetData}
+              selectedAssetId={selectedAssetId}
+              onChange={setSelectedAssetId}
+            />
             {/* 2. 검색 필드 선택 */}
             {previewData?.previewColumns && (
-              <div className="content-row">
-                <div className="content-title">검색 필드</div>
-                <FieldSelector
-                  previewData={previewData}
-                  searchKey={searchKey}
-                  onChange={(key, isStr) => {
-                    setSearchKey(key);
-                    setSearchKeyIsString(isStr ?? false);
-                  }}
-                />
-              </div>
+              <FieldSelector
+                previewData={previewData}
+                searchKey={searchCondition.key}
+                onChange={(key, isStr) => {
+                  updateSearchCondition({
+                    key: key,
+                    isString: isStr ?? false
+                  })
+                }}
+              />
             )}
 
             {/* 3. 검색어 입력 */}
             {previewData?.previewColumns && (
-              <div className="content-row">
-                <div className="content-title">검색어</div>
-                <select className="criteria-select"
-                        onChange={(e) => setKeywordCriteria(e.target.value as "eq" | "contains")}>
-                  <option value="eq">일치</option>
-                  {searchKeyIsString && <option value="contains">포함</option>}
-                </select>
-                <DebouncedInput
-                  value={keyword}
-                  onDebounce={setKeyword}
-                  placeholder="검색어 입력"
-                  className="keyword-input"
-                />
-              </div>
+              <SearchInputCondition
+                isString={searchCondition.isString}
+                criteria={searchCondition.criteria}
+                keyword={searchCondition.keyword}
+                onChange={(patch) => updateSearchCondition(patch)}
+              />
             )}
           </div>
 
@@ -168,7 +167,7 @@ const AsidePrintArea = ({ display }: Props) => {
                 display={display}
                 assetName={selectedAsset?.name ?? ""}
                 features={features}
-                searchKey={searchKey}
+                searchKey={searchCondition.key}
               />
               )
             }
@@ -176,14 +175,8 @@ const AsidePrintArea = ({ display }: Props) => {
 
           {/* 5. 페이지네이션 */}
           <InputPagination
-            page={page}
-            totalPages={totalPages}
-            pageSize={pageSize}
-            onChange={setPage}
-            onPageSizeChange={(newSize) => {
-              setPageSize(newSize);
-              setPage(0);
-            }}
+            pagination={pagination}
+            setPagination={setPagination}
           />
         </div>
       </div>

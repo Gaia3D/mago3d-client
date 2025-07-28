@@ -9,22 +9,25 @@ interface Props {
 
 const AssetSelector = ({ assetData, selectedAssetId, onChange }: Props) => {
   return (
-    <select
-      className="content-value"
-      name="asset-selector"
-      value={selectedAssetId}
-      onChange={(e) => onChange(e.target.value)}
-    >
-      <option value="" hidden>1. 인쇄 구역 선택</option>
-      {assetData?.assets.map((asset) => {
-        if (!asset) return;
-        return (
-          <option key={asset.id} value={asset.id}>
-            {`${asset.name} (id: ${asset.id})`}
-          </option>
-        )
-      })}
-    </select>
+    <div className="content-row">
+      <div className="content-title">인쇄 구역</div>
+      <select
+        className="content-value"
+        name="asset-selector"
+        value={selectedAssetId}
+        onChange={(e) => onChange(e.target.value)}
+      >
+        <option value="" hidden>1. 인쇄 구역 선택</option>
+        {assetData?.assets.map((asset) => {
+          if (!asset) return;
+          return (
+            <option key={asset.id} value={asset.id}>
+              {`${asset.name} (id: ${asset.id})`}
+            </option>
+          )
+        })}
+      </select>
+    </div>
   );
 };
 

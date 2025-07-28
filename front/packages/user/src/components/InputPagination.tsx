@@ -1,42 +1,38 @@
-import React, { useState, useEffect } from "react";
+import {Pagination} from "@/types/PrintArea.ts";
+import React, {useEffect, useState} from "react";
 
-interface Props {
-  page: number;
-  totalPages: number;
-  pageSize: number;
-  onChange: (page: number) => void;
-  onPageSizeChange: (size: number) => void;
+interface InputPaginationProps {
+  pagination: Pagination;
+  setPagination: React.Dispatch<React.SetStateAction<Pagination>>;
 }
 
-const InputPagination = ({
- page,
- totalPages,
- pageSize,
- onChange,
- onPageSizeChange,
-}: Props) => {
-  const [inputPage, setInputPage] = useState(page + 1); // 1-based
+const InputPagination = ({ pagination, setPagination }: InputPaginationProps) => {
+  const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize);
+  const [inputPage, setInputPage] = useState(pagination.page + 1);
 
   useEffect(() => {
-    setInputPage(page + 1);
-  }, [page]);
+    setInputPage(pagination.page + 1);
+  }, [pagination.page]);
 
   const handleMove = () => {
     const target = Math.max(1, Math.min(totalPages, inputPage));
-    onChange(target - 1);
+    setPagination(prev => ({ ...prev, page: target - 1 }));
   };
 
   const renderPages = () => {
     const pages: React.ReactNode[] = [];
-    const start = Math.max(0, page - 2);
+    const start = Math.max(0, pagination.page - 2);
     const end = Math.min(totalPages, start + 5);
 
     for (let i = start; i < end; i++) {
-      const isActive = i === page;
+      const isActive = i === pagination.page;
       pages.push(
         <button
           key={i}
-          onClick={() => onChange(i)}
+          onClick={() => setPagination(prev => ({
+            ...prev,
+            page: i
+          }))}
           className={`page-btn ${isActive ? "active" : ""}`}
         >
           {i + 1}
@@ -49,7 +45,10 @@ const InputPagination = ({
       pages.push(
         <button
           key="last"
-          onClick={() => onChange(totalPages - 1)}
+          onClick={() => setPagination(prev => ({
+            ...prev,
+            page: totalPages - 1
+          }))}
           className="page-btn"
         >
           {totalPages}
@@ -62,25 +61,31 @@ const InputPagination = ({
 
   return (
     <div className="input-pagination">
-      {/* 1. 이전/다음 */}
       <div className="page-nav-row">
-        <button onClick={() => onChange(page - 1)} disabled={page === 0}>
+        <button onClick={() => setPagination(p => ({...p, page: p.page - 1}))} disabled={pagination.page === 0}>
           &lt; 이전
         </button>
-        <button onClick={() => onChange(page + 1)} disabled={page >= totalPages - 1}>
+        <button onClick={() => setPagination(p => ({...p, page: p.page + 1}))}
+                disabled={pagination.page >= totalPages - 1}>
           다음 &gt;
         </button>
       </div>
 
-      {/* 2. 페이지 번호 */}
-      <div className="page-number-row">{renderPages()}</div>
+      <div className="page-number-row">
+        {renderPages()}
+      </div>
 
-      {/* 3. 페이지 이동 및 사이즈 선택 */}
       <div className="page-control-row">
         <div className="page-size-box">
           <select
-            value={pageSize}
-            onChange={(e) => onPageSizeChange(Number(e.target.value))}
+            value={pagination.pageSize}
+            onChange={(e) =>
+              setPagination(prev => ({
+                ...prev,
+                pageSize: Number(e.target.value),
+                page: 0,
+              }))
+            }
           >
             {[10, 20, 30, 50].map((size) => (
               <option key={size} value={size}>
@@ -94,13 +99,8 @@ const InputPagination = ({
             type="number"
             value={inputPage}
             onChange={(e) => setInputPage(Number(e.target.value))}
-            min={1}
-            max={totalPages}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleMove();
-            }}
+            onKeyDown={(e) => e.key === "Enter" && handleMove()}
           />
-          <span>/ {totalPages}</span>
           <button onClick={handleMove}>이동</button>
         </div>
       </div>
