@@ -18,7 +18,7 @@ const PreviewPanel = () => {
   const asset = useRecoilValue(selectedAssetState);
   const [previewMode, setPreviewMode] = useState<PreviewMode>(PreviewMode.Single);
 
-  const { dataSource, loading } = usePreviewData(asset);
+  const { geoJson, loading } = usePreviewData(asset);
 
   if (loading) return <>loading...</>;
 
@@ -35,7 +35,7 @@ const PreviewPanel = () => {
         />
         <div className={`preview-cesium-wrapper ${previewMode === PreviewMode.Legend ? 'none' : ''}`}>
           <CesiumPreview
-            dataSource={dataSource}
+            geoJson={geoJson}
             previewMode={previewMode}
           />
           <BackgroundMapSelector/>
