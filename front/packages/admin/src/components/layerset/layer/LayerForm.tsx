@@ -1,10 +1,10 @@
-import React, {useEffect} from "react";
+import React from "react";
 import { UseFormReturn } from "react-hook-form";
-import { UpdateAssetInput } from "@src/generated/gql/layerset/graphql";
 import { getPublishStatusName } from "@src/api/Data";
 import { useTranslation } from "react-i18next";
 import {useRecoilValue} from "recoil";
 import {selectedAssetState} from "@src/layer-style/recoils/layerStyle";
+import {UpdateAssetInput} from "@mnd/shared/src/types/layerset/gql/graphql";
 
 interface LayerFormProps {
   groups: { id: string; name: string }[];
@@ -56,7 +56,7 @@ const LayerForm = ({ groups, form, onSubmit, onDelete, onCancel }: LayerFormProp
 
       <label>{t("printable")}</label>
       <label className="switch mt8">
-        <input type="checkbox" defaultChecked={asset.printable} {...register("printable" as keyof UpdateAssetInput)} />
+        <input type="checkbox" defaultChecked={asset.printable} {...register("printable")} />
         <span className="slider"></span>
       </label>
 
