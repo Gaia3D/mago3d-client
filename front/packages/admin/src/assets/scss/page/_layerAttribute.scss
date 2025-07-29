@@ -280,8 +280,9 @@
     .feature-group {
       display: flex;
       width:100%;
+      max-width: 520px;
       justify-content: center;
-      margin-bottom: 20px;
+      margin: 0 auto 20px auto;
       font-weight: normal;
       div {
         width:100%;
@@ -298,7 +299,7 @@
       .properties-container {
         display: flex;
         flex-wrap: wrap;
-        width: 100%;
+        width: calc(100% - 100px);
       }
 
       .properties-item {
@@ -308,6 +309,7 @@
           text-align: center;
           padding: 2px;
           outline: 0;
+          min-height: 28px;
         }
         .properties-value {
           text-align: center;
@@ -342,4 +344,12 @@
     top: 0;
     right: 0;
   }
+}
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
 }
