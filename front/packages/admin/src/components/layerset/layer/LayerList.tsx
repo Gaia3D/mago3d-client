@@ -283,7 +283,7 @@ const LayerList = () => {
               ref={treeRef}
               tree={treeData}
               rootId={0}
-              classes={{container: 'layer-list',}}
+              classes={{container: 'layer-list mix-width-700',}}
               initialOpen={initialOpen}
               sort={false}
               canDrop={(tree, {dragSource, dropTargetId, dropTarget}) => {

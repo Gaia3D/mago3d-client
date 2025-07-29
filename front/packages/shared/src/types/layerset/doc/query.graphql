@@ -46,6 +46,7 @@ fragment LayersetAssetBasic on LayerAsset {
     type
     enabled
     visible
+    printable
     access
     status
     createdAt
