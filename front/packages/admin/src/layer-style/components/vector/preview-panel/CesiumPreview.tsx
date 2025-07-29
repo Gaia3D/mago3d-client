@@ -12,9 +12,10 @@ import { updateImageryProvider } from "@src/layer-style/utils/updateImageryProvi
 import { applyStyledEntities } from "@src/layer-style/utils/apply-styled-entities";
 import { setGeometryToEntity } from "@src/layer-style/utils/setGeometryToEntity";
 import {zoomToBbox} from "@src/layer-style/utils/zoomToBbox";
+import {FeatureCollection} from "geojson";
 
 interface CesiumPreviewerProps {
-  geoJson: GeoJSON.FeatureCollection;
+  geoJson: FeatureCollection;
   previewMode: PreviewMode;
 }
 
