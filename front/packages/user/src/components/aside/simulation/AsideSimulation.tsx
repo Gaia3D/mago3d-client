@@ -285,6 +285,43 @@ const layers: LayersData[] = [
 		min: 0,
 		max: 147,
 	},
+	/** 서천군 율리 사방댐 **/
+	{
+		area: "seocheon_yuli",
+		caseName: "시나리오1: 보정대상지 발생원 적용",
+		bbox: [126.626140633336, 36.1514533320994, 126.639246181038, 36.1606072807271],
+		layerName: "mago3d:seocheon_yuli_scenario_1",
+		interval: 5,
+		min: 0,
+		max: 100,
+	},
+	{
+		area: "seocheon_yuli",
+		caseName: "시나리오2: 선정된 붕괴 위치의 FS<1.0이 전부 붕괴한다고 가정",
+		bbox: [126.626140633336, 36.1514533320994, 126.639246181038, 36.1606072807271],
+		layerName: "mago3d:seocheon_yuli_scenario_2",
+		interval: 5,
+		min: 0,
+		max: 70,
+	},
+	{
+		area: "seocheon_yuli",
+		caseName: "시나리오3: 시나리오1에 사방댐을 적용",
+		bbox: [126.626140633336, 36.1514533320994, 126.639246181038, 36.1606072807271],
+		layerName: "mago3d:seocheon_yuli_scenario_3",
+		interval: 5,
+		min: 0,
+		max: 1000,
+	},
+	{
+		area: "seocheon_yuli",
+		caseName: "시나리오4: 시나리오2에 사방댐을 적용",
+		bbox: [126.626140633336, 36.1514533320994, 126.639246181038, 36.1606072807271],
+		layerName: "mago3d:seocheon_yuli_scenario_4",
+		interval: 5,
+		min: 0,
+		max: 1000,
+	},
 ];
 
 export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
@@ -481,6 +518,7 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 							<option value="yeongju1">1 경상북도 영주시 풍기읍 삼가리 산22-1임 일대</option>
 							<option value="yecheon1">1 경상북도 예천군 용문면 사부리 산100임 일대</option>
 							<option value="yecheon2">2 경상북도 예천군 용문면 사부리 산100임 일대</option>
+							<option value="seocheon_yuli">1 서천군 비인면 율리 산101-1 일대</option>
 						</select>
 					</div>
 					<div className="simulation-list">
