@@ -416,7 +416,7 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
 		simulationRef.current = window.setInterval(() => {
 			if (cqlIndexRef.current >= cqlFilters.length) {
-				setTimeout(stopSimulation, 10000);
+				//setTimeout(stopSimulation, 10000);
 				return;
 			}
 
@@ -436,6 +436,24 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 
 	};
 
+	function getWmsLayerInfo(layer: any) {
+		if (!(layer.imageryProvider instanceof Cesium.WebMapServiceImageryProvider)) {
+			return null;
+		}
+
+		const provider = layer.imageryProvider;
+		const info = {
+			url: provider.url || provider._url,
+			layers: provider.layers || provider._layers,
+			cqlFilter: null as string | null
+		};
+
+		if (provider._resource && provider._resource.queryParameters) {
+			info.cqlFilter = provider._resource.queryParameters.cql_filter || null;
+		}
+		return info;
+	}
+
 	const fadeLayer = (layer: Cesium.ImageryLayer) => {
 		let alpha = 0;
 
@@ -454,6 +472,13 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 		};
 
 		const fadeOut = () => {
+			const layerInfo = getWmsLayerInfo(layer);
+			if (layerInfo?.cqlFilter === `location='${selectedLayer?.max}.tif'`) {
+				// 마지막 레이어는 페이드아웃 없이 유지
+				layer.alpha = 0.7;
+				return;
+			}
+
 			if (alpha <= 0) {
 				layer.show = false;
 				return;
