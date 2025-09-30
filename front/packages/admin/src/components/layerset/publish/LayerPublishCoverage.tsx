@@ -34,7 +34,7 @@ const LayerPublishCoverage = ({dataAsset, groupsQuery}: {
   const onSubmit: SubmitHandler<CreateAssetInput> = (data) => {
     if (!confirm(t("question.create"))) return;
 
-    //data.access = data.access ? LayerAccess.Private : LayerAccess.Public;
+    data.access = data.access ? LayerAccess.Public: LayerAccess.Private;
     data.type = LayerAssetType.Raster;
     data.context = {
       coverage: {
@@ -95,18 +95,16 @@ const LayerPublishCoverage = ({dataAsset, groupsQuery}: {
                  })}
           />
           {errors?.name?.message && <span className="error">{errors.name.message}</span>}
-          {/*
-          <label>권한</label>
+          <label>{t("publish-access")}</label>
           <label className="switch mt8">
             <input type="checkbox"
-                   defaultChecked={false}
+                   defaultChecked={true}
                    id="layer-publish-coverage-access"
                    {...register("access")}
             />
             <span className="slider"></span>
           </label>
-          */}
-          <label>{t("use-status")}</label>
+          <label>{t("publish-status")}</label>
           <label className="switch mt8">
             <input type="checkbox"
                    defaultChecked={true}
@@ -115,7 +113,7 @@ const LayerPublishCoverage = ({dataAsset, groupsQuery}: {
             />
             <span className="slider"></span>
           </label>
-          <label>{t("turn-on")}</label>
+          <label>{t("publish-turn-on")}</label>
           <label className="switch mt8">
             <input type="checkbox"
                    defaultChecked={true}

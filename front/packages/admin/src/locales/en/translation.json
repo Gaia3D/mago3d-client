@@ -203,6 +203,9 @@
   "prev-page": "Go to Previous Page",
   "portal-page": "Go to Portal Page",
   "authority": "Authority",
+  "publish-access": "Publich/Private",
+  "publish-status": "Use/Unuse",
+  "publish-turn-on": "TurnOn/TurnOff",
   "authorities": {
     "name": "Authority Name",
     "admin": "Admin Authority",

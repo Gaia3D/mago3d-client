@@ -202,6 +202,9 @@
   "prev-page": "이전 페이지로 가기",
   "portal-page": "포탈 페이지로 가기",
   "authority": "권한",
+  "publish-access": "공개/비공개",
+  "publish-status": "사용/미사용",
+  "publish-turn-on": "켜기/끄기",
   "authorities": {
     "name": "권한명",
     "admin": "관리 권한",
