@@ -11,8 +11,19 @@ export const styledPolygonEntity = (
   now: Cesium.JulianDate,
   isAttribute = false,
 ): Cesium.Entity.ConstructorOptions | null => {
-  const {context} = style;
-  const hierarchy = entity.polygon?.hierarchy?.getValue(now);
+  const { context } = style;
+  let hierarchy = entity.polygon?.hierarchy?.getValue(now);
+
+  // polygon이 없을 경우 polyline → polygon 시도
+  if (!hierarchy?.positions?.length) {
+    const linePositions = entity.polyline?.positions?.getValue(now);
+    if (linePositions?.length > 2) {
+      const closed = Cesium.Cartesian3.equals(linePositions[0], linePositions[linePositions.length - 1]);
+      const looped = closed ? [...linePositions] : [...linePositions, linePositions[0]];
+      hierarchy = new Cesium.PolygonHierarchy(looped);
+    }
+  }
+
   if (!hierarchy?.positions?.length) return null;
 
   const color = isAttribute

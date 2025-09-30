@@ -278,12 +278,12 @@ const LayerList = () => {
           <button type="button" className="btn-basic" onClick={toggleEnableAll}>{!enable ? t("all-available") : t("all-unavailable")}</button>
         </div>
         <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-          <div style={{maxHeight:"700px", overflowY:"auto", paddingRight:"10px", width: "100%"}}>
+          <div style={{ overflowY:"auto", paddingRight:"10px", width: "100%", height: "calc(100% - 120px)"}}>
             <Tree
               ref={treeRef}
               tree={treeData}
               rootId={0}
-              classes={{container: 'layer-list',}}
+              classes={{container: 'layer-list mix-width-700',}}
               initialOpen={initialOpen}
               sort={false}
               canDrop={(tree, {dragSource, dropTargetId, dropTarget}) => {
@@ -444,18 +444,18 @@ const GroupNode = ({node, params}: TreeNodeProps) => {
   const {keycloak} = useKeycloak();
   const userId = keycloak?.profile?.id ?? "";
   const filter = {
-    userId: { eq : userId },
-    or : [
-      {
-        access : { eq : "Public" }
-      },
-      {
-        and : [
-          { access : { eq : "Private" }},
-          { createdBy : { eq : userId }}
-        ]
-      }
-    ]
+    // userId: { eq : userId },
+    // or : [
+    //   {
+    //     access : { eq : "Public" }
+    //   },
+    //   {
+    //     and : [
+    //       { access : { eq : "Private" }},
+    //       { createdBy : { eq : userId }}
+    //     ]
+    //   }
+    // ]
   }
 
   const [updateMutation] = useMutation(LayersetUpdateGroupDocument, {

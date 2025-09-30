@@ -2,8 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { v4 as uuidv4 } from 'uuid';
-import {LayerAsset} from "@src/generated/gql/layerset/graphql";
-import { useSuspenseQuery, useMutation} from "@apollo/client";
+import {useSuspenseQuery, useMutation, useQuery} from "@apollo/client";
 import {
   AttributeByNativeNameDocument,
   CreateAttributesDocument,
@@ -42,10 +41,13 @@ const LayerAttribute = () => {
     }
   });
 
-  const { data: attributeData } = useSuspenseQuery(AttributeByNativeNameDocument,{
+  const {
+    data: attributeData,
+    refetch: refetchAttribute,
+  } = useQuery(AttributeByNativeNameDocument, {
     variables: {
-      name: assetName
-    }
+      name: assetName,
+    },
   });
 
   const [createAttributes] = useMutation(CreateAttributesDocument);
@@ -105,6 +107,7 @@ const LayerAttribute = () => {
         await updateAttributes({ variables });
         toast("수정 완료");
       }
+      await refetchAttribute();
     } catch (e) {
       console.error(e);
     }

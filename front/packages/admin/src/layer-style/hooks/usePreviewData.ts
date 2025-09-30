@@ -1,33 +1,36 @@
-import {LayerAsset} from "@mnd/shared/src/types/layerset/gql/graphql";
+import {LayerAsset, RemoteDocument} from "@mnd/shared/src/types/layerset/gql/graphql";
 import {useEffect, useState} from "react";
-import * as Cesium from "cesium";
 import {MAX_PREVIEW_FEATURE_COUNT} from "@src/constants/common";
+import {useSuspenseQuery} from "@apollo/client";
 
 export const usePreviewData = (asset: LayerAsset | null) => {
-  const [dataSource, setDataSource] = useState<Cesium.GeoJsonDataSource | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const wfsUrl = (() => {
+    if (!asset?.properties?.layer?.resource?.name) return null;
+    const params = new URLSearchParams({
+      service: "WFS",
+      version: "2.0.0",
+      request: "GetFeature",
+      typeName: asset.properties.layer.resource.name,
+      outputFormat: "application/json",
+      count: MAX_PREVIEW_FEATURE_COUNT.toString(),
+    });
+    return `${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}?${params.toString()}`;
+  })();
+
+  const { data: remoteData } = useSuspenseQuery(RemoteDocument, {
+    variables: { href: wfsUrl ?? "" },
+    skip: !wfsUrl,
+  });
+
   useEffect(() => {
-    if (!asset?.properties?.layer?.resource?.name) return;
-    const fetch = async () => {
-      try {
-        const url = `${import.meta.env.VITE_GEOSERVER_WFS_SERVICE_URL}
-        service=WFS
-        &version=2.0.0
-        &request=GetFeature&typeName=${asset.properties.layer.resource.name}
-        &outputFormat=application/json&
-        count=${MAX_PREVIEW_FEATURE_COUNT}`;
+    setLoading(!remoteData?.remote);
+  }, [remoteData]);
 
-        const ds = await Cesium.GeoJsonDataSource.load(url);
-        setDataSource(ds);
-      } catch (e) {
-        console.error("GeoJSON load error:", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
-  }, [asset]);
-
-  return { dataSource, loading };
+  return {
+    geoJson: remoteData?.remote,
+    loading,
+  };
 };
+

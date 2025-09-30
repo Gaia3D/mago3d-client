@@ -10,7 +10,7 @@ import {OptionsState} from "@/recoils/Tool.ts";
 import {useGlobeController} from "@/components/providers/GlobeControllerProvider.tsx";
 import {layersetGraphqlFetcher} from "@/api/queryClient.ts";
 import {Query} from "@mnd/shared/src/types/layerset/gql/graphql.ts";
-import {GET_TERRAINS} from "@mnd/shared/src/types/layerset/Query.ts";
+import {GET_TERRAINS} from "@mnd/shared/src/types/layerset/doc/Query.ts";
 import * as Cesium from "cesium";
 
 const AsideTerrains: React.FC<AsideDisplayProps>  = ({display}) => {

@@ -187,6 +187,9 @@ importers:
       '@types/crypto-js':
         specifier: ^4.1.3
         version: 4.2.2
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
       '@types/lodash':
         specifier: ^4.14.202
         version: 4.14.202
@@ -564,6 +567,12 @@ importers:
       '@parcel/watcher':
         specifier: ^2.3.0
         version: 2.4.0
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
+      '@types/lodash':
+        specifier: ^4.14.202
+        version: 4.14.202
       '@types/proj4':
         specifier: ^2.5.5
         version: 2.5.5
@@ -11795,7 +11804,7 @@ snapshots:
     dependencies:
       chokidar: 3.6.0
       immutable: 4.3.7
-      source-map-js: 1.0.2
+      source-map-js: 1.2.1
 
   sax@1.3.0: {}
 

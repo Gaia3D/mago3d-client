@@ -1,9 +1,9 @@
 import * as Cesium from "cesium";
-import {EditableStyleModel} from "@src/layer-style/models/EditableStyleModel";
-import {getFinalAttributeColor} from "./getFinalAttributeColor";
-import {DEFAULT_STYLE} from "@src/layer-style/constants/defaultStyle";
-import {styledLabelGraphics} from "@src/layer-style/utils/apply-styled-entities/styledLabelGraphics";
-import {getCameraDistanceFromScale} from "@src/layer-style/utils/getCameraDistanceFromScale";
+import { EditableStyleModel } from "@src/layer-style/models/EditableStyleModel";
+import { getFinalAttributeColor } from "./getFinalAttributeColor";
+import { DEFAULT_STYLE } from "@src/layer-style/constants/defaultStyle";
+import { styledLabelGraphics } from "@src/layer-style/utils/apply-styled-entities/styledLabelGraphics";
+import { getCameraDistanceFromScale } from "@src/layer-style/utils/getCameraDistanceFromScale";
 
 export const styledLineEntity = (
   entity: Cesium.Entity,
@@ -11,14 +11,20 @@ export const styledLineEntity = (
   now: Cesium.JulianDate,
   isAttribute = false
 ): Cesium.Entity.ConstructorOptions | null => {
-  const {context} = style;
-  const hierarchy = entity.polygon?.hierarchy?.getValue(now);
-  if (!hierarchy?.positions?.length) return null;
+  const { context } = style;
 
-  const positions = [...hierarchy.positions];
-  if (!Cesium.Cartesian3.equals(positions[0], positions[positions.length - 1])) {
-    positions.push(positions[0]);
+  let positions = entity.polyline?.positions?.getValue(now);
+
+  if (!positions?.length && entity.polygon?.hierarchy?.getValue) {
+    const hierarchy = entity.polygon.hierarchy.getValue(now);
+    const coords = hierarchy?.positions;
+    if (coords?.length > 1) {
+      const closed = Cesium.Cartesian3.equals(coords[0], coords[coords.length - 1]);
+      positions = closed ? coords : [...coords, coords[0]];
+    }
   }
+
+  if (!positions?.length) return null;
 
   const color = isAttribute
     ? getFinalAttributeColor(entity, context.attribute, context.comparisonType, context.rules)

@@ -4,7 +4,7 @@ import {
 } from "@mnd/shared/src/types/layerset/gql/graphql.ts";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import { TerrainUrlState} from "@/recoils/Terrain.ts";
-import {GET_TERRAINS} from "@mnd/shared/src/types/layerset/Query.ts";
+import {GET_TERRAINS} from "@mnd/shared/src/types/layerset/doc/Query.ts";
 import {layersetGraphqlFetcher} from "@/api/queryClient.ts";
 import {newTerrainCountState} from "@/recoils/MainMenuState.tsx";
 import {terrainState} from "@/recoils/Layer.ts";

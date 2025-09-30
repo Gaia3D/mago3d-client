@@ -1,0 +1,77 @@
+.input-pagination {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+
+  .page-nav-row,
+  .page-number-row,
+  .page-control-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    button {
+      background: #353535;
+      color: white;
+      border: 0;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+  }
+
+  .page-btn {
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #353535;
+    color: white;
+    cursor: pointer;
+
+    &.active {
+      background: #3382EC ;
+      color: white;
+    }
+  }
+
+  .goto-box input {
+    width: 60px;
+    text-align: center;
+    height: 28px;
+    margin-right: 6px;
+    border-radius: 6px;
+    background-color:#3E3E3E;
+    color: white;
+    border: 0;
+  }
+
+  .goto-box button {
+    margin-left: 10px;
+    padding: 4px 8px;
+    background: #3382EC;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+
+  select {
+    padding: 0 30px 0 10px;
+    border: none;
+    border-radius: 6px;
+    background-color:#3E3E3E;
+    color: white;
+    height: 30px;
+  }
+
+  select {
+    appearance: none; /* 기본 화살표 제거 (지원 브라우저 한정) */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23fff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    background-size: 16px;
+  }
+}
