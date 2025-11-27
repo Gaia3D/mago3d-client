@@ -287,7 +287,7 @@ const layers: LayersData[] = [
 	},
 	/** 서천군 율리 사방댐 **/
 	{
-		area: "seocheon_yuli",
+		area: "seocheon_yuli1",
 		caseName: "시나리오1: 보정대상지 발생원 적용",
 		bbox: [126.626140633336, 36.1514533320994, 126.639246181038, 36.1606072807271],
 		layerName: "mago3d:seocheon_yuli_scenario_1",
@@ -296,7 +296,7 @@ const layers: LayersData[] = [
 		max: 100,
 	},
 	{
-		area: "seocheon_yuli",
+		area: "seocheon_yuli1",
 		caseName: "시나리오2: 선정된 붕괴 위치의 FS<1.0이 전부 붕괴한다고 가정",
 		bbox: [126.626140633336, 36.1514533320994, 126.639246181038, 36.1606072807271],
 		layerName: "mago3d:seocheon_yuli_scenario_2",
@@ -305,7 +305,7 @@ const layers: LayersData[] = [
 		max: 70,
 	},
 	{
-		area: "seocheon_yuli",
+		area: "seocheon_yuli1",
 		caseName: "시나리오3: 시나리오1에 사방댐을 적용",
 		bbox: [126.626140633336, 36.1514533320994, 126.639246181038, 36.1606072807271],
 		layerName: "mago3d:seocheon_yuli_scenario_3",
@@ -314,10 +314,66 @@ const layers: LayersData[] = [
 		max: 1000,
 	},
 	{
-		area: "seocheon_yuli",
+		area: "seocheon_yuli1",
 		caseName: "시나리오4: 시나리오2에 사방댐을 적용",
 		bbox: [126.626140633336, 36.1514533320994, 126.639246181038, 36.1606072807271],
 		layerName: "mago3d:seocheon_yuli_scenario_4",
+		interval: 5,
+		min: 0,
+		max: 1000,
+	},
+	{
+		area: "seocheon_yuli2",
+		caseName: "서천군 율리 면적 시나리오 100",
+		bbox: [126.626236015357, 36.1534471707995, 126.640598188675, 36.1606270668472],
+		layerName: "mago3d:seocheon_area",
+		interval: 5,
+		min: 0,
+		max: 320,
+	},
+	{
+		area: "seocheon_yuli2",
+		caseName: "서천군 율리 사방댐 시나리오",
+		bbox: [126.626236015357, 36.1534471707995, 126.640598188675, 36.1606270668472],
+		layerName: "mago3d:seocheon_check_dam",
+		interval: 5,
+		min: 0,
+		max: 1000,
+	},
+	/** 논산시 천호리 **/
+	{
+		area: "nonsan_cheonho",
+		caseName: "논산시 천호리 면적 시나리오 100",
+		bbox: [127.228598069979, 36.2382896317404, 127.23807559925, 36.2421715175584],
+		layerName: "mago3d:nonsan_area",
+		interval: 5,
+		min: 0,
+		max: 415,
+	},
+	{
+		area: "nonsan_cheonho",
+		caseName: "논산시 천호리 사방댐 다중",
+		bbox: [127.228598069979, 36.2382896317404, 127.23807559925, 36.2421715175584],
+		layerName: "mago3d:nonsan_check_dam",
+		interval: 5,
+		min: 0,
+		max: 1000,
+	},
+	/** 충주시 신만리 **/
+	{
+		area: "chungju_sinman",
+		caseName: "충주시 신만리 면적 시나리오 100",
+		bbox: [127.951890633063, 37.0922874880378, 127.956924479749, 37.099753792746],
+		layerName: "mago3d:chungju_area",
+		interval: 5,
+		min: 0,
+		max: 280,
+	},
+	{
+		area: "chungju_sinman",
+		caseName: "충주시 신만리 사방댐 시나리오 100",
+		bbox: [127.951890633063, 37.0922874880378, 127.956924479749, 37.099753792746],
+		layerName: "mago3d:chungju_check_dam",
 		interval: 5,
 		min: 0,
 		max: 1000,
@@ -536,14 +592,17 @@ export const AsideSimulation: React.FC<AsideDisplayProps> = ({ display }) => {
 					<div className="simulation-list">
 						<label>대상지역</label>
 						<select style={{width: "240px"}} className="custom-select" id="simulationAreaSelectBox"
-										onChange={selectArea}>
+								onChange={selectArea}>
 							<option value="" hidden>대상지역 선택</option>
 							<option value="mungyeong1">1 경상북도 문경시 동로면 수평리 산68임 일대</option>
 							<option value="mungyeong2">2 경상북도 문경시 동로면 수평리 산68임 일대</option>
 							<option value="yeongju1">1 경상북도 영주시 풍기읍 삼가리 산22-1임 일대</option>
 							<option value="yecheon1">1 경상북도 예천군 용문면 사부리 산100임 일대</option>
 							<option value="yecheon2">2 경상북도 예천군 용문면 사부리 산100임 일대</option>
-							<option value="seocheon_yuli">1 서천군 비인면 율리 산101-1 일대</option>
+							<option value="seocheon_yuli1">1 서천군 비인면 율리 산101-1 일대</option>
+							<option value="seocheon_yuli2">2 서천군 비인면 율리 산101-1 일대</option>
+							<option value="nonsan_cheonho">1 논산시 연산면 천호리 산46-1 일대</option>
+							<option value="chungju_sinman">1 충주시 엄정면 신만리 산60-1 일대</option>
 						</select>
 					</div>
 					<div className="simulation-list">
