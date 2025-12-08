@@ -1,0 +1,52 @@
+services:
+  file-server:
+    build: .
+    image: gaia3d/mago3d-file-server:latest
+    container_name: secure-file-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - /dev/DATA2/files:/data/files:ro
+      - /dev/DATA2/nginx/logs:/var/log/nginx
+    restart: unless-stopped
+
+    # 보안: 리소스 제한
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+    # 보안: 추가 옵션
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /var/run:size=1M,mode=755,uid=1001,gid=1001
+      - /var/cache/nginx:size=10M,mode=755,uid=1001,gid=1001
+      - /tmp:size=10M,mode=755,uid=1001,gid=1001
+
+    # 보안: capability 제한
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE  # 포트 바인딩용 (필요시)
+
+    # 헬스체크
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+    # 네트워크 격리
+    networks:
+      - mago3d
+
+networks:
+  mago3d:
+    external: true
