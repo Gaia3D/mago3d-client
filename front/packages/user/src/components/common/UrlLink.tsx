@@ -34,7 +34,7 @@ export const UrlLink = ({ url }: Props) => {
   return (
     <span
       className="properties-url-link"
-      onClick={handleLinkClick}
+      onClick={copyTextToClipboard}
       style={{ cursor: 'pointer', textDecoration: 'underline' }}
     >
       {url}
