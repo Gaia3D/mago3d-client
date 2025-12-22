@@ -54,7 +54,19 @@ export const AsideLayers: React.FC<AsideDisplayProps>  = ({display}) => {
     const restoreToDefault = async () => {
         if (!confirm(t("confirm.layer.restore"))) return;
         const {saveUserLayer} = await restoreUserLayerMutateAsync();
-        setUserLayerGroups(saveUserLayer);
+
+        const updatedGroups = saveUserLayer.map(group => {
+            if (!group) return group;
+
+            const updatedAssets = group.assets.map(asset => {
+                setLayerVisibility(asset, asset.visible ?? false);
+                return asset;
+            });
+
+            return { ...group, assets: updatedAssets };
+        });
+
+        setUserLayerGroups(updatedGroups);
     };
 
     const saveState = async () => {
