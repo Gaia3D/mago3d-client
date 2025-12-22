@@ -3,6 +3,8 @@ import * as Cesium from "cesium";
 import { processFeatures } from "@/components/tool/actions/layer-info/layerInfoUtils";
 import {ApolloClient, NormalizedCacheObject, useApolloClient} from "@apollo/client";
 import { ProcessedFeature } from "@/components/tool/actions/layer-info/layerInfoType";
+import {isURL} from "@/utils/common.ts";
+import {UrlLink} from "@/components/common/UrlLink.tsx";
 
 interface LayerInfoTemplateProps {
     selectedFeatures: Cesium.ImageryLayerFeatureInfo[];
@@ -32,11 +34,7 @@ const LayerInfoTemplate = ({ selectedFeatures }: LayerInfoTemplateProps) => {
     const toggleFeature = (featureKey: string) => {
         setExpandedFeatures((prev) => {
             const newSet = new Set(prev);
-            if (newSet.has(featureKey)) {
-                newSet.delete(featureKey);
-            } else {
-                newSet.add(featureKey);
-            }
+            newSet.has(featureKey) ? newSet.delete(featureKey) : newSet.add(featureKey);
             return newSet;
         });
     };
@@ -67,7 +65,9 @@ const LayerInfoTemplate = ({ selectedFeatures }: LayerInfoTemplateProps) => {
                                   {group.properties.map((item, pIdx) => (
                                     <div key={`${featureKey}-prop-${pIdx}`} className="properties-item" data-weight={item.weight}>
                                         <div className="properties-label bg-gray fw-bold">{item.label}</div>
-                                        <div className="properties-value ellipsis" title={item.value || "-"}>{item.value || "-"}</div>
+                                        <div className="properties-value ellipsis" title={item.value || "-"}>
+                                            {!item.value ? "-" : isURL(item.value) ? <UrlLink url={item.value} /> : item.value}
+                                        </div>
                                     </div>
                                   ))}
                               </div>
