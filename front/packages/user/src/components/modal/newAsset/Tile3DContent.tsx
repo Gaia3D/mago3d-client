@@ -19,8 +19,7 @@ import {
 import { UploadedFile } from "@/types/Common.ts";
 import InputWithLabel from "@/components/modal/InputWithLabel.tsx";
 import {assetsConvertingListState, assetsRefetchTriggerState} from "@/recoils/Assets.ts";
-import {useRecoilState, useSetRecoilState} from "recoil";
-import {stackAlertArrState} from "@/recoils/Spinner.ts";
+import {useSetRecoilState} from "recoil";
 import {useTranslation} from "react-i18next";
 
 interface Tile3DContentProps {

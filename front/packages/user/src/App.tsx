@@ -4,12 +4,12 @@ import {routes} from "./Routes";
 import {getClient} from "./api/queryClient";
 import LoadingSpinner from "./components/Spinner";
 import "react-toastify/dist/ReactToastify.css";
-import {AppLoader, AuthClientEvent} from "@mnd/shared";
+import {AppLoader} from "@mnd/shared";
 import {Suspense} from "react";
 import UserInfoLoadableProvider from "@/components/providers/UserInfoLoadableProvider.tsx";
 import {ApolloProvider} from "@apollo/client";
 import apolloClients from "@/api/ApolloClients.ts";
-import StackAlert from "@/components/StackAlert.tsx";
+import {ToastContainer} from "react-toastify";
 
 function App() {
   const router = createBrowserRouter(routes, {
@@ -24,8 +24,8 @@ function App() {
                 <ApolloProvider client={apolloClients}>
                   <UserInfoLoadableProvider>
                     <RouterProvider router={router} />
-                    <StackAlert/>
                     <LoadingSpinner />
+                    <ToastContainer hideProgressBar={true} pauseOnFocusLoss={false} limit={3} autoClose={2000}  className="custom-toast-container" toastClassName="custom-toast" bodyClassName="custom-toast-body"/>
                   </UserInfoLoadableProvider>
                 </ApolloProvider>
             </QueryClientProvider>
