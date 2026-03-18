@@ -13,12 +13,18 @@ export const useBackgrounds = () => {
   useEffect(() => {
     if (!Array.isArray(data?.backgrounds)) return;
 
-    setBackgrounds(data.backgrounds);
+    const vworldToken = import.meta.env.VITE_VWORLD_TOKEN ?? "";
+    const backgrounds = data.backgrounds.map(bg => ({
+      ...bg,
+      url: bg.url?.map(u => u?.replace("{VWorldToken}", vworldToken) ?? u),
+    }));
+
+    setBackgrounds(backgrounds);
 
     const localBackgroundId = localStorage.getItem("BACKGROUND_MAP_ID");
     const initBackground = localBackgroundId
-      ? data.backgrounds.find(bg => bg.id === localBackgroundId)
-      : data.backgrounds[0];
+      ? backgrounds.find(bg => bg.id === localBackgroundId)
+      : backgrounds[0];
 
     if (initBackground) {
       setSelectedBackground(initBackground);
