@@ -18,7 +18,7 @@ const config: CodegenConfig = {
   generates: {
     "src/types/dataset/gql/": {
       schema: {
-        "https://59.27.63.245/app/api/dataset/graphql": {
+        "https://106.254.235.66/app/api/dataset/graphql": {
           customFetch: fetchWithAgent,
         },
       } as unknown as string,
@@ -28,7 +28,7 @@ const config: CodegenConfig = {
     },
     "src/types/layerset/gql/": {
       schema: {
-        "https://59.27.63.245/app/api/layerset/graphql": {
+        "https://106.254.235.66/app/api/layerset/graphql": {
           customFetch: fetchWithAgent,
         },
       } as unknown as string,
@@ -38,7 +38,7 @@ const config: CodegenConfig = {
     },
     "src/types/userset/gql/": {
       schema: {
-        "https://59.27.63.245/app/api/userset/graphql": {
+        "https://106.254.235.66/app/api/userset/graphql": {
           customFetch: fetchWithAgent,
         },
       } as unknown as string,
