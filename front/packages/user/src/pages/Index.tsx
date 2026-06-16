@@ -1,3 +1,4 @@
+import {Suspense} from "react";
 import {AsideMenu} from "@/components/aside/AsideMenu.tsx";
 import {AsidePanel} from "@/components/aside/AsidePanel.tsx";
 import {MapTool, MapToolbox} from "@/components/MapToolbox";
@@ -49,32 +50,41 @@ const MainPage = () => {
             initOptions={{
               onLoad: 'login-required',
               responseMode: 'query',
-              silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
+              checkLoginIframe: false,
+              // silentCheckSsoRedirectUri
+              // keycloak-js가 이 값 때문에 3p-cookies 체크를 돌림(노이즈)
             }}
             LoadingComponent={<AppLoader />}
         >
-          <main>
-            <GlobeControllerProvider globeController={globeController}>
-              <TimeSeriesProvider>
-                <div id="map" className={"map"}>
-                  <Header />
-                  <MapPopup/>
-                  <Globe/>
-                  <AsidePanel/>
-                  <BoundarySearchWrapper/>
-                  <SideToolContainer />
-                  {/*<MapToolbox onToolClick={handleToolClick}/>*/}
-                  <NewAssetModal />
-                  <LogModal />
-                  <Footer/>
-                </div>
-              </TimeSeriesProvider>
-            </GlobeControllerProvider>
-            <nav>
-              <h1 className="logo"></h1>
-              <AsideMenu/>
-            </nav>
-          </main>
+          {/* keycloak provider 안쪽에 Suspense 경계를 둔다.
+              AsideAssets 등이 async recoil 셀렉터(currentUserProfileSelector → loadUserProfile)로
+              suspend할 때, 이 경계가 받아내야 provider가 언마운트/재마운트되지 않는다.
+              (App.tsx 최상위 Suspense가 받으면 keycloak provider까지 리마운트되어
+               init이 재실행 → login-required로 /auth 무한 리다이렉트 루프가 발생함) */}
+          <Suspense fallback={<AppLoader />}>
+            <main>
+              <GlobeControllerProvider globeController={globeController}>
+                <TimeSeriesProvider>
+                  <div id="map" className={"map"}>
+                    <Header />
+                    <MapPopup/>
+                    <Globe/>
+                    <AsidePanel/>
+                    <BoundarySearchWrapper/>
+                    <SideToolContainer />
+                    {/*<MapToolbox onToolClick={handleToolClick}/>*/}
+                    <NewAssetModal />
+                    <LogModal />
+                    <Footer/>
+                  </div>
+                </TimeSeriesProvider>
+              </GlobeControllerProvider>
+              <nav>
+                <h1 className="logo"></h1>
+                <AsideMenu/>
+              </nav>
+            </main>
+          </Suspense>
         </ReactKeycloakProvider>
       </>
   );
