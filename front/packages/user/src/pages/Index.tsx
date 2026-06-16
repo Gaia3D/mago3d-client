@@ -49,6 +49,7 @@ const MainPage = () => {
             initOptions={{
               onLoad: 'login-required',
               responseMode: 'query',
+              checkLoginIframe: false,
               silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
             }}
             LoadingComponent={<AppLoader />}

@@ -30,6 +30,10 @@ export const useLayerManagement = () => {
                     if (createdLayer) {
                         addLayerToCache(layer.assetId, createdLayer);
                     }
+                })
+                .catch(error => {
+                    // tileset.json 404 등 레이어 로드 실패 시 Uncaught 방지.
+                    console.warn(`Failed to load layer ${layer.assetId}.`, error);
                 });
         });
 

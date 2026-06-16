@@ -21,8 +21,16 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
     if (!container) return;
 
     const initializeViewer = async () => {
-      const terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
-      setOptions(prev => ({ ...prev, isTerrain: true }));
+      let terrainProvider: Cesium.TerrainProvider;
+      try {
+        terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.VITE_TERRAIN_SERVER_URL);
+        setOptions(prev => ({ ...prev, isTerrain: true }));
+      } catch (error) {
+        // terrain 서버가 404 등으로 실패해도 viewer 생성은 계속 진행한다.
+        console.warn("Failed to load terrain provider, falling back to ellipsoid.", error);
+        terrainProvider = new Cesium.EllipsoidTerrainProvider();
+        setOptions(prev => ({ ...prev, isTerrain: false }));
+      }
 
       const baseLayers = selectedBackground.url
         .filter((url): url is string => !!url)
@@ -74,7 +82,9 @@ export const useCreateViewer = (containerRef: RefObject<HTMLDivElement>) => {
       viewer.scene.camera.percentageChanged = 0.01;
     };
 
-    initializeViewer();
+    initializeViewer().catch(error => {
+      console.error("Failed to initialize Cesium viewer.", error);
+    });
   }, [containerRef]);
 
   // 4. selectedBackground 변경 시 baseLayer 교체
