@@ -4,21 +4,15 @@ import keycloak from "./keycloak";
 import { GraphQLClientResponse } from "node_modules/graphql-request/build/esm/types";
 
 //graphql-request requestMiddleware type
-export const requestMiddleware: RequestMiddleware = (request: RequestInit) => {
+export const requestMiddleware: RequestMiddleware = (request) => {
     const {token} = keycloak;
-    const returnRequest = {
-        url: import.meta.env.VITE_GRAPHQL_LAYERSET_URL + '/graphql',
+    return {
         ...request,
         headers: {
-            ...request.headers
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any
-    }
-    if(token) {
-        returnRequest.headers.Authorization = `Bearer ${token}`;
-    }
-    
-    return returnRequest;
+            ...request.headers,
+            ...(token ? {Authorization: `Bearer ${token}`} : {}),
+        },
+    };
 }
 
 export const responseMiddleware: ResponseMiddleware = (res: GraphQLClientResponse<unknown> | Error) => {

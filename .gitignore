@@ -1,0 +1,20 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SSH keys
+gitlab-deploy-key
+gitlab-deploy-key.pub
+
+# bkit
+.bkit/
+
+# env
+.env
+.env.*
+!.env.example

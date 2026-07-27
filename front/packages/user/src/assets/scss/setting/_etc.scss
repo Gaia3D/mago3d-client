@@ -35,11 +35,12 @@
 
   }
   .header-wrapper {
-    width:190px;
+    width:auto;
     display: flex;
     position: relative;
     flex-direction: rows;
     margin-top:10px;
+    margin-right:12px;
     gap:10px;
     align-items: center;
   }

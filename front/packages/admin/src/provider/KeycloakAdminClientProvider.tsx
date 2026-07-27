@@ -10,16 +10,8 @@ const KeycloakAdminClientContext = createContext<KcAdminClient>({} as KcAdminCli
 export const useKcAdminClient = () => useContext(KeycloakAdminClientContext);
 
 const KeycloakAdminClientProvider = ({ children }: {children:React.ReactNode}) => {
-    //const [kcacAuth, setKcacAuth] = useState(false);
-
-    let baseUrl = `${import.meta.env.VITE_AUTH_URL}`;
-    if (import.meta.env.MODE == 'development') {
-        const { protocol, hostname, port } = window.location;
-        // 포트가 있는 경우 콜론과 함께 포트 번호를 추가
-        const portPart = port ? `:${port}` : '';
-        // 전체 URL 구성
-        baseUrl = `${protocol}//${hostname}${portPart}${import.meta.env.VITE_AUTH_URL}`;
-    }
+    // VITE_AUTH_URL이 절대 URL이면 그대로, 상대 경로이면 현재 origin 기준으로 resolve
+    const baseUrl = new URL(import.meta.env.VITE_AUTH_URL, window.location.origin).href;
 
     const kcAdminClient = new KcAdminClient({
         baseUrl,
