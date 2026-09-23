@@ -1,11 +1,27 @@
 import * as Cesium from "cesium";
 
+const createOsmProvider = (url: string) => {
+  const queryIndex = url.indexOf("?");
+  if (queryIndex === -1) {
+    return new Cesium.OpenStreetMapImageryProvider({ url });
+  }
+
+  const baseUrl = url.slice(0, queryIndex).replace(/\/?$/, "/");
+  const queryString = url.slice(queryIndex + 1);
+
+  return new Cesium.UrlTemplateImageryProvider({
+    url: `${baseUrl}{z}/{x}/{y}.png?${queryString}`,
+    tilingScheme: new Cesium.WebMercatorTilingScheme(),
+    tileWidth: 256,
+    tileHeight: 256,
+    minimumLevel: 0,
+    credit: new Cesium.Credit("MapQuest, Open Street Map and contributors, CC-BY-SA"),
+  });
+};
+
 export const initBackground = (type: string, url: string): Cesium.ImageryLayer => {
   if (type === "osm") {
-    return new Cesium.ImageryLayer(
-      new Cesium.OpenStreetMapImageryProvider({ url }),
-      { show: true }
-    );
+    return new Cesium.ImageryLayer(createOsmProvider(url), { show: true });
   }
 
   if (type === "vworld") {
